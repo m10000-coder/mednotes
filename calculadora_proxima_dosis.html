@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Próxima Vacuna · ENI Ecuador</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text: #0f172a;
+    --text-secondary: #475569;
+    --muted: #94a3b8;
+
+    --primary: #1e3a8a;
+    --primary-mid: #2563eb;
+    --primary-soft: #eff6ff;
+    --primary-border: #bfdbfe;
+
+    --result-bg: #fef9e9;
+    --result-border: #ef4444;
+
+    --green: #16a34a;
+    --green-soft: #f0fdf4;
+    --green-border: #bbf7d0;
+
+    --orange: #f97316;
+    --orange-soft: #fff7ed;
+    --orange-border: #fed7aa;
+    --orange-dark: #c2410c;
+
+    --danger: #dc2626;
+    --danger-dark: #b91c1c;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 28px 16px 50px;
+    line-height: 1.5;
+    font-size: 14px;
+  }
+
+  .wrapper { max-width: 900px; margin: 0 auto; }
+
+  .title-row {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 18px;
+  }
+  .title-icon {
+    width: 38px; height: 38px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  h1 {
+    font-size: 26px; font-weight: 800;
+    color: var(--primary);
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+  }
+
+  /* Scheme tabs */
+  .scheme-tabs {
+    display: flex; gap: 6px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 5px;
+    margin-bottom: 20px;
+    max-width: 360px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  .scheme-tab {
+    flex: 1;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .scheme-tab.active {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(30,58,138,0.25);
+  }
+  .scheme-tab .year {
+    font-family: 'JetBrains Mono', monospace;
+    opacity: 0.75;
+    font-size: 11px;
+    margin-left: 2px;
+  }
+
+  /* Info alert */
+  .info-alert {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 14px;
+    background: var(--primary-soft);
+    border: 1px solid var(--primary-border);
+    border-left: 4px solid var(--primary-mid);
+    border-radius: 8px;
+    margin-bottom: 22px;
+    font-size: 13px;
+    color: var(--primary);
+    font-weight: 500;
+  }
+  .info-icon {
+    width: 22px; height: 22px;
+    background: var(--primary-mid);
+    color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* Form */
+  .field { margin-bottom: 16px; }
+  .label {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 14px; font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 6px;
+  }
+
+  .input, .select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--primary-border);
+    border-radius: 8px;
+    background: var(--primary-soft);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    transition: all 0.15s;
+  }
+  .select {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%231e3a8a' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+  }
+  .input:focus, .select:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(30,58,138,0.12);
+  }
+
+  /* Buttons */
+  .btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .btn {
+    padding: 14px 18px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px; font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-primary { background: var(--primary); }
+  .btn-primary:hover { background: #1e40af; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(30,58,138,0.3); }
+  .btn-danger { background: var(--danger); }
+  .btn-danger:hover { background: var(--danger-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(220,38,38,0.3); }
+
+  /* Result */
+  .result {
+    margin-top: 22px;
+    padding: 22px 24px 18px;
+    background: var(--result-bg);
+    border: 1.5px solid var(--orange-border);
+    border-left: 6px solid var(--result-border);
+    border-radius: 12px;
+    display: none;
+    animation: fadeIn 0.25s ease;
+  }
+  .result.show { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+
+  .result-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 8px;
+    padding: 5px 0;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .result-key {
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .result-val { color: var(--text); }
+  .result-val.highlight {
+    color: var(--orange-dark);
+    font-weight: 700;
+  }
+
+  .result-note {
+    margin-top: 14px;
+    padding: 10px 12px;
+    background: var(--primary-soft);
+    border: 1px solid var(--primary-border);
+    border-left: 4px solid var(--primary-mid);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--primary);
+    line-height: 1.5;
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .result-note .info-icon {
+    width: 18px; height: 18px;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+
+  .result.error {
+    background: #fef2f2;
+    border-color: #fecaca;
+    border-left-color: var(--danger);
+  }
+  .result.error .result-title { color: var(--danger-dark); }
+
+  /* Disclaimer */
+  .disclaimer {
+    margin-top: 22px;
+    padding: 12px 14px;
+    background: var(--orange-soft);
+    border: 1px solid var(--orange-border);
+    border-radius: 8px;
+    font-size: 11px;
+    color: var(--orange-dark);
+    line-height: 1.5;
+  }
+  .disclaimer strong { color: #7c2d12; }
+  .source {
+    margin-top: 12px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 540px) {
+    body { padding: 22px 12px 40px; }
+    h1 { font-size: 20px; }
+    .btn-row { grid-template-columns: 1fr; }
+    .result-row { grid-template-columns: 1fr; gap: 2px; padding: 6px 0; }
+    .result-key { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="title-row">
+    <div class="title-icon">📅</div>
+    <h1>Calculadora de Próxima Vacuna</h1>
+  </div>
+
+  <!-- Scheme tabs -->
+  <div class="scheme-tabs" role="tablist">
+    <button class="scheme-tab active" data-scheme="2019">Esquema <span class="year">2019</span></button>
+    <button class="scheme-tab" data-scheme="2025">Esquema <span class="year">2025</span></button>
+  </div>
+
+  <!-- Info alert -->
+  <div class="info-alert">
+    <div class="info-icon">i</div>
+    <div>*Solo vacunas con múltiples dosis. Evita automáticamente fines de semana y feriados nacionales*</div>
+  </div>
+
+  <!-- Form -->
+  <div class="field">
+    <label class="label">📅 Fecha de la última dosis:</label>
+    <input type="date" class="input" id="last-date">
+  </div>
+
+  <div class="field">
+    <label class="label">💉 Vacuna:</label>
+    <select class="select" id="vaccine"></select>
+  </div>
+
+  <div class="field">
+    <label class="label">📋 Dosis recibida:</label>
+    <select class="select" id="dose"></select>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" id="btn-calc">🧮 Calcular Próxima Dosis</button>
+    <button class="btn btn-danger" id="btn-reset">↻ Reiniciar</button>
+  </div>
+
+  <!-- Result -->
+  <div class="result" id="result"></div>
+
+  <div class="disclaimer">
+    <strong>⚠ Aviso clínico:</strong> Esta herramienta es un apoyo educativo basado en el Manual ENI Ecuador. Verificar siempre normativa vigente, contraindicaciones individuales y prescripción médica. No sustituye criterio profesional.
+  </div>
+  <div class="source">Fuente: <strong>MSP Ecuador · ENI 2019 / Actualización 2025</strong></div>
+
+</div>
+
+<script>
+/* ============================================================
+   FERIADOS NACIONALES DE ECUADOR
+   ============================================================ */
+
+// Cálculo de Pascua (algoritmo de Meeus/Jones/Butcher)
+function easterDate(year) {
+  const a = year % 19;
+  const b = Math.floor(year / 100);
+  const c = year % 100;
+  const d = Math.floor(b / 4);
+  const e = b % 4;
+  const f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4);
+  const k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const month = Math.floor((h + l - 7 * m + 114) / 31);
+  const day = ((h + l - 7 * m + 114) % 31) + 1;
+  return new Date(year, month - 1, day);
+}
+
+function getEcuadorHolidays(year) {
+  const easter = easterDate(year);
+  // Carnaval: lunes y martes 48 y 47 días antes de Pascua
+  const carnavalLun = new Date(easter); carnavalLun.setDate(easter.getDate() - 48);
+  const carnavalMar = new Date(easter); carnavalMar.setDate(easter.getDate() - 47);
+  // Viernes Santo: 2 días antes de Pascua
+  const viernesSanto = new Date(easter); viernesSanto.setDate(easter.getDate() - 2);
+
+  return [
+    new Date(year, 0, 1),    // Año Nuevo
+    carnavalLun,
+    carnavalMar,
+    viernesSanto,
+    new Date(year, 4, 1),    // 1 mayo - Día del Trabajo
+    new Date(year, 4, 24),   // 24 mayo - Batalla de Pichincha
+    new Date(year, 7, 10),   // 10 agosto - Independencia de Quito
+    new Date(year, 9, 9),    // 9 octubre - Independencia de Guayaquil
+    new Date(year, 10, 2),   // 2 noviembre - Día de los Difuntos
+    new Date(year, 10, 3),   // 3 noviembre - Independencia de Cuenca
+    new Date(year, 11, 6),   // 6 diciembre - Fundación de Quito
+    new Date(year, 11, 25)   // 25 diciembre - Navidad
+  ];
+}
+
+function isHoliday(date) {
+  const holidays = getEcuadorHolidays(date.getFullYear());
+  return holidays.some(h =>
+    h.getFullYear() === date.getFullYear() &&
+    h.getMonth() === date.getMonth() &&
+    h.getDate() === date.getDate()
+  );
+}
+
+function isWeekend(date) {
+  const d = date.getDay();
+  return d === 0 || d === 6; // domingo o sábado
+}
+
+function adjustToWorkday(date) {
+  const d = new Date(date);
+  while (isWeekend(d) || isHoliday(d)) {
+    d.setDate(d.getDate() + 1);
+  }
+  return d;
+}
+
+function addDays(date, days) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+
+function formatDateLong(date) {
+  return date.toLocaleDateString('es-EC', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+  });
+}
+
+/* ============================================================
+   ESQUEMAS — Vacunas con múltiples dosis y sus intervalos
+   ============================================================ */
+
+const SCHEMES = {
+
+  '2019': {
+    PENTA: {
+      label: 'Pentavalente',
+      doses: {
+        '1':  { label: '1ª dosis',     nextLabel: '2ª dosis',     intervalDays: 28,  intervalText: '4 semanas' },
+        '2':  { label: '2ª dosis',     nextLabel: '3ª dosis',     intervalDays: 28,  intervalText: '4 semanas' },
+        '3':  { label: '3ª dosis',     nextLabel: 'Refuerzo DPT (18 m)', intervalDays: 365, intervalText: '12 meses (refuerzo)' }
+      }
+    },
+    NEUMO: {
+      label: 'Neumococo',
+      doses: {
+        '1':  { label: '1ª dosis',     nextLabel: '2ª dosis',     intervalDays: 28,  intervalText: '4 semanas' },
+        '2':  { label: '2ª dosis',     nextLabel: 'Refuerzo (12 m)', intervalDays: 56, intervalText: '8 semanas' }
+      }
+    },
+    ROTA: {
+      label: 'Rotavirus',
+      doses: {
+        '1':  { label: '1ª dosis',     nextLabel: '2ª dosis',     intervalDays: 28,  intervalText: '4 semanas' }
+      }
+    },
+    IPV: {
+      label: 'IPV',
+      doses: {
+        '1':  { label: '1ª dosis',     nextLabel: '2ª dosis',     intervalDays: 35,  intervalText: '5 semanas' }
+      }
+    },
+    BOPV: {
+      label: 'bOPV',
+      doses: {
+        '1':  { label: '1ª dosis (6 m)',  nextLabel: 'Refuerzo 1 (18 m)', intervalDays: 365, intervalText: '12 meses' },
+        'r1': { label: 'Refuerzo 1 (18 m)', nextLabel: 'Refuerzo 2 (5 a)',  intervalDays: 1280, intervalText: '3 años 6 meses' }
+      }
+    },
+    SRP: {
+      label: 'SRP',
+      doses: {
+        '1':  { label: '1ª dosis (12 m)', nextLabel: '2ª dosis (18 m)', intervalDays: 180, intervalText: '6 meses' }
+      }
+    },
+    DPT: {
+      label: 'DPT (refuerzos)',
+      doses: {
+        'r1': { label: '1er refuerzo (18 m)', nextLabel: '2do refuerzo (5 a)', intervalDays: 1280, intervalText: '3 años 6 meses' }
+      }
+    },
+    VPH: {
+      label: 'VPH',
+      doses: {
+        '1':  { label: '1ª dosis',     nextLabel: '2ª dosis',     intervalDays: 150, intervalText: '5 meses' }
+      }
+    },
+    HBA: {
+      label: 'Hepatitis B (adulto)',
+      doses: {
+        '1':  { label: '1ª dosis',     nextLabel: '2ª dosis',     intervalDays: 30,  intervalText: '1 mes' },
+        '2':  { label: '2ª dosis',     nextLabel: '3ª dosis',     intervalDays: 150, intervalText: '5 meses (6 m desde 1ª)' }
+      }
+    },
+    DT: {
+      label: 'dT (adulto)',
+      doses: {
+        'r':  { label: 'Refuerzo',     nextLabel: 'Próximo refuerzo', intervalDays: 3650, intervalText: '10 años' }
+      }
+    }
+  },
+
+  '2025': {
+    HEXA: {
+      label: 'Hexavalente',
+      doses: {
+        '1':  { label: '1ª dosis',     nextLabel: '2ª dosis',     intervalDays: 28,  intervalText: '4 semanas' },
+        '2':  { label: '2ª dosis',     nextLabel: '3ª dosis',     intervalDays: 28,  intervalText: '4 semanas' },
+        '3':  { label: '3ª dosis',     nextLabel: 'Refuerzo DPT (18 m)', intervalDays: 365, intervalText: '12 meses (refuerzo)' }
+      }
+    },
+    PCV13: {
+      label: 'Neumococo PCV-13',
+      doses: {
+        '1':  { label: '1ª dosis',     nextLabel: '2ª dosis',     intervalDays: 28,  intervalText: '4 semanas' },
+        '2':  { label: '2ª dosis',     nextLabel: '3ª dosis',     intervalDays: 28,  intervalText: '4 semanas' },
+        '3':  { label: '3ª dosis',     nextLabel: 'Esquema completo · refuerzo según norma', intervalDays: 0, intervalText: '—' }
+      }
+    },
+    ROTA: {
+      label: 'Rotavirus',
+      doses: {
+        '1':  { label: '1ª dosis',     nextLabel: '2ª dosis',     intervalDays: 28,  intervalText: '4 semanas' }
+      }
+    },
+    BOPV: {
+      label: 'bOPV (refuerzos)',
+      doses: {
+        'r1': { label: 'Refuerzo 1 (18 m)', nextLabel: 'Refuerzo 2 (5 a)', intervalDays: 1280, intervalText: '3 años 6 meses' }
+      }
+    },
+    SRP: {
+      label: 'SRP',
+      doses: {
+        '1':  { label: '1ª dosis (12 m)', nextLabel: '2ª dosis (18 m)', intervalDays: 180, intervalText: '6 meses' }
+      }
+    },
+    DPT: {
+      label: 'DPT (refuerzos)',
+      doses: {
+        'r1': { label: '1er refuerzo (18 m)', nextLabel: '2do refuerzo (5 a)', intervalDays: 1280, intervalText: '3 años 6 meses' }
+      }
+    },
+    VPH: {
+      label: 'VPH',
+      doses: {
+        '1':  { label: '1ª dosis (≥15 a)', nextLabel: '2ª dosis (≥15 a)', intervalDays: 180, intervalText: '6 meses (solo si ≥15 años)' }
+      }
+    },
+    HBA: {
+      label: 'Hepatitis B (adulto)',
+      doses: {
+        '1':  { label: '1ª dosis',     nextLabel: '2ª dosis',     intervalDays: 30,  intervalText: '1 mes' },
+        '2':  { label: '2ª dosis',     nextLabel: '3ª dosis',     intervalDays: 150, intervalText: '5 meses (6 m desde 1ª)' }
+      }
+    },
+    DT: {
+      label: 'dT (adulto)',
+      doses: {
+        'r':  { label: 'Refuerzo',     nextLabel: 'Próximo refuerzo', intervalDays: 3650, intervalText: '10 años' }
+      }
+    },
+    INF: {
+      label: 'Influenza',
+      doses: {
+        'a':  { label: 'Dosis anual',  nextLabel: 'Próxima dosis anual', intervalDays: 365, intervalText: '12 meses' }
+      }
+    },
+    COVID: {
+      label: 'COVID-19',
+      doses: {
+        'a':  { label: 'Dosis anual',  nextLabel: 'Próxima dosis anual', intervalDays: 365, intervalText: '12 meses' }
+      }
+    }
+  }
+};
+
+/* ============================================================
+   UI
+   ============================================================ */
+
+let currentScheme = '2019';
+
+const elDate = document.getElementById('last-date');
+const elVaccine = document.getElementById('vaccine');
+const elDose = document.getElementById('dose');
+const elResult = document.getElementById('result');
+
+function populateVaccines() {
+  elVaccine.innerHTML = '';
+  const scheme = SCHEMES[currentScheme];
+  Object.keys(scheme).forEach(k => {
+    const o = document.createElement('option');
+    o.value = k; o.textContent = scheme[k].label;
+    elVaccine.appendChild(o);
+  });
+  populateDoses();
+}
+
+function populateDoses() {
+  elDose.innerHTML = '';
+  const k = elVaccine.value;
+  const v = SCHEMES[currentScheme][k];
+  if (!v) return;
+  Object.keys(v.doses).forEach(dk => {
+    const o = document.createElement('option');
+    o.value = dk; o.textContent = v.doses[dk].label;
+    elDose.appendChild(o);
+  });
+}
+
+function calculate() {
+  const dateStr = elDate.value;
+  if (!dateStr) {
+    showError('Falta fecha', 'Ingresa la fecha de la última dosis recibida.');
+    return;
+  }
+
+  const last = new Date(dateStr + 'T12:00:00');
+  const vKey = elVaccine.value;
+  const dKey = elDose.value;
+  const vac = SCHEMES[currentScheme][vKey];
+  const dose = vac.doses[dKey];
+
+  if (dose.intervalDays === 0) {
+    showInfo(vac, dose, last, null, 'Esta dosis completa el esquema. No se requiere próxima dosis programada.');
+    return;
+  }
+
+  const target = addDays(last, dose.intervalDays);
+  const adjusted = adjustToWorkday(target);
+
+  showResult(vac, dose, last, adjusted, target);
+}
+
+function showResult(vac, dose, last, adjusted, target) {
+  let note = 'Esta fecha evita fines de semana y feriados nacionales. Recuerde verificar el carné de vacunación antes de administrar.';
+  let movedNote = '';
+  if (adjusted.getTime() !== target.getTime()) {
+    const diff = Math.round((adjusted - target) / (1000 * 60 * 60 * 24));
+    movedNote = ` <em>(ajustada ${diff} día${diff > 1 ? 's' : ''} por feriado / fin de semana)</em>`;
+  }
+
+  elResult.className = 'result show';
+  elResult.innerHTML = `
+    <div class="result-title">📅 Próxima dosis</div>
+    <div class="result-row"><span class="result-key">Vacuna:</span><span class="result-val">${vac.label}</span></div>
+    <div class="result-row"><span class="result-key">Dosis actual:</span><span class="result-val">${dose.label}</span></div>
+    <div class="result-row"><span class="result-key">Próxima dosis:</span><span class="result-val">${dose.nextLabel}</span></div>
+    <div class="result-row"><span class="result-key">Intervalo:</span><span class="result-val">${dose.intervalText}</span></div>
+    <div class="result-row"><span class="result-key">Fecha de próxima dosis:</span><span class="result-val highlight">${formatDateLong(adjusted)}${movedNote}</span></div>
+    <div class="result-note">
+      <div class="info-icon">i</div>
+      <div>${note}</div>
+    </div>
+  `;
+  elResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function showInfo(vac, dose, last, _, message) {
+  elResult.className = 'result show';
+  elResult.innerHTML = `
+    <div class="result-title">✓ Esquema completo</div>
+    <div class="result-row"><span class="result-key">Vacuna:</span><span class="result-val">${vac.label}</span></div>
+    <div class="result-row"><span class="result-key">Dosis actual:</span><span class="result-val">${dose.label}</span></div>
+    <div class="result-note">
+      <div class="info-icon">i</div>
+      <div>${message}</div>
+    </div>
+  `;
+  elResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function showError(title, body) {
+  elResult.className = 'result show error';
+  elResult.innerHTML = `
+    <div class="result-title">⚠ ${title}</div>
+    <div class="result-row"><span class="result-val">${body}</span></div>
+  `;
+  elResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function reset() {
+  elDate.value = new Date().toISOString().split('T')[0];
+  elResult.classList.remove('show');
+  elResult.innerHTML = '';
+  populateVaccines();
+}
+
+/* Eventos */
+elVaccine.addEventListener('change', populateDoses);
+document.getElementById('btn-calc').addEventListener('click', calculate);
+document.getElementById('btn-reset').addEventListener('click', reset);
+
+document.querySelectorAll('.scheme-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.scheme-tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    currentScheme = t.dataset.scheme;
+    populateVaccines();
+    elResult.classList.remove('show');
+  });
+});
+
+/* Init */
+elDate.value = new Date().toISOString().split('T')[0];
+populateVaccines();
+</script>
+</body>
+</html>
