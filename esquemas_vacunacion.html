@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Esquemas de Vacunación · MSP Ecuador</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text: #0f172a;
+    --text-secondary: #475569;
+    --muted: #94a3b8;
+    --accent: #3b82f6;
+    --accent-soft: #eff6ff;
+
+    --bcg:    #f59e0b;
+    --hb:     #10b981;
+    --rota:   #f97316;
+    --penta:  #6366f1;
+    --hexa:   #4f46e5;
+    --neumo:  #8b5cf6;
+    --polio:  #06b6d4;
+    --ipv:    #0891b2;
+    --srp:    #ec4899;
+    --fa:     #f59e0b;
+    --var:    #14b8a6;
+    --dpt:    #3b82f6;
+    --vph:    #a855f7;
+    --inf:    #64748b;
+    --cov:    #ef4444;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    padding: 40px 24px 60px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; }
+
+  /* Header */
+  .header { margin-bottom: 28px; }
+  .header-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--accent-soft);
+    border: 1px solid #bfdbfe;
+    color: #1d4ed8;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.15em;
+    padding: 4px 10px; border-radius: 3px;
+    margin-bottom: 14px;
+  }
+  .header-tag::before { content: '◉'; font-size: 8px; }
+  h1 {
+    font-size: 34px; font-weight: 700;
+    letter-spacing: -0.03em; line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  h1 span { color: var(--accent); }
+  .subtitle { color: var(--text-secondary); font-size: 14px; letter-spacing: 0.01em; }
+
+  /* Toggle tabs */
+  .tabs {
+    display: inline-flex;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 4px;
+    margin: 24px 0 20px;
+    gap: 4px;
+  }
+  .tab {
+    padding: 10px 20px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: -0.01em;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    background: var(--text);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  .tab-status {
+    display: inline-block;
+    width: 6px; height: 6px; border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .tab-status.ok { background: #10b981; }
+  .tab-status.alert { background: #ef4444; }
+
+  /* Status banner */
+  .status-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .status-banner.available {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+  }
+  .status-banner.depleted {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+  }
+  .status-banner strong { font-weight: 700; }
+
+  /* Table wrapper */
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 24px rgba(0,0,0,0.04);
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  /* Column headers */
+  thead tr {
+    background: var(--surface-alt);
+    border-bottom: 1px solid var(--border);
+  }
+  thead th {
+    padding: 14px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    text-align: center;
+    border-right: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  thead th:first-child { text-align: left; padding-left: 24px; min-width: 200px; }
+  thead th:last-child { border-right: none; }
+
+  /* Body rows */
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface-alt); }
+
+  tbody td {
+    padding: 14px 8px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  tbody td:first-child {
+    text-align: left;
+    padding-left: 20px;
+    border-right: 1px solid var(--border-strong);
+    background: #fafbfc;
+  }
+  tbody td:last-child { border-right: none; }
+
+  /* Vaccine name cell */
+  .vax-name {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .vax-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.01em; flex-shrink: 0;
+  }
+  .vax-label {
+    font-size: 14px; font-weight: 600; color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .vax-sub {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 2px;
+    letter-spacing: 0.05em;
+  }
+  .vax-name-text { display: flex; flex-direction: column; }
+
+  /* Dose pill */
+  .dose {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 44px; height: 38px; padding: 0 10px;
+    border-radius: 10px;
+    font-size: 10px; font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.04em;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .dose:hover {
+    transform: translateY(-1px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  /* Empty cell */
+  .empty { display: block; width: 6px; height: 6px; border-radius: 50%; background: #e2e8f0; margin: 0 auto; }
+
+  /* Color classes - dose pills (gradients) */
+  .c-bcg   { background: linear-gradient(135deg, #f59e0b, #d97706); }
+  .c-hb    { background: linear-gradient(135deg, #10b981, #059669); }
+  .c-rota  { background: linear-gradient(135deg, #f97316, #ea580c); }
+  .c-penta { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+  .c-hexa  { background: linear-gradient(135deg, #4f46e5, #4338ca); }
+  .c-neumo { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+  .c-polio { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+  .c-ipv   { background: linear-gradient(135deg, #0891b2, #0e7490); }
+  .c-srp   { background: linear-gradient(135deg, #ec4899, #db2777); }
+  .c-fa    { background: linear-gradient(135deg, #f59e0b, #d97706); }
+  .c-var   { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+  .c-dpt   { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+  .c-vph   { background: linear-gradient(135deg, #a855f7, #9333ea); }
+  .c-inf   { background: linear-gradient(135deg, #64748b, #475569); }
+  .c-cov   { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+  /* Icon backgrounds (softer pastel) */
+  .i-bcg   { background: #fef3c7; color: #92400e; }
+  .i-hb    { background: #d1fae5; color: #065f46; }
+  .i-rota  { background: #ffedd5; color: #9a3412; }
+  .i-penta { background: #e0e7ff; color: #3730a3; }
+  .i-hexa  { background: #ddd6fe; color: #4338ca; }
+  .i-neumo { background: #ede9fe; color: #5b21b6; }
+  .i-polio { background: #cffafe; color: #155e75; }
+  .i-ipv   { background: #cffafe; color: #155e75; }
+  .i-srp   { background: #fce7f3; color: #9d174d; }
+  .i-fa    { background: #fef3c7; color: #92400e; }
+  .i-var   { background: #ccfbf1; color: #115e59; }
+  .i-dpt   { background: #dbeafe; color: #1e40af; }
+  .i-vph   { background: #f3e8ff; color: #6b21a8; }
+  .i-inf   { background: #f1f5f9; color: #334155; }
+  .i-cov   { background: #fee2e2; color: #991b1b; }
+
+  /* Highlight badge for changed vaccines */
+  .badge-new {
+    display: inline-block;
+    background: #4f46e5;
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.1em;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .badge-out {
+    display: inline-block;
+    background: #fee2e2;
+    color: #991b1b;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.1em;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  /* Footer / legend */
+  .footer {
+    margin-top: 24px;
+    padding: 20px 24px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .footer-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .footer-item strong { color: var(--text); }
+  .source {
+    margin-top: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+  .source strong { color: var(--text-secondary); }
+
+  /* Hidden by default */
+  .scheme { display: none; }
+  .scheme.active { display: block; }
+
+  /* Responsive */
+  .table-scroll { overflow-x: auto; }
+  @media (max-width: 768px) {
+    h1 { font-size: 26px; }
+    .tabs { width: 100%; justify-content: center; }
+    .tab { flex: 1; padding: 10px 12px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="header">
+    <div class="header-tag">MSP Ecuador · ENI 2025</div>
+    <h1>Esquemas de <span>Vacunación</span></h1>
+    <p class="subtitle">Esquema Nacional de Inmunización · Transición Pentavalente → Hexavalente</p>
+  </div>
+
+  <!-- Toggle tabs -->
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-target="esquema-disponible" role="tab">
+      <span class="tab-status ok"></span>Pentavalente disponible
+    </button>
+    <button class="tab" data-target="esquema-agotada" role="tab">
+      <span class="tab-status alert"></span>Pentavalente agotada
+    </button>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- ESQUEMA 1: PENTAVALENTE DISPONIBLE -->
+  <!-- ========================================== -->
+  <div class="scheme active" id="esquema-disponible">
+
+    <div class="status-banner available">
+      <div>
+        <strong>Esquema regular con Pentavalente</strong> — Aplicable cuando hay disponibilidad de la vacuna pentavalente (DPT + Hib + HB) en el establecimiento de salud. La polio se aplica por separado (IPV + bOPV).
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Vacuna</th>
+            <th>RN</th>
+            <th>2 m</th>
+            <th>4 m</th>
+            <th>6 m</th>
+            <th>12 m</th>
+            <th>15 m</th>
+            <th>18 m</th>
+            <th>5 a</th>
+            <th>9 a</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-bcg">BCG</div><div class="vax-name-text"><span class="vax-label">BCG</span><span class="vax-sub">Tuberculosis</span></div></div></td>
+            <td><span class="dose c-bcg">DU</span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-hb">HB</div><div class="vax-name-text"><span class="vax-label">Hepatitis B</span><span class="vax-sub">Pediátrica</span></div></div></td>
+            <td><span class="dose c-hb">HB</span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-rota">Rot</div><div class="vax-name-text"><span class="vax-label">Rotavirus</span><span class="vax-sub">Oral</span></div></div></td>
+            <td><span class="empty"></span></td>
+            <td><span class="dose c-rota">1ª</span></td>
+            <td><span class="dose c-rota">2ª</span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-penta">Pen</div><div class="vax-name-text"><span class="vax-label">Pentavalente</span><span class="vax-sub">DPT + Hib + HB</span></div></div></td>
+            <td><span class="empty"></span></td>
+            <td><span class="dose c-penta">1ª</span></td>
+            <td><span class="dose c-penta">2ª</span></td>
+            <td><span class="dose c-penta">3ª</span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-ipv">IPV</div><div class="vax-name-text"><span class="vax-label">Polio inactivada</span><span class="vax-sub">Inyectable</span></div></div></td>
+            <td><span class="empty"></span></td>
+            <td><span class="dose c-ipv">IPV</span></td>
+            <td><span class="dose c-ipv">IPV</span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-polio">OPV</div><div class="vax-name-text"><span class="vax-label">Polio oral</span><span class="vax-sub">bOPV</span></div></div></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="dose c-polio">bOPV</span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="dose c-polio">R1</span></td>
+            <td><span class="dose c-polio">R2</span></td>
+            <td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-neumo">Neu</div><div class="vax-name-text"><span class="vax-label">Neumococo PCV-13</span><span class="vax-sub">Conjugada</span></div></div></td>
+            <td><span class="empty"></span></td>
+            <td><span class="dose c-neumo">1ª</span></td>
+            <td><span class="dose c-neumo">2ª</span></td>
+            <td><span class="empty"></span></td>
+            <td><span class="dose c-neumo">R</span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-srp">SRP</div><div class="vax-name-text"><span class="vax-label">SRP</span><span class="vax-sub">Sarampión · Rubéola · Parotiditis</span></div></div></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td>
+            <td><span class="dose c-srp">1ª</span></td>
+            <td><span class="empty"></span></td>
+            <td><span class="dose c-srp">2ª</span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-fa">FA</div><div class="vax-name-text"><span class="vax-label">Fiebre Amarilla</span><span class="vax-sub">Subcutánea</span></div></div></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td>
+            <td><span class="dose c-fa">DU</span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-var">Var</div><div class="vax-name-text"><span class="vax-label">Varicela</span><span class="vax-sub">Atenuada</span></div></div></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="dose c-var">DU</span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-dpt">DPT</div><div class="vax-name-text"><span class="vax-label">DPT (refuerzo)</span><span class="vax-sub">Difteria · Tétanos · Pertussis</span></div></div></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="dose c-dpt">R1</span></td>
+            <td><span class="dose c-dpt">R2</span></td>
+            <td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-vph">VPH</div><div class="vax-name-text"><span class="vax-label">VPH</span><span class="vax-sub">Niñas y niños</span></div></div></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="dose c-vph">DU</span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-inf">Inf</div><div class="vax-name-text"><span class="vax-label">Influenza</span><span class="vax-sub">Anual estacional</span></div></div></td>
+            <td colspan="9" style="text-align:center; color: var(--text-secondary); font-size: 12px; font-style: italic;">Anual desde los 6 meses · grupos prioritarios</td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-cov">Cov</div><div class="vax-name-text"><span class="vax-label">COVID-19</span><span class="vax-sub">Anual</span></div></div></td>
+            <td colspan="9" style="text-align:center; color: var(--text-secondary); font-size: 12px; font-style: italic;">Dosis anual · población vulnerable</td>
+          </tr>
+
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- ESQUEMA 2: PENTAVALENTE AGOTADA (HEXAVALENTE) -->
+  <!-- ========================================== -->
+  <div class="scheme" id="esquema-agotada">
+
+    <div class="status-banner depleted">
+      <div>
+        <strong>Esquema con Hexavalente</strong> — Aplicable cuando la pentavalente está agotada. La hexavalente (DPT + Hib + HB + IPV) reemplaza pentavalente <em>+</em> IPV en una sola inyección. Se mantienen los refuerzos de polio oral (bOPV) en 18 meses y 5 años.
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Vacuna</th>
+            <th>RN</th>
+            <th>2 m</th>
+            <th>4 m</th>
+            <th>6 m</th>
+            <th>12 m</th>
+            <th>15 m</th>
+            <th>18 m</th>
+            <th>5 a</th>
+            <th>9 a</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-bcg">BCG</div><div class="vax-name-text"><span class="vax-label">BCG</span><span class="vax-sub">Tuberculosis</span></div></div></td>
+            <td><span class="dose c-bcg">DU</span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-hb">HB</div><div class="vax-name-text"><span class="vax-label">Hepatitis B</span><span class="vax-sub">Pediátrica</span></div></div></td>
+            <td><span class="dose c-hb">HB</span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-rota">Rot</div><div class="vax-name-text"><span class="vax-label">Rotavirus</span><span class="vax-sub">Oral</span></div></div></td>
+            <td><span class="empty"></span></td>
+            <td><span class="dose c-rota">1ª</span></td>
+            <td><span class="dose c-rota">2ª</span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-hexa">Hex</div><div class="vax-name-text"><span class="vax-label">Hexavalente <span class="badge-new">NUEVA</span></span><span class="vax-sub">DPT + Hib + HB + IPV</span></div></div></td>
+            <td><span class="empty"></span></td>
+            <td><span class="dose c-hexa">1ª</span></td>
+            <td><span class="dose c-hexa">2ª</span></td>
+            <td><span class="dose c-hexa">3ª</span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+          </tr>
+
+          <tr style="opacity:0.45">
+            <td><div class="vax-name"><div class="vax-icon i-penta">Pen</div><div class="vax-name-text"><span class="vax-label">Pentavalente <span class="badge-out">AGOTADA</span></span><span class="vax-sub">Reemplazada por hexavalente</span></div></div></td>
+            <td colspan="9" style="text-align:center; color: var(--muted); font-size: 12px; font-style: italic;">No se aplica · sustituida por hexavalente</td>
+          </tr>
+
+          <tr style="opacity:0.45">
+            <td><div class="vax-name"><div class="vax-icon i-ipv">IPV</div><div class="vax-name-text"><span class="vax-label">IPV (separada) <span class="badge-out">INCLUIDA</span></span><span class="vax-sub">Ya viene en hexavalente</span></div></div></td>
+            <td colspan="9" style="text-align:center; color: var(--muted); font-size: 12px; font-style: italic;">No se aplica por separado · contenida en hexavalente</td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-polio">OPV</div><div class="vax-name-text"><span class="vax-label">Polio oral</span><span class="vax-sub">bOPV refuerzos</span></div></div></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="dose c-polio">R1</span></td>
+            <td><span class="dose c-polio">R2</span></td>
+            <td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-neumo">Neu</div><div class="vax-name-text"><span class="vax-label">Neumococo PCV-13</span><span class="vax-sub">Conjugada</span></div></div></td>
+            <td><span class="empty"></span></td>
+            <td><span class="dose c-neumo">1ª</span></td>
+            <td><span class="dose c-neumo">2ª</span></td>
+            <td><span class="empty"></span></td>
+            <td><span class="dose c-neumo">R</span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-srp">SRP</div><div class="vax-name-text"><span class="vax-label">SRP</span><span class="vax-sub">Sarampión · Rubéola · Parotiditis</span></div></div></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td>
+            <td><span class="dose c-srp">1ª</span></td>
+            <td><span class="empty"></span></td>
+            <td><span class="dose c-srp">2ª</span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-fa">FA</div><div class="vax-name-text"><span class="vax-label">Fiebre Amarilla</span><span class="vax-sub">Subcutánea</span></div></div></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td>
+            <td><span class="dose c-fa">DU</span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-var">Var</div><div class="vax-name-text"><span class="vax-label">Varicela</span><span class="vax-sub">Atenuada</span></div></div></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="dose c-var">DU</span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-dpt">DPT</div><div class="vax-name-text"><span class="vax-label">DPT (refuerzo)</span><span class="vax-sub">Difteria · Tétanos · Pertussis</span></div></div></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="dose c-dpt">R1</span></td>
+            <td><span class="dose c-dpt">R2</span></td>
+            <td><span class="empty"></span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-vph">VPH</div><div class="vax-name-text"><span class="vax-label">VPH</span><span class="vax-sub">Niñas y niños</span></div></div></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="empty"></span></td><td><span class="empty"></span></td>
+            <td><span class="dose c-vph">DU</span></td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-inf">Inf</div><div class="vax-name-text"><span class="vax-label">Influenza</span><span class="vax-sub">Anual estacional</span></div></div></td>
+            <td colspan="9" style="text-align:center; color: var(--text-secondary); font-size: 12px; font-style: italic;">Anual desde los 6 meses · grupos prioritarios</td>
+          </tr>
+
+          <tr>
+            <td><div class="vax-name"><div class="vax-icon i-cov">Cov</div><div class="vax-name-text"><span class="vax-label">COVID-19</span><span class="vax-sub">Anual</span></div></div></td>
+            <td colspan="9" style="text-align:center; color: var(--text-secondary); font-size: 12px; font-style: italic;">Dosis anual · población vulnerable</td>
+          </tr>
+
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-title">Notas clínicas</div>
+    <div class="footer-grid">
+      <div class="footer-item">
+        <strong>Pentavalente</strong> contiene difteria, tétanos, pertussis, Hib y hepatitis B. Requiere aplicar polio (IPV/bOPV) por separado.
+      </div>
+      <div class="footer-item">
+        <strong>Hexavalente</strong> añade IPV a la fórmula pentavalente, eliminando una inyección por dosis durante la primovacunación.
+      </div>
+      <div class="footer-item">
+        <strong>Refuerzos bOPV</strong> (polio oral) se mantienen a los 18 meses y 5 años en ambos esquemas.
+      </div>
+      <div class="footer-item">
+        <strong>Verificar disponibilidad</strong> en el establecimiento al momento de la cita y registrar en el carnet de vacunación.
+      </div>
+    </div>
+    <div class="source">
+      Fuente: <strong>MSP Ecuador · Estrategia Nacional de Inmunizaciones (ENI)</strong> · Actualización 2025
+    </div>
+  </div>
+
+</div>
+
+<script>
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.target;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.scheme').forEach(s => s.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(target).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
