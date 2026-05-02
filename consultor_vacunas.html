@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consultor de Vacunas por Edad · ENI Ecuador</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f1f5f9;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text: #0f172a;
+    --text-secondary: #475569;
+    --muted: #94a3b8;
+
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --primary-soft: #eff6ff;
+    --primary-border: #bfdbfe;
+
+    --success: #10b981;
+    --success-soft: #ecfdf5;
+    --success-border: #a7f3d0;
+    --success-dark: #065f46;
+
+    --danger: #dc2626;
+    --danger-soft: #fef2f2;
+    --danger-border: #fecaca;
+    --danger-dark: #991b1b;
+
+    --warn: #f59e0b;
+    --warn-soft: #fffbeb;
+    --warn-border: #fde68a;
+    --warn-dark: #92400e;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 28px 16px 50px;
+    line-height: 1.5;
+    font-size: 14px;
+  }
+
+  .wrapper { max-width: 980px; margin: 0 auto; }
+
+  /* ============= Header ============= */
+  .header { margin-bottom: 22px; text-align: center; }
+  .header-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--primary-soft);
+    border: 1px solid var(--primary-border);
+    color: var(--primary-dark);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.15em;
+    padding: 4px 10px; border-radius: 3px;
+    margin-bottom: 12px;
+  }
+  .header-tag::before { content: '◉'; font-size: 8px; }
+  h1 {
+    font-size: 28px; font-weight: 800;
+    letter-spacing: -0.025em; line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  h1 .icon-big { display: inline-block; vertical-align: -3px; margin-right: 6px; }
+  h1 span { color: var(--primary); }
+  .subtitle { color: var(--text-secondary); font-size: 13px; }
+
+  /* ============= Selector card ============= */
+  .selector-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 26px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .selector-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+  }
+
+  /* Current age display */
+  .current-age {
+    text-align: center;
+    margin-bottom: 18px;
+    padding: 10px 0;
+  }
+  .current-age-emoji {
+    font-size: 26px;
+    margin-right: 8px;
+    vertical-align: -2px;
+  }
+  .current-age-label {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: -0.01em;
+  }
+
+  /* Slider track */
+  .slider-wrap {
+    position: relative;
+    padding: 0 12px;
+    margin-bottom: 8px;
+  }
+  .slider-track {
+    position: relative;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 30px;
+  }
+  .slider-fill {
+    position: absolute;
+    height: 100%;
+    background: var(--primary);
+    border-radius: 2px;
+    transition: width 0.25s ease;
+    width: 0%;
+  }
+  .slider-points {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .slider-point {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--primary);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    z-index: 1;
+  }
+  .slider-point::after {
+    content: attr(data-label);
+    position: absolute;
+    top: 22px; left: 50%;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .slider-point:hover {
+    transform: scale(1.25);
+    background: var(--primary-soft);
+  }
+  .slider-point.active {
+    background: var(--primary);
+    transform: scale(1.4);
+    box-shadow: 0 0 0 6px rgba(37,99,235,0.15);
+  }
+  .slider-point.active::after { color: var(--primary); font-weight: 700; }
+  .slider-point.passed { background: var(--primary); }
+
+  /* Manual input + buttons */
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 28px;
+    justify-content: center;
+  }
+  .manual-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .manual-toggle:hover { background: var(--surface-alt); border-color: var(--border-strong); }
+  .manual-toggle.active { background: var(--text); color: #fff; border-color: var(--text); }
+
+  .manual-inputs {
+    display: none;
+    gap: 8px;
+    width: 100%;
+    margin-top: 12px;
+    justify-content: center;
+  }
+  .manual-inputs.show { display: flex; }
+  .manual-inputs select {
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    background: var(--surface);
+    cursor: pointer;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+  }
+  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(37,99,235,0.25); }
+  .btn-secondary {
+    background: var(--surface-alt);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { background: #e2e8f0; }
+
+  /* ============= Results header ============= */
+  .results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 24px 0 12px;
+    padding: 0 4px;
+  }
+  .results-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .results-title .count {
+    background: var(--primary);
+    color: #fff;
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 11px;
+    margin-left: 6px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ============= Vaccine card ============= */
+  .vaccine-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .vaccine-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid transparent;
+    transition: background 0.15s;
+  }
+  .card-header:hover { background: var(--surface-alt); }
+  .vaccine-card.open .card-header { border-bottom-color: var(--border); }
+
+  .card-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+  }
+  .vacuna-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    background: var(--surface-alt);
+  }
+  .vacuna-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .vacuna-dose {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    background: var(--success-soft);
+    color: var(--success-dark);
+    border: 1px solid var(--success-border);
+  }
+  .chevron {
+    color: var(--muted);
+    transition: transform 0.25s;
+    flex-shrink: 0;
+    margin-left: 10px;
+  }
+  .vaccine-card.open .chevron { transform: rotate(180deg); }
+
+  /* ============= Card body ============= */
+  .card-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+  .vaccine-card.open .card-body { max-height: 2400px; }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    padding: 18px 22px 8px;
+  }
+  @media (max-width: 640px) { .card-grid { grid-template-columns: 1fr; gap: 8px; } }
+
+  .section {
+    padding: 8px 16px 18px 0;
+  }
+  @media (max-width: 640px) { .section { padding: 4px 0 12px; } }
+
+  .section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--primary-border);
+  }
+  .section-row {
+    margin-bottom: 8px;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .section-row:last-child { margin-bottom: 0; }
+  .section-key {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-right: 4px;
+  }
+  .section-val { color: var(--text); }
+
+  .section-list {
+    list-style: none;
+    margin-top: 4px;
+  }
+  .section-list li {
+    position: relative;
+    padding: 3px 0 3px 14px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .section-list li::before {
+    content: '•';
+    position: absolute; left: 2px; top: 3px;
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  .reactions {
+    margin: 0 22px 18px;
+    padding: 12px 14px;
+    background: var(--warn-soft);
+    border: 1px solid var(--warn-border);
+    border-left: 4px solid var(--warn);
+    border-radius: 8px;
+    font-size: 12.5px;
+    color: var(--warn-dark);
+    line-height: 1.55;
+  }
+  .reactions strong {
+    color: var(--warn-dark);
+    font-weight: 700;
+    display: inline-block;
+    margin-right: 4px;
+  }
+
+  /* Empty state */
+  .empty {
+    background: var(--surface);
+    border: 1px dashed var(--border-strong);
+    border-radius: 14px;
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--muted);
+  }
+  .empty-emoji { font-size: 36px; margin-bottom: 8px; }
+  .empty h3 { font-size: 16px; color: var(--text-secondary); font-weight: 600; }
+
+  /* Disclaimer */
+  .disclaimer {
+    margin-top: 20px;
+    padding: 12px 14px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    font-size: 11px;
+    color: #9a3412;
+    line-height: 1.5;
+  }
+  .disclaimer strong { color: #7c2d12; }
+  .source {
+    margin-top: 12px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 540px) {
+    body { padding: 20px 12px 40px; }
+    h1 { font-size: 22px; }
+    .selector-card { padding: 18px 16px; }
+    .slider-point::after { font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="header">
+    <div class="header-tag">MSP Ecuador · ENI 2025</div>
+    <h1><span class="icon-big">👶</span>Consultor de <span>Vacunas</span> por Edad</h1>
+    <p class="subtitle">Selecciona la edad del paciente para ver las vacunas correspondientes</p>
+  </div>
+
+  <!-- Selector -->
+  <div class="selector-card">
+    <div class="selector-title">Seleccione la edad del paciente:</div>
+
+    <div class="current-age">
+      <span class="current-age-emoji" id="age-emoji">👶</span>
+      <span class="current-age-label" id="age-label">Recién nacido</span>
+    </div>
+
+    <div class="slider-wrap">
+      <div class="slider-track">
+        <div class="slider-fill" id="slider-fill"></div>
+        <div class="slider-points" id="slider-points"></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="manual-toggle" id="manual-toggle">📝 Ingreso manual</button>
+      <button class="btn btn-primary" id="btn-consult">🔍 Consultar</button>
+      <button class="btn btn-secondary" id="btn-reset">↻ Reiniciar</button>
+    </div>
+
+    <div class="manual-inputs" id="manual-inputs">
+      <select id="manual-y"></select>
+      <select id="manual-m"></select>
+      <select id="manual-d"></select>
+    </div>
+  </div>
+
+  <!-- Resultados -->
+  <div class="results-header">
+    <div class="results-title">
+      Vacunas para esta edad
+      <span class="count" id="results-count">0</span>
+    </div>
+  </div>
+  <div id="results"></div>
+
+  <div class="disclaimer">
+    <strong>⚠ Aviso clínico:</strong> Esta herramienta es de apoyo educativo basada en el Manual ENI Ecuador 2025. Verificar siempre normativa vigente, contraindicaciones individuales y prescripción médica. No sustituye criterio profesional.
+  </div>
+  <div class="source">Fuente: <strong>MSP Ecuador · ENI 2025 (Hexavalente)</strong></div>
+
+</div>
+
+<script>
+/* ===========================================================
+   ETAPAS DE EDAD CON VACUNAS QUE APLICAN (Esquema 2025)
+   =========================================================== */
+const EDADES = [
+  { id: 'rn',  label: 'Recién nacido', emoji: '👶', dias: 0,
+    vacunas: [['BCG','Única'], ['HB','Única RN']] },
+  { id: '2m',  label: '2 meses', emoji: '👶', dias: 60,
+    vacunas: [['ROTA','1ª dosis'], ['HEXA','1ª dosis'], ['PCV','1ª dosis']] },
+  { id: '4m',  label: '4 meses', emoji: '👶', dias: 120,
+    vacunas: [['ROTA','2ª dosis'], ['HEXA','2ª dosis'], ['PCV','2ª dosis']] },
+  { id: '6m',  label: '6 meses', emoji: '👶', dias: 180,
+    vacunas: [['HEXA','3ª dosis'], ['PCV','3ª dosis'], ['BOPV','1ª dosis'], ['INF','Anual']] },
+  { id: '12m', label: '12 meses', emoji: '🧒', dias: 365,
+    vacunas: [['SRP','1ª dosis'], ['FA','Única']] },
+  { id: '15m', label: '15 meses', emoji: '🧒', dias: 450,
+    vacunas: [['SRP','2ª dosis'], ['VAR','Única']] },
+  { id: '18m', label: '18 meses', emoji: '🧒', dias: 540,
+    vacunas: [['DPT','Refuerzo 1'], ['BOPV','Refuerzo 1']] },
+  { id: '5a',  label: '5 años', emoji: '🧒', dias: 1825,
+    vacunas: [['DPT','Refuerzo 2'], ['BOPV','Refuerzo 2']] },
+  { id: '9a',  label: '9 años', emoji: '🧒', dias: 3285,
+    vacunas: [['VPH','Dosis única']] },
+  { id: '18a', label: '18 años / adulto', emoji: '🧑', dias: 6570,
+    vacunas: [['DT','Refuerzo'], ['INF','Anual'], ['COVID','Anual']] }
+];
+
+/* ===========================================================
+   BASE DE DATOS DE VACUNAS
+   =========================================================== */
+const VACUNAS = {
+
+  BCG: {
+    nombre: 'BCG',
+    icon: '💉',
+    iconBg: '#fef3c7',
+    info: {
+      vacuna: 'BCG (Bacilo Calmette-Guérin)',
+      tipo: 'Viva atenuada (bacteriana)',
+      edadOptima: 'Recién nacido',
+      edadMaxima: '<1 año (11 meses 29 días)'
+    },
+    presentacion: {
+      presentacion: 'Vial liofilizado multidosis (10–20 dosis)',
+      diluyente: 'Solución salina estéril 1 ml',
+      dosisVol: '0.05 ml en RN · 0.1 ml en >1 mes'
+    },
+    administracion: {
+      via: 'Intradérmica',
+      lugar: 'Región deltoidea derecha',
+      jeringa: '1 ml + aguja 27G x 1/2"',
+      tiempoUso: 'Máximo 6 horas tras reconstitución'
+    },
+    contraindicaciones: [
+      'Recién nacido <2000 g',
+      'Inmunodeficiencia primaria o adquirida',
+      'VIH sintomático',
+      'Embarazo',
+      'Lesiones cutáneas extensas en zona de aplicación'
+    ],
+    reacciones: 'Pápula que evoluciona a costra y cicatriz BCG (4–6 semanas). Adenopatía axilar pequeña (autolimitada). Rara: BCGitis diseminada en inmunocomprometidos.'
+  },
+
+  HB: {
+    nombre: 'Hepatitis B',
+    icon: '💉',
+    iconBg: '#d1fae5',
+    info: {
+      vacuna: 'Hepatitis B pediátrica (recombinante)',
+      tipo: 'Inactivada (subunidad)',
+      edadOptima: 'Primeras 24 horas de vida',
+      edadMaxima: '7 días (luego continuar con hexavalente)'
+    },
+    presentacion: {
+      presentacion: 'Monodosis 0.5 ml o multidosis (10 dosis)',
+      dosisVol: '0.5 ml IM'
+    },
+    administracion: {
+      via: 'Intramuscular',
+      lugar: 'Vasto externo (tercio medio del muslo anterolateral)',
+      jeringa: '0.5 ml + aguja 25G x 5/8"',
+      tiempoUso: 'Hasta 28 días tras apertura (técnica aséptica)'
+    },
+    contraindicaciones: [
+      'Hipersensibilidad a levaduras (Saccharomyces)',
+      'Reacción anafiláctica a dosis previa'
+    ],
+    reacciones: 'Dolor e induración local, fiebre <38.5 °C, irritabilidad. Excepcional: anafilaxia.'
+  },
+
+  ROTA: {
+    nombre: 'Rotavirus',
+    icon: '💧',
+    iconBg: '#ffedd5',
+    info: {
+      vacuna: 'Rotavirus monovalente (RV1) o pentavalente (RV5)',
+      tipo: 'Viva atenuada (oral)',
+      edadOptima: '2 y 4 meses',
+      edadMaxima: '1ª: <3 m 15 d · 2ª: <7 m 29 d'
+    },
+    presentacion: {
+      presentacion: 'Unidosis oral lista para usar',
+      dosisVol: '1.5 ml VO'
+    },
+    administracion: {
+      via: 'Oral',
+      lugar: 'Cavidad oral (cara interna mejilla)',
+      jeringa: 'Aplicador precargado · sin aguja',
+      tiempoUso: 'Uso inmediato · desechar dosis no utilizada'
+    },
+    contraindicaciones: [
+      'Antecedente de invaginación intestinal',
+      'Malformación gastrointestinal congénita no corregida',
+      'Inmunodeficiencia combinada severa',
+      'Vómito o diarrea severa al momento de la dosis'
+    ],
+    reacciones: 'Irritabilidad, fiebre baja, diarrea o vómito leve. Riesgo bajo de invaginación intestinal (vigilar 7 días).'
+  },
+
+  HEXA: {
+    nombre: 'Hexavalente',
+    icon: '💉',
+    iconBg: '#ddd6fe',
+    info: {
+      vacuna: 'Hexavalente: DTPa + Hib + HB + IPV',
+      tipo: 'Inactivada · combinada',
+      edadOptima: '2, 4 y 6 meses',
+      edadMaxima: '<5 años'
+    },
+    presentacion: {
+      presentacion: 'Vial 0.5 ml o jeringa precargada',
+      dosisVol: '0.5 ml IM'
+    },
+    administracion: {
+      via: 'Intramuscular',
+      lugar: 'Vasto externo (muslo anterolateral)',
+      jeringa: '0.5 ml + aguja 25G x 5/8"',
+      tiempoUso: 'Uso inmediato tras reconstitución'
+    },
+    contraindicaciones: [
+      'Encefalopatía dentro de 7 días de DTPa previa',
+      'Reacción anafiláctica a dosis previa',
+      'Hipersensibilidad a componentes (neomicina, polimixina)',
+      'Enfermedad neurológica progresiva no estabilizada'
+    ],
+    reacciones: 'Fiebre, llanto persistente, induración local, somnolencia. Convulsiones febriles raras.'
+  },
+
+  PCV: {
+    nombre: 'Neumococo PCV-13',
+    icon: '💉',
+    iconBg: '#ede9fe',
+    info: {
+      vacuna: 'Neumococo conjugada 13-valente (PCV-13)',
+      tipo: 'Inactivada · conjugada',
+      edadOptima: '2, 4 y 6 meses (refuerzo 12 m)',
+      edadMaxima: '<5 años para esquema rutinario'
+    },
+    presentacion: {
+      presentacion: 'Jeringa precargada o vial',
+      dosisVol: '0.5 ml IM'
+    },
+    administracion: {
+      via: 'Intramuscular',
+      lugar: 'Vasto externo en lactantes · deltoides en >1 año',
+      jeringa: '0.5 ml + aguja 25G x 5/8"',
+      tiempoUso: 'Uso inmediato'
+    },
+    contraindicaciones: [
+      'Hipersensibilidad a difteria toxoide (CRM197)',
+      'Reacción anafiláctica a dosis previa'
+    ],
+    reacciones: 'Dolor local, fiebre, irritabilidad, somnolencia, disminución del apetito.'
+  },
+
+  BOPV: {
+    nombre: 'Polio (bOPV)',
+    icon: '💧',
+    iconBg: '#cffafe',
+    info: {
+      vacuna: 'Polio oral bivalente (bOPV tipo 1 y 3)',
+      tipo: 'Viva atenuada (oral)',
+      edadOptima: '6 m, 18 m y 5 años',
+      edadMaxima: '<7 años'
+    },
+    presentacion: {
+      presentacion: 'Frasco multidosis (20 dosis)',
+      dosisVol: '2 gotas VO'
+    },
+    administracion: {
+      via: 'Oral',
+      lugar: 'Cavidad oral',
+      jeringa: 'Gotero del frasco · sin aguja',
+      tiempoUso: 'Hasta 28 días refrigerado · frasco cerrado entre dosis'
+    },
+    contraindicaciones: [
+      'Inmunodeficiencia primaria o adquirida',
+      'Convivientes con inmunocomprometidos (precaución)',
+      'Vómito o diarrea severa'
+    ],
+    reacciones: 'Generalmente bien tolerada. Raro: parálisis asociada a vacuna (VAPP) en inmunocomprometidos.'
+  },
+
+  SRP: {
+    nombre: 'SRP',
+    icon: '💉',
+    iconBg: '#fce7f3',
+    info: {
+      vacuna: 'Triple viral: Sarampión · Rubéola · Parotiditis',
+      tipo: 'Viva atenuada',
+      edadOptima: '12 y 18 meses',
+      edadMaxima: 'Sin límite (aplicación según historia vacunal)'
+    },
+    presentacion: {
+      presentacion: 'Vial liofilizado multidosis (10 dosis) + diluyente',
+      dosisVol: '0.5 ml SC'
+    },
+    administracion: {
+      via: 'Subcutánea',
+      lugar: 'Región deltoidea izquierda',
+      jeringa: '0.5 ml + aguja 25G x 5/8"',
+      tiempoUso: 'Máximo 6 horas tras reconstitución'
+    },
+    contraindicaciones: [
+      'Inmunodeficiencia grave',
+      'Embarazo (evitar gestación 4 semanas tras vacuna)',
+      'Reacción anafiláctica a neomicina o gelatina',
+      'Tuberculosis activa no tratada'
+    ],
+    reacciones: 'Fiebre 5–12 días post-vacuna, exantema leve, parotiditis transitoria. Trombocitopenia rara.'
+  },
+
+  FA: {
+    nombre: 'Fiebre Amarilla',
+    icon: '💉',
+    iconBg: '#fef3c7',
+    info: {
+      vacuna: 'Fiebre Amarilla (cepa 17D)',
+      tipo: 'Viva atenuada',
+      edadOptima: '12 meses',
+      edadMaxima: 'Hasta 59 años (mayores: indicación individual)'
+    },
+    presentacion: {
+      presentacion: 'Vial liofilizado de 5 ml (10 dosis reconstituidas)',
+      dosisVol: '0.5 ml SC'
+    },
+    administracion: {
+      via: 'Subcutánea',
+      lugar: 'Región deltoidea',
+      jeringa: '25G x 5/8" (1 ml)',
+      tiempoUso: 'Máximo 6 horas tras reconstitución'
+    },
+    contraindicaciones: [
+      '<6 meses de edad',
+      'Inmunodeficiencia grave',
+      'VIH sintomático (CD4 <200)',
+      'Antecedente de timectomía o disfunción tímica',
+      'Hipersensibilidad al huevo o gelatina',
+      'Embarazo (relativa)'
+    ],
+    reacciones: 'Rubor, edema, dolor, fiebre, cefalea, mialgias. Raras: enfermedad neurotrópica o viscerotrópica asociada (mayores 60 años).'
+  },
+
+  VAR: {
+    nombre: 'Varicela',
+    icon: '💉',
+    iconBg: '#ccfbf1',
+    info: {
+      vacuna: 'Varicela (cepa Oka atenuada)',
+      tipo: 'Viva atenuada',
+      edadOptima: '15 meses',
+      edadMaxima: 'Sin límite (en susceptibles)'
+    },
+    presentacion: {
+      presentacion: 'Vial liofilizado unidosis + diluyente',
+      dosisVol: '0.5 ml SC'
+    },
+    administracion: {
+      via: 'Subcutánea',
+      lugar: 'Región deltoidea',
+      jeringa: '0.5 ml + aguja 25G x 5/8"',
+      tiempoUso: 'Máximo 6 horas tras reconstitución · no aplicar con otra vacuna en misma extremidad'
+    },
+    contraindicaciones: [
+      'Inmunodeficiencia grave',
+      'Embarazo',
+      'Tratamiento inmunosupresor activo',
+      'Reacción anafiláctica a neomicina o gelatina'
+    ],
+    reacciones: 'Reacción local, fiebre, exantema variceliforme leve (5–26 días post-vacuna).'
+  },
+
+  DPT: {
+    nombre: 'DPT (Refuerzo)',
+    icon: '💉',
+    iconBg: '#dbeafe',
+    info: {
+      vacuna: 'DPT: Difteria · Tétanos · Pertussis',
+      tipo: 'Inactivada (toxoides + componente celular)',
+      edadOptima: '18 meses y 5 años',
+      edadMaxima: '<7 años (luego usar dT/Tdap)'
+    },
+    presentacion: {
+      presentacion: 'Vial multidosis (10 dosis de 0.5 ml)',
+      dosisVol: '0.5 ml IM'
+    },
+    administracion: {
+      via: 'Intramuscular',
+      lugar: 'Vasto externo en <2 a · deltoides en ≥2 a',
+      jeringa: '0.5 ml + aguja 25G x 5/8"',
+      tiempoUso: 'Hasta 28 días refrigerado'
+    },
+    contraindicaciones: [
+      'Encefalopatía dentro de 7 días de DPT previa',
+      'Reacción anafiláctica a dosis previa',
+      'Convulsiones no controladas (precaución)'
+    ],
+    reacciones: 'Dolor, eritema e induración local, fiebre, llanto persistente. Convulsiones febriles raras.'
+  },
+
+  VPH: {
+    nombre: 'VPH',
+    icon: '💉',
+    iconBg: '#f3e8ff',
+    info: {
+      vacuna: 'Virus Papiloma Humano (bivalente, cuadrivalente o nonavalente)',
+      tipo: 'Inactivada (subunidad recombinante VLP)',
+      edadOptima: '9 años (niñas y niños)',
+      edadMaxima: '14 años para dosis única · ≥15 años usar 2 dosis'
+    },
+    presentacion: {
+      presentacion: 'Jeringa precargada o vial unidosis',
+      dosisVol: '0.5 ml IM'
+    },
+    administracion: {
+      via: 'Intramuscular',
+      lugar: 'Región deltoidea',
+      jeringa: '0.5 ml + aguja 25G x 1"',
+      tiempoUso: 'Uso inmediato (preferente monodosis)'
+    },
+    contraindicaciones: [
+      'Hipersensibilidad a levaduras (cuadrivalente/nonavalente)',
+      'Embarazo',
+      'Reacción anafiláctica a dosis previa'
+    ],
+    reacciones: 'Dolor e inflamación local, cefalea, mialgias, fiebre baja. Síncope vasovagal post-vacunal (sentar al paciente 15 min).'
+  },
+
+  DT: {
+    nombre: 'dT (adulto)',
+    icon: '💉',
+    iconBg: '#dbeafe',
+    info: {
+      vacuna: 'dT: difteria (dosis reducida) + tétanos',
+      tipo: 'Inactivada (toxoides)',
+      edadOptima: 'Adolescentes y adultos',
+      edadMaxima: 'Sin límite · refuerzos cada 10 años'
+    },
+    presentacion: {
+      presentacion: 'Vial multidosis (10 dosis de 0.5 ml)',
+      dosisVol: '0.5 ml IM'
+    },
+    administracion: {
+      via: 'Intramuscular',
+      lugar: 'Región deltoidea',
+      jeringa: '0.5 ml + aguja 23G x 1"',
+      tiempoUso: 'Hasta 28 días refrigerado'
+    },
+    contraindicaciones: [
+      'Reacción anafiláctica a dosis previa',
+      'Síndrome Guillain-Barré dentro de 6 sem de dosis previa (precaución)'
+    ],
+    reacciones: 'Dolor local, induración, fiebre baja. Reacción tipo Arthus en sobre-vacunados.'
+  },
+
+  INF: {
+    nombre: 'Influenza',
+    icon: '💉',
+    iconBg: '#f1f5f9',
+    info: {
+      vacuna: 'Influenza estacional (trivalente o tetravalente)',
+      tipo: 'Inactivada (fraccionada o subunidad)',
+      edadOptima: 'Desde 6 meses · grupos de riesgo',
+      edadMaxima: 'Anual de por vida en población vulnerable'
+    },
+    presentacion: {
+      presentacion: 'Multidosis (10 dosis 0.25–0.5 ml) o jeringa precargada',
+      dosisVol: '0.25 ml (6–35 m) · 0.5 ml (≥3 a)'
+    },
+    administracion: {
+      via: 'Intramuscular',
+      lugar: 'Vasto externo en lactantes · deltoides en >1 año',
+      jeringa: '0.5 ml + aguja 25G x 5/8"',
+      tiempoUso: 'Hasta 28 días refrigerado · una dosis por temporada'
+    },
+    contraindicaciones: [
+      'Anafilaxia previa al huevo (relativa según fórmula)',
+      'Reacción anafiláctica a dosis previa',
+      'Síndrome Guillain-Barré asociado a influenza previa (precaución)'
+    ],
+    reacciones: 'Dolor local, mialgias, fiebre baja, cefalea. Síntomas leves tipo gripe en 1–2 días.'
+  },
+
+  COVID: {
+    nombre: 'COVID-19',
+    icon: '💉',
+    iconBg: '#fee2e2',
+    info: {
+      vacuna: 'COVID-19 (mRNA o vector viral o subunidad)',
+      tipo: 'Variable según fabricante',
+      edadOptima: 'Anual en grupos vulnerables',
+      edadMaxima: 'Sin límite · población de riesgo'
+    },
+    presentacion: {
+      presentacion: 'Multidosis (varía 6–10 dosis por vial)',
+      dosisVol: 'Según fabricante (0.3–0.5 ml IM)'
+    },
+    administracion: {
+      via: 'Intramuscular',
+      lugar: 'Región deltoidea',
+      jeringa: '0.5 ml + aguja 23–25G x 1"',
+      tiempoUso: 'Pfizer 6 h · AstraZeneca/Sinovac 48 h tras apertura'
+    },
+    contraindicaciones: [
+      'Reacción anafiláctica a dosis previa o componente',
+      'Antecedente de miocarditis/pericarditis post-vacuna mRNA (precaución)'
+    ],
+    reacciones: 'Dolor local, fatiga, cefalea, mialgias, fiebre. Miocarditis rara en jóvenes (mRNA).'
+  }
+
+};
+
+/* ===========================================================
+   RENDER
+   =========================================================== */
+let currentIndex = 0;
+
+const sliderPoints = document.getElementById('slider-points');
+const sliderFill = document.getElementById('slider-fill');
+const ageLabel = document.getElementById('age-label');
+const ageEmoji = document.getElementById('age-emoji');
+const resultsEl = document.getElementById('results');
+const countEl = document.getElementById('results-count');
+
+function buildSlider() {
+  EDADES.forEach((e, i) => {
+    const pt = document.createElement('div');
+    pt.className = 'slider-point';
+    pt.dataset.label = e.label.replace('meses','m').replace('mes','m').replace('años','a').replace('año','a').replace('Recién nacido','RN').replace('18 años / adulto','18a');
+    pt.dataset.index = i;
+    pt.addEventListener('click', () => selectAge(i));
+    sliderPoints.appendChild(pt);
+  });
+  selectAge(0);
+}
+
+function selectAge(idx) {
+  currentIndex = idx;
+  const e = EDADES[idx];
+  ageLabel.textContent = e.label;
+  ageEmoji.textContent = e.emoji;
+
+  // Update slider
+  document.querySelectorAll('.slider-point').forEach((pt, i) => {
+    pt.classList.toggle('active', i === idx);
+    pt.classList.toggle('passed', i < idx);
+  });
+  const pct = (idx / (EDADES.length - 1)) * 100;
+  sliderFill.style.width = pct + '%';
+
+  renderResults(e);
+}
+
+function renderResults(edad) {
+  resultsEl.innerHTML = '';
+  countEl.textContent = edad.vacunas.length;
+
+  if (edad.vacunas.length === 0) {
+    resultsEl.innerHTML = `
+      <div class="empty">
+        <div class="empty-emoji">💤</div>
+        <h3>Sin vacunas programadas para esta edad</h3>
+      </div>`;
+    return;
+  }
+
+  edad.vacunas.forEach(([id, dosisLabel]) => {
+    const v = VACUNAS[id];
+    if (!v) return;
+    const card = document.createElement('div');
+    card.className = 'vaccine-card';
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="vacuna-icon" style="background: ${v.iconBg}">${v.icon}</div>
+          <div>
+            <div class="vacuna-name">${v.nombre}</div>
+            <div class="vacuna-dose">${dosisLabel}</div>
+          </div>
+        </div>
+        <span class="badge">✓ Aplicable</span>
+        <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-grid">
+
+          <div class="section">
+            <div class="section-title">Información general</div>
+            <div class="section-row"><span class="section-key">Vacuna:</span><span class="section-val">${v.info.vacuna}</span></div>
+            <div class="section-row"><span class="section-key">Dosis:</span><span class="section-val">${dosisLabel}</span></div>
+            <div class="section-row"><span class="section-key">Tipo:</span><span class="section-val">${v.info.tipo}</span></div>
+            <div class="section-row"><span class="section-key">Edad óptima:</span><span class="section-val">${v.info.edadOptima}</span></div>
+            <div class="section-row"><span class="section-key">Edad máxima:</span><span class="section-val">${v.info.edadMaxima}</span></div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Administración</div>
+            <div class="section-row"><span class="section-key">Vía:</span><span class="section-val">${v.administracion.via}</span></div>
+            <div class="section-row"><span class="section-key">Lugar:</span><span class="section-val">${v.administracion.lugar}</span></div>
+            <div class="section-row"><span class="section-key">Jeringa:</span><span class="section-val">${v.administracion.jeringa}</span></div>
+            <div class="section-row"><span class="section-key">Tiempo de uso:</span><span class="section-val">${v.administracion.tiempoUso}</span></div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Presentación y dosis</div>
+            <div class="section-row"><span class="section-key">Presentación:</span><span class="section-val">${v.presentacion.presentacion}</span></div>
+            ${v.presentacion.diluyente ? `<div class="section-row"><span class="section-key">Diluyente:</span><span class="section-val">${v.presentacion.diluyente}</span></div>` : ''}
+            <div class="section-row"><span class="section-key">Dosis:</span><span class="section-val">${v.presentacion.dosisVol}</span></div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Contraindicaciones</div>
+            <ul class="section-list">
+              ${v.contraindicaciones.map(c => `<li>${c}</li>`).join('')}
+            </ul>
+          </div>
+
+        </div>
+        <div class="reactions">
+          <strong>Reacciones adversas:</strong>${v.reacciones}
+        </div>
+      </div>
+    `;
+    card.querySelector('.card-header').addEventListener('click', () => {
+      card.classList.toggle('open');
+    });
+    resultsEl.appendChild(card);
+  });
+}
+
+/* ===========================================================
+   Manual age input
+   =========================================================== */
+const manualToggle = document.getElementById('manual-toggle');
+const manualInputs = document.getElementById('manual-inputs');
+
+const my = document.getElementById('manual-y');
+const mm = document.getElementById('manual-m');
+const md = document.getElementById('manual-d');
+
+['Años','Meses','Días'].forEach((lbl, i) => {
+  const el = [my, mm, md][i];
+  el.innerHTML = `<option value="">${lbl}</option>`;
+  const max = i === 0 ? 100 : i === 1 ? 11 : 30;
+  for (let n = 0; n <= max; n++) {
+    const o = document.createElement('option');
+    o.value = n; o.textContent = `${n} ${lbl[0].toLowerCase()}`;
+    el.appendChild(o);
+  }
+});
+
+manualToggle.addEventListener('click', () => {
+  manualInputs.classList.toggle('show');
+  manualToggle.classList.toggle('active');
+});
+
+document.getElementById('btn-consult').addEventListener('click', () => {
+  if (manualInputs.classList.contains('show')) {
+    const y = parseInt(my.value) || 0;
+    const m = parseInt(mm.value) || 0;
+    const d = parseInt(md.value) || 0;
+    const totalDias = y * 365 + m * 30 + d;
+    // Find closest age
+    let closest = 0;
+    let minDiff = Infinity;
+    EDADES.forEach((e, i) => {
+      const diff = Math.abs(e.dias - totalDias);
+      if (diff < minDiff) { minDiff = diff; closest = i; }
+    });
+    selectAge(closest);
+  } else {
+    // Just refresh
+    selectAge(currentIndex);
+  }
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  manualInputs.classList.remove('show');
+  manualToggle.classList.remove('active');
+  my.value = ''; mm.value = ''; md.value = '';
+  selectAge(0);
+});
+
+/* Init */
+buildSlider();
+</script>
+</body>
+</html>
