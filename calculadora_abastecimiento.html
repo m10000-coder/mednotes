@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abastecimiento de Vacunas · PAI Ecuador</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-alt: #f1f5f9;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text: #0f172a;
+    --text-secondary: #475569;
+    --muted: #94a3b8;
+
+    --primary: #1e3a5f;
+    --primary-dark: #16263f;
+    --primary-mid: #3a6589;
+    --primary-soft: #eef4f9;
+    --primary-border: #c7d8e6;
+
+    --blue-btn: #3b82f6;
+    --blue-btn-dark: #2563eb;
+
+    --green: #22c55e;
+    --green-dark: #16a34a;
+    --green-soft: #dcfce7;
+    --green-border: #86efac;
+
+    --red: #dc2626;
+    --red-dark: #b91c1c;
+    --red-soft: #fef2f2;
+
+    --orange: #f97316;
+  }
+
+  body {
+    background: var(--surface-alt);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    line-height: 1.55;
+    font-size: 14px;
+  }
+
+  .wrapper { max-width: 1100px; margin: 0 auto; padding: 0 16px 60px; }
+
+  /* ====== Hero ====== */
+  .hero {
+    background: var(--primary);
+    color: #fff;
+    padding: 50px 24px 26px;
+    text-align: center;
+    position: relative;
+  }
+  .hero-title {
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    color: #fff;
+    margin-bottom: 18px;
+  }
+  .hero-divider {
+    width: 70px; height: 4px;
+    background: var(--primary-mid);
+    margin: 0 auto 16px;
+    border-radius: 2px;
+  }
+  .hero-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  /* ====== Card ====== */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 30px;
+    margin-top: 22px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 18px rgba(0,0,0,0.04);
+  }
+  .card-section-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+  .subhead {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 22px 0 12px;
+    letter-spacing: -0.01em;
+  }
+  .help-text {
+    color: var(--text);
+    font-size: 13px;
+    margin-bottom: 16px;
+    line-height: 1.55;
+  }
+
+  /* ====== Form ====== */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 4px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 4px;
+  }
+  @media (max-width: 720px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+  .field { margin-bottom: 14px; }
+  .label {
+    display: block;
+    font-size: 13.5px; font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 6px;
+  }
+  .input, .select {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--surface);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    transition: all 0.15s;
+  }
+  .select {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+  }
+  .input:focus, .select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-soft);
+  }
+  .input::placeholder { color: var(--muted); }
+
+  .input.compact { padding: 8px 12px; font-size: 13.5px; }
+
+  /* ====== Buttons ====== */
+  .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-blue { background: var(--blue-btn); }
+  .btn-blue:hover { background: var(--blue-btn-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
+  .btn-danger { background: var(--red); }
+  .btn-danger:hover { background: var(--red-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(220,38,38,0.3); }
+
+  .help-note {
+    color: var(--text-secondary);
+    font-size: 12px;
+    margin-top: 6px;
+  }
+
+  /* ====== Wastage factors editor ====== */
+  .factors-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .factor-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+  }
+  .factor-item label {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .factor-item input {
+    width: 70px;
+    padding: 6px 8px;
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    text-align: center;
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ====== Results ====== */
+  .results-box {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-top: 14px;
+  }
+  .results-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+
+  .table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); }
+  table.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  table.results-table thead {
+    background: var(--surface-alt);
+  }
+  table.results-table th {
+    padding: 12px 14px;
+    font-weight: 700;
+    color: var(--primary);
+    text-align: left;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    border-bottom: 1px solid var(--border);
+  }
+  table.results-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  table.results-table tr:last-child td { border-bottom: none; }
+  table.results-table tr.totals-row td {
+    background: var(--primary-soft);
+    font-weight: 800;
+    color: var(--primary);
+    font-size: 14px;
+  }
+
+  .num { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; }
+
+  /* ====== Summary stats ====== */
+  .summary {
+    margin-top: 18px;
+    padding: 14px 16px;
+    background: var(--green);
+    border-radius: 10px;
+    color: #fff;
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 13.5px;
+  }
+  .summary-key { font-weight: 700; }
+  .summary-val {
+    background: rgba(255,255,255,0.18);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+  }
+
+  /* ====== Period block ====== */
+  .period-block { margin-top: 22px; }
+  .period-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 14px;
+  }
+  .period-pill {
+    background: var(--green);
+    color: #fff;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  ul.checks {
+    margin-top: 10px;
+    padding-left: 0;
+    list-style: none;
+  }
+  ul.checks li {
+    position: relative;
+    padding: 5px 0 5px 22px;
+    font-size: 14px;
+    color: var(--text);
+  }
+  ul.checks li::before {
+    content: '•';
+    position: absolute; left: 6px; top: 5px;
+    color: var(--primary-mid);
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  /* ====== Reference card ====== */
+  .ref-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 30px;
+    margin-top: 22px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  table.ref-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin-bottom: 6px;
+  }
+  table.ref-table thead {
+    background: var(--surface-alt);
+  }
+  table.ref-table th {
+    padding: 11px 14px;
+    text-align: left;
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+  }
+  table.ref-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  table.ref-table tr:last-child td { border-bottom: none; }
+
+  /* ====== Footer ====== */
+  .footer {
+    background: var(--primary-dark);
+    color: rgba(255,255,255,0.9);
+    padding: 22px 24px;
+    text-align: center;
+    border-radius: 14px;
+    margin-top: 22px;
+    font-size: 13px;
+  }
+  .footer p { margin: 2px 0; }
+
+  /* Disclaimer */
+  .disclaimer {
+    margin-top: 14px;
+    padding: 10px 14px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    font-size: 11.5px;
+    color: #9a3412;
+    line-height: 1.5;
+  }
+  .disclaimer strong { color: #7c2d12; }
+
+  /* Hidden until calculated */
+  .hidden { display: none !important; }
+
+  @media (max-width: 540px) {
+    .hero-title { font-size: 28px; letter-spacing: 0.03em; }
+    .card { padding: 22px 18px; }
+    .card-section-title { font-size: 18px; }
+    table.results-table { font-size: 12px; }
+    table.results-table th, table.results-table td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ====== HERO ====== -->
+<div class="hero">
+  <h1 class="hero-title">ABASTECIMIENTO</h1>
+  <div class="hero-divider"></div>
+  <p class="hero-sub">Herramienta de Planificación de Abastecimiento de Biológicos e Insumos</p>
+</div>
+
+<div class="wrapper">
+
+  <!-- ====== Form Card ====== -->
+  <div class="card">
+    <h2 class="card-section-title">Planificación de Requerimientos Anuales PAI</h2>
+    <p class="help-text">Complete la información requerida para calcular las necesidades de biológicos e insumos según la metodología OPS/OMS.</p>
+
+    <div class="grid-2">
+      <div class="field">
+        <label class="label">Año de Planificación:</label>
+        <input type="number" class="input" id="year" value="2025" min="2020" max="2050">
+      </div>
+      <div class="field">
+        <label class="label">Nivel de Planificación:</label>
+        <select class="select" id="nivel">
+          <option value="nacional">Nacional</option>
+          <option value="zonal">Zonal</option>
+          <option value="distrital">Distrital</option>
+          <option value="centro">Centro de Salud</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="subhead">Población Objetivo</div>
+    <div class="grid-3">
+      <div class="field">
+        <label class="label">Menores de 1 año:</label>
+        <input type="number" class="input" id="pop-rn" min="0" value="250000">
+      </div>
+      <div class="field">
+        <label class="label">Niños 1-5 años:</label>
+        <input type="number" class="input" id="pop-15" min="0" value="1250000">
+      </div>
+      <div class="field">
+        <label class="label">Niñas y niños de 9 años:</label>
+        <input type="number" class="input" id="pop-9" min="0" value="200000">
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="field">
+        <label class="label">Adolescentes de 15 años:</label>
+        <input type="number" class="input" id="pop-15ad" min="0" value="220000">
+      </div>
+      <div class="field">
+        <label class="label">Mujeres Embarazadas (MEF/EMB):</label>
+        <input type="number" class="input" id="pop-emb" min="0" value="300000">
+      </div>
+      <div class="field">
+        <label class="label">Grupos de Riesgo:</label>
+        <input type="number" class="input" id="pop-risk" min="0" value="500000">
+      </div>
+    </div>
+
+    <div class="subhead">Factores de Desperdicio</div>
+    <p class="help-text">Ingrese los factores de desperdicio para cada biológico según su experiencia local.</p>
+
+    <div class="field">
+      <label class="label">Factor de Desperdicio Predeterminado:</label>
+      <input type="number" class="input" id="default-factor" value="1.25" step="0.01" min="1" max="5" style="max-width:200px">
+      <p class="help-note">Este factor se aplicará a todos los biológicos a menos que especifique uno individual.</p>
+    </div>
+
+    <details style="margin: 8px 0 14px;">
+      <summary style="cursor:pointer; color: var(--primary); font-weight:600; font-size:13px;">▸ Ver/editar factores individuales por vacuna</summary>
+      <div class="factors-list" id="factors-list" style="margin-top:14px"></div>
+    </details>
+
+    <button class="btn btn-blue" id="btn-calc">📊 Calcular Necesidades</button>
+  </div>
+
+  <!-- ====== Results Card ====== -->
+  <div class="card hidden" id="results-card">
+    <h2 class="card-section-title">Resultados del Cálculo</h2>
+
+    <div class="results-box">
+      <div class="results-title" id="results-header">Necesidades de Abastecimiento para 2025 - Nivel Nacional</div>
+
+      <div class="table-wrap">
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Vacuna</th>
+              <th>Población Objetivo</th>
+              <th>Dosis Requeridas</th>
+              <th>Factor Desperdicio</th>
+              <th>Dosis a Solicitar</th>
+            </tr>
+          </thead>
+          <tbody id="results-tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="summary" id="summary-box">
+        <div class="summary-row"><span class="summary-key">Dosis totales requeridas:</span> <span class="summary-val" id="sum-required">—</span></div>
+        <div class="summary-row"><span class="summary-key">Dosis totales considerando desperdicio:</span> <span class="summary-val" id="sum-solicit">—</span></div>
+        <div class="summary-row"><span class="summary-key">Factor de desperdicio promedio:</span> <span class="summary-val" id="sum-avg">—</span></div>
+      </div>
+
+      <div class="period-block">
+        <div class="subhead">Periodicidad Recomendada de Pedidos</div>
+        <div class="period-line">
+          Para el nivel <strong id="nivel-name">Nacional</strong>, se recomienda realizar pedidos cada:
+          <span class="period-pill" id="period-pill">6 meses a 1 año</span>
+        </div>
+      </div>
+
+      <div class="period-block">
+        <div class="subhead">Consideraciones para la Distribución</div>
+        <ul class="checks">
+          <li>Verificar la capacidad de almacenamiento disponible</li>
+          <li>Considerar tiempos de distribución (nacional, zonal y distrital)</li>
+          <li>Incluir población rezagada en el cálculo</li>
+          <li>Actualizar según información epidemiológica reciente</li>
+          <li>Considerar zonas de difícil acceso</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <strong>⚠ Aviso:</strong> Esta herramienta es de apoyo educativo basada en la metodología PAHO/OPS y el Esquema Nacional de Vacunación 2025 de Ecuador. Los factores de desperdicio son referenciales y deben ajustarse según la experiencia local. Verifique la normativa MSP vigente.
+    </div>
+  </div>
+
+  <!-- ====== Reference Card ====== -->
+  <div class="ref-card">
+    <h2 class="card-section-title">Información de Referencia</h2>
+
+    <div class="subhead" style="margin-top: 6px;">Esquema de Vacunación 2025</div>
+    <div class="table-wrap" style="border:1px solid var(--border)">
+      <table class="ref-table">
+        <thead>
+          <tr><th>Vacuna</th><th>Población Objetivo</th><th>Dosis</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>BCG</td><td>Menores de 1 año</td><td>1</td></tr>
+          <tr><td>HB Neonatal</td><td>Recién nacidos</td><td>1</td></tr>
+          <tr><td>Rotavirus</td><td>Menores de 1 año</td><td>2</td></tr>
+          <tr><td>Hexavalente</td><td>Menores de 1 año</td><td>3</td></tr>
+          <tr><td>Neumococo 13v</td><td>Menores de 1 año</td><td>3</td></tr>
+          <tr><td>bOPV</td><td>Menores de 1 año</td><td>3</td></tr>
+          <tr><td>Influenza Pediátrica</td><td>Menores de 1 año</td><td>2</td></tr>
+          <tr><td>SRP</td><td>12 y 18 meses</td><td>2</td></tr>
+          <tr><td>Fiebre Amarilla</td><td>1-5 años</td><td>1</td></tr>
+          <tr><td>Varicela</td><td>1-5 años</td><td>1</td></tr>
+          <tr><td>Hexavalente (Refuerzo)</td><td>18 meses / 5 años</td><td>1</td></tr>
+          <tr><td>VPH</td><td>Niñas y niños 9 años</td><td>1</td></tr>
+          <tr><td>dT (15 años)</td><td>Adolescentes</td><td>1</td></tr>
+          <tr><td>TdaP</td><td>Embarazadas</td><td>1</td></tr>
+          <tr><td>COVID-19</td><td>Grupos de riesgo</td><td>1</td></tr>
+          <tr><td>Influenza Adultos</td><td>Grupos de riesgo</td><td>1</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="subhead">Periodicidad de Abastecimiento Recomendada</div>
+    <ul class="checks">
+      <li><strong>Nivel Nacional:</strong> 6 meses a 1 año</li>
+      <li><strong>Nivel Zonal:</strong> 3 a 6 meses</li>
+      <li><strong>Nivel Distrital:</strong> 2 a 3 meses</li>
+      <li><strong>Centro de Salud:</strong> 1 a 2 meses (óptimo 1 mes 1/2)</li>
+    </ul>
+  </div>
+
+  <!-- ====== Footer ====== -->
+  <div class="footer">
+    <p>Ministerio de Salud Pública del Ecuador · Programa Ampliado de Inmunizaciones (PAI)</p>
+    <p>Herramienta basada en el formulario PAHO 173 / Planificación de Requerimientos Anuales PAI</p>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   ESQUEMA Y FACTORES POR VACUNA
+   ============================================================ */
+const VACUNAS = [
+  // id, nombre, popKey, dosis, factorDefault
+  { id:'bcg',     nombre:'BCG',                  popKey:'rn',    dosis:1, factor:2.80 },
+  { id:'hb',      nombre:'HB Neonatal',          popKey:'rn',    dosis:1, factor:1.10 },
+  { id:'rota',    nombre:'Rotavirus',            popKey:'rn',    dosis:2, factor:1.20 },
+  { id:'hexa',    nombre:'Hexavalente',          popKey:'rn',    dosis:3, factor:1.15 },
+  { id:'pcv',     nombre:'Neumococo 13v',        popKey:'rn',    dosis:3, factor:1.15 },
+  { id:'bopv',    nombre:'bOPV',                 popKey:'rn',    dosis:3, factor:1.10 },
+  { id:'infped',  nombre:'Influenza Pediátrica', popKey:'rn',    dosis:2, factor:1.30 },
+  { id:'srp',     nombre:'SRP',                  popKey:'pop15', dosis:2, factor:1.25 },
+  { id:'fa',      nombre:'Fiebre Amarilla',      popKey:'pop15', dosis:1, factor:1.40 },
+  { id:'var',     nombre:'Varicela',             popKey:'pop15', dosis:1, factor:1.30 },
+  { id:'hexar',   nombre:'Hexavalente (Refuerzo)', popKey:'pop15', dosis:1, factor:1.15 },
+  { id:'vph',     nombre:'VPH',                  popKey:'pop9',  dosis:1, factor:1.10 },
+  { id:'dt',      nombre:'dT (15 años)',         popKey:'pop15ad', dosis:1, factor:1.10 },
+  { id:'tdap',    nombre:'TdaP (Embarazadas)',   popKey:'popEmb', dosis:1, factor:1.20 },
+  { id:'covid',   nombre:'COVID-19',             popKey:'popRisk', dosis:1, factor:1.05 },
+  { id:'infad',   nombre:'Influenza Adultos',    popKey:'popRisk', dosis:1, factor:1.30 }
+];
+
+const NIVELES = {
+  nacional:  { name:'Nacional',         period:'6 meses a 1 año' },
+  zonal:     { name:'Zonal',            period:'3 a 6 meses' },
+  distrital: { name:'Distrital',        period:'2 a 3 meses' },
+  centro:    { name:'Centro de Salud',  period:'1 a 2 meses (óptimo 1 mes 1/2)' }
+};
+
+/* ============================================================
+   Build factor editor
+   ============================================================ */
+const factorsList = document.getElementById('factors-list');
+VACUNAS.forEach(v => {
+  const el = document.createElement('div');
+  el.className = 'factor-item';
+  el.innerHTML = `
+    <label for="factor-${v.id}">${v.nombre}</label>
+    <input type="number" id="factor-${v.id}" data-id="${v.id}" value="${v.factor}" step="0.01" min="1" max="5">
+  `;
+  factorsList.appendChild(el);
+});
+
+/* ============================================================
+   Format number
+   ============================================================ */
+function fmt(n) {
+  return Math.round(n).toLocaleString('es-EC');
+}
+
+/* ============================================================
+   Calculate
+   ============================================================ */
+function getPopulations() {
+  return {
+    rn:      parseInt(document.getElementById('pop-rn').value)   || 0,
+    pop15:   parseInt(document.getElementById('pop-15').value)   || 0,
+    pop9:    parseInt(document.getElementById('pop-9').value)    || 0,
+    pop15ad: parseInt(document.getElementById('pop-15ad').value) || 0,
+    popEmb:  parseInt(document.getElementById('pop-emb').value)  || 0,
+    popRisk: parseInt(document.getElementById('pop-risk').value) || 0
+  };
+}
+
+function calculate() {
+  const year   = document.getElementById('year').value || '2025';
+  const nivel  = document.getElementById('nivel').value;
+  const defF   = parseFloat(document.getElementById('default-factor').value) || 1.25;
+  const pops   = getPopulations();
+
+  const tbody = document.getElementById('results-tbody');
+  tbody.innerHTML = '';
+  let totalReq = 0, totalSol = 0, factorSum = 0, factorCount = 0;
+
+  VACUNAS.forEach(v => {
+    const pop = pops[v.popKey] || 0;
+    const req = pop * v.dosis;
+    let factor = parseFloat(document.getElementById('factor-' + v.id).value);
+    if (isNaN(factor) || factor < 1) factor = defF;
+    const sol = req * factor;
+    totalReq += req;
+    totalSol += sol;
+    factorSum += factor;
+    factorCount += 1;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${v.nombre}</td>
+      <td class="num">${fmt(pop)}</td>
+      <td class="num">${fmt(req)}</td>
+      <td class="num">${factor.toFixed(2)}</td>
+      <td class="num"><strong>${fmt(sol)}</strong></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Totals row
+  const totalRow = document.createElement('tr');
+  totalRow.className = 'totals-row';
+  totalRow.innerHTML = `
+    <td>TOTALES</td>
+    <td>—</td>
+    <td class="num">${fmt(totalReq)}</td>
+    <td>—</td>
+    <td class="num">${fmt(totalSol)}</td>
+  `;
+  tbody.appendChild(totalRow);
+
+  // Summary
+  document.getElementById('sum-required').textContent = fmt(totalReq);
+  document.getElementById('sum-solicit').textContent  = fmt(totalSol);
+  document.getElementById('sum-avg').textContent      = (factorSum / factorCount).toFixed(2);
+
+  // Header & period
+  const niv = NIVELES[nivel];
+  document.getElementById('results-header').textContent = `Necesidades de Abastecimiento para ${year} - Nivel ${niv.name}`;
+  document.getElementById('nivel-name').textContent = niv.name;
+  document.getElementById('period-pill').textContent = niv.period;
+
+  document.getElementById('results-card').classList.remove('hidden');
+  document.getElementById('results-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+document.getElementById('btn-calc').addEventListener('click', calculate);
+</script>
+</body>
+</html>
