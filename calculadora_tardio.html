@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora Esquema Tardío · ENI Ecuador</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #fefce8;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text: #0f172a;
+    --text-secondary: #475569;
+    --muted: #94a3b8;
+
+    --primary: #1e3a8a;
+    --primary-soft: #eff6ff;
+    --primary-border: #bfdbfe;
+
+    --danger: #dc2626;
+    --danger-soft: #fef2f2;
+    --danger-border: #fecaca;
+
+    --success: #059669;
+    --success-soft: #ecfdf5;
+    --success-border: #a7f3d0;
+
+    --warn: #d97706;
+    --warn-soft: #fffbeb;
+    --warn-border: #fde68a;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    padding: 28px 16px 50px;
+    line-height: 1.5;
+  }
+
+  .wrapper { max-width: 760px; margin: 0 auto; }
+
+  /* Header */
+  .header { margin-bottom: 22px; text-align: center; }
+  .header-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--primary-soft);
+    border: 1px solid var(--primary-border);
+    color: var(--primary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.15em;
+    padding: 4px 10px; border-radius: 3px;
+    margin-bottom: 12px;
+  }
+  .header-tag::before { content: '◉'; font-size: 8px; }
+  h1 {
+    font-size: 28px; font-weight: 700;
+    letter-spacing: -0.02em; line-height: 1.2;
+    color: var(--primary);
+    margin-bottom: 6px;
+  }
+  .subtitle { color: var(--text-secondary); font-size: 13px; }
+
+  /* Tabs Esquema 2019 / 2025 */
+  .scheme-tabs {
+    display: flex; gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 6px;
+    margin: 18px auto 16px;
+    max-width: 360px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  .scheme-tab {
+    flex: 1;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px; font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .scheme-tab.active {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(30,58,138,0.25);
+  }
+  .scheme-tab .year { font-family: 'JetBrains Mono', monospace; opacity: 0.7; font-size: 11px; }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 24px rgba(0,0,0,0.04);
+    padding: 28px 24px;
+  }
+
+  .card-title {
+    font-size: 20px; font-weight: 700;
+    color: var(--primary);
+    text-align: center;
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+
+  /* Alert banner */
+  .alert {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 14px;
+    background: var(--primary-soft);
+    border: 1px solid var(--primary-border);
+    border-left: 4px solid var(--primary);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .alert-icon {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+  }
+  .alert strong { color: var(--danger); }
+
+  /* Form */
+  .field { margin-bottom: 16px; }
+  .label {
+    display: block;
+    font-size: 14px; font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 6px;
+  }
+  .input, .select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--primary-border);
+    border-radius: 8px;
+    background: var(--surface-alt);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    transition: all 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .select {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%231e3a8a' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 38px;
+    cursor: pointer;
+  }
+  .input:focus, .select:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: #fff;
+    box-shadow: 0 0 0 3px var(--primary-soft);
+  }
+  .select.highlight {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px var(--danger-soft);
+  }
+
+  .age-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+
+  /* Buttons */
+  .btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 22px;
+  }
+  .btn {
+    padding: 13px 20px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .btn-primary { background: var(--primary); }
+  .btn-primary:hover { background: #1e40af; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(30,58,138,0.3); }
+  .btn-danger { background: var(--danger); }
+  .btn-danger:hover { background: #b91c1c; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(220,38,38,0.3); }
+
+  /* Info panel */
+  .info-panel {
+    margin-top: 22px;
+    padding: 14px;
+    background: var(--primary-soft);
+    border: 1px solid var(--primary-border);
+    border-left: 4px solid var(--primary);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .info-panel-title {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 6px;
+  }
+  .info-panel-title-icon {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--primary); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+  }
+  .info-content { line-height: 1.55; }
+
+  /* Result */
+  .result {
+    margin-top: 22px;
+    padding: 18px 20px;
+    border-radius: 12px;
+    border: 1.5px solid;
+    display: none;
+  }
+  .result.show { display: block; animation: slideDown 0.25s ease; }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .result.ok { background: var(--success-soft); border-color: var(--success-border); }
+  .result.warn { background: var(--warn-soft); border-color: var(--warn-border); }
+  .result.error { background: var(--danger-soft); border-color: var(--danger-border); }
+
+  .result-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 16px; font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  .result.ok .result-title { color: var(--success); }
+  .result.warn .result-title { color: var(--warn); }
+  .result.error .result-title { color: var(--danger); }
+
+  .result-icon {
+    width: 24px; height: 24px; border-radius: 50%;
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+  }
+  .result.ok .result-icon { background: var(--success); }
+  .result.warn .result-icon { background: var(--warn); }
+  .result.error .result-icon { background: var(--danger); }
+
+  .result-body { font-size: 14px; line-height: 1.6; color: var(--text); }
+  .result-body strong { color: var(--primary); }
+  .result-list { margin: 8px 0 0 0; padding-left: 0; list-style: none; }
+  .result-list li {
+    padding: 6px 0 6px 22px;
+    position: relative;
+    font-size: 13px;
+  }
+  .result-list li::before {
+    content: '→'; position: absolute; left: 0; top: 6px;
+    color: var(--primary); font-weight: 700;
+  }
+  .next-date {
+    display: inline-block;
+    background: var(--primary);
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  /* Disclaimer */
+  .disclaimer {
+    margin-top: 20px;
+    padding: 12px 14px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    font-size: 11px;
+    color: #9a3412;
+    line-height: 1.5;
+  }
+  .disclaimer strong { color: #7c2d12; }
+
+  /* Source */
+  .source {
+    margin-top: 16px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* Hidden fieldsets per scheme */
+  .scheme-content { display: none; }
+  .scheme-content.active { display: block; }
+
+  @media (max-width: 540px) {
+    body { padding: 20px 12px 40px; }
+    h1 { font-size: 22px; }
+    .card { padding: 22px 18px; }
+    .age-grid { grid-template-columns: 1fr; gap: 8px; }
+    .btn-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="header">
+    <div class="header-tag">MSP Ecuador · ENI</div>
+    <h1>Calculadora Esquema Tardío</h1>
+    <p class="subtitle">Cálculo de dosis pendientes según edad y última dosis recibida</p>
+  </div>
+
+  <!-- Selector de esquema -->
+  <div class="scheme-tabs" role="tablist">
+    <button class="scheme-tab active" data-scheme="2019" role="tab">
+      Esquema <span class="year">2019</span>
+    </button>
+    <button class="scheme-tab" data-scheme="2025" role="tab">
+      Esquema <span class="year">2025</span>
+    </button>
+  </div>
+
+  <!-- Tarjeta principal -->
+  <div class="card">
+    <h2 class="card-title" id="card-title">Calculadora Esquema Tardío — Ecuador 2019</h2>
+
+    <div class="alert">
+      <div class="alert-icon">i</div>
+      <div>
+        <strong>Principio General:</strong> No reiniciar el esquema. Continuar con las dosis faltantes, respetando los intervalos mínimos y edades máximas de aplicación.
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <div class="field">
+      <label class="label">Vacuna:</label>
+      <select class="select" id="vaccine"></select>
+    </div>
+
+    <div class="field">
+      <label class="label">¿Qué dosis le falta?</label>
+      <select class="select highlight" id="dose"></select>
+    </div>
+
+    <div class="field">
+      <label class="label">Edad actual del paciente:</label>
+      <div class="age-grid">
+        <select class="select" id="age-y"><option value="">Años</option></select>
+        <select class="select" id="age-m"><option value="">Meses</option></select>
+        <select class="select" id="age-d"><option value="">Días</option></select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="label">Fecha de última dosis recibida:</label>
+      <input type="date" class="input" id="last-dose">
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btn-calc">Calcular</button>
+      <button class="btn btn-danger" id="btn-reset">Reiniciar</button>
+    </div>
+
+    <!-- Panel de información de la dosis -->
+    <div class="info-panel" id="info-panel" style="display:none">
+      <div class="info-panel-title">
+        <div class="info-panel-title-icon">i</div>
+        <span id="info-title">Información de Esquema Tardío</span>
+      </div>
+      <div class="info-content" id="info-content"></div>
+    </div>
+
+    <!-- Resultado del cálculo -->
+    <div class="result" id="result"></div>
+
+    <div class="disclaimer">
+      <strong>⚠ Aviso clínico:</strong> Esta calculadora es una herramienta de apoyo basada en el Manual ENI de Ecuador. Verificar siempre la normativa vigente y la indicación médica individual antes de aplicar. No sustituye criterio profesional.
+    </div>
+
+    <div class="source">
+      Fuente: <strong>MSP Ecuador · Manual ENI 2019 / Actualización 2025</strong>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   ESQUEMAS DE VACUNACIÓN ECUADOR — DATOS DE ESQUEMA TARDÍO
+   ============================================================ */
+
+const SCHEMES = {
+
+  /* ============== ESQUEMA 2019 ============== */
+  '2019': {
+    BCG: {
+      label: 'BCG',
+      doses: {
+        'unica': {
+          label: 'Única dosis',
+          info: 'Aplicar dosis única antes del año de edad. Si paciente ≥ 1 año, no aplicar.',
+          maxAgeDays: 365,
+          calc: (age, last) => age.totalDays > 365
+            ? { type: 'error', title: 'No aplicable', body: 'BCG solo se aplica antes del año de edad. Paciente excede edad máxima.' }
+            : { type: 'ok', title: 'Aplicar BCG hoy', body: 'Aplicar dosis única vía intradérmica. No requiere fecha previa.' }
+        }
+      }
+    },
+    HB: {
+      label: 'Hepatitis B (RN)',
+      doses: {
+        'rn': {
+          label: 'Dosis RN (al nacer)',
+          info: 'Aplicar dentro de las primeras 24 horas de vida. Si pasa, continuar con pentavalente.',
+          maxAgeDays: 1,
+          calc: (age) => age.totalDays > 7
+            ? { type: 'warn', title: 'Continuar con pentavalente', body: 'Excedió la ventana ideal de RN. Continuar con esquema de pentavalente (que incluye HB) según edad.' }
+            : { type: 'ok', title: 'Aplicar HB pediátrica', body: 'Aplicar dosis IM en muslo anterolateral.' }
+        }
+      }
+    },
+    ROTA: {
+      label: 'Rotavirus',
+      doses: {
+        '1': {
+          label: '1ª dosis',
+          info: 'Edad mínima: 6 sem. Edad máxima 1ª dosis: <3 m 15 d. Después no iniciar esquema.',
+          maxAgeDays: 105, // 3m 15d
+          calc: (age) => age.totalDays > 105
+            ? { type: 'error', title: 'No aplicable', body: 'No iniciar esquema de rotavirus después de 3 meses 15 días.' }
+            : age.totalDays < 42
+              ? { type: 'warn', title: 'Esperar', body: 'Edad mínima 6 semanas. Esperar a cumplir esa edad.' }
+              : { type: 'ok', title: 'Aplicar 1ª dosis hoy', body: 'Vía oral. Intervalo mínimo a 2ª dosis: 4 semanas.' }
+        },
+        '2': {
+          label: '2ª dosis',
+          info: 'Intervalo mínimo 4 sem desde 1ª dosis. Edad máxima: <7 m 29 d. No aplicar después.',
+          maxAgeDays: 239, // 7m 29d
+          calc: (age, last) => {
+            if (age.totalDays > 239) return { type: 'error', title: 'No aplicable', body: 'No aplicar 2ª dosis después de 7 m 29 d.' };
+            if (!last) return { type: 'warn', title: 'Falta fecha', body: 'Ingresar fecha de la 1ª dosis.' };
+            const days = daysBetween(last, new Date());
+            if (days < 28) return { type: 'warn', title: 'Esperar', body: `Intervalo mínimo 4 sem. Faltan ${28 - days} días. Aplicar el ${addDays(last, 28)}.` };
+            return { type: 'ok', title: 'Aplicar 2ª dosis hoy', body: 'Intervalo cumplido y dentro de edad máxima.' };
+          }
+        }
+      }
+    },
+    PENTA: {
+      label: 'Pentavalente (DPT+Hib+HB)',
+      doses: {
+        '1': {
+          label: '1ª dosis',
+          info: '3 dosis, intervalo mín 4 sem. Edad mín: 2 m. Edad máx: <5 años (4 a 11 m 29 d).',
+          maxAgeDays: 1825,
+          calc: (age) => age.totalDays > 1825
+            ? { type: 'error', title: 'No aplicable', body: 'Edad >5 años. Usar dT/DPT adulto según protocolo.' }
+            : age.totalDays < 60
+              ? { type: 'warn', title: 'Esperar', body: 'Edad mínima 2 meses.' }
+              : { type: 'ok', title: 'Aplicar 1ª dosis hoy', body: 'Continuar con 2ª y 3ª dosis a intervalos mínimos de 4 sem.' }
+        },
+        '2': {
+          label: '2ª dosis',
+          info: 'Intervalo mín 4 sem desde 1ª. Edad máx: <5 años.',
+          maxAgeDays: 1825,
+          calc: (age, last) => {
+            if (age.totalDays > 1825) return { type: 'error', title: 'No aplicable', body: 'Edad >5 años. Usar dT/DPT adulto.' };
+            if (!last) return { type: 'warn', title: 'Falta fecha', body: 'Ingresar fecha de la 1ª dosis.' };
+            const days = daysBetween(last, new Date());
+            if (days < 28) return { type: 'warn', title: 'Esperar', body: `Intervalo mín 4 sem. Faltan ${28 - days} d. Aplicar el ${addDays(last, 28)}.` };
+            return { type: 'ok', title: 'Aplicar 2ª dosis hoy', body: 'Intervalo cumplido. Programar 3ª dosis a las 4 sem.' };
+          }
+        },
+        '3': {
+          label: '3ª dosis',
+          info: 'Intervalo mín 4 sem desde 2ª. Edad máx: <5 años.',
+          maxAgeDays: 1825,
+          calc: (age, last) => {
+            if (age.totalDays > 1825) return { type: 'error', title: 'No aplicable', body: 'Edad >5 años. Usar dT/DPT adulto.' };
+            if (!last) return { type: 'warn', title: 'Falta fecha', body: 'Ingresar fecha de la 2ª dosis.' };
+            const days = daysBetween(last, new Date());
+            if (days < 28) return { type: 'warn', title: 'Esperar', body: `Intervalo mín 4 sem. Faltan ${28 - days} d. Aplicar el ${addDays(last, 28)}.` };
+            return { type: 'ok', title: 'Aplicar 3ª dosis hoy', body: 'Esquema primario completo. Programar refuerzos DPT a 18 m y 5 a.' };
+          }
+        }
+      }
+    },
+    IPV: {
+      label: 'IPV (Polio inactivada)',
+      doses: {
+        '1': {
+          label: '1ª dosis (con penta 1)',
+          info: 'Aplicar simultánea con pentavalente 1ª y 2ª dosis. Edad máx: <5 años.',
+          maxAgeDays: 1825,
+          calc: (age) => age.totalDays > 1825
+            ? { type: 'error', title: 'No aplicable', body: 'Edad >5 años.' }
+            : { type: 'ok', title: 'Aplicar IPV hoy', body: 'Aplicar simultánea con pentavalente.' }
+        },
+        '2': {
+          label: '2ª dosis (con penta 2)',
+          info: 'Intervalo mín 4 sem desde 1ª IPV.',
+          maxAgeDays: 1825,
+          calc: (age, last) => {
+            if (age.totalDays > 1825) return { type: 'error', title: 'No aplicable', body: 'Edad >5 años.' };
+            if (!last) return { type: 'warn', title: 'Falta fecha', body: 'Ingresar fecha de la 1ª IPV.' };
+            const days = daysBetween(last, new Date());
+            if (days < 28) return { type: 'warn', title: 'Esperar', body: `Intervalo 4 sem. Faltan ${28 - days} d.` };
+            return { type: 'ok', title: 'Aplicar 2ª dosis hoy', body: 'Intervalo cumplido.' };
+          }
+        }
+      }
+    },
+    BOPV: {
+      label: 'bOPV (Polio oral)',
+      doses: {
+        '3': {
+          label: '3ª dosis (con penta 3)',
+          info: 'Edad mínima 6 m. Edad máxima <5 años.',
+          maxAgeDays: 1825,
+          calc: (age) => age.totalDays < 180
+            ? { type: 'warn', title: 'Esperar', body: 'Edad mínima 6 meses.' }
+            : age.totalDays > 1825
+              ? { type: 'error', title: 'No aplicable', body: 'Edad >5 años.' }
+              : { type: 'ok', title: 'Aplicar bOPV hoy', body: 'Vía oral, 2 gotas.' }
+        },
+        'r1': {
+          label: 'Refuerzo 1 (18 m)',
+          info: 'Intervalo mín 6 m desde 3ª dosis. Edad máx: <5 años.',
+          maxAgeDays: 1825,
+          calc: (age, last) => {
+            if (age.totalDays > 1825) return { type: 'error', title: 'No aplicable', body: 'Edad >5 años.' };
+            if (!last) return { type: 'warn', title: 'Falta fecha', body: 'Ingresar fecha de 3ª dosis.' };
+            const days = daysBetween(last, new Date());
+            if (days < 180) return { type: 'warn', title: 'Esperar', body: `Faltan ${180 - days} d. Aplicar el ${addDays(last, 180)}.` };
+            return { type: 'ok', title: 'Aplicar refuerzo hoy', body: 'Intervalo cumplido.' };
+          }
+        },
+        'r2': {
+          label: 'Refuerzo 2 (5 años)',
+          info: 'Aplicar a los 5 años. Edad máx: <7 años.',
+          maxAgeDays: 2555,
+          calc: (age) => age.totalDays > 2555
+            ? { type: 'error', title: 'No aplicable', body: 'Edad >7 años.' }
+            : { type: 'ok', title: 'Aplicar refuerzo hoy', body: 'Vía oral.' }
+        }
+      }
+    },
+    NEUMO: {
+      label: 'Neumococo PCV-10',
+      doses: {
+        '1': {
+          label: '1ª dosis',
+          info: 'Edad mín 2 m. Edad máx <2 años.',
+          maxAgeDays: 730,
+          calc: (age) => age.totalDays > 730
+            ? { type: 'error', title: 'No aplicable', body: 'Edad >2 años.' }
+            : age.totalDays < 60
+              ? { type: 'warn', title: 'Esperar', body: 'Edad mínima 2 m.' }
+              : { type: 'ok', title: 'Aplicar 1ª dosis hoy', body: 'Continuar con esquema 2-4-12 m.' }
+        },
+        '2': {
+          label: '2ª dosis',
+          info: 'Intervalo mín 8 sem (4 sem si <12 m).',
+          maxAgeDays: 730,
+          calc: (age, last) => {
+            if (age.totalDays > 730) return { type: 'error', title: 'No aplicable', body: 'Edad >2 años.' };
+            if (!last) return { type: 'warn', title: 'Falta fecha', body: 'Ingresar fecha de la 1ª dosis.' };
+            const days = daysBetween(last, new Date());
+            if (days < 28) return { type: 'warn', title: 'Esperar', body: `Intervalo mín 4 sem. Faltan ${28 - days} d.` };
+            return { type: 'ok', title: 'Aplicar 2ª dosis hoy', body: 'Programar refuerzo a los 12 m.' };
+          }
+        },
+        'r': {
+          label: 'Refuerzo (12 m)',
+          info: 'Intervalo mín 8 sem desde 2ª. Edad máx <2 años.',
+          maxAgeDays: 730,
+          calc: (age, last) => {
+            if (age.totalDays > 730) return { type: 'error', title: 'No aplicable', body: 'Edad >2 años.' };
+            if (!last) return { type: 'warn', title: 'Falta fecha', body: 'Ingresar fecha de 2ª dosis.' };
+            const days = daysBetween(last, new Date());
+            if (days < 56) return { type: 'warn', title: 'Esperar', body: `Intervalo mín 8 sem. Faltan ${56 - days} d.` };
+            return { type: 'ok', title: 'Aplicar refuerzo hoy', body: 'Esquema PCV completo.' };
+          }
+        }
+      }
+    },
+    SRP: {
+      label: 'SRP (Triple viral)',
+      doses: {
+        '1': {
+          label: '1ª dosis (12 m)',
+          info: 'Edad mín 12 m. Sin edad máx (se aplica hasta adultos según historia vacunal).',
+          maxAgeDays: 99999,
+          calc: (age) => age.totalDays < 365
+            ? { type: 'warn', title: 'Esperar', body: 'Edad mínima 12 meses.' }
+            : { type: 'ok', title: 'Aplicar 1ª dosis hoy', body: 'Vía SC. Programar 2ª dosis a los 18 m.' }
+        },
+        '2': {
+          label: '2ª dosis (18 m)',
+          info: 'Intervalo mín 4 sem desde 1ª.',
+          maxAgeDays: 99999,
+          calc: (age, last) => {
+            if (!last) return { type: 'warn', title: 'Falta fecha', body: 'Ingresar fecha de 1ª dosis.' };
+            const days = daysBetween(last, new Date());
+            if (days < 28) return { type: 'warn', title: 'Esperar', body: `Intervalo mín 4 sem. Faltan ${28 - days} d.` };
+            return { type: 'ok', title: 'Aplicar 2ª dosis hoy', body: 'Esquema completo.' };
+          }
+        }
+      }
+    },
+    SR: {
+      label: 'SR (Doble viral)',
+      doses: {
+        'unica': {
+          label: 'Única dosis',
+          info: 'Única dosis sin límite de edad, aplicada en campañas o brotes.',
+          maxAgeDays: 99999,
+          calc: () => ({ type: 'ok', title: 'Aplicar SR hoy', body: 'Vía SC. Indicada en campañas, brotes o personal de riesgo.' })
+        }
+      }
+    },
+    FA: {
+      label: 'Fiebre Amarilla',
+      doses: {
+        'unica': {
+          label: 'Única dosis (12 m)',
+          info: 'Edad mín 12 m. Dosis única de por vida.',
+          maxAgeDays: 99999,
+          calc: (age) => age.totalDays < 365
+            ? { type: 'warn', title: 'Esperar', body: 'Edad mínima 12 meses.' }
+            : { type: 'ok', title: 'Aplicar FA hoy', body: 'Vía SC. Dosis única.' }
+        }
+      }
+    },
+    VAR: {
+      label: 'Varicela',
+      doses: {
+        'unica': {
+          label: 'Única dosis (15 m)',
+          info: 'Edad mín 12 m. Dosis única en esquema 2019.',
+          maxAgeDays: 99999,
+          calc: (age) => age.totalDays < 365
+            ? { type: 'warn', title: 'Esperar', body: 'Edad mínima 12 meses.' }
+            : { type: 'ok', title: 'Aplicar varicela hoy', body: 'Vía SC.' }
+        }
+      }
+    },
+    DPT: {
+      label: 'DPT (Refuerzo)',
+      doses: {
+        'r1': {
+          label: 'Refuerzo 1 (18 m)',
+          info: 'Después del esquema primario. Edad máx <7 años.',
+          maxAgeDays: 2555,
+          calc: (age, last) => {
+            if (age.totalDays > 2555) return { type: 'error', title: 'No aplicable', body: 'Edad >7 años. Usar dT/Tdap.' };
+            if (!last) return { type: 'warn', title: 'Falta fecha', body: 'Ingresar fecha de penta 3ª.' };
+            const days = daysBetween(last, new Date());
+            if (days < 180) return { type: 'warn', title: 'Esperar', body: `Intervalo mín 6 m. Faltan ${180 - days} d.` };
+            return { type: 'ok', title: 'Aplicar refuerzo hoy', body: 'Programar 2do refuerzo a los 5 a.' };
+          }
+        },
+        'r2': {
+          label: 'Refuerzo 2 (5 años)',
+          info: 'Intervalo mín 6 m desde refuerzo 1. Edad máx <7 años.',
+          maxAgeDays: 2555,
+          calc: (age, last) => {
+            if (age.totalDays > 2555) return { type: 'error', title: 'No aplicable', body: 'Edad >7 años. Usar dT/Tdap.' };
+            if (!last) return { type: 'warn', title: 'Falta fecha', body: 'Ingresar fecha de refuerzo 1.' };
+            const days = daysBetween(last, new Date());
+            if (days < 180) return { type: 'warn', title: 'Esperar', body: `Faltan ${180 - days} d.` };
+            return { type: 'ok', title: 'Aplicar refuerzo hoy', body: 'Esquema DPT completo.' };
+          }
+        }
+      }
+    },
+    DT: {
+      label: 'dT (adulto)',
+      doses: {
+        'refuerzo': {
+          label: 'Refuerzo (cada 10 años)',
+          info: 'Refuerzos cada 10 años. En embarazadas: 1 dosis cada gestación.',
+          maxAgeDays: 99999,
+          calc: (age, last) => {
+            if (!last) return { type: 'ok', title: 'Aplicar dT hoy', body: 'Iniciar esquema o aplicar refuerzo según historia.' };
+            const days = daysBetween(last, new Date());
+            const yearsSince = days / 365;
+            if (yearsSince < 10) return { type: 'warn', title: 'Aún vigente', body: `Última dosis hace ${yearsSince.toFixed(1)} años. Próximo refuerzo: ${addDays(last, 3650)}.` };
+            return { type: 'ok', title: 'Aplicar refuerzo hoy', body: `Han pasado ${yearsSince.toFixed(1)} años desde la última dosis.` };
+          }
+        }
+      }
+    },
+    VPH: {
+      label: 'VPH',
+      doses: {
+        '1': {
+          label: '1ª dosis (9 años)',
+          info: 'Esquema 2019: 9 años niñas. 2 dosis con intervalo de 6 meses.',
+          maxAgeDays: 5475, // 15 a
+          calc: (age) => age.totalDays < 3285
+            ? { type: 'warn', title: 'Esperar', body: 'Edad mínima 9 años.' }
+            : age.totalDays > 5475
+              ? { type: 'error', title: 'Fuera de rango programa', body: 'Aplicar según indicación clínica individual.' }
+              : { type: 'ok', title: 'Aplicar 1ª dosis hoy', body: 'Programar 2ª dosis en 6 meses.' }
+        },
+        '2': {
+          label: '2ª dosis',
+          info: 'Intervalo 6 meses desde 1ª.',
+          maxAgeDays: 99999,
+          calc: (age, last) => {
+            if (!last) return { type: 'warn', title: 'Falta fecha', body: 'Ingresar fecha de 1ª dosis.' };
+            const days = daysBetween(last, new Date());
+            if (days < 180) return { type: 'warn', title: 'Esperar', body: `Faltan ${180 - days} d. Aplicar el ${addDays(last, 180)}.` };
+            return { type: 'ok', title: 'Aplicar 2ª dosis hoy', body: 'Esquema completo.' };
+          }
+        }
+      }
+    }
+  },
+
+  /* ============== ESQUEMA 2025 ============== */
+  '2025': {
+    BCG: {
+      label: 'BCG',
+      doses: {
+        'unica': {
+          label: 'Única dosis',
+          info: 'Aplicar dosis única antes del año de edad.',
+          maxAgeDays: 365,
+          calc: (age) => age.totalDays > 365
+            ? { type: 'error', title: 'No aplicable', body: 'BCG solo se aplica antes del año de edad.' }
+            : { type: 'ok', title: 'Aplicar BCG hoy', body: 'Vía intradérmica. Dosis única.' }
+        }
+      }
+    },
+    HB: {
+      label: 'Hepatitis B (RN)',
+      doses: {
+        'rn': {
+          label: 'Dosis RN (al nacer)',
+          info: 'Aplicar en las primeras 24 h. Si pasa, continuar con hexavalente.',
+          maxAgeDays: 1,
+          calc: (age) => age.totalDays > 7
+            ? { type: 'warn', title: 'Continuar con hexavalente', body: 'Excedió ventana ideal RN. Continuar con esquema de hexavalente (incluye HB).' }
+            : { type: 'ok', title: 'Aplicar HB pediátrica', body: 'Aplicar IM en muslo anterolateral.' }
+        }
+      }
+    },
+    ROTA: {
+      label: 'Rotavirus',
+      doses: {
+        '1': {
+          label: '1ª dosis',
+          info: 'Edad mín 6 sem. Edad máx 1ª: <3 m 15 d.',
+          maxAgeDays: 105,
+          calc: (age) => age.totalDays > 105
+            ? { type: 'error', title: 'No aplicable', body: 'No iniciar después de 3 m 15 d.' }
+            : age.totalDays < 42
+              ? { type: 'warn', title: 'Esperar', body: 'Edad mínima 6 sem.' }
+              : { type: 'ok', title: 'Aplicar 1ª dosis hoy', body: 'Vía oral.' }
+        },
+        '2': {
+          label: '2ª dosis',
+          info: 'Intervalo mín 4 sem. Edad máx: <7 m 29 d.',
+          maxAgeDays: 239,
+          calc: (age, last) => {
+            if (age.totalDays > 239) return { type: 'error', title: 'No aplicable', body: 'No aplicar después de 7 m 29 d.' };
+            if (!last) return { type: 'warn', title: 'Falta fecha', body: 'Ingresar fecha de 1ª dosis.' };
+            const days = daysBetween(last, new Date());
+            if (days < 28) return { type: 'warn', title: 'Esperar', body: `Faltan ${28 - days} d. Aplicar el ${addDays(last, 28)}.` };
+            return { type: 'ok', title: 'Aplicar 2ª dosis hoy', body: 'Intervalo cumplido.' };
+          }
+        }
+      }
+    },
+    HEXA: {
+      label: 'Hexavalente (DPT+Hib+HB+IPV)',
+      doses: {
+        '1': {
+          label: '1ª dosis (2 m)',
+          info: '3 dosis (2-4-6 m), intervalo mín 4 sem. Edad máx: <5 años.',
+          maxAgeDays: 1825,
+          calc: (age) => age.totalDays > 1825
+            ? { type: 'error', title: 'No aplicable', body: 'Edad >5 años. Usar dT/DPT adulto.' }
+            : age.totalDays < 60
+              ? { type: 'warn', title: 'Esperar', body: 'Edad mínima 2 m.' }
+              : { type: 'ok', title: 'Aplicar 1ª dosis hoy', body: 'Continuar 2ª y 3ª a intervalos mín de 4 sem.' }
+        },
+        '2': {
+          label: '2ª dosis (4 m)',
+          info: 'Intervalo mín 4 sem desde 1ª. Edad máx: <5 años.',
+          maxAgeDays: 1825,
+          calc: (age, last) => {
+            if (age.totalDays > 1825) return { type: 'error', title: 'No aplicable', body: 'Edad >5 años.' };
+            if (!last) return { type: 'warn', title: 'Falta fecha', body: 'Ingresar fecha 1ª dosis.' };
+            const days = daysBetween(last, new Date());
+            if (days < 28) return { type: 'warn', title: 'Esperar', body: `Faltan ${28 - days} d.` };
+            return { type: 'ok', title: 'Aplicar 2ª dosis hoy', body: 'Programar 3ª en 4 sem.' };
+          }
+        },
+        '3': {
+          label: '3ª dosis (6 m)',
+          info: 'Intervalo mín 4 sem desde 2ª. Edad máx: <5 años.',
+          maxAgeDays: 1825,
+          calc: (age, last) => {
+            if (age.totalDays > 1825) return { type: 'error', title: 'No aplicable', body: 'Edad >5 años.' };
+            if (!last) return { type: 'warn', title: 'Falta fecha', body: 'Ingresar fecha 2ª dosis.' };
+            const days = daysBetween(last, new Date());
+            if (days < 28) return { type: 'warn', title: 'Esperar', body: `Faltan ${28 - days} d.` };
+            return { type: 'ok', title: 'Aplicar 3ª dosis hoy', body: 'Esquema primario completo. Refuerzos DPT a 18 m y 5 a.' };
+          }
+        }
+      }
+    },
+    BOPV: {
+      label: 'bOPV (Polio oral)',
+      doses: {
+        'r1': {
+          label: 'Refuerzo 1 (18 m)',
+          info: 'En esquema 2025 los refuerzos bOPV se mantienen.',
+          maxAgeDays: 1825,
+          calc: (age) => age.totalDays > 1825
+            ? { type: 'error', title: 'No aplicable', body: 'Edad >5 años.' }
+            : age.totalDays < 540
+              ? { type: 'warn', title: 'Esperar', body: 'Edad mínima 18 m.' }
+              : { type: 'ok', title: 'Aplicar refuerzo hoy', body: 'Vía oral.' }
+        },
+        'r2': {
+          label: 'Refuerzo 2 (5 años)',
+          info: 'Edad máx <7 años.',
+          maxAgeDays: 2555,
+          calc: (age) => age.totalDays > 2555
+            ? { type: 'error', title: 'No aplicable', body: 'Edad >7 años.' }
+            : { type: 'ok', title: 'Aplicar refuerzo hoy', body: 'Vía oral.' }
+        }
+      }
+    },
+    NEUMO: {
+      label: 'Neumococo PCV-13',
+      doses: {
+        '1': {
+          label: '1ª dosis (2 m)',
+          info: 'Esquema 2025: PCV-13. 3 dosis (2-4-6 m). Edad máx <2 años.',
+          maxAgeDays: 730,
+          calc: (age) => age.totalDays > 730
+            ? { type: 'error', title: 'No aplicable', body: 'Edad >2 años.' }
+            : age.totalDays < 60
+              ? { type: 'warn', title: 'Esperar', body: 'Edad mín 2 m.' }
+              : { type: 'ok', title: 'Aplicar 1ª dosis hoy', body: 'Esquema 2-4-6 m.' }
+        },
+        '2': {
+          label: '2ª dosis (4 m)',
+          info: 'Intervalo mín 4 sem.',
+          maxAgeDays: 730,
+          calc: (age, last) => {
+            if (age.totalDays > 730) return { type: 'error', title: 'No aplicable', body: 'Edad >2 años.' };
+            if (!last) return { type: 'warn', title: 'Falta fecha', body: 'Ingresar fecha 1ª dosis.' };
+            const days = daysBetween(last, new Date());
+            if (days < 28) return { type: 'warn', title: 'Esperar', body: `Faltan ${28 - days} d.` };
+            return { type: 'ok', title: 'Aplicar 2ª dosis hoy', body: 'Programar 3ª.' };
+          }
+        },
+        '3': {
+          label: '3ª dosis (6 m)',
+          info: 'Intervalo mín 4 sem desde 2ª.',
+          maxAgeDays: 730,
+          calc: (age, last) => {
+            if (age.totalDays > 730) return { type: 'error', title: 'No aplicable', body: 'Edad >2 años.' };
+            if (!last) return { type: 'warn', title: 'Falta fecha', body: 'Ingresar fecha 2ª dosis.' };
+            const days = daysBetween(last, new Date());
+            if (days < 28) return { type: 'warn', title: 'Esperar', body: `Faltan ${28 - days} d.` };
+            return { type: 'ok', title: 'Aplicar 3ª dosis hoy', body: 'Esquema PCV-13 completo.' };
+          }
+        }
+      }
+    },
+    SRP: {
+      label: 'SRP (Triple viral)',
+      doses: {
+        '1': {
+          label: '1ª dosis (12 m)',
+          info: 'Edad mín 12 m.',
+          maxAgeDays: 99999,
+          calc: (age) => age.totalDays < 365
+            ? { type: 'warn', title: 'Esperar', body: 'Edad mínima 12 m.' }
+            : { type: 'ok', title: 'Aplicar 1ª dosis hoy', body: 'Vía SC.' }
+        },
+        '2': {
+          label: '2ª dosis (18 m)',
+          info: 'Intervalo mín 4 sem.',
+          maxAgeDays: 99999,
+          calc: (age, last) => {
+            if (!last) return { type: 'warn', title: 'Falta fecha', body: 'Ingresar fecha 1ª dosis.' };
+            const days = daysBetween(last, new Date());
+            if (days < 28) return { type: 'warn', title: 'Esperar', body: `Faltan ${28 - days} d.` };
+            return { type: 'ok', title: 'Aplicar 2ª dosis hoy', body: 'Esquema completo.' };
+          }
+        }
+      }
+    },
+    FA: {
+      label: 'Fiebre Amarilla',
+      doses: {
+        'unica': {
+          label: 'Única dosis (12 m)',
+          info: 'Edad mín 12 m. Dosis única.',
+          maxAgeDays: 99999,
+          calc: (age) => age.totalDays < 365
+            ? { type: 'warn', title: 'Esperar', body: 'Edad mínima 12 m.' }
+            : { type: 'ok', title: 'Aplicar FA hoy', body: 'Vía SC.' }
+        }
+      }
+    },
+    VAR: {
+      label: 'Varicela',
+      doses: {
+        'unica': {
+          label: 'Única dosis (15 m)',
+          info: 'Edad mín 12 m.',
+          maxAgeDays: 99999,
+          calc: (age) => age.totalDays < 365
+            ? { type: 'warn', title: 'Esperar', body: 'Edad mínima 12 m.' }
+            : { type: 'ok', title: 'Aplicar varicela hoy', body: 'Vía SC.' }
+        }
+      }
+    },
+    DPT: {
+      label: 'DPT (Refuerzo)',
+      doses: {
+        'r1': {
+          label: 'Refuerzo 1 (18 m)',
+          info: 'Tras esquema primario hexavalente.',
+          maxAgeDays: 2555,
+          calc: (age, last) => {
+            if (age.totalDays > 2555) return { type: 'error', title: 'No aplicable', body: 'Edad >7 años.' };
+            if (!last) return { type: 'warn', title: 'Falta fecha', body: 'Ingresar fecha hexavalente 3ª.' };
+            const days = daysBetween(last, new Date());
+            if (days < 180) return { type: 'warn', title: 'Esperar', body: `Faltan ${180 - days} d.` };
+            return { type: 'ok', title: 'Aplicar refuerzo hoy', body: 'Programar 2do refuerzo a 5 a.' };
+          }
+        },
+        'r2': {
+          label: 'Refuerzo 2 (5 años)',
+          info: 'Edad máx <7 años.',
+          maxAgeDays: 2555,
+          calc: (age, last) => {
+            if (age.totalDays > 2555) return { type: 'error', title: 'No aplicable', body: 'Edad >7 años.' };
+            if (!last) return { type: 'warn', title: 'Falta fecha', body: 'Ingresar fecha refuerzo 1.' };
+            const days = daysBetween(last, new Date());
+            if (days < 180) return { type: 'warn', title: 'Esperar', body: `Faltan ${180 - days} d.` };
+            return { type: 'ok', title: 'Aplicar refuerzo hoy', body: 'Esquema DPT completo.' };
+          }
+        }
+      }
+    },
+    INF: {
+      label: 'Influenza (anual)',
+      doses: {
+        'anual': {
+          label: 'Dosis anual',
+          info: 'Edad mín 6 m. Aplicación anual estacional.',
+          maxAgeDays: 99999,
+          calc: (age, last) => {
+            if (age.totalDays < 180) return { type: 'warn', title: 'Esperar', body: 'Edad mínima 6 m.' };
+            if (!last) return { type: 'ok', title: 'Aplicar influenza hoy', body: 'Aplicación anual estacional.' };
+            const days = daysBetween(last, new Date());
+            if (days < 365) return { type: 'warn', title: 'Aún vigente', body: `Última dosis hace ${days} d. Próxima: ${addDays(last, 365)}.` };
+            return { type: 'ok', title: 'Aplicar dosis anual hoy', body: 'Han pasado >12 meses.' };
+          }
+        }
+      }
+    },
+    COVID: {
+      label: 'COVID-19 (anual)',
+      doses: {
+        'anual': {
+          label: 'Dosis anual',
+          info: 'Esquema 2025: dosis anual en población vulnerable.',
+          maxAgeDays: 99999,
+          calc: (age, last) => {
+            if (!last) return { type: 'ok', title: 'Aplicar COVID-19 hoy', body: 'Iniciar o continuar esquema según historia.' };
+            const days = daysBetween(last, new Date());
+            if (days < 365) return { type: 'warn', title: 'Aún vigente', body: `Última dosis hace ${days} d.` };
+            return { type: 'ok', title: 'Aplicar dosis anual hoy', body: 'Han pasado >12 meses.' };
+          }
+        }
+      }
+    },
+    VPH: {
+      label: 'VPH (niñas y niños)',
+      doses: {
+        'unica': {
+          label: 'Dosis única (9 años)',
+          info: 'Esquema 2025: 1 dosis a los 9 años en niñas y niños. Algunos países usan esquema de 2 dosis para >15 a.',
+          maxAgeDays: 5475,
+          calc: (age) => age.totalDays < 3285
+            ? { type: 'warn', title: 'Esperar', body: 'Edad mínima 9 años.' }
+            : age.totalDays > 5475
+              ? { type: 'warn', title: 'Indicación individual', body: 'Fuera del programa rutinario. Valorar 2 dosis.' }
+              : { type: 'ok', title: 'Aplicar VPH hoy', body: 'Dosis única.' }
+        }
+      }
+    },
+    DT: {
+      label: 'dT (adulto)',
+      doses: {
+        'refuerzo': {
+          label: 'Refuerzo (cada 10 años)',
+          info: 'Refuerzos cada 10 años. Embarazadas: 1 dosis cada gestación.',
+          maxAgeDays: 99999,
+          calc: (age, last) => {
+            if (!last) return { type: 'ok', title: 'Aplicar dT hoy', body: 'Iniciar o aplicar refuerzo.' };
+            const days = daysBetween(last, new Date());
+            const yearsSince = days / 365;
+            if (yearsSince < 10) return { type: 'warn', title: 'Aún vigente', body: `Última dosis hace ${yearsSince.toFixed(1)} a.` };
+            return { type: 'ok', title: 'Aplicar refuerzo hoy', body: `${yearsSince.toFixed(1)} a desde la última.` };
+          }
+        }
+      }
+    }
+  }
+};
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+function daysBetween(date1, date2) {
+  const d1 = (date1 instanceof Date) ? date1 : new Date(date1);
+  const d2 = (date2 instanceof Date) ? date2 : new Date(date2);
+  return Math.floor((d2 - d1) / (1000 * 60 * 60 * 24));
+}
+
+function addDays(dateStr, days) {
+  const d = new Date(dateStr);
+  d.setDate(d.getDate() + days);
+  return d.toLocaleDateString('es-EC', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+function getAge(y, m, d) {
+  const years = parseInt(y) || 0;
+  const months = parseInt(m) || 0;
+  const days = parseInt(d) || 0;
+  const totalDays = years * 365 + months * 30 + days;
+  return { years, months, days, totalDays };
+}
+
+/* ============================================================
+   UI
+   ============================================================ */
+let currentScheme = '2019';
+const elVaccine = document.getElementById('vaccine');
+const elDose = document.getElementById('dose');
+const elInfoPanel = document.getElementById('info-panel');
+const elInfoContent = document.getElementById('info-content');
+const elInfoTitle = document.getElementById('info-title');
+const elResult = document.getElementById('result');
+const elCardTitle = document.getElementById('card-title');
+
+function populateAgeSelectors() {
+  const ageY = document.getElementById('age-y');
+  const ageM = document.getElementById('age-m');
+  const ageD = document.getElementById('age-d');
+  for (let i = 0; i <= 100; i++) {
+    const o = document.createElement('option');
+    o.value = i; o.textContent = `${i} a`; ageY.appendChild(o);
+  }
+  for (let i = 0; i <= 11; i++) {
+    const o = document.createElement('option');
+    o.value = i; o.textContent = `${i} m`; ageM.appendChild(o);
+  }
+  for (let i = 0; i <= 30; i++) {
+    const o = document.createElement('option');
+    o.value = i; o.textContent = `${i} d`; ageD.appendChild(o);
+  }
+}
+
+function populateVaccines() {
+  elVaccine.innerHTML = '';
+  const scheme = SCHEMES[currentScheme];
+  Object.keys(scheme).forEach(key => {
+    const o = document.createElement('option');
+    o.value = key;
+    o.textContent = scheme[key].label;
+    elVaccine.appendChild(o);
+  });
+  populateDoses();
+}
+
+function populateDoses() {
+  elDose.innerHTML = '';
+  const vKey = elVaccine.value;
+  const vac = SCHEMES[currentScheme][vKey];
+  if (!vac) return;
+  Object.keys(vac.doses).forEach(dKey => {
+    const o = document.createElement('option');
+    o.value = dKey;
+    o.textContent = vac.doses[dKey].label;
+    elDose.appendChild(o);
+  });
+  showInfo();
+}
+
+function showInfo() {
+  const vKey = elVaccine.value;
+  const dKey = elDose.value;
+  const vac = SCHEMES[currentScheme][vKey];
+  if (!vac || !vac.doses[dKey]) {
+    elInfoPanel.style.display = 'none';
+    return;
+  }
+  const info = vac.doses[dKey].info;
+  elInfoTitle.textContent = `Información — ${vac.label}: ${vac.doses[dKey].label}`;
+  elInfoContent.textContent = info;
+  elInfoPanel.style.display = 'block';
+}
+
+function calculate() {
+  const vKey = elVaccine.value;
+  const dKey = elDose.value;
+  const y = document.getElementById('age-y').value;
+  const m = document.getElementById('age-m').value;
+  const d = document.getElementById('age-d').value;
+  const last = document.getElementById('last-dose').value;
+
+  if (y === '' && m === '' && d === '') {
+    showResult({ type: 'warn', title: 'Falta edad', body: 'Indicar la edad actual del paciente.' });
+    return;
+  }
+
+  const age = getAge(y, m, d);
+  const vac = SCHEMES[currentScheme][vKey];
+  const dose = vac.doses[dKey];
+  const result = dose.calc(age, last || null);
+
+  showResult(result, vac, dose, age);
+}
+
+function showResult(r, vac, dose, age) {
+  elResult.className = 'result show ' + r.type;
+  let html = `
+    <div class="result-title">
+      <div class="result-icon">${r.type === 'ok' ? '✓' : r.type === 'warn' ? '!' : '✕'}</div>
+      ${r.title}
+    </div>
+    <div class="result-body">${r.body}`;
+  if (vac && dose && age) {
+    html += `<ul class="result-list">
+      <li><strong>Vacuna:</strong> ${vac.label} — ${dose.label}</li>
+      <li><strong>Edad actual:</strong> ${age.years} a ${age.months} m ${age.days} d (${age.totalDays} días)</li>
+    </ul>`;
+  }
+  html += '</div>';
+  elResult.innerHTML = html;
+  elResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function reset() {
+  document.getElementById('age-y').value = '';
+  document.getElementById('age-m').value = '';
+  document.getElementById('age-d').value = '';
+  document.getElementById('last-dose').value = '';
+  elResult.className = 'result';
+  elResult.innerHTML = '';
+}
+
+/* Eventos */
+elVaccine.addEventListener('change', populateDoses);
+elDose.addEventListener('change', showInfo);
+document.getElementById('btn-calc').addEventListener('click', calculate);
+document.getElementById('btn-reset').addEventListener('click', reset);
+
+document.querySelectorAll('.scheme-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.scheme-tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    currentScheme = t.dataset.scheme;
+    elCardTitle.textContent = `Calculadora Esquema Tardío — Ecuador ${currentScheme}`;
+    populateVaccines();
+    reset();
+  });
+});
+
+/* Init */
+populateAgeSelectors();
+populateVaccines();
+
+/* Set today's date as default for last dose */
+document.getElementById('last-dose').value = new Date().toISOString().split('T')[0];
+</script>
+
+</body>
+</html>
