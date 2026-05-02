@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Coberturas de Vacunación · ENI Ecuador</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text: #0f172a;
+    --text-secondary: #475569;
+    --muted: #94a3b8;
+
+    --primary: #1e3a8a;
+    --primary-mid: #2563eb;
+    --primary-soft: #eff6ff;
+    --primary-border: #bfdbfe;
+
+    --teal: #0d9488;
+    --teal-soft: #ccfbf1;
+    --teal-border: #5eead4;
+    --teal-dark: #115e59;
+
+    --green: #16a34a;
+    --green-soft: #f0fdf4;
+    --green-border: #bbf7d0;
+    --green-dark: #15803d;
+
+    --orange: #f59e0b;
+    --orange-soft: #fffbeb;
+    --orange-border: #fde68a;
+    --orange-dark: #92400e;
+
+    --red: #dc2626;
+    --red-soft: #fef2f2;
+    --red-border: #fecaca;
+    --red-dark: #991b1b;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 28px 16px 60px;
+    line-height: 1.55;
+    font-size: 14px;
+  }
+
+  .wrapper { max-width: 760px; margin: 0 auto; }
+
+  /* ========== Header ========== */
+  .title-row {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 8px;
+  }
+  .title-icon {
+    width: 42px; height: 42px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  h1 {
+    font-size: 26px; font-weight: 800;
+    color: var(--primary);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  .subtitle {
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-bottom: 22px;
+  }
+
+  /* ========== Mode tabs ========== */
+  .mode-tabs {
+    display: flex; gap: 6px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 5px;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  .mode-tab {
+    flex: 1;
+    padding: 12px 14px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .mode-tab:hover { color: var(--text); }
+  .mode-tab.active {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(30,58,138,0.25);
+  }
+
+  /* ========== Card ========== */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px 26px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 18px rgba(0,0,0,0.04);
+    margin-bottom: 18px;
+  }
+  .card-title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+  .card-title.teal { color: var(--teal); }
+  .card-title.primary { color: var(--primary); }
+
+  /* ========== Formula banner (teal) ========== */
+  .formula-banner {
+    background: var(--teal-soft);
+    border: 1px solid var(--teal-border);
+    border-left: 5px solid var(--teal);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    color: var(--teal-dark);
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .formula-banner strong { color: var(--teal-dark); font-weight: 700; }
+
+  /* ========== Instructions banner (blue) ========== */
+  .info-banner {
+    background: var(--primary-soft);
+    border: 1px solid var(--primary-border);
+    border-left: 5px solid var(--primary-mid);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 22px;
+    color: var(--text);
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .info-banner strong { color: var(--primary); font-weight: 700; }
+
+  /* ========== Form ========== */
+  .field { margin-bottom: 14px; }
+  .label {
+    display: block;
+    font-size: 14px; font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .input, .select {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--surface);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    transition: all 0.15s;
+  }
+  .select {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+  }
+  .input:focus, .select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-soft);
+  }
+  .input::placeholder { color: var(--muted); }
+
+  /* ========== Buttons ========== */
+  .btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .btn-row.three { grid-template-columns: 1fr 1fr 1fr; }
+  .btn {
+    padding: 13px 18px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-teal    { background: var(--teal); }
+  .btn-teal:hover { background: var(--teal-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(13,148,136,0.3); }
+  .btn-primary { background: var(--primary-mid); }
+  .btn-primary:hover { background: var(--primary); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(30,58,138,0.3); }
+  .btn-danger  { background: var(--red); }
+  .btn-danger:hover { background: var(--red-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(220,38,38,0.3); }
+  .btn-light   { background: #e2e8f0; color: var(--text); font-weight: 700; }
+  .btn-light:hover { background: #cbd5e1; }
+
+  /* ========== Result (single coverage) ========== */
+  .result {
+    margin-top: 20px;
+    padding: 18px 22px;
+    border-radius: 10px;
+    border: 1.5px solid;
+    border-left: 6px solid;
+    display: none;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .result.show { display: block; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .result-pct {
+    font-size: 26px;
+    font-weight: 800;
+    display: block;
+    margin: 4px 0 6px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .result.deficiente { background: var(--red-soft); border-color: var(--red-border); color: var(--red-dark); }
+  .result.regular    { background: var(--orange-soft); border-color: var(--orange-border); color: var(--orange-dark); }
+  .result.util       { background: #fef9c3; border-color: #fde047; color: #854d0e; }
+  .result.optimo     { background: var(--green-soft); border-color: var(--green-border); color: var(--green-dark); }
+
+  /* ========== Monthly table ========== */
+  .table-wrap {
+    margin-top: 20px;
+    overflow-x: auto;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  table.monthly {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  table.monthly thead {
+    background: var(--primary);
+    color: #fff;
+  }
+  table.monthly th {
+    padding: 12px 14px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+  }
+  table.monthly td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    background: var(--surface);
+  }
+  table.monthly tr:last-child td { border-bottom: none; }
+  table.monthly td:first-child { font-weight: 600; color: var(--primary); }
+
+  table.monthly input.cell-input {
+    width: 100%;
+    max-width: 110px;
+    padding: 6px 10px;
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    text-align: center;
+    background: var(--surface);
+  }
+
+  .evol-mejorado  { color: var(--green-dark); font-weight: 600; }
+  .evol-empeorado { color: var(--red-dark); font-weight: 600; }
+  .evol-igual     { color: var(--text-secondary); font-weight: 600; }
+
+  .estado-cell {
+    font-weight: 700;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    display: inline-block;
+  }
+  .estado-optimo     { background: var(--green-soft); color: var(--green-dark); }
+  .estado-util       { background: #fef9c3; color: #854d0e; }
+  .estado-regular    { background: var(--orange-soft); color: var(--orange-dark); }
+  .estado-deficiente { background: var(--red-soft); color: var(--red-dark); }
+
+  .empty-row {
+    padding: 20px;
+    text-align: center;
+    color: var(--muted);
+    font-style: italic;
+    font-size: 13px;
+  }
+
+  .delete-btn {
+    background: transparent;
+    border: none;
+    color: var(--red);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.15s;
+  }
+  .delete-btn:hover { background: var(--red-soft); }
+
+  /* ========== Footer ========== */
+  .footer {
+    margin-top: 22px;
+    text-align: center;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ========== Section toggling ========== */
+  .calc-section { display: none; }
+  .calc-section.active { display: block; }
+
+  /* ========== Hidden helper ========== */
+  .hidden { display: none !important; }
+
+  /* Responsive */
+  @media (max-width: 540px) {
+    body { padding: 22px 12px 40px; }
+    h1 { font-size: 20px; }
+    .card { padding: 20px 18px; }
+    .card-title { font-size: 18px; }
+    .btn-row, .btn-row.three { grid-template-columns: 1fr; }
+    table.monthly th, table.monthly td { padding: 8px 6px; font-size: 11.5px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="title-row">
+    <div class="title-icon">📊</div>
+    <h1>Calculadora de Coberturas de Vacunación</h1>
+  </div>
+  <p class="subtitle">Herramienta para calcular cobertura por vacuna y dar seguimiento mensual de la evolución.</p>
+
+  <!-- Mode tabs -->
+  <div class="mode-tabs" role="tablist">
+    <button class="mode-tab active" data-mode="single">💉 Cobertura por vacuna</button>
+    <button class="mode-tab" data-mode="monthly">📅 Cobertura mensual</button>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- SECCIÓN 1: COBERTURA POR VACUNA (single)    -->
+  <!-- ============================================ -->
+  <div class="calc-section active" id="section-single">
+    <div class="card">
+      <h2 class="card-title teal">Cobertura de Vacunación</h2>
+
+      <div class="formula-banner">
+        <strong>Fórmula utilizada:</strong><br>
+        Cobertura (%) = (Dosis aplicadas ÷ Población objetivo) × 100
+      </div>
+
+      <div class="field">
+        <label class="label">Grupo etario:</label>
+        <select class="select" id="s-grupo">
+          <option value="rn">Recién nacido</option>
+          <option value="lactante">Lactante (2–11 m)</option>
+          <option value="ninopequeño">Niño pequeño (12–23 m)</option>
+          <option value="preescolar">Preescolar (2–4 años)</option>
+          <option value="escolar">Escolar (5–9 años)</option>
+          <option value="adolescente">Adolescente (10–19 años)</option>
+          <option value="adulto">Adulto (20+ años)</option>
+          <option value="embarazada">Embarazadas</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="label">Vacuna aplicada:</label>
+        <select class="select" id="s-vacuna">
+          <option>BCG</option>
+          <option>Hepatitis B (RN)</option>
+          <option>Rotavirus</option>
+          <option>Pentavalente</option>
+          <option>Hexavalente</option>
+          <option>Neumococo (PCV-10)</option>
+          <option>Neumococo (PCV-13)</option>
+          <option>IPV</option>
+          <option>bOPV</option>
+          <option>SRP</option>
+          <option>SR</option>
+          <option>Fiebre Amarilla</option>
+          <option>Varicela</option>
+          <option>DPT (refuerzo)</option>
+          <option>VPH</option>
+          <option>dT</option>
+          <option>Influenza</option>
+          <option>COVID-19</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="label">N.º de dosis aplicadas en el mes:</label>
+        <input type="number" class="input" id="s-dosis" min="0" placeholder="Ej. 850">
+      </div>
+
+      <div class="field">
+        <label class="label">Población objetivo estimada:</label>
+        <input type="number" class="input" id="s-poblacion" min="1" placeholder="Ej. 1000">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-teal" id="btn-s-calc">Calcular</button>
+        <button class="btn btn-danger" id="btn-s-reset">Limpiar</button>
+      </div>
+
+      <div class="result" id="s-result"></div>
+
+      <div class="footer">Datos basados en el esquema nacional de vacunación del MSP — Ecuador</div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- SECCIÓN 2: COBERTURA MENSUAL (tracking)     -->
+  <!-- ============================================ -->
+  <div class="calc-section" id="section-monthly">
+    <div class="card">
+      <h2 class="card-title primary">Cobertura Mensual de Vacunación</h2>
+
+      <div class="info-banner">
+        <strong>Instrucciones:</strong> Selecciona un mes, introduce los valores de cobertura anterior y actual.
+        Haz clic en <strong>Agregar</strong> para añadir el mes a la tabla. Luego presiona <strong>Calcular</strong>
+        para evaluar la evolución. El botón <strong>Reset</strong> limpia toda la información ingresada.
+      </div>
+
+      <div class="field">
+        <label class="label">Selecciona un mes:</label>
+        <select class="select" id="m-mes">
+          <option>Enero</option>
+          <option>Febrero</option>
+          <option>Marzo</option>
+          <option>Abril</option>
+          <option>Mayo</option>
+          <option>Junio</option>
+          <option>Julio</option>
+          <option>Agosto</option>
+          <option>Septiembre</option>
+          <option>Octubre</option>
+          <option>Noviembre</option>
+          <option>Diciembre</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="label">Cobertura anterior (%):</label>
+        <input type="number" class="input" id="m-anterior" min="0" max="200" step="0.01" placeholder="Ej. 75">
+      </div>
+
+      <div class="field">
+        <label class="label">Cobertura actual (%):</label>
+        <input type="number" class="input" id="m-actual" min="0" max="200" step="0.01" placeholder="Ej. 92">
+      </div>
+
+      <div class="btn-row three">
+        <button class="btn btn-light" id="btn-m-add">Agregar</button>
+        <button class="btn btn-primary" id="btn-m-calc">Calcular</button>
+        <button class="btn btn-danger" id="btn-m-reset">Reset</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="monthly">
+          <thead>
+            <tr>
+              <th>Mes</th>
+              <th>Anterior (%)</th>
+              <th>Actual (%)</th>
+              <th>Evolución</th>
+              <th>Estado Final</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="m-tbody">
+            <tr><td colspan="6" class="empty-row">Sin datos. Agrega tu primer mes arriba.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="footer">Estados: ÓPTIMO ≥95% · ÚTIL 80–94% · REGULAR 50–79% · DEFICIENTE &lt;50%</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   ESTADOS DE COBERTURA
+   ============================================================ */
+function getStatus(pct) {
+  if (pct >= 95) return { key: 'optimo',     label: 'ÓPTIMO',     icon: '✅' };
+  if (pct >= 80) return { key: 'util',       label: 'ÚTIL',       icon: '👍' };
+  if (pct >= 50) return { key: 'regular',    label: 'REGULAR',    icon: '⚠️' };
+  return                   { key: 'deficiente', label: 'DEFICIENTE', icon: '⚠️' };
+}
+
+/* ============================================================
+   SECCIÓN 1: COBERTURA POR VACUNA
+   ============================================================ */
+const sResult = document.getElementById('s-result');
+
+function calcSingle() {
+  const dosis = parseFloat(document.getElementById('s-dosis').value);
+  const pob = parseFloat(document.getElementById('s-poblacion').value);
+  const vacuna = document.getElementById('s-vacuna').value;
+  const grupoSel = document.getElementById('s-grupo');
+  const grupo = grupoSel.options[grupoSel.selectedIndex].text;
+
+  if (isNaN(dosis) || isNaN(pob) || pob <= 0) {
+    sResult.className = 'result show deficiente';
+    sResult.innerHTML = '⚠ Ingresa valores válidos (la población debe ser mayor a 0).';
+    return;
+  }
+
+  const pct = (dosis / pob) * 100;
+  const s = getStatus(pct);
+
+  sResult.className = `result show ${s.key}`;
+  sResult.innerHTML = `
+    ${s.icon} <strong>${s.label}</strong>
+    <span class="result-pct">${pct.toFixed(2)}%</span>
+    de cobertura para <strong>${vacuna}</strong> (${grupo})
+  `;
+}
+
+function resetSingle() {
+  document.getElementById('s-dosis').value = '';
+  document.getElementById('s-poblacion').value = '';
+  document.getElementById('s-grupo').selectedIndex = 0;
+  document.getElementById('s-vacuna').selectedIndex = 0;
+  sResult.className = 'result';
+  sResult.innerHTML = '';
+}
+
+document.getElementById('btn-s-calc').addEventListener('click', calcSingle);
+document.getElementById('btn-s-reset').addEventListener('click', resetSingle);
+
+/* ============================================================
+   SECCIÓN 2: COBERTURA MENSUAL
+   ============================================================ */
+let monthlyData = [];
+const mTbody = document.getElementById('m-tbody');
+
+function renderMonthly() {
+  if (monthlyData.length === 0) {
+    mTbody.innerHTML = `<tr><td colspan="6" class="empty-row">Sin datos. Agrega tu primer mes arriba.</td></tr>`;
+    return;
+  }
+  mTbody.innerHTML = monthlyData.map((row, idx) => {
+    return `
+      <tr data-idx="${idx}">
+        <td>${row.mes}</td>
+        <td><input type="number" class="cell-input" data-field="anterior" data-idx="${idx}" value="${row.anterior}" min="0" max="200" step="0.01"></td>
+        <td><input type="number" class="cell-input" data-field="actual" data-idx="${idx}" value="${row.actual}" min="0" max="200" step="0.01"></td>
+        <td>${row.evolucion ? renderEvolution(row.evolucion) : '<span style="color:var(--muted)">—</span>'}</td>
+        <td>${row.estado ? renderEstado(row.estado) : '<span style="color:var(--muted)">—</span>'}</td>
+        <td><button class="delete-btn" data-del="${idx}" title="Eliminar">✕</button></td>
+      </tr>
+    `;
+  }).join('');
+
+  // listeners on cell inputs
+  mTbody.querySelectorAll('.cell-input').forEach(inp => {
+    inp.addEventListener('input', e => {
+      const i = parseInt(e.target.dataset.idx);
+      const f = e.target.dataset.field;
+      monthlyData[i][f] = parseFloat(e.target.value) || 0;
+      // No re-render here so user can keep typing; only on calc
+    });
+  });
+  mTbody.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const i = parseInt(e.target.dataset.del);
+      monthlyData.splice(i, 1);
+      renderMonthly();
+    });
+  });
+}
+
+function renderEvolution(evol) {
+  if (evol === 'mejorado')  return `<span class="evol-mejorado">📈 Mejorado</span>`;
+  if (evol === 'empeorado') return `<span class="evol-empeorado">📉 Empeorado</span>`;
+  return `<span class="evol-igual">➖ Igual</span>`;
+}
+
+function renderEstado(estado) {
+  const s = getStatus(estado.pct);
+  return `<span class="estado-cell estado-${s.key}">${s.icon} ${s.label}</span>`;
+}
+
+function addMonthly() {
+  const mes = document.getElementById('m-mes').value;
+  const anterior = parseFloat(document.getElementById('m-anterior').value);
+  const actual = parseFloat(document.getElementById('m-actual').value);
+
+  if (isNaN(anterior) || isNaN(actual)) {
+    alert('Ingresa valores válidos para cobertura anterior y actual.');
+    return;
+  }
+  if (monthlyData.some(r => r.mes === mes)) {
+    alert(`${mes} ya está agregado en la tabla. Elige otro mes o elimina el existente.`);
+    return;
+  }
+
+  monthlyData.push({
+    mes,
+    anterior,
+    actual,
+    evolucion: null,
+    estado: null
+  });
+  document.getElementById('m-anterior').value = '';
+  document.getElementById('m-actual').value = '';
+  renderMonthly();
+}
+
+function calcMonthly() {
+  if (monthlyData.length === 0) {
+    alert('Agrega al menos un mes a la tabla antes de calcular.');
+    return;
+  }
+  monthlyData.forEach(row => {
+    const ant = parseFloat(row.anterior) || 0;
+    const act = parseFloat(row.actual) || 0;
+    if (act > ant)      row.evolucion = 'mejorado';
+    else if (act < ant) row.evolucion = 'empeorado';
+    else                row.evolucion = 'igual';
+    row.estado = { pct: act };
+  });
+  renderMonthly();
+}
+
+function resetMonthly() {
+  monthlyData = [];
+  document.getElementById('m-anterior').value = '';
+  document.getElementById('m-actual').value = '';
+  document.getElementById('m-mes').selectedIndex = 0;
+  renderMonthly();
+}
+
+document.getElementById('btn-m-add').addEventListener('click', addMonthly);
+document.getElementById('btn-m-calc').addEventListener('click', calcMonthly);
+document.getElementById('btn-m-reset').addEventListener('click', resetMonthly);
+
+/* ============================================================
+   Mode tabs
+   ============================================================ */
+document.querySelectorAll('.mode-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.mode-tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.calc-section').forEach(s => s.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('section-' + t.dataset.mode).classList.add('active');
+  });
+});
+
+renderMonthly();
+</script>
+</body>
+</html>
