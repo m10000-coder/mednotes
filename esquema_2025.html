@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Esquema Nacional de Vacunación Ecuador 2025 — Actualización</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text: #0f172a;
+    --text-secondary: #475569;
+    --muted: #94a3b8;
+
+    --primary: #1e3a8a;
+    --primary-mid: #2563eb;
+    --primary-soft: #eff6ff;
+    --primary-border: #bfdbfe;
+
+    --yellow: #facc15;
+    --yellow-soft: #fef9c3;
+    --yellow-border: #fde047;
+    --yellow-dark: #854d0e;
+
+    --red: #dc2626;
+    --red-soft: #fef2f2;
+    --red-border: #fecaca;
+    --red-dark: #991b1b;
+
+    --green: #16a34a;
+    --green-soft: #f0fdf4;
+    --green-border: #bbf7d0;
+    --green-dark: #15803d;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 28px 16px 60px;
+    line-height: 1.55;
+    font-size: 14px;
+  }
+
+  .wrapper { max-width: 1100px; margin: 0 auto; }
+
+  /* ============ Top banner ============ */
+  .top-banner {
+    background: linear-gradient(135deg, #fde047, #facc15);
+    color: var(--text);
+    padding: 16px 24px;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 22px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    box-shadow: 0 2px 10px rgba(250,204,21,0.25);
+  }
+  .top-banner::before {
+    content: '🔄 ';
+    margin-right: 6px;
+  }
+
+  /* ============ Section heading ============ */
+  .section {
+    margin-bottom: 36px;
+  }
+  .section-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+    border-bottom: 3px solid var(--yellow);
+    padding-bottom: 8px;
+  }
+  .section-title.with-bar {
+    border-bottom: none;
+    border-left: 4px solid var(--yellow);
+    padding: 4px 0 4px 12px;
+  }
+  .section-title .emoji { font-size: 20px; }
+
+  /* ============ Cambios cards ============ */
+  .changes-block {
+    background: linear-gradient(135deg, #fef9c3, #fef08a);
+    border: 1px solid var(--yellow-border);
+    border-radius: 16px;
+    padding: 22px 24px;
+    margin-bottom: 30px;
+    border-left: 5px solid var(--primary);
+  }
+  .changes-title {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--primary);
+    font-size: 19px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+  .changes-title .star { color: var(--primary-mid); }
+
+  .changes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .change-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px 18px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+  .change-head {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--primary-mid);
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .change-head .ico { font-size: 16px; }
+  .change-text { color: var(--text); font-size: 13.5px; line-height: 1.55; }
+
+  /* ============ Two-card grid (vivas vs inactivadas) ============ */
+  .two-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 720px) { .two-cards { grid-template-columns: 1fr; } }
+
+  .info-card {
+    background: var(--primary-soft);
+    border: 1px solid var(--primary-border);
+    border-left: 5px solid var(--yellow);
+    border-radius: 12px;
+    padding: 18px 22px;
+  }
+  .info-card-title {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+  .info-card p {
+    font-size: 13.5px;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.55;
+  }
+  .info-card strong { color: var(--primary); }
+
+  /* ============ Two-column types table ============ */
+  .types-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  .types-table thead {
+    background: var(--primary-mid);
+    color: #fff;
+  }
+  .types-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 13.5px;
+  }
+  .types-table td {
+    padding: 11px 18px;
+    border-bottom: 1px solid var(--border);
+    background: #fff;
+  }
+  .types-table tr:nth-child(even) td { background: #f8fafc; }
+  .types-table tr:last-child td { border-bottom: none; }
+
+  .pop-icon { display: inline-block; margin-left: 4px; font-size: 12px; vertical-align: -1px; }
+
+  /* ============ Standard table (intervals, esavi) ============ */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .data-table thead {
+    background: var(--primary-mid);
+    color: #fff;
+  }
+  .data-table thead.red { background: var(--red); }
+  .data-table th {
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .data-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    background: #fff;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .data-table tr:nth-child(even) td { background: #f8fafc; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr.highlight td { background: var(--primary-soft); font-weight: 600; }
+  .data-table .col-vacuna { font-weight: 700; color: var(--primary); }
+
+  /* ============ Principio general banner ============ */
+  .principle-banner {
+    background: var(--primary-soft);
+    border: 1px solid var(--primary-border);
+    border-left: 5px solid var(--primary-mid);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .principle-banner strong {
+    color: var(--primary);
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 4px;
+    font-size: 15px;
+  }
+
+  /* ============ Critical notes ============ */
+  .critical-notes {
+    background: var(--yellow-soft);
+    border: 1px solid var(--yellow-border);
+    border-left: 5px solid var(--yellow);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 8px;
+  }
+  .critical-notes h4 {
+    color: var(--yellow-dark);
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .critical-notes ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .critical-notes li {
+    position: relative;
+    padding: 4px 0 4px 18px;
+    color: var(--text);
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .critical-notes li::before {
+    content: '•';
+    position: absolute; left: 4px; top: 4px;
+    color: var(--yellow-dark);
+    font-weight: 700;
+  }
+  .critical-notes strong { color: var(--text); font-weight: 700; }
+
+  /* ============ Cold chain section ============ */
+  .cold-chain-card {
+    background: var(--primary-soft);
+    border: 1px solid var(--primary-border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+  }
+  .cold-chain-title {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--primary);
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--yellow);
+    padding-left: 10px;
+  }
+  .cold-chain-card p {
+    font-size: 13.5px;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.55;
+  }
+
+  .cold-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+  }
+  .cold-item {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px 14px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  .cold-item .icon-big {
+    color: var(--primary-mid);
+    font-size: 32px;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .cold-item h5 {
+    color: var(--text);
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .cold-item p {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  /* ============ Sensitivity table ============ */
+  .sens-table th {
+    background: var(--primary-mid);
+    color: #fff;
+  }
+
+  /* ============ Important alert (red) ============ */
+  .alert-red {
+    background: var(--red-soft);
+    border: 1px solid var(--red-border);
+    border-left: 5px solid var(--red);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 14px;
+  }
+  .alert-red h4 {
+    color: var(--red);
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .alert-red ul { list-style: none; padding: 0; }
+  .alert-red li {
+    position: relative;
+    padding: 4px 0 4px 18px;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .alert-red li::before {
+    content: '•';
+    position: absolute; left: 4px; top: 4px;
+    color: var(--red);
+    font-weight: 700;
+  }
+  .alert-red strong { color: var(--text); font-weight: 700; }
+
+  /* ============ Compatible cards ============ */
+  .compat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .compat-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .compat-card h4 {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--primary-mid);
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .compat-card h4 .check {
+    width: 22px; height: 22px;
+    background: var(--primary-mid);
+    color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .compat-card ul { list-style: none; padding: 0; }
+  .compat-card li {
+    position: relative;
+    padding: 4px 0 4px 16px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .compat-card li::before {
+    content: '•';
+    position: absolute; left: 4px; top: 4px;
+    color: var(--primary-mid);
+    font-weight: 700;
+  }
+
+  /* Yellow incompatibility card */
+  .alert-yellow {
+    background: var(--yellow-soft);
+    border: 1px solid var(--yellow-border);
+    border-left: 5px solid var(--yellow);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+  }
+  .alert-yellow h4 {
+    display: flex; align-items: center; gap: 6px;
+    color: var(--yellow-dark);
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .alert-yellow ul { list-style: none; padding: 0; }
+  .alert-yellow li {
+    position: relative;
+    padding: 4px 0 4px 18px;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .alert-yellow li::before {
+    content: '•';
+    position: absolute; left: 4px; top: 4px;
+    color: var(--yellow-dark);
+    font-weight: 700;
+  }
+
+  /* Blue exception card */
+  .alert-blue {
+    background: var(--primary-soft);
+    border: 1px solid var(--primary-border);
+    border-left: 5px solid var(--primary-mid);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+  }
+  .alert-blue h4 {
+    display: flex; align-items: center; gap: 6px;
+    color: var(--primary);
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .alert-blue h4 .info-icon {
+    width: 22px; height: 22px;
+    background: var(--primary-mid);
+    color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .alert-blue ul { list-style: none; padding: 0; }
+  .alert-blue li {
+    position: relative;
+    padding: 4px 0 4px 18px;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .alert-blue li::before {
+    content: '•';
+    position: absolute; left: 4px; top: 4px;
+    color: var(--primary-mid);
+    font-weight: 700;
+  }
+  .alert-blue strong, .alert-yellow strong, .alert-red strong { font-weight: 700; }
+
+  /* Quick navigation */
+  .quick-nav {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  .quick-nav .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-right: 4px;
+    font-weight: 600;
+  }
+  .quick-nav a {
+    text-decoration: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .quick-nav a:hover {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+
+  /* Header */
+  h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--primary);
+    text-align: center;
+    margin-bottom: 6px;
+    letter-spacing: -0.025em;
+  }
+  .header-sub {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+
+  /* Footer / source */
+  .footer-source {
+    margin-top: 36px;
+    padding: 18px 20px;
+    background: var(--surface-alt);
+    border-radius: 12px;
+    text-align: center;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    border-top: 3px solid var(--primary);
+  }
+  .footer-source strong { color: var(--text-secondary); }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    body { padding: 22px 12px 50px; }
+    h1 { font-size: 22px; }
+    .section-title { font-size: 18px; }
+    .changes-grid { grid-template-columns: 1fr; }
+    .data-table { font-size: 12px; }
+    .data-table th, .data-table td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- ============ Top banner ============ -->
+  <div class="top-banner">
+    Actualización Esquema Nacional de Vacunación Ecuador 2025
+  </div>
+
+  <h1>Esquema Nacional de Vacunación 2025</h1>
+  <p class="header-sub">Resumen completo de cambios, tipos, esquemas tardíos, cadena de frío, compatibilidad y ESAVI</p>
+
+  <!-- Quick navigation -->
+  <div class="quick-nav">
+    <span class="lbl">Ir a:</span>
+    <a href="#cambios">Cambios clave</a>
+    <a href="#tipos">Tipos de vacunas</a>
+    <a href="#tardio">Esquemas tardíos</a>
+    <a href="#cadena">Cadena de frío</a>
+    <a href="#compatibilidad">Compatibilidad</a>
+    <a href="#esavi">ESAVI</a>
+  </div>
+
+  <!-- ====================================== -->
+  <!-- 1. CAMBIOS CLAVE 2025 vs 2024          -->
+  <!-- ====================================== -->
+  <section class="section" id="cambios">
+    <div class="changes-block">
+      <div class="changes-title"><span class="star">★</span> Cambios Clave 2025 vs. 2024</div>
+      <div class="changes-grid">
+
+        <div class="change-card">
+          <div class="change-head"><span class="ico">💉</span>Hexavalente</div>
+          <div class="change-text">Reemplaza a Pentavalente, DT, DPTO e IPV en lactantes (2, 4, 6 meses) y refuerzo (18 meses).</div>
+        </div>
+
+        <div class="change-card">
+          <div class="change-head"><span class="ico">🛡</span>Neumococo 13v</div>
+          <div class="change-text">Sustituye a Neumococo 10 valente.</div>
+        </div>
+
+        <div class="change-card">
+          <div class="change-head"><span class="ico">🤰</span>TdaP para embarazadas</div>
+          <div class="change-text">Nueva indicación (1 dosis desde las 20 semanas).</div>
+        </div>
+
+        <div class="change-card">
+          <div class="change-head"><span class="ico">🧒</span>VPH</div>
+          <div class="change-text">Reducción de 2 a 1 dosis para niñas y niños a los 9 años.</div>
+        </div>
+
+        <div class="change-card">
+          <div class="change-head"><span class="ico">🦠</span>COVID-19</div>
+          <div class="change-text">Ahora es estacional anual.</div>
+        </div>
+
+        <div class="change-card">
+          <div class="change-head"><span class="ico">⊗</span>Eliminación de refuerzos</div>
+          <div class="change-text">DPT y bOPV a los 5 años ya no se aplican.</div>
+        </div>
+
+        <div class="change-card">
+          <div class="change-head"><span class="ico">💧</span>bOPV en lactantes</div>
+          <div class="change-text">Aumenta de 1 a 3 dosis (2, 4, 6 meses).</div>
+        </div>
+
+        <div class="change-card">
+          <div class="change-head"><span class="ico">🧮</span>Total de vacunas</div>
+          <div class="change-text">Aumenta de 18 a 19 biológicos.</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================== -->
+  <!-- 2. TIPOS DE VACUNAS                    -->
+  <!-- ====================================== -->
+  <section class="section" id="tipos">
+    <h2 class="section-title"><span class="emoji">🧬</span> Tipos de Vacunas</h2>
+
+    <div class="two-cards">
+      <div class="info-card">
+        <div class="info-card-title">🧬 Vacunas Vivas Atenuadas</div>
+        <p>Preparaciones biológicas con microorganismos vivos modificados en laboratorio para no causar enfermedad, pero sí generar una respuesta inmune similar a la infección natural. Otorgan inmunidad prolongada y suelen requerir menos dosis.</p>
+        <p><strong>2025:</strong> BCG, SR, SRP, Fiebre Amarilla, Varicela, Rotavirus, bOPV.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-title">🛡 Vacunas Inactivadas o Muertas</div>
+        <p>Contienen microorganismos inactivados (muertos) por calor o sustancias químicas, o fragmentos purificados (subunidades, toxoides, recombinantes). Son más seguras en inmunodeprimidos y embarazadas, pero requieren más refuerzos.</p>
+        <p><strong>2025:</strong> Hexavalente (reemplaza a fIPV, DT, DPTO, Pentavalente), TdaP (nueva para embarazadas), Neumococo PCV13 (sustituye a Neumococo 10 valente), HB, VPH (ahora 1 dosis), Influenza, COVID-19 (estacional anual).</p>
+      </div>
+    </div>
+
+    <table class="types-table">
+      <thead>
+        <tr>
+          <th>🧬 Vivas Atenuadas</th>
+          <th>🛡 Inactivadas / Muertas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>💉 BCG <span class="pop-icon">👶</span></td><td>💉 Hexavalente <span class="pop-icon">👶</span></td></tr>
+        <tr><td>💉 SR <span class="pop-icon">👶</span></td><td>💉 TdaP <span class="pop-icon">🤰</span></td></tr>
+        <tr><td>💉 SRP <span class="pop-icon">👶</span></td><td>💉 Neumococo PCV13 <span class="pop-icon">👶</span></td></tr>
+        <tr><td>💉 Fiebre Amarilla <span class="pop-icon">👶</span></td><td>💉 HB <span class="pop-icon">👶</span></td></tr>
+        <tr><td>💉 Varicela <span class="pop-icon">👶</span></td><td>💉 VPH <span class="pop-icon">👶🧒</span></td></tr>
+        <tr><td>💧 Rotavirus <span class="pop-icon">👶</span></td><td>💉 Influenza <span class="pop-icon">👶🧑</span></td></tr>
+        <tr><td>💧 bOPV <span class="pop-icon">👶</span></td><td>💉 COVID-19 <span class="pop-icon">🧑</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ====================================== -->
+  <!-- 3. ESQUEMAS TARDÍOS / ACELERADOS       -->
+  <!-- ====================================== -->
+  <section class="section" id="tardio">
+    <h2 class="section-title"><span class="emoji">⏱</span> Esquemas Tardíos / Acelerados</h2>
+
+    <div class="principle-banner">
+      <strong>ⓘ Principio General</strong>
+      No reiniciar esquemas; continuar con dosis faltantes respetando intervalos mínimos y edades máximas.
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Vacuna</th>
+          <th>Intervalo Mínimo</th>
+          <th>Edad Máxima</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight"><td class="col-vacuna">Hexavalente / Pentavalente</td><td>4 semanas</td><td>11 meses 29 días</td></tr>
+        <tr><td class="col-vacuna">IPV (2024)</td><td>5 semanas</td><td>11 meses 29 días</td></tr>
+        <tr><td class="col-vacuna">Rotavirus</td><td>4 semanas</td><td>1ª dosis: 3 meses 29 días<br>2ª dosis: 7 meses 29 días</td></tr>
+        <tr><td class="col-vacuna">bOPV</td><td>4 semanas</td><td>2024: 11 meses 29 días<br>2025: 7 años 11 meses 29 días</td></tr>
+        <tr><td class="col-vacuna">Neumococo</td><td>4 semanas</td><td>11 meses 29 días</td></tr>
+        <tr><td class="col-vacuna">SRP</td><td>6 meses</td><td>6 años 11 meses 29 días</td></tr>
+        <tr><td class="col-vacuna">Influenza Pediátrica</td><td>4 semanas</td><td>11 meses 29 días</td></tr>
+        <tr><td class="col-vacuna">DPT / Hexavalente Refuerzo</td><td>1 año después de tercera dosis</td><td>5 años 11 meses 29 días</td></tr>
+        <tr><td class="col-vacuna">VPH</td><td>2024: 5 meses<br>2025: No aplica (1 dosis)</td><td>2024: 10 años 6 meses<br>2025: 15 años 11 meses 29 días</td></tr>
+        <tr><td class="col-vacuna">dT Adulto</td><td>1°→2°: 1 mes<br>2°→3°: 5 meses<br>3°→4°: 1 año<br>4°→5°: 1 año</td><td>Sin límite de edad</td></tr>
+      </tbody>
+    </table>
+
+    <div class="critical-notes" style="margin-top: 18px;">
+      <h4>⚠ Notas Críticas</h4>
+      <ul>
+        <li><strong>Rotavirus:</strong> No iniciar si el niño tiene más de 3 meses 29 días.</li>
+        <li><strong>SRP:</strong> No administrar segunda dosis si el niño tiene más de 6 años 11 meses 29 días.</li>
+        <li><strong>Vacunas vivas (SRP, Varicela, Fiebre Amarilla):</strong> Esperar 4 semanas entre ellas.</li>
+        <li><strong>En brotes de sarampión / rubéola:</strong> vacunación de bloqueo en 72 horas.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ====================================== -->
+  <!-- 4. CADENA DE FRÍO                      -->
+  <!-- ====================================== -->
+  <section class="section" id="cadena">
+    <h2 class="section-title"><span class="emoji">❄</span> Cadena de Frío</h2>
+
+    <div class="cold-chain-card">
+      <div class="cold-chain-title">¿Qué es la Cadena de Frío?</div>
+      <p>Es el proceso logístico que asegura la correcta conservación, almacenamiento y transporte de las vacunas, desde el laboratorio productor hasta el momento en que se va a realizar la vacunación al usuario / paciente; con el fin de preservar toda la potencia inmunogénica del biológico.</p>
+
+      <div class="cold-grid">
+        <div class="cold-item">
+          <div class="icon-big">🌡</div>
+          <h5>Temperatura</h5>
+          <p>2°C a 8°C para la mayoría de vacunas</p>
+        </div>
+        <div class="cold-item">
+          <div class="icon-big">❄</div>
+          <h5>Congelador</h5>
+          <p>-15°C a -25°C para paquetes fríos</p>
+        </div>
+        <div class="cold-item">
+          <div class="icon-big">📦</div>
+          <h5>Termos</h5>
+          <p>Mantienen temperatura hasta 48 horas</p>
+        </div>
+        <div class="cold-item">
+          <div class="icon-big">🌡</div>
+          <h5>Termómetros</h5>
+          <p>Monitoreo constante de temperatura</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="cold-chain-title" style="margin-bottom: 12px; padding-left: 10px;">Clasificación de Vacunas según Sensibilidad</h3>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>☀ Sensibles a la Luz</th>
+          <th>🔥 Sensibles a Temperaturas Altas</th>
+          <th>❄ Sensibles a Temperaturas Bajas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>SRP, SR, fIPV, bOPV, influenza, varicela, vacunas con Haemophilus influenzae, rotavirus, VPH, BCG, Fiebre Amarilla</td>
+          <td>bOPV, varicela, influenza, fIPV, SRP, DwPT, DPaT, pentavalente, hexavalente, SR, rotavirus, fiebre amarilla, BCG y dT adulto</td>
+          <td>DPaT, hexavalente, DpwT, pentavalente, hepatitis B, VPH, neumococo, dT adulto, influenza, fIPV y rotavirus</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert-red">
+      <h4>❗ Importante</h4>
+      <ul>
+        <li><strong>Reacciones anafilácticas:</strong> Ante reacción a pertussis, usar DT pediátrica (sin componente pertussis).</li>
+        <li><strong>Cadena de frío:</strong> Mantener entre +2°C y +8°C.</li>
+        <li><strong>Sensibles a la luz:</strong> SRP, Varicela, Fiebre Amarilla, BCG.</li>
+        <li><strong>Sensibles a congelación:</strong> Hexavalente, Neumococo, Influenza.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ====================================== -->
+  <!-- 5. VACUNAS COMPATIBLES / NO            -->
+  <!-- ====================================== -->
+  <section class="section" id="compatibilidad">
+    <h2 class="section-title"><span class="emoji">✓</span> Vacunas que se Pueden Administrar Juntas</h2>
+
+    <div class="compat-grid">
+      <div class="compat-card">
+        <h4><span class="check">✓</span> Inactivadas + Inactivadas</h4>
+        <ul>
+          <li>Hexavalente + Neumococo 13v</li>
+          <li>Hexavalente + Influenza</li>
+          <li>Neumococo 13v + Influenza</li>
+          <li>Hexavalente + Neumococo 13v + Influenza</li>
+        </ul>
+      </div>
+      <div class="compat-card">
+        <h4><span class="check">✓</span> Vivas Inyectables + Vivas Inyectables</h4>
+        <ul>
+          <li>SRP + Varicela</li>
+          <li>SRP + Fiebre Amarilla</li>
+          <li>Varicela + Fiebre Amarilla</li>
+          <li>SRP + Varicela + Fiebre Amarilla (mismo día)</li>
+        </ul>
+      </div>
+      <div class="compat-card">
+        <h4><span class="check">✓</span> Vivas Orales + Cualquier Vacuna</h4>
+        <ul>
+          <li>Rotavirus + Hexavalente</li>
+          <li>Rotavirus + Neumococo 13v</li>
+          <li>bOPV + Hexavalente</li>
+          <li>Rotavirus + Hexavalente + Neumococo 13v (mismo día)</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="margin-top: 26px;"><span class="emoji">✕</span> Vacunas que NO se Pueden Administrar Juntas</h2>
+
+    <div class="alert-yellow">
+      <h4>⊗ Requieren intervalos mínimos de 4 semanas</h4>
+      <ul>
+        <li>SRP y Varicela</li>
+        <li>SRP y Fiebre Amarilla</li>
+        <li>Varicela y Fiebre Amarilla</li>
+        <li>BCG y SRP / Varicela / Fiebre Amarilla</li>
+      </ul>
+    </div>
+
+    <div class="alert-blue">
+      <h4><span class="info-icon">i</span> Excepciones</h4>
+      <ul>
+        <li><strong>En brotes de sarampión / rubéola:</strong> administrar SRP inmediatamente, sin esperar 4 semanas.</li>
+        <li><strong>Embarazadas:</strong> Permitidas TdaP + Influenza (mismo día). Contraindicadas vacunas vivas.</li>
+      </ul>
+    </div>
+
+    <div class="alert-red">
+      <h4>❗ Verificación Obligatoria</h4>
+      <ul>
+        <li>Revisar carnet de vacunación</li>
+        <li>Verificar grupo de riesgo</li>
+        <li>Consultar recomendaciones del MSP</li>
+        <li>No administrar vacuna canina antirrábica en humanos (exclusiva para caninos en campañas)</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ====================================== -->
+  <!-- 6. ESAVI                                -->
+  <!-- ====================================== -->
+  <section class="section" id="esavi">
+    <h2 class="section-title"><span class="emoji">⚕</span> Eventos Supuestamente Atribuibles a la Vacunación o Inmunización (ESAVI)</h2>
+
+    <h3 class="cold-chain-title" style="margin-bottom: 12px; padding-left: 10px;">ESAVI No Graves</h3>
+
+    <table class="data-table">
+      <thead class="red">
+        <tr>
+          <th>Vacuna</th>
+          <th>Reacción Local</th>
+          <th>Fiebre</th>
+          <th>Irritabilidad / Malestar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="col-vacuna">Hepatitis B</td><td>30% Adultos / 5% Niños</td><td>1–6%</td><td>—</td></tr>
+        <tr><td class="col-vacuna">SRP</td><td>10%</td><td>5%</td><td>5%</td></tr>
+        <tr><td class="col-vacuna">OPV</td><td>Ninguna</td><td>Menos del 1%</td><td>Menos del 1%</td></tr>
+        <tr><td class="col-vacuna">DT</td><td>10%</td><td>10%</td><td>25%</td></tr>
+        <tr><td class="col-vacuna">DPT</td><td>50%</td><td>50%</td><td>60%</td></tr>
+        <tr><td class="col-vacuna">BCG</td><td>Común</td><td>—</td><td>—</td></tr>
+        <tr><td class="col-vacuna">Pfizer</td><td>90%</td><td>20%</td><td>59%</td></tr>
+        <tr><td class="col-vacuna">AstraZeneca</td><td>90%</td><td>30%</td><td>80%</td></tr>
+        <tr><td class="col-vacuna">Sinovac</td><td>20%</td><td>10%</td><td>10%</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="cold-chain-title" style="margin: 24px 0 12px; padding-left: 10px;">ESAVI Graves</h3>
+
+    <table class="data-table">
+      <thead class="red">
+        <tr>
+          <th>Vacuna</th>
+          <th>ESAVI Grave</th>
+          <th>Tiempo de Aparición</th>
+          <th>Tasa por 1.000.000 dosis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="col-vacuna">BCG</td><td>Linfadenitis Supurativa</td><td>2–6 meses</td><td>100–1.000</td></tr>
+        <tr><td class="col-vacuna">Hepatitis B</td><td>Anafilaxia</td><td>0–1 hora</td><td>1–2</td></tr>
+        <tr><td class="col-vacuna">SRP</td><td>Convulsiones febriles</td><td>5–12 días</td><td>333</td></tr>
+        <tr><td class="col-vacuna">OPV</td><td>Poliomielitis paralítica relacionada con la vacuna (VAPP)</td><td>4–30 días</td><td>1–4</td></tr>
+        <tr><td class="col-vacuna">DPT</td><td>Convulsiones</td><td>1–2 días</td><td>570</td></tr>
+        <tr><td class="col-vacuna">Fiebre Amarilla</td><td>Encefalitis</td><td>7–21 días</td><td>500–4.000</td></tr>
+        <tr><td class="col-vacuna">Pfizer</td><td>Miocarditis / Pericarditis</td><td>1–5 días</td><td>40 (2ª dosis)</td></tr>
+        <tr><td class="col-vacuna">AstraZeneca</td><td>Síndrome de trombocitopenia protrombótica inmune inducida por vacuna (VIPIT)</td><td>3–30 días</td><td>10</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============ Footer ============ -->
+  <div class="footer-source">
+    Fuente: <strong>MSP Ecuador · Manual ENI · Actualización 2025</strong> · Documento educativo basado en la normativa vigente
+  </div>
+
+</div>
+</body>
+</html>
