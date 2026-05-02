@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semáforo de Vacunas por Grupo Etario · ENI Ecuador</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text: #0f172a;
+    --text-secondary: #475569;
+    --muted: #94a3b8;
+
+    --primary: #1e3a8a;
+    --primary-mid: #2563eb;
+    --primary-light: #3b82f6;
+    --primary-soft: #eff6ff;
+    --primary-border: #bfdbfe;
+
+    --green: #16a34a;
+    --green-soft: #f0fdf4;
+    --green-border: #bbf7d0;
+    --green-dark: #15803d;
+
+    --orange: #f97316;
+    --orange-soft: #fff7ed;
+    --orange-border: #fed7aa;
+    --orange-dark: #c2410c;
+
+    --blue: #2563eb;
+    --blue-soft: #eff6ff;
+    --blue-border: #bfdbfe;
+    --blue-dark: #1e40af;
+
+    --danger: #dc2626;
+    --danger-dark: #b91c1c;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 28px 16px 50px;
+    line-height: 1.5;
+    font-size: 14px;
+  }
+
+  .wrapper { max-width: 900px; margin: 0 auto; }
+
+  .title-row {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 8px;
+  }
+  .title-icon {
+    width: 38px; height: 38px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  h1 {
+    font-size: 26px; font-weight: 800;
+    color: var(--primary);
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+  }
+  .description {
+    font-size: 14px;
+    color: var(--text);
+    margin-bottom: 20px;
+    line-height: 1.55;
+  }
+
+  .scheme-tabs {
+    display: flex; gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 5px;
+    margin-bottom: 22px;
+    max-width: 360px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  .scheme-tab {
+    flex: 1;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .scheme-tab.active {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(30,58,138,0.25);
+  }
+  .scheme-tab .year {
+    font-family: 'JetBrains Mono', monospace;
+    opacity: 0.75;
+    font-size: 11px;
+    margin-left: 2px;
+  }
+
+  .field { margin-bottom: 14px; }
+  .label {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 14px; font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 6px;
+  }
+  .label-icon { font-size: 14px; }
+
+  .select {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--primary-border);
+    border-radius: 8px;
+    background: var(--primary-soft);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%231e3a8a' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+  }
+  .select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(30,58,138,0.12);
+  }
+
+  .btn {
+    width: 100%;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px; font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 10px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-primary { background: var(--primary); }
+  .btn-primary:hover { background: #1e40af; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(30,58,138,0.3); }
+  .btn-danger { background: var(--danger); }
+  .btn-danger:hover { background: var(--danger-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(220,38,38,0.3); }
+
+  .results-section { margin-top: 26px; display: none; }
+  .results-section.show { display: block; }
+
+  .section-heading {
+    font-size: 18px; font-weight: 800;
+    margin: 22px 0 12px;
+    letter-spacing: -0.01em;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-heading.optima { color: var(--green); }
+  .section-heading.proxima { color: var(--orange); }
+  .section-heading.tardia { color: var(--blue); }
+  .section-heading::before {
+    content: ''; width: 4px; height: 18px;
+    border-radius: 2px;
+    background: currentColor;
+  }
+
+  .vax-card {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 16px;
+    background: var(--primary-soft);
+    border: 1px solid var(--primary-border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+  }
+  @media (max-width: 540px) {
+    .vax-card { grid-template-columns: 1fr; gap: 10px; }
+  }
+
+  .badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 8px 14px;
+    background: #fff;
+    border: 1.5px solid;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    height: fit-content;
+    align-self: flex-start;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .badge.optima  { color: var(--green);  border-color: var(--green-border); background: var(--green-soft); }
+  .badge.proxima { color: var(--orange); border-color: var(--orange-border); background: var(--orange-soft); }
+  .badge.tardia  { color: var(--blue);   border-color: var(--blue-border); background: var(--blue-soft); }
+
+  .vax-info { min-width: 0; }
+  .vax-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 2px;
+    letter-spacing: -0.01em;
+  }
+  .vax-grupo {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+  .vax-grupo::before {
+    content: '👤'; margin-right: 4px; font-size: 12px;
+  }
+  .vax-data {
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.5;
+  }
+  .vax-data strong {
+    color: var(--text);
+    font-weight: 700;
+  }
+  .vax-dosis {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  .empty-section {
+    background: var(--surface);
+    border: 1px dashed var(--border-strong);
+    border-radius: 10px;
+    padding: 18px 16px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .interval-block {
+    margin-top: 32px;
+    background: var(--surface);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .interval-header {
+    background: var(--primary);
+    color: #fff;
+    padding: 18px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .table-wrap { overflow-x: auto; }
+  table.intervals {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  table.intervals thead { background: var(--primary-soft); }
+  table.intervals th {
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    border-bottom: 1px solid var(--primary-border);
+    white-space: nowrap;
+  }
+  table.intervals td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.45;
+  }
+  table.intervals tr:nth-child(even) td { background: #fafbfc; }
+  table.intervals tr:last-child td { border-bottom: none; }
+
+  .col-vacuna { font-weight: 700; color: var(--primary); white-space: nowrap; }
+  .col-regular { color: var(--green-dark); font-weight: 600; }
+  .col-tardio  { color: var(--orange-dark); font-weight: 600; }
+  .col-max     { color: var(--text); font-weight: 600; white-space: nowrap; }
+
+  .disclaimer {
+    margin-top: 22px;
+    padding: 12px 14px;
+    background: var(--orange-soft);
+    border: 1px solid var(--orange-border);
+    border-radius: 8px;
+    font-size: 11px;
+    color: var(--orange-dark);
+    line-height: 1.5;
+  }
+  .disclaimer strong { color: #7c2d12; }
+  .source {
+    margin-top: 12px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 540px) {
+    body { padding: 22px 12px 40px; }
+    h1 { font-size: 20px; }
+    .interval-header { font-size: 13px; padding: 14px 18px; }
+    table.intervals { font-size: 12px; }
+    table.intervals th, table.intervals td { padding: 9px 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="title-row">
+    <div class="title-icon">⏱</div>
+    <h1>Semáforo de Vacunas por Grupo Etario</h1>
+  </div>
+
+  <p class="description">
+    Esta herramienta te permite identificar las vacunas correspondientes según la edad del paciente,
+    indicando si están en <strong>edad óptima</strong>, <strong>captación tardía</strong> o <strong>próximas a aplicar</strong>
+    según el Esquema Nacional de Vacunación de Ecuador <span id="year-tag">2019</span>.
+  </p>
+
+  <div class="scheme-tabs" role="tablist">
+    <button class="scheme-tab active" data-scheme="2019">Esquema <span class="year">2019</span></button>
+    <button class="scheme-tab" data-scheme="2025">Esquema <span class="year">2025</span></button>
+  </div>
+
+  <div class="field">
+    <label class="label"><span class="label-icon">🕐</span> Horas:</label>
+    <select class="select" id="age-h"></select>
+  </div>
+  <div class="field">
+    <label class="label"><span class="label-icon">📅</span> Días:</label>
+    <select class="select" id="age-d"></select>
+  </div>
+  <div class="field">
+    <label class="label"><span class="label-icon">📆</span> Meses:</label>
+    <select class="select" id="age-m"></select>
+  </div>
+  <div class="field">
+    <label class="label"><span class="label-icon">🎂</span> Años:</label>
+    <select class="select" id="age-y"></select>
+  </div>
+
+  <button class="btn btn-primary" id="btn-calc">🧮 Calcular Vacunas</button>
+  <button class="btn btn-danger" id="btn-reset">↻ Reiniciar</button>
+
+  <div class="results-section" id="results">
+    <h2 class="section-heading optima">Vacunas en edad óptima</h2>
+    <div id="list-optima"></div>
+    <h2 class="section-heading proxima">Vacunas próximas a aplicar</h2>
+    <div id="list-proxima"></div>
+    <h2 class="section-heading tardia">Vacunas con captación tardía</h2>
+    <div id="list-tardia"></div>
+  </div>
+
+  <div class="interval-block">
+    <div class="interval-header" id="interval-header">
+      TABLA DE INTERVALOS MÍNIMOS (ESQUEMA REGULAR Y TARDÍO) - ECUADOR 2019
+    </div>
+    <div class="table-wrap">
+      <table class="intervals">
+        <thead>
+          <tr>
+            <th>Vacuna</th>
+            <th>Esquema Regular</th>
+            <th>Esquema Tardío</th>
+            <th>Edad Máxima Permitida</th>
+          </tr>
+        </thead>
+        <tbody id="interval-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    <strong>⚠ Aviso clínico:</strong> Esta herramienta es un apoyo educativo basado en el Manual ENI Ecuador. Verificar siempre normativa vigente, contraindicaciones individuales y prescripción médica. No sustituye criterio profesional.
+  </div>
+  <div class="source">Fuente: <strong>MSP Ecuador · ENI 2019 / Actualización 2025</strong></div>
+
+</div>
+
+<script>
+const SCHEMES = {
+
+  '2019': [
+    { id:'HB', nombre:'HB', grupo:'Recién nacido',
+      edadOptima:'Al nacer', edadMaxima:'7 días', intervalo:'-', dosis:'Única dosis',
+      optimalStart:0, optimalEnd:1, maxDay:7,
+      regular:'Única dosis RN, primeras 24h', tardio:'Hasta 7 días de nacido', maxText:'7 días' },
+    { id:'BCG', nombre:'BCG', grupo:'Recién nacido',
+      edadOptima:'Al nacer', edadMaxima:'11 meses 29 días', intervalo:'-', dosis:'Única dosis',
+      optimalStart:0, optimalEnd:30, maxDay:364,
+      regular:'Única dosis RN, primeras 24h', tardio:'Hasta 11m 29d', maxText:'11m 29d (364 días)' },
+    { id:'ROTA', nombre:'Rotavirus', grupo:'Lactante',
+      edadOptima:'2 y 4 meses', edadMaxima:'7 meses 29 días', intervalo:'4 semanas', dosis:'2 dosis',
+      optimalStart:60, optimalEnd:120, maxDay:239,
+      regular:'2m y 4m (1 mes entre dosis)', tardio:'1ª dosis hasta 3m, 2ª hasta 7m 29d (mín. 4 semanas)', maxText:'7m 29d' },
+    { id:'PENTA', nombre:'Pentavalente', grupo:'Lactante',
+      edadOptima:'2, 4, 6 meses', edadMaxima:'11 meses 29 días', intervalo:'4 semanas', dosis:'3 dosis',
+      optimalStart:60, optimalEnd:180, maxDay:364,
+      regular:'2m, 4m, 6m (4 semanas entre dosis)', tardio:'Recuperar antes de 12 meses', maxText:'11m 29d' },
+    { id:'NEUMO', nombre:'Neumococo', grupo:'Lactante',
+      edadOptima:'2, 4, 6 meses', edadMaxima:'11 meses 29 días', intervalo:'4 semanas', dosis:'3 dosis',
+      optimalStart:60, optimalEnd:180, maxDay:364,
+      regular:'2m, 4m, 6m (4 semanas entre dosis)', tardio:'Hasta 11m 29d', maxText:'11m 29d' },
+    { id:'IPV', nombre:'IPV', grupo:'Lactante',
+      edadOptima:'2 y 4 meses', edadMaxima:'11 meses 29 días', intervalo:'5 semanas', dosis:'2 dosis',
+      optimalStart:60, optimalEnd:120, maxDay:364,
+      regular:'2m, 4m (5 semanas entre dosis)', tardio:'Hasta 11m 29d', maxText:'11m 29d' },
+    { id:'BOPV', nombre:'bOPV', grupo:'Lactante / Preescolar',
+      edadOptima:'6 m, 18 m, 5 a', edadMaxima:'5 años 11 meses 29 días', intervalo:'12 m / 3 a 6 m', dosis:'3 dosis',
+      optimalStart:180, optimalEnd:1825, maxDay:2154,
+      regular:'6m, 18m, 5a (12m / 3a6m entre dosis)', tardio:'Hasta 11m 29d (1ª) / 5a 11m 29d (refuerzos)', maxText:'5a 11m 29d' },
+    { id:'DPT1', nombre:'DPT (1er Refuerzo)', grupo:'Niño pequeño',
+      edadOptima:'18 meses', edadMaxima:'23 meses 29 días', intervalo:'1 año tras 3ª Pentavalente', dosis:'1 refuerzo',
+      optimalStart:540, optimalEnd:570, maxDay:719,
+      regular:'18m (1 año tras 3ª Pentavalente)', tardio:'Hasta 23m 29d', maxText:'23m 29d' },
+    { id:'SRP', nombre:'SRP', grupo:'Preescolar',
+      edadOptima:'12 y 18 meses', edadMaxima:'23 meses 29 días', intervalo:'6 meses', dosis:'2 dosis',
+      optimalStart:365, optimalEnd:570, maxDay:719,
+      regular:'12m y 18m (6 meses)', tardio:'2ª dosis hasta 23m 29d (mín. 6 meses)', maxText:'23m 29d' },
+    { id:'SR', nombre:'SR', grupo:'Adultos',
+      edadOptima:'12 meses (campañas)', edadMaxima:'Sin límite', intervalo:'-', dosis:'Única dosis',
+      optimalStart:365, optimalEnd:99999, maxDay:99999,
+      regular:'12m', tardio:'≥7 años según necesidad', maxText:'Sin límite' },
+    { id:'FA', nombre:'Fiebre Amarilla', grupo:'Preescolar',
+      edadOptima:'12 meses', edadMaxima:'23 meses 29 días', intervalo:'-', dosis:'Única dosis',
+      optimalStart:365, optimalEnd:395, maxDay:719,
+      regular:'12m', tardio:'Hasta 23m 29d', maxText:'23m 29d' },
+    { id:'VAR', nombre:'Varicela', grupo:'Preescolar',
+      edadOptima:'15 meses', edadMaxima:'23 meses 29 días', intervalo:'-', dosis:'Única dosis',
+      optimalStart:450, optimalEnd:480, maxDay:719,
+      regular:'15m', tardio:'No aplicar si >24m', maxText:'23m 29d' },
+    { id:'INF', nombre:'Influenza', grupo:'Todas las edades',
+      edadOptima:'6 meses en adelante', edadMaxima:'Sin límite', intervalo:'Anual', dosis:'1 dosis anual',
+      optimalStart:180, optimalEnd:99999, maxDay:99999,
+      regular:'6m (anual, sin límite)', tardio:'Según grupo riesgo', maxText:'Sin límite' },
+    { id:'DPT5', nombre:'DPT (5 años)', grupo:'Escolar',
+      edadOptima:'5 años', edadMaxima:'5 años 11 meses 29 días', intervalo:'3 a 6 m tras 1er refuerzo', dosis:'1 refuerzo',
+      optimalStart:1825, optimalEnd:1855, maxDay:2154,
+      regular:'5a (3a6m tras 1er refuerzo)', tardio:'Hasta 5a 11m 29d', maxText:'5a 11m 29d' },
+    { id:'BOPV5', nombre:'bOPV (5 años)', grupo:'Escolar',
+      edadOptima:'5 años', edadMaxima:'5 años 11 meses 29 días', intervalo:'3 a 6 m tras dosis anterior', dosis:'1 refuerzo',
+      optimalStart:1825, optimalEnd:1855, maxDay:2154,
+      regular:'5a (3a6m tras dosis anterior)', tardio:'Hasta 5a 11m 29d', maxText:'5a 11m 29d' },
+    { id:'VPH', nombre:'VPH', grupo:'Adolescente',
+      edadOptima:'9 años', edadMaxima:'10 años 6 meses', intervalo:'5 meses', dosis:'2 dosis',
+      optimalStart:3285, optimalEnd:3315, maxDay:3833,
+      regular:'9a (5 meses entre dosis)', tardio:'Hasta 10a 6m', maxText:'10a 6m' },
+    { id:'DT15', nombre:'dT (15 años)', grupo:'Adolescente',
+      edadOptima:'15 años', edadMaxima:'15 años 11 meses 29 días', intervalo:'-', dosis:'1 refuerzo',
+      optimalStart:5475, optimalEnd:5505, maxDay:5840,
+      regular:'15a', tardio:'Hasta 15a 11m 29d', maxText:'15a 11m 29d' }
+  ],
+
+  '2025': [
+    { id:'HB', nombre:'HB', grupo:'Recién nacido',
+      edadOptima:'Al nacer', edadMaxima:'7 días', intervalo:'-', dosis:'Única dosis',
+      optimalStart:0, optimalEnd:1, maxDay:7,
+      regular:'Única dosis RN, primeras 24h', tardio:'Hasta 7 días (luego continuar con hexavalente)', maxText:'7 días' },
+    { id:'BCG', nombre:'BCG', grupo:'Recién nacido',
+      edadOptima:'Al nacer', edadMaxima:'11 meses 29 días', intervalo:'-', dosis:'Única dosis',
+      optimalStart:0, optimalEnd:30, maxDay:364,
+      regular:'Única dosis RN, primeras 24h', tardio:'Hasta 11m 29d', maxText:'11m 29d (364 días)' },
+    { id:'ROTA', nombre:'Rotavirus', grupo:'Lactante',
+      edadOptima:'2 y 4 meses', edadMaxima:'7 meses 29 días', intervalo:'4 semanas', dosis:'2 dosis',
+      optimalStart:60, optimalEnd:120, maxDay:239,
+      regular:'2m y 4m (1 mes entre dosis)', tardio:'1ª dosis hasta 3m, 2ª hasta 7m 29d (mín. 4 semanas)', maxText:'7m 29d' },
+    { id:'HEXA', nombre:'Hexavalente', grupo:'Lactante',
+      edadOptima:'2, 4, 6 meses', edadMaxima:'11 meses 29 días', intervalo:'4 semanas', dosis:'3 dosis (incluye IPV)',
+      optimalStart:60, optimalEnd:180, maxDay:364,
+      regular:'2m, 4m, 6m (4 semanas entre dosis)', tardio:'Recuperar antes de 12 meses', maxText:'11m 29d' },
+    { id:'PCV13', nombre:'Neumococo PCV-13', grupo:'Lactante',
+      edadOptima:'2, 4, 6 meses', edadMaxima:'11 meses 29 días', intervalo:'4 semanas', dosis:'3 dosis',
+      optimalStart:60, optimalEnd:180, maxDay:364,
+      regular:'2m, 4m, 6m (4 semanas entre dosis)', tardio:'Hasta 11m 29d', maxText:'11m 29d' },
+    { id:'BOPV', nombre:'bOPV (Refuerzos)', grupo:'Niño pequeño / Preescolar',
+      edadOptima:'18 m y 5 a', edadMaxima:'5 años 11 meses 29 días', intervalo:'3 a 6 m', dosis:'2 refuerzos',
+      optimalStart:540, optimalEnd:1825, maxDay:2154,
+      regular:'18m, 5a (refuerzos)', tardio:'Hasta 5a 11m 29d', maxText:'5a 11m 29d' },
+    { id:'DPT1', nombre:'DPT (1er Refuerzo)', grupo:'Niño pequeño',
+      edadOptima:'18 meses', edadMaxima:'23 meses 29 días', intervalo:'1 año tras 3ª Hexavalente', dosis:'1 refuerzo',
+      optimalStart:540, optimalEnd:570, maxDay:719,
+      regular:'18m (1 año tras 3ª Hexavalente)', tardio:'Hasta 23m 29d', maxText:'23m 29d' },
+    { id:'SRP', nombre:'SRP', grupo:'Preescolar',
+      edadOptima:'12 y 18 meses', edadMaxima:'23 meses 29 días', intervalo:'6 meses', dosis:'2 dosis',
+      optimalStart:365, optimalEnd:570, maxDay:719,
+      regular:'12m y 18m (6 meses)', tardio:'2ª dosis hasta 23m 29d (mín. 6 meses)', maxText:'23m 29d' },
+    { id:'FA', nombre:'Fiebre Amarilla', grupo:'Preescolar',
+      edadOptima:'12 meses', edadMaxima:'23 meses 29 días', intervalo:'-', dosis:'Única dosis',
+      optimalStart:365, optimalEnd:395, maxDay:719,
+      regular:'12m', tardio:'Hasta 23m 29d', maxText:'23m 29d' },
+    { id:'VAR', nombre:'Varicela', grupo:'Preescolar',
+      edadOptima:'15 meses', edadMaxima:'23 meses 29 días', intervalo:'-', dosis:'Única dosis',
+      optimalStart:450, optimalEnd:480, maxDay:719,
+      regular:'15m', tardio:'No aplicar si >24m', maxText:'23m 29d' },
+    { id:'INF', nombre:'Influenza', grupo:'Todas las edades',
+      edadOptima:'6 meses en adelante', edadMaxima:'Sin límite', intervalo:'Anual', dosis:'1 dosis anual',
+      optimalStart:180, optimalEnd:99999, maxDay:99999,
+      regular:'6m (anual, sin límite)', tardio:'Según grupo riesgo', maxText:'Sin límite' },
+    { id:'DPT5', nombre:'DPT (5 años)', grupo:'Escolar',
+      edadOptima:'5 años', edadMaxima:'5 años 11 meses 29 días', intervalo:'3 a 6 m tras 1er refuerzo', dosis:'1 refuerzo',
+      optimalStart:1825, optimalEnd:1855, maxDay:2154,
+      regular:'5a (3a6m tras 1er refuerzo)', tardio:'Hasta 5a 11m 29d', maxText:'5a 11m 29d' },
+    { id:'VPH', nombre:'VPH (niñas y niños)', grupo:'Adolescente',
+      edadOptima:'9 años', edadMaxima:'14 años (dosis única)', intervalo:'-', dosis:'Dosis única',
+      optimalStart:3285, optimalEnd:3315, maxDay:5475,
+      regular:'9a (dosis única, niñas y niños)', tardio:'Hasta 14a (≥15a usar 2 dosis)', maxText:'14a' },
+    { id:'DT15', nombre:'dT (15 años)', grupo:'Adolescente',
+      edadOptima:'15 años', edadMaxima:'15 años 11 meses 29 días', intervalo:'-', dosis:'1 refuerzo',
+      optimalStart:5475, optimalEnd:5505, maxDay:5840,
+      regular:'15a', tardio:'Hasta 15a 11m 29d', maxText:'15a 11m 29d' },
+    { id:'COVID', nombre:'COVID-19', grupo:'Población vulnerable',
+      edadOptima:'Anual desde 6 meses', edadMaxima:'Sin límite', intervalo:'12 meses', dosis:'1 dosis anual',
+      optimalStart:180, optimalEnd:99999, maxDay:99999,
+      regular:'Anual en grupos de riesgo', tardio:'Según indicación clínica', maxText:'Sin límite' }
+  ]
+};
+
+let currentScheme = '2019';
+
+const elH = document.getElementById('age-h');
+const elD = document.getElementById('age-d');
+const elM = document.getElementById('age-m');
+const elY = document.getElementById('age-y');
+const elResults = document.getElementById('results');
+const elIntervalBody = document.getElementById('interval-body');
+const elIntervalHeader = document.getElementById('interval-header');
+const elYearTag = document.getElementById('year-tag');
+
+function populate(el, max, label) {
+  el.innerHTML = `<option value="">${label}</option>`;
+  for (let i = 0; i <= max; i++) {
+    const o = document.createElement('option');
+    o.value = i; o.textContent = i;
+    el.appendChild(o);
+  }
+}
+populate(elH, 23, 'Horas');
+populate(elD, 30, 'Días');
+populate(elM, 11, 'Meses');
+populate(elY, 100, 'Años');
+
+function getTotalDays() {
+  const h = parseInt(elH.value) || 0;
+  const d = parseInt(elD.value) || 0;
+  const m = parseInt(elM.value) || 0;
+  const y = parseInt(elY.value) || 0;
+  return y * 365 + m * 30 + d + h / 24;
+}
+
+function classify(vac, ageDays) {
+  if (ageDays < vac.optimalStart) return 'proxima';
+  if (ageDays <= vac.optimalEnd) return 'optima';
+  if (ageDays <= vac.maxDay) return 'tardia';
+  return 'no-aplicable';
+}
+
+function buildCard(vac, status) {
+  const labels = {
+    optima:  'Edad óptima',
+    proxima: 'Próxima a aplicar',
+    tardia:  'Captación tardía'
+  };
+  return `
+    <div class="vax-card">
+      <span class="badge ${status}">${labels[status]}</span>
+      <div class="vax-info">
+        <div class="vax-name">${vac.nombre}</div>
+        <div class="vax-grupo">${vac.grupo}</div>
+        <div class="vax-data"><strong>Edad óptima:</strong> ${vac.edadOptima}</div>
+        <div class="vax-data"><strong>Edad máxima:</strong> ${vac.edadMaxima}</div>
+        <div class="vax-data"><strong>Intervalo:</strong> ${vac.intervalo}</div>
+        <div class="vax-dosis">${vac.dosis}</div>
+      </div>
+    </div>
+  `;
+}
+
+function calculate() {
+  const ageDays = getTotalDays();
+  const vacunas = SCHEMES[currentScheme];
+  const groups = { optima: [], proxima: [], tardia: [] };
+
+  vacunas.forEach(v => {
+    const s = classify(v, ageDays);
+    if (s !== 'no-aplicable') groups[s].push(v);
+  });
+
+  document.getElementById('list-optima').innerHTML  = renderList(groups.optima, 'optima',  'No hay vacunas en edad óptima para esta edad.');
+  document.getElementById('list-proxima').innerHTML = renderList(groups.proxima, 'proxima', 'No hay vacunas próximas a aplicar.');
+  document.getElementById('list-tardia').innerHTML  = renderList(groups.tardia, 'tardia',  'No hay vacunas con captación tardía pendientes.');
+
+  elResults.classList.add('show');
+  elResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderList(list, status, emptyMsg) {
+  if (list.length === 0) return `<div class="empty-section">${emptyMsg}</div>`;
+  return list.map(v => buildCard(v, status)).join('');
+}
+
+function renderTable() {
+  const vacunas = SCHEMES[currentScheme];
+  elIntervalBody.innerHTML = vacunas.map(v => `
+    <tr>
+      <td class="col-vacuna">${v.nombre}</td>
+      <td class="col-regular">${v.regular}</td>
+      <td class="col-tardio">${v.tardio}</td>
+      <td class="col-max">${v.maxText}</td>
+    </tr>
+  `).join('');
+  elIntervalHeader.textContent = `TABLA DE INTERVALOS MÍNIMOS (ESQUEMA REGULAR Y TARDÍO) - ECUADOR ${currentScheme}`;
+  elYearTag.textContent = currentScheme;
+}
+
+function reset() {
+  elH.value = ''; elD.value = ''; elM.value = ''; elY.value = '';
+  elResults.classList.remove('show');
+  document.getElementById('list-optima').innerHTML  = '';
+  document.getElementById('list-proxima').innerHTML = '';
+  document.getElementById('list-tardia').innerHTML  = '';
+}
+
+document.getElementById('btn-calc').addEventListener('click', calculate);
+document.getElementById('btn-reset').addEventListener('click', reset);
+
+document.querySelectorAll('.scheme-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.scheme-tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    currentScheme = t.dataset.scheme;
+    renderTable();
+    reset();
+  });
+});
+
+renderTable();
+</script>
+</body>
+</html>
