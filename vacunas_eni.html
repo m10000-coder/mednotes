@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vacunas ENI · MSP Ecuador</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --surface-hover: #f1f5f9;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text: #0f172a;
+    --text-secondary: #475569;
+    --muted: #94a3b8;
+
+    --blue: #3b82f6;
+    --blue-soft: #eff6ff;
+    --blue-border: #bfdbfe;
+    --blue-text: #1e40af;
+
+    --green: #10b981;
+    --green-soft: #ecfdf5;
+    --green-border: #a7f3d0;
+    --green-text: #065f46;
+
+    --orange: #f59e0b;
+    --orange-soft: #fffbeb;
+    --orange-text: #92400e;
+
+    --red: #ef4444;
+    --red-soft: #fef2f2;
+    --red-text: #991b1b;
+
+    --purple: #8b5cf6;
+    --purple-soft: #f5f3ff;
+    --purple-text: #5b21b6;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    padding: 32px 20px 60px;
+    line-height: 1.5;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; }
+
+  /* ========== Header ========== */
+  .header { margin-bottom: 28px; }
+  .header-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--blue-soft);
+    border: 1px solid var(--blue-border);
+    color: var(--blue-text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.15em;
+    padding: 4px 10px; border-radius: 3px;
+    margin-bottom: 14px;
+  }
+  .header-tag::before { content: '◉'; font-size: 8px; }
+  h1 {
+    font-size: 36px; font-weight: 700;
+    letter-spacing: -0.03em; line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  h1 span { color: var(--blue); }
+  .subtitle { color: var(--text-secondary); font-size: 14px; }
+
+  /* ========== Stats bar ========== */
+  .stats {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin: 20px 0 24px;
+  }
+  .stat-card {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 10px;
+    flex: 1; min-width: 140px;
+  }
+  .stat-num {
+    font-size: 22px; font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 11px; color: var(--text-secondary);
+    letter-spacing: 0.05em; text-transform: uppercase;
+    font-weight: 500;
+  }
+  .stat-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+
+  /* ========== Controls ========== */
+  .controls {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .search-box {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    transition: border 0.15s, box-shadow 0.15s;
+  }
+  .search-box:focus-within {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px var(--blue-soft);
+  }
+  .search-box svg { width: 16px; height: 16px; color: var(--muted); flex-shrink: 0; }
+  .search-input {
+    flex: 1; border: none; outline: none;
+    background: transparent;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .search-input::placeholder { color: var(--muted); }
+
+  .filter-group {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    align-items: center;
+  }
+  .filter-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-right: 6px;
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--surface);
+    font-size: 12px; font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .chip:hover {
+    background: var(--surface-alt);
+    border-color: var(--border-strong);
+    color: var(--text);
+  }
+  .chip.active {
+    background: var(--text);
+    color: #fff;
+    border-color: var(--text);
+  }
+  .chip-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+  }
+  .chip-emoji { font-size: 12px; }
+
+  /* ========== Grid ========== */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 14px;
+  }
+
+  /* ========== Card ========== */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    position: relative;
+    cursor: pointer;
+    display: flex; flex-direction: column;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    border-color: var(--border-strong);
+  }
+  .card.hidden { display: none; }
+
+  .card-stripe {
+    height: 4px;
+    background: var(--blue);
+  }
+  .card[data-type="viva"] .card-stripe { background: var(--green); }
+  .card[data-type="inactivada"] .card-stripe { background: var(--blue); }
+
+  .card-header {
+    padding: 16px 18px 12px;
+    display: flex; align-items: flex-start; gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-icon {
+    width: 42px; height: 42px;
+    background: var(--surface-alt);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+  }
+  .card-title-wrap { flex: 1; min-width: 0; }
+  .card-title {
+    font-size: 16px; font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin-bottom: 4px;
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .type-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .type-dot.viva { background: var(--green); }
+  .type-dot.inactivada { background: var(--blue); }
+
+  .card-subtitle {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* Badges */
+  .badges {
+    display: flex; flex-wrap: wrap; gap: 5px;
+    padding: 10px 18px;
+    background: var(--surface-alt);
+    border-bottom: 1px solid var(--border);
+  }
+  .badge {
+    font-size: 9px; font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .badge-route { background: var(--blue-soft); color: var(--blue-text); border: 1px solid var(--blue-border); }
+  .badge-pop   { background: var(--purple-soft); color: var(--purple-text); border: 1px solid #ddd6fe; }
+  .badge-time  { background: var(--orange-soft); color: var(--orange-text); border: 1px solid #fed7aa; }
+  .badge-time.short { background: var(--red-soft); color: var(--red-text); border: 1px solid #fecaca; }
+  .badge-time.medium { background: var(--orange-soft); color: var(--orange-text); border: 1px solid #fed7aa; }
+  .badge-time.long { background: var(--green-soft); color: var(--green-text); border: 1px solid var(--green-border); }
+
+  /* Card body - data rows */
+  .card-body {
+    padding: 14px 18px;
+    display: flex; flex-direction: column; gap: 10px;
+    flex: 1;
+  }
+  .data-row {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 13px;
+  }
+  .data-icon {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 11px;
+    background: var(--surface-alt);
+  }
+  .data-text { flex: 1; line-height: 1.45; min-width: 0; }
+  .data-key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    font-weight: 600;
+  }
+  .data-value { color: var(--text); }
+  .data-value.warn { color: var(--orange-text); font-weight: 500; }
+  .data-value.note {
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  /* ========== Empty state ========== */
+  .empty-state {
+    grid-column: 1 / -1;
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--muted);
+  }
+  .empty-state h3 { font-size: 18px; color: var(--text-secondary); margin-bottom: 6px; }
+
+  /* ========== Legend ========== */
+  .legend {
+    margin-top: 28px;
+    padding: 22px 24px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+  }
+  .legend-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .legend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px;
+    font-size: 13px;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .legend-icon {
+    width: 26px; height: 26px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface-alt);
+    border-radius: 6px;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .legend-key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--blue-text);
+  }
+  .legend-val { color: var(--text-secondary); font-size: 12px; }
+
+  .source {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+  .source strong { color: var(--text-secondary); }
+
+  /* ========== Modal ========== */
+  .modal-bg {
+    position: fixed; inset: 0;
+    background: rgba(15,23,42,0.5);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 100;
+    padding: 20px;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: 16px;
+    max-width: 520px; width: 100%;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: modalIn 0.2s ease;
+  }
+  @keyframes modalIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .modal-close {
+    position: absolute; top: 14px; right: 14px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    width: 32px; height: 32px; border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary);
+    transition: all 0.15s;
+  }
+  .modal-close:hover { background: var(--text); color: #fff; }
+
+  /* ========== Responsive ========== */
+  @media (max-width: 600px) {
+    body { padding: 24px 14px 50px; }
+    h1 { font-size: 26px; }
+    .grid { grid-template-columns: 1fr; }
+    .stats { display: grid; grid-template-columns: repeat(2, 1fr); }
+    .stat-card { min-width: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="header">
+    <div class="header-tag">MSP Ecuador · Manual ENI</div>
+    <h1>Vacunas del <span>Esquema Nacional</span></h1>
+    <p class="subtitle">Estrategia Nacional de Inmunizaciones · Presentación, conservación y observaciones clínicas</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card">
+      <div>
+        <div class="stat-num" id="stat-total">19</div>
+        <div class="stat-label">Vacunas</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-dot" style="background: var(--green)"></div>
+      <div>
+        <div class="stat-num" id="stat-viva">7</div>
+        <div class="stat-label">Vivas atenuadas</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-dot" style="background: var(--blue)"></div>
+      <div>
+        <div class="stat-num" id="stat-inact">12</div>
+        <div class="stat-label">Inactivadas</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div>
+        <div class="stat-num" id="stat-shown">19</div>
+        <div class="stat-label">Visibles</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls: search + filters -->
+  <div class="controls">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" class="search-input" id="search" placeholder="Buscar vacuna, presentación, observación...">
+    </div>
+
+    <div class="filter-group" id="filter-type">
+      <span class="filter-label">Tipo</span>
+      <button class="chip active" data-filter="type" data-value="all">Todas</button>
+      <button class="chip" data-filter="type" data-value="viva"><span class="chip-dot" style="background: var(--green)"></span>Viva atenuada</button>
+      <button class="chip" data-filter="type" data-value="inactivada"><span class="chip-dot" style="background: var(--blue)"></span>Inactivada</button>
+    </div>
+
+    <div class="filter-group" id="filter-pop" style="margin-top: 10px;">
+      <span class="filter-label">Población</span>
+      <button class="chip active" data-filter="pop" data-value="all">Todas</button>
+      <button class="chip" data-filter="pop" data-value="lactante"><span class="chip-emoji">👶</span>Lactantes</button>
+      <button class="chip" data-filter="pop" data-value="adolescente"><span class="chip-emoji">🧒</span>Adolescentes</button>
+      <button class="chip" data-filter="pop" data-value="embarazada"><span class="chip-emoji">🤰</span>Embarazadas</button>
+      <button class="chip" data-filter="pop" data-value="adulto"><span class="chip-emoji">🧑</span>Adultos</button>
+      <button class="chip" data-filter="pop" data-value="canina"><span class="chip-emoji">🐶</span>Canina</button>
+    </div>
+
+    <div class="filter-group" id="filter-route" style="margin-top: 10px;">
+      <span class="filter-label">Vía</span>
+      <button class="chip active" data-filter="route" data-value="all">Todas</button>
+      <button class="chip" data-filter="route" data-value="IM">IM</button>
+      <button class="chip" data-filter="route" data-value="SC">SC</button>
+      <button class="chip" data-filter="route" data-value="ID">ID</button>
+      <button class="chip" data-filter="route" data-value="oral">Oral</button>
+    </div>
+  </div>
+
+  <!-- Grid de cards -->
+  <div class="grid" id="grid"></div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-title">Leyenda y abreviaturas</div>
+    <div class="legend-grid">
+      <div class="legend-item"><div class="legend-icon" style="background: var(--green-soft)"><span class="chip-dot" style="background: var(--green); width:10px; height:10px;"></span></div><div><div class="legend-val"><strong style="color: var(--text)">Viva atenuada</strong></div><div class="legend-val">BCG, Rotavirus, OPV, SRP, FA, Varicela, SR</div></div></div>
+      <div class="legend-item"><div class="legend-icon" style="background: var(--blue-soft)"><span class="chip-dot" style="background: var(--blue); width:10px; height:10px;"></span></div><div><div class="legend-val"><strong style="color: var(--text)">Inactivada / muerta</strong></div><div class="legend-val">HB, Penta, IPV, Neumo, Influenza, VPH, DPT, COVID</div></div></div>
+      <div class="legend-item"><div class="legend-icon">👶</div><div><span class="legend-val">Lactantes y niños</span></div></div>
+      <div class="legend-item"><div class="legend-icon">🧒</div><div><span class="legend-val">Adolescentes</span></div></div>
+      <div class="legend-item"><div class="legend-icon">🤰</div><div><span class="legend-val">Embarazadas</span></div></div>
+      <div class="legend-item"><div class="legend-icon">🧑</div><div><span class="legend-val">Adultos / jóvenes</span></div></div>
+      <div class="legend-item"><div class="legend-icon">🐶</div><div><span class="legend-val">Vacuna canina</span></div></div>
+      <div class="legend-item"><div class="legend-icon"><span class="legend-key">IM</span></div><div><span class="legend-val">Intramuscular</span></div></div>
+      <div class="legend-item"><div class="legend-icon"><span class="legend-key">SC</span></div><div><span class="legend-val">Subcutánea</span></div></div>
+      <div class="legend-item"><div class="legend-icon"><span class="legend-key">ID</span></div><div><span class="legend-val">Intradérmica</span></div></div>
+    </div>
+    <div class="source">
+      Fuente: <strong>Manual ENI Ecuador 2019–2024 · MSP</strong> · Consultar normativa vigente para cambios o actualizaciones.
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<script>
+  /* ============================================
+     DATOS DE LAS VACUNAS
+     ============================================ */
+  const vacunas = [
+    {
+      id: 'bcg', nombre: 'BCG', icon: '💉', subtitle: 'Tuberculosis',
+      type: 'viva', pop: ['lactante'], route: ['ID'],
+      presentacion: 'Multidosis (10–20 dosis de 0.05–0.1 ml)',
+      tiempo: 'Hasta 6 horas o jornada', tiempoCat: 'short',
+      condicion: 'Cadena de frío (2–8 °C)',
+      observacion: 'Desechar frasco al final del día'
+    },
+    {
+      id: 'hb-rn', nombre: 'Hepatitis B', icon: '💉', subtitle: 'Recién nacido',
+      type: 'inactivada', pop: ['lactante'], route: ['IM'],
+      presentacion: 'Monodosis (0.5 ml) o multidosis (10 dosis)',
+      tiempo: 'Hasta 28 días', tiempoCat: 'long',
+      condicion: 'Cadena de frío (2–8 °C)',
+      observacion: 'Técnica aséptica si multidosis'
+    },
+    {
+      id: 'hb-ad', nombre: 'Hepatitis B', icon: '💉', subtitle: 'Adultos',
+      type: 'inactivada', pop: ['adulto'], route: ['IM'],
+      presentacion: 'Multidosis (10 dosis de 1 ml)',
+      tiempo: 'Hasta 28 días', tiempoCat: 'long',
+      condicion: 'Cadena de frío (2–8 °C)',
+      observacion: 'Solo para grupos de riesgo'
+    },
+    {
+      id: 'rota', nombre: 'Rotavirus', icon: '💧', subtitle: 'Gastroenteritis',
+      type: 'viva', pop: ['lactante'], route: ['oral'],
+      presentacion: 'Unidosis (1.5 ml oral)',
+      tiempo: 'Uso inmediato', tiempoCat: 'short',
+      condicion: 'No se conserva tras apertura',
+      observacion: 'Desechar dosis no utilizada'
+    },
+    {
+      id: 'neumo', nombre: 'Neumococo Conjugada', icon: '💉', subtitle: 'PCV',
+      type: 'inactivada', pop: ['lactante'], route: ['IM'],
+      presentacion: 'Multidosis (10 dosis de 0.5 ml)',
+      tiempo: 'Hasta 28 días', tiempoCat: 'long',
+      condicion: 'Cadena de frío (2–8 °C)',
+      observacion: 'Técnica aséptica obligatoria'
+    },
+    {
+      id: 'penta', nombre: 'Pentavalente', icon: '💉', subtitle: 'DPT + Hib + HB',
+      type: 'inactivada', pop: ['lactante'], route: ['IM'],
+      presentacion: 'Multidosis (10 dosis de 0.5 ml)',
+      tiempo: 'Hasta 28 días', tiempoCat: 'long',
+      condicion: 'Cadena de frío (2–8 °C)',
+      observacion: 'Evitar contaminación'
+    },
+    {
+      id: 'fipv', nombre: 'fIPV', icon: '💉', subtitle: 'Polio inactivado',
+      type: 'inactivada', pop: ['lactante'], route: ['ID', 'SC'],
+      presentacion: 'Multidosis (hasta 150 dosis de 0.1 ml)',
+      tiempo: 'Hasta 28 días', tiempoCat: 'long',
+      condicion: 'Refrigeración constante',
+      observacion: 'Fraccionada por ID o SC'
+    },
+    {
+      id: 'bopv', nombre: 'bOPV', icon: '💧', subtitle: 'Polio oral',
+      type: 'viva', pop: ['lactante'], route: ['oral'],
+      presentacion: 'Multidosis (20 dosis, 2 gotas c/u)',
+      tiempo: 'Hasta 28 días', tiempoCat: 'long',
+      condicion: 'Refrigeración 2–8 °C',
+      observacion: 'Frasco cerrado entre dosis'
+    },
+    {
+      id: 'penta-r', nombre: 'Pentavalente (Refuerzo DPT)', icon: '💉', subtitle: 'Refuerzo DPT',
+      type: 'inactivada', pop: ['lactante'], route: ['IM'],
+      presentacion: 'Multidosis (10 dosis de 0.5 ml)',
+      tiempo: 'Hasta 28 días', tiempoCat: 'long',
+      condicion: 'Cadena de frío constante',
+      observacion: 'Primer refuerzo después de 1 año'
+    },
+    {
+      id: 'srp', nombre: 'SRP', icon: '💉', subtitle: 'Sarampión · Rubéola · Parotiditis',
+      type: 'viva', pop: ['lactante'], route: ['SC'],
+      presentacion: 'Multidosis (10 dosis de 0.5 ml)',
+      tiempo: 'Hasta 6 horas o jornada', tiempoCat: 'short',
+      condicion: 'Refrigerado',
+      observacion: 'Aplicar en brazo izquierdo (SC)'
+    },
+    {
+      id: 'sr', nombre: 'SR', icon: '💉', subtitle: 'Sarampión · Rubéola',
+      type: 'viva', pop: ['adulto'], route: ['SC'],
+      presentacion: 'Multidosis (10 dosis de 0.5 ml)',
+      tiempo: 'Hasta 6 horas o jornada', tiempoCat: 'short',
+      condicion: 'Refrigerado',
+      observacion: 'Uso en brotes o viajes'
+    },
+    {
+      id: 'fa', nombre: 'Fiebre Amarilla', icon: '💉', subtitle: 'YF',
+      type: 'viva', pop: ['lactante', 'adulto'], route: ['SC'],
+      presentacion: 'Multidosis (10 dosis de 0.5 ml)',
+      tiempo: 'Hasta 6 horas o jornada', tiempoCat: 'short',
+      condicion: 'Refrigerado 2–8 °C',
+      observacion: 'Desechar frasco al final del día'
+    },
+    {
+      id: 'var', nombre: 'Varicela', icon: '💉', subtitle: 'VZV',
+      type: 'viva', pop: ['lactante'], route: ['SC'],
+      presentacion: 'Unidosis (0.5 ml)',
+      tiempo: 'Hasta 6 horas o jornada', tiempoCat: 'short',
+      condicion: 'Refrigerado',
+      observacion: 'No aplicar con otra vacuna en misma extremidad'
+    },
+    {
+      id: 'inf', nombre: 'Influenza', icon: '💉', subtitle: 'Pediátrica y adulto',
+      type: 'inactivada', pop: ['lactante', 'adulto', 'embarazada'], route: ['IM'],
+      presentacion: 'Multidosis (10 dosis de 0.25–0.5 ml)',
+      tiempo: 'Hasta 28 días', tiempoCat: 'long',
+      condicion: 'Refrigerado 2–8 °C',
+      observacion: 'Según grupo etario'
+    },
+    {
+      id: 'vph', nombre: 'VPH (HPV)', icon: '💉', subtitle: 'Virus Papiloma Humano',
+      type: 'inactivada', pop: ['adolescente'], route: ['IM'],
+      presentacion: 'Generalmente unidosis (0.5 ml)',
+      tiempo: 'Hasta 28 días (si multidosis)', tiempoCat: 'long',
+      condicion: 'Refrigerado',
+      observacion: 'Monodosis preferente'
+    },
+    {
+      id: 'dt', nombre: 'DT (dT)', icon: '💉', subtitle: 'Difteria · Tétanos',
+      type: 'inactivada', pop: ['adolescente', 'adulto', 'embarazada'], route: ['IM'],
+      presentacion: 'Multidosis (10 dosis de 0.5 ml)',
+      tiempo: 'Hasta 28 días', tiempoCat: 'long',
+      condicion: 'Cadena de frío 2–8 °C',
+      observacion: 'Refuerzo escolar / adulto'
+    },
+    {
+      id: 'dpt', nombre: 'DPT (Refuerzo)', icon: '💉', subtitle: 'Difteria · Tétanos · Pertussis',
+      type: 'inactivada', pop: ['lactante'], route: ['IM'],
+      presentacion: 'Multidosis (10 dosis de 0.5 ml)',
+      tiempo: 'Hasta 28 días', tiempoCat: 'long',
+      condicion: 'Refrigeración constante',
+      observacion: 'Tras esquema primario'
+    },
+    {
+      id: 'covid', nombre: 'COVID-19', icon: '💉', subtitle: 'SARS-CoV-2',
+      type: 'inactivada', pop: ['adulto', 'adolescente', 'embarazada'], route: ['IM'],
+      presentacion: 'Multidosis (varía por fabricante, 6–10 dosis)',
+      tiempo: 'Pfizer 6 h · AZ/Sinovac 48 h', tiempoCat: 'medium',
+      condicion: 'Refrigerado / diluido según instrucción',
+      observacion: 'Preferente uso mismo día'
+    },
+    {
+      id: 'rabia', nombre: 'Vacuna Canina', icon: '🐶', subtitle: 'Antirrábica veterinaria',
+      type: 'inactivada', pop: ['canina'], route: ['IM', 'SC'],
+      presentacion: 'Multidosis (10 dosis de 1 ml)',
+      tiempo: 'Hasta 8 horas o jornada', tiempoCat: 'short',
+      condicion: 'Cadena de frío 2–8 °C',
+      observacion: 'Desechar remanente al final del día'
+    }
+  ];
+
+  /* ============================================
+     RENDER
+     ============================================ */
+  const grid = document.getElementById('grid');
+  const search = document.getElementById('search');
+  const modalBg = document.getElementById('modal-bg');
+  const modalContent = document.getElementById('modal-content');
+
+  const filters = { type: 'all', pop: 'all', route: 'all' };
+  let searchTerm = '';
+
+  const popEmoji = {
+    lactante: '👶', adolescente: '🧒', embarazada: '🤰', adulto: '🧑', canina: '🐶'
+  };
+  const popLabel = {
+    lactante: 'Lactantes', adolescente: 'Adolesc.', embarazada: 'Embarazadas', adulto: 'Adultos', canina: 'Canina'
+  };
+
+  function buildCard(v) {
+    const popBadges = v.pop.map(p =>
+      `<span class="badge badge-pop">${popEmoji[p]} ${popLabel[p]}</span>`
+    ).join('');
+    const routeBadges = v.route.map(r =>
+      `<span class="badge badge-route">${r}</span>`
+    ).join('');
+    const timeBadge = `<span class="badge badge-time ${v.tiempoCat}">⏱ ${v.tiempo}</span>`;
+
+    return `
+      <div class="card" data-type="${v.type}" data-pop="${v.pop.join(',')}" data-route="${v.route.join(',')}" data-id="${v.id}">
+        <div class="card-stripe"></div>
+        <div class="card-header">
+          <div class="card-icon">${v.icon}</div>
+          <div class="card-title-wrap">
+            <div class="card-title">
+              <span class="type-dot ${v.type}"></span>
+              ${v.nombre}
+            </div>
+            <div class="card-subtitle">${v.subtitle}</div>
+          </div>
+        </div>
+        <div class="badges">
+          ${routeBadges}${popBadges}${timeBadge}
+        </div>
+        <div class="card-body">
+          <div class="data-row">
+            <div class="data-icon">📦</div>
+            <div class="data-text">
+              <div class="data-key">Presentación</div>
+              <div class="data-value">${v.presentacion}</div>
+            </div>
+          </div>
+          <div class="data-row">
+            <div class="data-icon">❄️</div>
+            <div class="data-text">
+              <div class="data-key">Conservación</div>
+              <div class="data-value warn">${v.condicion}</div>
+            </div>
+          </div>
+          <div class="data-row">
+            <div class="data-icon">📝</div>
+            <div class="data-text">
+              <div class="data-key">Observación</div>
+              <div class="data-value note">${v.observacion}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function render() {
+    grid.innerHTML = vacunas.map(buildCard).join('');
+    attachCardListeners();
+    applyFilters();
+  }
+
+  function attachCardListeners() {
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', () => {
+        const id = card.dataset.id;
+        const v = vacunas.find(x => x.id === id);
+        openModal(v);
+      });
+    });
+  }
+
+  function applyFilters() {
+    let visibleCount = 0;
+    document.querySelectorAll('.card').forEach(card => {
+      const v = vacunas.find(x => x.id === card.dataset.id);
+      const matchType = filters.type === 'all' || v.type === filters.type;
+      const matchPop = filters.pop === 'all' || v.pop.includes(filters.pop);
+      const matchRoute = filters.route === 'all' || v.route.includes(filters.route);
+      const txt = (v.nombre + ' ' + v.subtitle + ' ' + v.presentacion + ' ' + v.observacion + ' ' + v.condicion).toLowerCase();
+      const matchSearch = !searchTerm || txt.includes(searchTerm);
+
+      if (matchType && matchPop && matchRoute && matchSearch) {
+        card.classList.remove('hidden');
+        visibleCount++;
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+    document.getElementById('stat-shown').textContent = visibleCount;
+
+    // Empty state
+    const existingEmpty = grid.querySelector('.empty-state');
+    if (existingEmpty) existingEmpty.remove();
+    if (visibleCount === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.innerHTML = '<h3>Sin resultados</h3><p>Prueba con otros filtros o término de búsqueda.</p>';
+      grid.appendChild(empty);
+    }
+  }
+
+  /* Filter chips */
+  document.querySelectorAll('.chip[data-filter]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const f = chip.dataset.filter;
+      const v = chip.dataset.value;
+      filters[f] = v;
+      // Toggle active state in same group
+      chip.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      applyFilters();
+    });
+  });
+
+  /* Search */
+  search.addEventListener('input', e => {
+    searchTerm = e.target.value.toLowerCase().trim();
+    applyFilters();
+  });
+
+  /* Modal */
+  function openModal(v) {
+    const popBadges = v.pop.map(p =>
+      `<span class="badge badge-pop">${popEmoji[p]} ${popLabel[p]}</span>`
+    ).join('');
+    const routeBadges = v.route.map(r =>
+      `<span class="badge badge-route">${r}</span>`
+    ).join('');
+
+    modalContent.innerHTML = `
+      <div style="position:relative">
+        <div class="card-stripe" style="background: ${v.type === 'viva' ? 'var(--green)' : 'var(--blue)'}; height: 6px;"></div>
+        <button class="modal-close" onclick="closeModal()">×</button>
+        <div style="padding: 28px 28px 24px;">
+          <div style="display:flex; align-items:center; gap:14px; margin-bottom:14px;">
+            <div class="card-icon" style="width:54px; height:54px; font-size:28px;">${v.icon}</div>
+            <div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="type-dot ${v.type}" style="width:10px; height:10px;"></span>
+                <h2 style="font-size:22px; font-weight:700; letter-spacing:-0.02em; color: var(--text);">${v.nombre}</h2>
+              </div>
+              <div class="card-subtitle" style="margin-top:4px;">${v.subtitle}</div>
+            </div>
+          </div>
+
+          <div class="badges" style="background:transparent; border:none; padding:0 0 18px; flex-wrap:wrap;">
+            ${routeBadges}${popBadges}
+            <span class="badge badge-time ${v.tiempoCat}">⏱ ${v.tiempo}</span>
+            <span class="badge" style="background: ${v.type==='viva'?'var(--green-soft)':'var(--blue-soft)'}; color: ${v.type==='viva'?'var(--green-text)':'var(--blue-text)'}; border: 1px solid ${v.type==='viva'?'var(--green-border)':'var(--blue-border)'};">
+              ${v.type === 'viva' ? '🧬 Viva atenuada' : '🛡 Inactivada'}
+            </span>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div class="data-row">
+              <div class="data-icon" style="width:30px; height:30px; font-size:14px;">📦</div>
+              <div class="data-text">
+                <div class="data-key">Presentación</div>
+                <div class="data-value" style="font-size:14px;">${v.presentacion}</div>
+              </div>
+            </div>
+            <div class="data-row">
+              <div class="data-icon" style="width:30px; height:30px; font-size:14px;">⏱</div>
+              <div class="data-text">
+                <div class="data-key">Tiempo de uso por frasco abierto</div>
+                <div class="data-value" style="font-size:14px;">${v.tiempo}</div>
+              </div>
+            </div>
+            <div class="data-row">
+              <div class="data-icon" style="width:30px; height:30px; font-size:14px;">❄️</div>
+              <div class="data-text">
+                <div class="data-key">Condición de almacenamiento</div>
+                <div class="data-value warn" style="font-size:14px;">${v.condicion}</div>
+              </div>
+            </div>
+            <div class="data-row">
+              <div class="data-icon" style="width:30px; height:30px; font-size:14px;">📝</div>
+              <div class="data-text">
+                <div class="data-key">Observación clínica</div>
+                <div class="data-value note" style="font-size:14px;">${v.observacion}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    modalBg.classList.add('open');
+  }
+
+  window.closeModal = function() {
+    modalBg.classList.remove('open');
+  };
+
+  modalBg.addEventListener('click', e => {
+    if (e.target === modalBg) closeModal();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  /* Init */
+  document.getElementById('stat-total').textContent = vacunas.length;
+  document.getElementById('stat-viva').textContent = vacunas.filter(v => v.type === 'viva').length;
+  document.getElementById('stat-inact').textContent = vacunas.filter(v => v.type === 'inactivada').length;
+  render();
+</script>
+</body>
+</html>
