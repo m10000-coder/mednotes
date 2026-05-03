@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Riesgo Obstétrico · MED NOTES®</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text: #0f172a;
+    --text-secondary: #475569;
+    --muted: #94a3b8;
+
+    --primary: #1e3a8a;
+    --primary-mid: #2563eb;
+    --primary-soft: #eff6ff;
+    --primary-border: #bfdbfe;
+
+    --green: #16a34a;
+    --green-soft: #f0fdf4;
+    --green-border: #bbf7d0;
+    --green-dark: #15803d;
+
+    --yellow: #f59e0b;
+    --yellow-soft: #fef9c3;
+    --yellow-border: #fde047;
+    --yellow-dark: #854d0e;
+
+    --orange: #ea580c;
+    --orange-soft: #fff7ed;
+    --orange-border: #fed7aa;
+    --orange-dark: #9a3412;
+
+    --red: #dc2626;
+    --red-soft: #fee2e2;
+    --red-border: #fecaca;
+    --red-dark: #991b1b;
+
+    --purple: #9333ea;
+    --purple-soft: #f3e8ff;
+    --purple-border: #d8b4fe;
+    --purple-dark: #6b21a8;
+
+    --teal: #0d9488;
+    --teal-soft: #ccfbf1;
+    --teal-border: #5eead4;
+    --teal-dark: #115e59;
+  }
+
+  body {
+    background: var(--surface-alt);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.55;
+    font-size: 14px;
+    min-height: 100vh;
+    padding: 22px 16px 60px;
+  }
+
+  .wrapper { max-width: 980px; margin: 0 auto; }
+
+  /* ============ Brand ============ */
+  .brand-logo {
+    background: #000;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 7px;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+    flex-shrink: 0;
+  }
+  .brand-logo .reg {
+    font-size: 8px;
+    vertical-align: super;
+    margin-left: 1px;
+  }
+
+  /* ============ Header ============ */
+  .page-header {
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .page-header .brand-logo { margin-bottom: 12px; }
+
+  /* ============ Calc Card ============ */
+  .calc-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 18px rgba(0,0,0,0.04);
+  }
+
+  .calc-title {
+    text-align: center;
+    color: var(--primary);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+
+  /* FUM bar */
+  .fum-bar {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: var(--primary-soft);
+    border: 1px solid var(--primary-border);
+    border-radius: 10px;
+    padding: 14px 18px;
+  }
+  .fum-bar label {
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 14px;
+  }
+  .fum-bar input[type=date] {
+    padding: 8px 12px;
+    border: 1.5px solid var(--primary-border);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    background: #fff;
+    color: var(--text);
+  }
+  .fum-bar .pill {
+    background: #fff;
+    border: 1px solid var(--primary-border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 600;
+  }
+  .fum-bar .pill strong { color: var(--primary); }
+
+  /* ============ Section ============ */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--primary);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .section.s-blue   { border-left-color: var(--primary-mid); }
+  .section.s-yellow { border-left-color: var(--yellow); }
+  .section.s-green  { border-left-color: var(--green); }
+  .section.s-red    { border-left-color: var(--red); }
+  .section.s-orange { border-left-color: var(--orange); }
+  .section.s-purple { border-left-color: var(--purple); }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+  .section-subtitle {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+  }
+  .section-divider {
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 4px;
+  }
+
+  /* Risk badge inside section */
+  .risk-tag {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .risk-tag.low    { background: var(--green-soft);  color: var(--green-dark); }
+  .risk-tag.med    { background: var(--yellow-soft); color: var(--yellow-dark); }
+  .risk-tag.high   { background: var(--red-soft);    color: var(--red-dark); }
+  .risk-tag.mixed  { background: var(--primary-soft); color: var(--primary); }
+
+  /* Factor rows */
+  .factor-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 6px;
+    border-bottom: 1px dashed var(--border);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.12s;
+  }
+  .factor-row:last-child { border-bottom: none; }
+  .factor-row:hover { background: var(--surface-alt); }
+
+  .factor-row input[type="checkbox"] {
+    width: 18px; height: 18px;
+    cursor: pointer;
+    accent-color: var(--primary);
+    flex-shrink: 0;
+  }
+
+  .factor-text {
+    flex: 1;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.45;
+  }
+
+  .factor-points {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 13px;
+    flex-shrink: 0;
+    padding: 3px 9px;
+    border-radius: 4px;
+    min-width: 50px;
+    text-align: center;
+    background: var(--surface-alt);
+    color: var(--text);
+  }
+  .factor-points.p1 { background: var(--green-soft); color: var(--green-dark); }
+  .factor-points.p2 { background: var(--yellow-soft); color: var(--yellow-dark); }
+  .factor-points.p3 { background: var(--red-soft); color: var(--red-dark); }
+
+  .factor-row.checked {
+    background: var(--primary-soft);
+  }
+  .factor-row.checked .factor-text { font-weight: 600; color: var(--primary); }
+
+  /* ============ Result card ============ */
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 30px;
+    margin-top: 14px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    position: sticky;
+    bottom: 12px;
+  }
+
+  .result-title {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .result-title .points {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--primary-mid);
+  }
+  .result-sub {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 14px 16px;
+    background: var(--surface-alt);
+    border-radius: 10px;
+  }
+  .result-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 14.5px;
+  }
+  .result-row strong { font-weight: 700; }
+  .result-row .key { color: var(--text); font-weight: 600; min-width: 180px; }
+  .result-row .val { font-weight: 700; }
+
+  .pill-result {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .pill-result.bajo  { background: var(--green-soft);  color: var(--green-dark); }
+  .pill-result.medio { background: var(--yellow-soft); color: var(--yellow-dark); }
+  .pill-result.alto  { background: var(--red-soft);    color: var(--red-dark); }
+
+  .reset-btn {
+    display: block;
+    margin: 14px auto 0;
+    padding: 8px 18px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .reset-btn:hover { background: #e2e8f0; }
+
+  /* ============ Footer ============ */
+  .footer {
+    margin-top: 36px;
+    padding: 22px 24px;
+    background: #000;
+    color: #fff;
+    border-radius: 14px;
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .footer .brand-logo {
+    background: #fff;
+    color: #000;
+    margin-bottom: 8px;
+  }
+  .footer p { margin: 4px 0; opacity: 0.85; }
+
+  .disclaimer {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    font-size: 11.5px;
+    color: #9a3412;
+    line-height: 1.55;
+  }
+  .disclaimer strong { color: #7c2d12; }
+
+  @media (max-width: 600px) {
+    body { padding: 18px 12px 40px; }
+    .calc-card, .section, .result-card { padding: 18px 16px; }
+    .result-title { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- ============ Header ============ -->
+  <div class="page-header">
+    <span class="brand-logo">MED NOTES<span class="reg">®</span></span>
+  </div>
+
+  <!-- ============ FUM / Edad gestacional ============ -->
+  <div class="calc-card">
+    <h2 class="calc-title">Calculadora de Riesgo Obstétrico</h2>
+    <div class="fum-bar">
+      <label for="fum">FUM:</label>
+      <input type="date" id="fum">
+      <span class="pill">FPP: <strong id="fpp">--/--/----</strong></span>
+      <span class="pill">Trimestre: <strong id="trimestre">--</strong> (<strong id="semanas">0</strong> semanas)</span>
+    </div>
+  </div>
+
+  <!-- ============ 1. ANTECEDENTES (mixed risk) ============ -->
+  <div class="section s-blue" data-section="antecedentes">
+    <h3 class="section-title">1. Antecedentes <span class="risk-tag mixed">Riesgo mixto</span></h3>
+    <div class="section-subtitle">Edad materna, paridad, antecedentes obstétricos previos</div>
+    <div class="section-divider"></div>
+    <!-- factors injected by JS -->
+  </div>
+
+  <!-- ============ 2. SOCIOECONÓMICOS (low-medium) ============ -->
+  <div class="section s-yellow" data-section="socio">
+    <h3 class="section-title">2. Factores Socioeconómicos <span class="risk-tag med">Riesgo medio</span></h3>
+    <div class="section-subtitle">Educación, sustancias, vulnerabilidad social</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <!-- ============ 3. NUTRICIONALES (medium) ============ -->
+  <div class="section s-green" data-section="nutri">
+    <h3 class="section-title">3. Factores Nutricionales <span class="risk-tag med">Riesgo medio-alto</span></h3>
+    <div class="section-subtitle">IMC, glicemia, estado nutricional</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <!-- ============ 4. PATOLÓGICOS DEL EMBARAZO (high) ============ -->
+  <div class="section s-red" data-section="pato">
+    <h3 class="section-title">4. Factores Patológicos del Embarazo <span class="risk-tag high">Riesgo alto</span></h3>
+    <div class="section-subtitle">Patologías que se presentan durante la gestación</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <!-- ============ 5. COMORBILIDADES (high) ============ -->
+  <div class="section s-orange" data-section="comorb">
+    <h3 class="section-title">5. Comorbilidades Maternas <span class="risk-tag high">Riesgo alto</span></h3>
+    <div class="section-subtitle">Enfermedades crónicas o sistémicas preexistentes</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <!-- ============ 6. DISCAPACIDAD (medium-high) ============ -->
+  <div class="section s-purple" data-section="discap">
+    <h3 class="section-title">6. Discapacidad <span class="risk-tag med">Riesgo medio</span></h3>
+    <div class="section-subtitle">Discapacidad física o intelectual de la gestante</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <!-- ============ Resultado ============ -->
+  <div class="result-card" id="result">
+    <div class="result-title">Puntaje Total de Riesgo: <span class="points" id="total-pts">0</span></div>
+    <div class="result-sub">Algoritmo de Manejo de Atención</div>
+    <div class="result-grid">
+      <div class="result-row"><span class="key">Nivel de Riesgo:</span><span class="val" id="nivel-riesgo"><span class="pill-result bajo">BAJO</span></span></div>
+      <div class="result-row"><span class="key">Nivel de Atención:</span><span class="val" id="nivel-atencion">Primer Nivel (Obstetriz o Médico General)</span></div>
+      <div class="result-row"><span class="key">Prioridad de Atención:</span><span class="val" id="prioridad"><span class="pill-result bajo">VERDE (15 días)</span></span></div>
+      <div class="result-row"><span class="key">Recomendación:</span><span class="val" id="recomendacion">Control prenatal habitual cada 4 semanas hasta la semana 28; cada 2 semanas hasta la 36; semanal desde la 37.</span></div>
+    </div>
+    <button class="reset-btn" id="btn-reset">↻ Reiniciar selección</button>
+  </div>
+
+  <!-- ============ Disclaimer ============ -->
+  <div class="disclaimer">
+    <strong>⚠ Aviso clínico:</strong> Esta herramienta es de apoyo educativo basada en el formulario de evaluación de riesgo obstétrico del MSP Ecuador. La clasificación final de riesgo y nivel de atención debe ser determinada por un profesional de salud capacitado, considerando la evaluación clínica integral. No sustituye criterio profesional.
+  </div>
+
+  <!-- ============ Footer ============ -->
+  <div class="footer">
+    <span class="brand-logo">MED NOTES<span class="reg">®</span></span>
+    <p>Hecha por <strong>MED NOTES®</strong> — Apuntes médicos basados en evidencia</p>
+    <p style="font-size:11px; opacity:0.7;">Fuente: MSP Ecuador · Score de riesgo obstétrico</p>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   FACTORES DE RIESGO POR SECCIÓN
+   ============================================================ */
+
+const FACTORES = {
+
+  antecedentes: [
+    ['Gestante igual o menor de 14 años', 3],
+    ['Gestante 14 (1 día) a 19 años', 1],
+    ['Gestante mayor de 35 años hasta 39 años', 1],
+    ['Gestante ≥ de 40 años', 2],
+    ['Primípara tardía ≥ 40 años', 2],
+    ['Gran multípara ≥ 4 gestas', 2],
+    ['Infertilidad', 1],
+    ['Aborto', 1],
+    ['Aborto habitual ≥ 2', 2],
+    ['Embarazo ectópico / molar', 1],
+    ['Mortinato', 2],
+    ['Óbito fetal', 2],
+    ['Hijo con malformaciones congénitas mayores', 2],
+    ['Hijo con bajo peso de nacimiento < 2500 gr', 3],
+    ['Hijo con macrosomía al nacimiento > 4000 gr', 3],
+    ['Periodo intergenésico ≤ 18 meses', 2],
+    ['Periodo intergenésico > 5 años', 1],
+    ['Embarazo producto de violencia sexual', 3],
+    ['Antecedente preeclampsia / eclampsia*', 3],
+    ['Madre o hermana con preeclampsia', 2],
+    ['Cicatriz uterina previa con embarazo > 32 semanas (miomectomía, rotura uterina, cesárea)', 2],
+    ['Cicatriz uterina previa, tres o más cesáreas con embarazo > 28 semanas', 3],
+    ['Ningún control prenatal en embarazo mayor a 20 semanas', 2],
+    ['Presenta tres o más factores de la lista', 3]
+  ],
+
+  socio: [
+    ['Sin instrucción', 1],
+    ['Alcoholismo, tabaco y drogas', 3],
+    ['Violencia basada en género, disfunción familiar, movilidad humana', 1],
+    ['Gestante callejizada, indigente, vive sola', 1],
+    ['Presenta tres o más factores de la lista', 3]
+  ],
+
+  nutri: [
+    ['Desnutrición materna IMC < 18', 3],
+    ['Obesidad IMC > 30', 3],
+    ['Sobrepeso IMC de 25.1 a 29.9', 1],
+    ['Glicemia basal mayor a 92 mg/dL', 2],
+    ['Presenta dos o más factores de la lista', 3]
+  ],
+
+  pato: [
+    ['TORCH IgM positivo', 3],
+    ['Infección de tracto urinario a repetición', 2],
+    ['Anemia HB < 10 (corregida)', 2],
+    ['Anemia HB < 7 (corregida)', 3],
+    ['Trastorno hipertensivo', 3],
+    ['Colestasis intrahepática', 3],
+    ['Hemorragia primera mitad del embarazo', 2],
+    ['Hemorragia segunda mitad del embarazo', 3],
+    ['Amenaza parto prematuro', 3],
+    ['Embarazo múltiple', 3],
+    ['Presentación anómala en embarazo mayor a 36 semanas', 3],
+    ['Polihidramnios / oligohidramnios', 2],
+    ['Gestación con malformaciones fetales mayores', 3],
+    ['Diabetes gestacional', 3],
+    ['Presenta dos o más factores de la lista', 3]
+  ],
+
+  comorb: [
+    ['Cardiopatías', 3],
+    ['Enfermedades neuropsiquiátricas', 3],
+    ['Insuficiencia renal crónica', 3],
+    ['Hipotiroidismo sin tratamiento', 2],
+    ['Lupus eritematoso sistémico', 3],
+    ['Síndrome antifosfolipídico', 3],
+    ['Trombocitopenia < 100 000 plaquetas', 3],
+    ['Tuberculosis materna activa', 2],
+    ['Cáncer', 3],
+    ['Otras patologías relevantes', 3],
+    ['Presenta dos o más factores de la lista', 3]
+  ],
+
+  discap: [
+    ['Física', 2],
+    ['Intelectual', 3],
+    ['Presenta dos o más factores de la lista', 3]
+  ]
+
+};
+
+/* ============================================================
+   RENDERIZAR FACTORES
+   ============================================================ */
+Object.entries(FACTORES).forEach(([key, list]) => {
+  const sec = document.querySelector(`.section[data-section="${key}"]`);
+  if (!sec) return;
+  list.forEach((f, i) => {
+    const id = `f-${key}-${i}`;
+    const row = document.createElement('label');
+    row.className = 'factor-row';
+    row.htmlFor = id;
+    const ptsClass = f[1] === 1 ? 'p1' : (f[1] === 2 ? 'p2' : 'p3');
+    row.innerHTML = `
+      <input type="checkbox" id="${id}" data-points="${f[1]}" data-section="${key}">
+      <span class="factor-text">${f[0]}</span>
+      <span class="factor-points ${ptsClass}">${f[1]} ${f[1] === 1 ? 'pt' : 'pts'}</span>
+    `;
+    sec.appendChild(row);
+  });
+});
+
+/* Toggle row visual when checkbox state changes */
+document.querySelectorAll('input[type="checkbox"][data-points]').forEach(cb => {
+  cb.addEventListener('change', () => {
+    cb.closest('.factor-row').classList.toggle('checked', cb.checked);
+    actualizarTotal();
+  });
+});
+
+/* ============================================================
+   CÁLCULO DE TOTAL Y CLASIFICACIÓN
+   ============================================================ */
+function actualizarTotal() {
+  let total = 0;
+  document.querySelectorAll('input[type="checkbox"][data-points]:checked').forEach(cb => {
+    total += parseInt(cb.dataset.points) || 0;
+  });
+  document.getElementById('total-pts').textContent = total;
+
+  let nivel, prioridad, atencion, recom, color;
+
+  if (total <= 2) {
+    nivel = 'BAJO';
+    color = 'bajo';
+    prioridad = 'VERDE (15 días)';
+    atencion = 'Primer Nivel (Obstetriz o Médico General)';
+    recom = 'Control prenatal habitual cada 4 semanas hasta la semana 28; cada 2 semanas hasta la 36; semanal desde la 37. Educación, suplementación con hierro/ácido fólico, y exámenes de rutina.';
+  } else if (total <= 5) {
+    nivel = 'MEDIO';
+    color = 'medio';
+    prioridad = 'AMARILLA (7 días)';
+    atencion = 'Segundo Nivel (Médico General con especialista de referencia)';
+    recom = 'Control prenatal con valoración por especialista (Ginecólogo). Monitoreo más frecuente. Considerar exámenes complementarios según el factor de riesgo identificado.';
+  } else {
+    nivel = 'ALTO';
+    color = 'alto';
+    prioridad = 'ROJA (24–72 horas)';
+    atencion = 'Tercer Nivel (Ginecólogo / Perinatólogo)';
+    recom = 'Referencia inmediata a Tercer Nivel. Manejo multidisciplinario, controles seriados, monitoreo materno-fetal estrecho. Valorar resolución según patología y edad gestacional.';
+  }
+
+  document.getElementById('nivel-riesgo').innerHTML = `<span class="pill-result ${color}">${nivel}</span>`;
+  document.getElementById('nivel-atencion').textContent = atencion;
+  document.getElementById('prioridad').innerHTML = `<span class="pill-result ${color}">${prioridad}</span>`;
+  document.getElementById('recomendacion').textContent = recom;
+}
+
+/* ============================================================
+   FUM / FPP / EDAD GESTACIONAL
+   ============================================================ */
+const elFum = document.getElementById('fum');
+const elFpp = document.getElementById('fpp');
+const elTrim = document.getElementById('trimestre');
+const elSem = document.getElementById('semanas');
+
+elFum.addEventListener('input', () => {
+  if (!elFum.value) {
+    elFpp.textContent = '--/--/----';
+    elTrim.textContent = '--';
+    elSem.textContent = '0';
+    return;
+  }
+  const fum = new Date(elFum.value + 'T12:00:00');
+  // Regla de Naegele: FPP = FUM + 280 días (7 días + 9 meses)
+  const fpp = new Date(fum);
+  fpp.setDate(fpp.getDate() + 280);
+  elFpp.textContent = fpp.toLocaleDateString('es-EC', { day:'2-digit', month:'2-digit', year:'numeric' });
+
+  // Edad gestacional
+  const hoy = new Date();
+  const diff = Math.floor((hoy - fum) / (1000*60*60*24));
+  const semanas = Math.floor(diff / 7);
+  const dias = diff % 7;
+  elSem.textContent = semanas + (dias > 0 ? ' + ' + dias + 'd' : '');
+
+  let tri;
+  if (semanas < 14) tri = '1° Trimestre';
+  else if (semanas < 28) tri = '2° Trimestre';
+  else if (semanas <= 42) tri = '3° Trimestre';
+  else tri = 'Post-término';
+  elTrim.textContent = tri;
+});
+
+/* ============================================================
+   RESET
+   ============================================================ */
+document.getElementById('btn-reset').addEventListener('click', () => {
+  document.querySelectorAll('input[type="checkbox"][data-points]').forEach(cb => {
+    cb.checked = false;
+    cb.closest('.factor-row').classList.remove('checked');
+  });
+  actualizarTotal();
+});
+
+/* Init */
+actualizarTotal();
+</script>
+</body>
+</html>
