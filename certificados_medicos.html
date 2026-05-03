@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador de Certificados Médicos · MED NOTES®</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f1f5f9;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text: #0f172a;
+    --text-secondary: #475569;
+    --muted: #94a3b8;
+
+    --primary: #2563eb;
+    --primary-soft: #eff6ff;
+    --primary-border: #bfdbfe;
+    --primary-dark: #1d4ed8;
+
+    --green: #16a34a;
+    --green-dark: #15803d;
+
+    --red: #dc2626;
+    --red-dark: #b91c1c;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.55;
+    font-size: 14px;
+    min-height: 100vh;
+    padding: 18px 16px 60px;
+  }
+
+  .wrapper { max-width: 1500px; margin: 0 auto; }
+
+  /* ============ Brand ============ */
+  .brand-logo {
+    background: #000;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 7px;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .brand-logo .reg { font-size: 8px; vertical-align: super; margin-left: 1px; }
+
+  /* ============ Header ============ */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .top-bar-left { display: flex; align-items: center; gap: 14px; }
+  h1 {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.025em;
+  }
+  .h1-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+  .format-toggle {
+    display: inline-flex;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .format-btn {
+    padding: 9px 18px;
+    border: none;
+    background: transparent;
+    border-radius: 7px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .format-btn.active {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+  }
+
+  /* ============ Layout: 2 columns ============ */
+  .layout {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 18px;
+    align-items: flex-start;
+  }
+  @media (max-width: 980px) { .layout { grid-template-columns: 1fr; } }
+
+  /* ============ Form column ============ */
+  .form-col {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: sticky;
+    top: 12px;
+    max-height: calc(100vh - 24px);
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+  @media (max-width: 980px) {
+    .form-col { position: static; max-height: none; }
+  }
+
+  details.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    overflow: hidden;
+  }
+  details.card[open] { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  details.card summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 18px;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+  }
+  details.card summary::-webkit-details-marker { display: none; }
+  details.card summary::after {
+    content: '▾';
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 12px;
+    transition: transform 0.2s;
+  }
+  details.card[open] summary::after { transform: rotate(180deg); }
+  details.card .card-body {
+    padding: 4px 18px 18px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Form fields */
+  .field { margin-bottom: 12px; }
+  .field-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .input, .textarea, .select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    background: var(--surface-alt);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    transition: all 0.15s;
+  }
+  .textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+  .input:focus, .textarea:focus, .select:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: #fff;
+    box-shadow: 0 0 0 3px var(--primary-soft);
+  }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+  .checkbox-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: var(--primary-soft);
+    border: 1px solid var(--primary-border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin: 10px 0;
+    cursor: pointer;
+  }
+  .checkbox-row input { margin-top: 2px; accent-color: var(--primary); width: 16px; height: 16px; }
+  .checkbox-row .lbl { font-size: 13px; color: var(--text); flex: 1; }
+  .checkbox-row .lbl strong { color: var(--primary-dark); display: block; }
+  .checkbox-row .lbl span { font-size: 11px; color: var(--text-secondary); }
+
+  .multi-check {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .multi-check label {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--surface-alt);
+    padding: 7px 10px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+  }
+  .multi-check input { accent-color: var(--primary); }
+  .multi-check label:has(input:checked) {
+    background: var(--primary-soft);
+    border-color: var(--primary-border);
+    color: var(--primary-dark);
+    font-weight: 600;
+  }
+
+  .save-btn {
+    width: 100%;
+    padding: 10px;
+    background: #9333ea;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: all 0.15s;
+  }
+  .save-btn:hover { background: #7e22ce; }
+  .save-msg {
+    font-size: 11px;
+    color: var(--green-dark);
+    margin-top: 4px;
+    text-align: center;
+    min-height: 14px;
+  }
+
+  /* Diagnoses list */
+  .dx-list { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .dx-item {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 8px 10px;
+    font-size: 12.5px;
+  }
+  .dx-item .code {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--primary);
+    background: var(--primary-soft);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 11.5px;
+  }
+  .dx-item .desc { flex: 1; }
+  .dx-item .del {
+    color: var(--red);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .add-btn {
+    width: 100%;
+    padding: 9px;
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+    border: 1px dashed var(--primary-border);
+    border-radius: 7px;
+    font-weight: 600;
+    font-size: 12.5px;
+    cursor: pointer;
+    margin-top: 6px;
+  }
+  .add-btn:hover { background: #dbeafe; }
+
+  /* Download buttons */
+  .download-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .download-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .download-btn:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+  .download-tip { font-size: 11px; color: var(--text-secondary); text-align: center; }
+
+  /* ============ Preview column ============ */
+  .preview-col {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  /* ============ CERTIFICATE PREVIEW ============ */
+  .certificate {
+    background: #fff;
+    width: 100%;
+    max-width: 794px;  /* A4 width @ 96dpi */
+    margin: 0 auto;
+    padding: 32px 40px 40px;
+    font-family: 'Inter', 'Helvetica', sans-serif;
+    color: #000;
+    font-size: 13px;
+    line-height: 1.55;
+    box-shadow: 0 0 0 1px var(--border);
+    position: relative;
+  }
+  .certificate.msp { min-height: 1100px; }
+  .certificate.iess { min-height: 1100px; }
+
+  /* MSP Header */
+  .msp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    margin-bottom: 30px;
+  }
+  .msp-header .left {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .msp-header .escudo {
+    width: 60px; height: 60px;
+  }
+  .msp-header .republic {
+    font-size: 14px;
+    line-height: 1.15;
+    color: #1e3a8a;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+  .msp-header .republic .l1 { font-size: 12px; opacity: 0.95; }
+  .msp-header .ms-text {
+    color: #1e3a8a;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .cert-place-date {
+    text-align: right;
+    margin: 18px 0 26px;
+    font-size: 13px;
+    color: #000;
+  }
+
+  .cert-title {
+    text-align: center;
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 22px;
+    letter-spacing: 0.05em;
+  }
+
+  .cert-body p {
+    margin-bottom: 12px;
+    text-align: justify;
+    font-size: 13px;
+  }
+  .cert-body strong { font-weight: 700; }
+
+  .cert-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 14px;
+    font-size: 12.5px;
+  }
+  .cert-table td {
+    padding: 5px 0;
+    vertical-align: top;
+  }
+  .cert-table td:first-child {
+    font-weight: 700;
+    width: 38%;
+  }
+
+  .cert-options {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin: 6px 0 14px;
+    font-size: 12.5px;
+  }
+  .cert-options .opt {
+    white-space: nowrap;
+  }
+  .cert-options .opt.checked { font-weight: 700; }
+  .cert-options .opt .box {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 1.2px solid #000;
+    text-align: center;
+    line-height: 12px;
+    font-size: 12px;
+    font-weight: 800;
+    margin-right: 4px;
+    vertical-align: -2px;
+  }
+
+  .cert-rest {
+    margin: 14px 0;
+    padding: 10px 0;
+    border-top: 1px dashed #94a3b8;
+    border-bottom: 1px dashed #94a3b8;
+    font-size: 12.5px;
+  }
+
+  .cert-signature {
+    margin-top: 60px;
+    text-align: center;
+    font-size: 12.5px;
+  }
+  .cert-signature .line {
+    border-top: 1px solid #000;
+    width: 280px;
+    margin: 0 auto 6px;
+  }
+  .cert-signature strong { font-weight: 700; }
+
+  /* Footer */
+  .cert-footer {
+    margin-top: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 14px;
+    border-top: 1px solid #e2e8f0;
+    font-size: 11px;
+    color: #475569;
+  }
+  .cert-footer .footer-left { line-height: 1.65; }
+  .cert-footer .footer-flag {
+    color: #1e3a8a;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ============ IESS specific ============ */
+  .iess-section {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-weight: 700;
+    margin: 18px 0 10px;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: #1e3a8a;
+    text-transform: uppercase;
+  }
+  .iess-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 18px;
+    margin-bottom: 12px;
+    font-size: 12.5px;
+  }
+  .iess-grid .row .lbl { font-weight: 700; }
+
+  .iess-title {
+    text-align: center;
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Print styles */
+  @media print {
+    body { background: #fff; padding: 0; }
+    .wrapper { max-width: 100%; margin: 0; }
+    .top-bar, .form-col, .preview-col { display: none !important; }
+    .preview-col { background: none; border: none; padding: 0; box-shadow: none; }
+    body > .wrapper > .layout { display: block; }
+    body > .wrapper > .layout > .preview-col { display: block !important; padding: 0; border: none; box-shadow: none; }
+    .certificate { box-shadow: none; padding: 20mm; max-width: 100%; min-height: auto; }
+    @page { size: A4; margin: 0; }
+  }
+
+  /* Footer of page */
+  .page-footer {
+    margin-top: 22px;
+    padding: 18px 22px;
+    background: #000;
+    color: #fff;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .page-footer .brand-logo {
+    background: #fff; color: #000;
+    margin-bottom: 6px;
+  }
+
+  /* Disclaimer */
+  .disclaimer {
+    margin-top: 14px;
+    padding: 11px 14px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    font-size: 11px;
+    color: #9a3412;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- ============ Header ============ -->
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <span class="brand-logo">MED NOTES<span class="reg">®</span></span>
+      <div>
+        <h1>Certificados Médicos</h1>
+        <div class="h1-sub">Genera certificados con tus datos guardados · Formato MSP / IESS</div>
+      </div>
+    </div>
+    <div class="format-toggle">
+      <button class="format-btn active" data-format="msp">MSP Estándar</button>
+      <button class="format-btn" data-format="iess">Formato IESS</button>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- ============ FORM COLUMN ============ -->
+    <div class="form-col">
+
+      <!-- Datos del Médico -->
+      <details class="card" open>
+        <summary>👨‍⚕ Datos del Médico</summary>
+        <div class="card-body">
+          <div class="field">
+            <label class="field-label">Nombre Completo</label>
+            <input class="input" id="m-nombre" placeholder="Dr. Esteban Cifuentes">
+          </div>
+          <div class="field">
+            <label class="field-label">Cédula</label>
+            <input class="input" id="m-cedula" placeholder="1700000000">
+          </div>
+          <div class="field">
+            <label class="field-label">Cargo / Especialidad</label>
+            <input class="input" id="m-cargo" placeholder="Médico Rural">
+          </div>
+          <div class="field">
+            <label class="field-label">Registro Profesional (SENESCYT)</label>
+            <input class="input" id="m-registro" placeholder="Ej: 1005-2023-2754011">
+          </div>
+          <div class="field">
+            <label class="field-label">Correo Electrónico</label>
+            <input class="input" id="m-correo" placeholder="medico@gmail.com">
+          </div>
+          <button class="save-btn" id="btn-save-medico">💾 Guardar datos del médico</button>
+          <div class="save-msg" id="save-msg-medico"></div>
+        </div>
+      </details>
+
+      <!-- Datos del Centro de Salud -->
+      <details class="card">
+        <summary>🏥 Datos del Establecimiento</summary>
+        <div class="card-body">
+          <div class="field">
+            <label class="field-label">Centro de Salud</label>
+            <input class="input" id="cs-nombre" placeholder="Centro de Salud Tipo A 'San Cristóbal'">
+          </div>
+          <div class="row-2">
+            <div class="field">
+              <label class="field-label">Parroquia</label>
+              <input class="input" id="cs-parroquia">
+            </div>
+            <div class="field">
+              <label class="field-label">Cantón</label>
+              <input class="input" id="cs-canton">
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Ciudad</label>
+            <input class="input" id="cs-ciudad" placeholder="Quito">
+          </div>
+          <div class="field">
+            <label class="field-label">Dirección</label>
+            <input class="input" id="cs-direccion" value="Manuel J. Cobos e Ignacio Hernández">
+          </div>
+          <div class="row-2">
+            <div class="field">
+              <label class="field-label">Código Postal</label>
+              <input class="input" id="cs-cp" value="200101">
+            </div>
+            <div class="field">
+              <label class="field-label">Teléfono</label>
+              <input class="input" id="cs-telefono" value="(04) 52521644">
+            </div>
+          </div>
+          <button class="save-btn" id="btn-save-establecimiento">💾 Guardar establecimiento</button>
+          <div class="save-msg" id="save-msg-establecimiento"></div>
+        </div>
+      </details>
+
+      <!-- Imágenes oficiales (encabezado y pie) -->
+      <details class="card">
+        <summary>🖼 Encabezado y Pie Oficial (opcional)</summary>
+        <div class="card-body">
+          <p style="font-size:12px; color: var(--text-secondary); margin-bottom:10px;">
+            Sube las imágenes oficiales del MSP para que aparezcan en el certificado. Si no subes, se usa el escudo SVG por defecto. <strong>Las imágenes se guardan en este navegador.</strong>
+          </p>
+
+          <div class="field">
+            <label class="field-label">Imagen del encabezado (escudo + Ministerio)</label>
+            <input type="file" class="input" id="img-header" accept="image/*">
+            <div id="img-header-preview" style="margin-top:8px; min-height:0;"></div>
+            <button class="add-btn" id="btn-clear-header" style="margin-top:6px; display:none;">✕ Quitar imagen de encabezado</button>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Imagen del pie de página (El Nuevo Ecuador)</label>
+            <input type="file" class="input" id="img-footer" accept="image/*">
+            <div id="img-footer-preview" style="margin-top:8px; min-height:0;"></div>
+            <button class="add-btn" id="btn-clear-footer" style="margin-top:6px; display:none;">✕ Quitar imagen de pie</button>
+          </div>
+        </div>
+      </details>
+
+      <!-- Datos del Paciente -->
+      <details class="card" open>
+        <summary>🧑 Datos del Paciente</summary>
+        <div class="card-body">
+          <div class="field">
+            <label class="field-label">Nombre Completo</label>
+            <input class="input" id="p-nombre">
+          </div>
+          <div class="row-2">
+            <div class="field">
+              <label class="field-label">Cédula</label>
+              <input class="input" id="p-cedula">
+            </div>
+            <div class="field">
+              <label class="field-label">Edad</label>
+              <input class="input" id="p-edad" placeholder="30 años">
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Domicilio</label>
+            <input class="input" id="p-domicilio">
+          </div>
+          <div class="row-2">
+            <div class="field">
+              <label class="field-label">Institución / Empresa</label>
+              <input class="input" id="p-institucion">
+            </div>
+            <div class="field">
+              <label class="field-label">Puesto / Cargo</label>
+              <input class="input" id="p-puesto">
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">N° Historia Clínica</label>
+            <input class="input" id="p-hc">
+          </div>
+          <div class="field">
+            <label class="field-label">N° Contacto</label>
+            <input class="input" id="p-contacto">
+          </div>
+        </div>
+      </details>
+
+      <!-- Cuadro Clínico -->
+      <details class="card" open>
+        <summary>📝 Cuadro Clínico y Diagnósticos</summary>
+        <div class="card-body">
+          <div class="field">
+            <label class="field-label">Cuadro Clínico</label>
+            <textarea class="textarea" id="c-cuadro" placeholder="Hace 8 horas presenta..."></textarea>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Presenta síntomas</label>
+            <div class="multi-check" style="grid-template-columns: 1fr 1fr">
+              <label><input type="radio" name="sintomas" value="si" checked> SI</label>
+              <label><input type="radio" name="sintomas" value="no"> NO</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Causa</label>
+            <div class="multi-check">
+              <label><input type="radio" name="causa" value="enf" checked> Enfermedad General</label>
+              <label><input type="radio" name="causa" value="trabajo"> Accidente Trabajo</label>
+              <label><input type="radio" name="causa" value="transito"> Accidente Tránsito</label>
+              <label><input type="radio" name="causa" value="maternidad"> Maternidad</label>
+              <label><input type="radio" name="causa" value="catastrofica"> Enf. Catastrófica</label>
+            </div>
+          </div>
+
+          <div class="checkbox-row">
+            <input type="checkbox" id="c-reposo" checked>
+            <label for="c-reposo" class="lbl">
+              <strong>Indicar reposo médico</strong>
+              <span>Si desactivas, el certificado solo mencionará el diagnóstico sin reposo.</span>
+            </label>
+          </div>
+
+          <div id="reposo-block">
+            <div class="field">
+              <label class="field-label">Tipo de reposo</label>
+              <div class="multi-check">
+                <label><input type="radio" name="tipo-reposo" value="absoluto" checked> Reposo Absoluto</label>
+                <label><input type="radio" name="tipo-reposo" value="aislamiento"> Aislamiento</label>
+                <label><input type="radio" name="tipo-reposo" value="teletrabajo"> Teletrabajo</label>
+              </div>
+            </div>
+
+            <div class="row-2">
+              <div class="field">
+                <label class="field-label">Fecha Inicio</label>
+                <input type="date" class="input" id="c-inicio">
+              </div>
+              <div class="field">
+                <label class="field-label">Fecha Hasta</label>
+                <input type="date" class="input" id="c-hasta">
+              </div>
+            </div>
+            <div class="row-2">
+              <div class="field">
+                <label class="field-label">Días Concedidos</label>
+                <input type="number" class="input" id="c-dias" min="0" value="0">
+              </div>
+              <div class="field">
+                <label class="field-label">Hora</label>
+                <input type="time" class="input" id="c-hora">
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Diagnósticos / CIE-10</label>
+            <div class="row-2" style="grid-template-columns: 100px 1fr">
+              <input class="input" id="dx-code" placeholder="J00X" style="text-transform:uppercase">
+              <input class="input" id="dx-desc" placeholder="Descripción">
+            </div>
+            <button class="add-btn" id="btn-add-dx">+ Añadir diagnóstico</button>
+            <div class="dx-list" id="dx-list"></div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Observaciones (opcional)</label>
+            <textarea class="textarea" id="c-obs"></textarea>
+          </div>
+        </div>
+      </details>
+
+      <!-- Download -->
+      <div class="download-bar">
+        <button class="download-btn" id="btn-print">📄 Descargar / Imprimir Certificado</button>
+        <p class="download-tip">Usa el diálogo de impresión y selecciona <strong>"Guardar como PDF"</strong></p>
+      </div>
+
+      <div class="disclaimer">
+        <strong>⚠ Aviso:</strong> Esta herramienta genera certificados con base en los formatos MSP e IESS de Ecuador. Verifica los datos antes de firmar y entregar al paciente.
+      </div>
+    </div>
+
+    <!-- ============ PREVIEW COLUMN ============ -->
+    <div class="preview-col">
+      <div class="certificate msp" id="cert-msp">
+        <!-- Header MSP -->
+        <div class="msp-header" id="msp-header-block">
+          <!-- Default header (custom SVG); replaced if user uploads image -->
+          <div class="left" id="msp-header-default">
+            <div class="republic">
+              <div class="l1">REPÚBLICA</div>
+              <div>DEL ECUADOR</div>
+            </div>
+          </div>
+          <!-- Custom uploaded header image -->
+          <img id="msp-header-img" style="display:none; max-height:90px; max-width:100%;" alt="Encabezado MSP">
+
+          <div class="ms-text" id="msp-text">Ministerio de Salud Pública</div>
+        </div>
+
+        <div class="cert-place-date" id="msp-place-date">Lugar, 3 de mayo de 2026</div>
+
+        <div class="cert-title">CERTIFICADO MÉDICO</div>
+
+        <div class="cert-body" id="msp-body">
+          <p>
+            Certifico haber atendido a <strong id="msp-paciente">[Paciente]</strong>
+            con cédula de identidad <strong id="msp-cedula">XXXXXXXXX</strong>,
+            en el <strong id="msp-centro">Centro de Salud</strong>
+            el día <strong id="msp-fecha">XX de XX del XXXX</strong>.
+          </p>
+
+          <table class="cert-table" id="msp-datos-table">
+            <tr><td>Domicilio:</td><td id="msp-domicilio">—</td></tr>
+            <tr><td>Institución:</td><td id="msp-institucion">—</td></tr>
+            <tr><td>Puesto:</td><td id="msp-puesto">—</td></tr>
+            <tr><td>Historia clínica:</td><td id="msp-hc">—</td></tr>
+            <tr><td>Diagnóstico:</td><td id="msp-diagnostico">—</td></tr>
+            <tr><td>CIE-10:</td><td id="msp-cie">—</td></tr>
+          </table>
+
+          <div id="msp-sintomas-row">
+            Presenta síntomas: <span id="msp-sintomas-si">SI ( )</span> &nbsp; <span id="msp-sintomas-no">NO ( )</span>
+          </div>
+
+          <div class="cert-options" style="margin-top:6px">
+            <span class="opt" id="opt-aislamiento"><span class="box"></span>Aislamiento</span>
+            <span class="opt" id="opt-absoluto"><span class="box"></span>Reposo Absoluto</span>
+            <span class="opt" id="opt-teletrabajo"><span class="box"></span>Teletrabajo</span>
+          </div>
+
+          <div style="font-weight:700; margin-top:8px;">Causa:</div>
+          <div class="cert-options">
+            <span class="opt" id="causa-enf"><span class="box"></span>Enfermedad General</span>
+            <span class="opt" id="causa-trabajo"><span class="box"></span>Accidente de Trabajo</span>
+            <span class="opt" id="causa-transito"><span class="box"></span>Accidente de Tránsito</span>
+            <span class="opt" id="causa-maternidad"><span class="box"></span>Maternidad</span>
+            <span class="opt" id="causa-catastrofica"><span class="box"></span>Enf. Catastrófica</span>
+          </div>
+
+          <div id="msp-cuadro-block" style="margin-top:14px">
+            <strong>Descripción de la enfermedad:</strong>
+            <p id="msp-cuadro" style="margin-top:6px">—</p>
+          </div>
+
+          <div class="cert-rest" id="msp-rest-block">
+            <div>Se da reposo por <strong id="msp-dias">0 (cero)</strong> días:</div>
+            <div>DESDE: <strong id="msp-desde">—</strong></div>
+            <div>HASTA: <strong id="msp-hasta">—</strong></div>
+          </div>
+
+          <div id="msp-obs-block" style="display:none">
+            <strong>Observaciones:</strong>
+            <p id="msp-obs">—</p>
+          </div>
+
+          <p>Atentamente,</p>
+        </div>
+
+        <div class="cert-signature">
+          <div style="height: 60px;"></div>
+          <div class="line"></div>
+          <strong id="msp-firma-nombre">Md. XXXXXXXX</strong><br>
+          <span id="msp-firma-cargo">Médico general</span><br>
+          CI: <span id="msp-firma-ci">—</span><br>
+          Registro Sanitario N° <span id="msp-firma-reg">—</span><br>
+          Correo: <span id="msp-firma-correo">—</span>
+        </div>
+
+        <div class="cert-footer" id="msp-footer-block">
+          <div class="footer-left" id="msp-footer-default">
+            <div>Dirección: <span id="ft-dir">—</span></div>
+            <div>Código postal: <span id="ft-cp">—</span></div>
+            <div>Teléfono: <span id="ft-tel">—</span></div>
+            <div>www.salud.gob.ec</div>
+          </div>
+          <div id="msp-footer-logo">
+            <!-- SVG logo "El Nuevo Ecuador" + Defiende/Impulsa/Construye -->
+            <svg width="280" height="62" viewBox="0 0 320 70" xmlns="http://www.w3.org/2000/svg" style="font-family: 'Inter', sans-serif;">
+              <defs>
+                <style>
+                  .ne-bold { font-family: 'Inter', Arial Black, sans-serif; font-weight: 900; font-style: italic; }
+                </style>
+              </defs>
+              <!-- EL NUEVO -->
+              <text x="98" y="17" class="ne-bold" font-size="11" fill="#1e3a8a" letter-spacing="0.5">EL NUEVO</text>
+              <!-- ECUADOR -->
+              <text x="2" y="50" class="ne-bold" font-size="32" fill="#1e3a8a" letter-spacing="-1">ECUADOR</text>
+
+              <!-- Tres franjas onduladas (bandera) -->
+              <g>
+                <!-- Amarilla -->
+                <path d="M177 20 Q183 16 188 22 L196 60 Q190 64 184 58 Z" fill="#facc15"/>
+                <!-- Azul -->
+                <path d="M193 18 Q199 14 204 20 L212 60 Q206 64 200 58 Z" fill="#1e3a8a"/>
+                <!-- Roja -->
+                <path d="M209 16 Q215 12 220 18 L228 60 Q222 64 216 58 Z" fill="#dc2626"/>
+              </g>
+
+              <!-- DEFIENDE / IMPULSA / CONSTRUYE -->
+              <text x="232" y="22" class="ne-bold" font-size="10" fill="#1e3a8a" letter-spacing="0.4">DEFIENDE</text>
+              <text x="232" y="38" class="ne-bold" font-size="10" fill="#1e3a8a" letter-spacing="0.4">IMPULSA</text>
+              <text x="232" y="54" class="ne-bold" font-size="10" fill="#1e3a8a" letter-spacing="0.4">CONSTRUYE</text>
+            </svg>
+          </div>
+          <img id="msp-footer-img" style="display:none; max-height:60px; max-width:280px;" alt="Pie de página MSP">
+        </div>
+      </div>
+
+      <!-- ============ IESS Certificate ============ -->
+      <div class="certificate iess" id="cert-iess" style="display:none">
+        <div class="iess-title">CERTIFICADO MÉDICO</div>
+
+        <div class="iess-section">DATOS DEL ESTABLECIMIENTO</div>
+        <div class="iess-grid">
+          <div class="row"><span class="lbl">Establecimiento de Salud:</span> <span id="iess-cs">—</span></div>
+          <div class="row"><span class="lbl">Número de contacto:</span> <span id="iess-cs-tel">—</span></div>
+          <div class="row"><span class="lbl">Correo electrónico:</span> <span id="iess-cs-correo">—</span></div>
+          <div class="row"><span class="lbl">Dirección del establecimiento:</span> <span id="iess-cs-dir">—</span></div>
+          <div class="row"><span class="lbl">Fecha de emisión:</span> <span id="iess-fecha">—</span></div>
+          <div class="row"><span class="lbl">Lugar de emisión:</span> <span id="iess-lugar">—</span></div>
+        </div>
+
+        <div class="iess-section">DATOS DEL AFILIADO / PACIENTE</div>
+        <div class="iess-grid">
+          <div class="row"><span class="lbl">Apellidos y Nombres:</span> <span id="iess-pac">—</span></div>
+          <div class="row"><span class="lbl">Número de contacto:</span> <span id="iess-pac-tel">—</span></div>
+          <div class="row"><span class="lbl">N° de cédula de identidad:</span> <span id="iess-pac-ci">—</span></div>
+          <div class="row"><span class="lbl">N° Historia clínica:</span> <span id="iess-pac-hc">—</span></div>
+          <div class="row"><span class="lbl">Dirección domiciliaria:</span> <span id="iess-pac-dir">—</span></div>
+          <div class="row"><span class="lbl">Edad:</span> <span id="iess-pac-edad">—</span></div>
+          <div class="row"><span class="lbl">Institución o empresa:</span> <span id="iess-pac-inst">—</span></div>
+          <div class="row"><span class="lbl">Puesto de trabajo:</span> <span id="iess-pac-puesto">—</span></div>
+        </div>
+
+        <div class="iess-section">MOTIVO DEL AISLAMIENTO / ENFERMEDAD</div>
+        <div style="font-size:12.5px; line-height:1.7;">
+          <div><strong>Diagnóstico:</strong> <span id="iess-dx">—</span></div>
+          <div><strong>Código CIE-10:</strong> <span id="iess-cie">—</span></div>
+          <div style="margin-top:6px">
+            <strong>Presenta síntomas:</strong>
+            <span class="opt" id="iess-sint-si"><span class="box"></span>SI</span>
+            <span class="opt" id="iess-sint-no" style="margin-left:14px"><span class="box"></span>NO</span>
+          </div>
+          <div style="margin-top:6px">
+            <strong>Causa:</strong>
+            <span class="opt" id="iess-causa-enf"><span class="box"></span>Enfermedad general</span>
+            <span class="opt" id="iess-causa-trabajo" style="margin-left:8px"><span class="box"></span>Acc. Trabajo</span>
+            <span class="opt" id="iess-causa-transito" style="margin-left:8px"><span class="box"></span>Acc. Tránsito</span>
+            <span class="opt" id="iess-causa-maternidad" style="margin-left:8px"><span class="box"></span>Maternidad</span>
+          </div>
+          <div style="margin-top:6px">
+            <span class="opt" id="iess-aislamiento"><span class="box"></span>Aislamiento</span>
+            <span class="opt" id="iess-teletrabajo" style="margin-left:14px"><span class="box"></span>Teletrabajo</span>
+          </div>
+          <div style="margin-top:10px"><strong>Descripción de la enfermedad:</strong></div>
+          <p id="iess-desc">—</p>
+        </div>
+
+        <div class="cert-rest" id="iess-rest-block">
+          <div><strong>Total de días concedidos:</strong> <span id="iess-dias">0</span> (<span id="iess-dias-letras">cero</span>)</div>
+          <div><strong>Desde (dd/mm/aaaa):</strong> <span id="iess-desde">—</span></div>
+          <div><strong>Hasta (dd/mm/aaaa):</strong> <span id="iess-hasta">—</span></div>
+        </div>
+
+        <div class="iess-section">FIRMAS DE RESPONSABILIDAD</div>
+        <div style="margin-top: 50px"></div>
+        <div class="cert-signature">
+          <div class="line"></div>
+          <strong id="iess-firma">—</strong>
+        </div>
+        <div class="iess-grid" style="margin-top:14px">
+          <div class="row"><span class="lbl">Nombre del profesional:</span> <span id="iess-prof-nombre">—</span></div>
+          <div class="row"><span class="lbl">Cédula de identidad:</span> <span id="iess-prof-ci">—</span></div>
+          <div class="row"><span class="lbl">N° de registro:</span> <span id="iess-prof-reg">—</span></div>
+          <div class="row"><span class="lbl">Especialidad:</span> <span id="iess-prof-esp">—</span></div>
+          <div class="row"><span class="lbl">Correo electrónico:</span> <span id="iess-prof-correo">—</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="page-footer">
+    <span class="brand-logo">MED NOTES<span class="reg">®</span></span>
+    <p>Hecho por <strong>MED NOTES®</strong> — Apuntes médicos basados en evidencia</p>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   FORMAT TOGGLE
+   ============================================================ */
+let currentFormat = 'msp';
+document.querySelectorAll('.format-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.format-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    currentFormat = b.dataset.format;
+    document.getElementById('cert-msp').style.display = currentFormat === 'msp' ? 'block' : 'none';
+    document.getElementById('cert-iess').style.display = currentFormat === 'iess' ? 'block' : 'none';
+    update();
+  });
+});
+
+/* ============================================================
+   STORAGE: Doctor + Establishment
+   ============================================================ */
+const STORAGE_DOC = 'mednotes_certificados_medico';
+const STORAGE_EST = 'mednotes_certificados_establecimiento';
+
+function loadStored() {
+  try {
+    const doc = JSON.parse(localStorage.getItem(STORAGE_DOC) || '{}');
+    if (doc.nombre) document.getElementById('m-nombre').value = doc.nombre;
+    if (doc.cedula) document.getElementById('m-cedula').value = doc.cedula;
+    if (doc.cargo) document.getElementById('m-cargo').value = doc.cargo;
+    if (doc.registro) document.getElementById('m-registro').value = doc.registro;
+    if (doc.correo) document.getElementById('m-correo').value = doc.correo;
+
+    const est = JSON.parse(localStorage.getItem(STORAGE_EST) || '{}');
+    if (est.nombre) document.getElementById('cs-nombre').value = est.nombre;
+    if (est.parroquia) document.getElementById('cs-parroquia').value = est.parroquia;
+    if (est.canton) document.getElementById('cs-canton').value = est.canton;
+    if (est.ciudad) document.getElementById('cs-ciudad').value = est.ciudad;
+    if (est.direccion) document.getElementById('cs-direccion').value = est.direccion;
+    if (est.cp) document.getElementById('cs-cp').value = est.cp;
+    if (est.telefono) document.getElementById('cs-telefono').value = est.telefono;
+  } catch(e) { console.warn('No localStorage'); }
+}
+
+document.getElementById('btn-save-medico').addEventListener('click', () => {
+  try {
+    localStorage.setItem(STORAGE_DOC, JSON.stringify({
+      nombre: document.getElementById('m-nombre').value,
+      cedula: document.getElementById('m-cedula').value,
+      cargo: document.getElementById('m-cargo').value,
+      registro: document.getElementById('m-registro').value,
+      correo: document.getElementById('m-correo').value
+    }));
+    const msg = document.getElementById('save-msg-medico');
+    msg.textContent = '✓ Datos guardados en este navegador';
+    setTimeout(() => msg.textContent = '', 2500);
+  } catch(e) { alert('Error al guardar: ' + e.message); }
+});
+
+document.getElementById('btn-save-establecimiento').addEventListener('click', () => {
+  try {
+    localStorage.setItem(STORAGE_EST, JSON.stringify({
+      nombre: document.getElementById('cs-nombre').value,
+      parroquia: document.getElementById('cs-parroquia').value,
+      canton: document.getElementById('cs-canton').value,
+      ciudad: document.getElementById('cs-ciudad').value,
+      direccion: document.getElementById('cs-direccion').value,
+      cp: document.getElementById('cs-cp').value,
+      telefono: document.getElementById('cs-telefono').value
+    }));
+    const msg = document.getElementById('save-msg-establecimiento');
+    msg.textContent = '✓ Establecimiento guardado';
+    setTimeout(() => msg.textContent = '', 2500);
+  } catch(e) { alert('Error al guardar: ' + e.message); }
+});
+
+/* ============================================================
+   DIAGNOSES (CIE-10)
+   ============================================================ */
+let diagnoses = [];
+
+document.getElementById('btn-add-dx').addEventListener('click', () => {
+  const code = document.getElementById('dx-code').value.trim().toUpperCase();
+  const desc = document.getElementById('dx-desc').value.trim();
+  if (!code || !desc) { alert('Ingresa código y descripción'); return; }
+  diagnoses.push({ code, desc });
+  document.getElementById('dx-code').value = '';
+  document.getElementById('dx-desc').value = '';
+  renderDx();
+  update();
+});
+
+function renderDx() {
+  const container = document.getElementById('dx-list');
+  container.innerHTML = diagnoses.map((d, i) => `
+    <div class="dx-item">
+      <span class="code">${d.code}</span>
+      <span class="desc">${d.desc}</span>
+      <button class="del" data-idx="${i}" title="Eliminar">✕</button>
+    </div>
+  `).join('');
+  container.querySelectorAll('.del').forEach(b => {
+    b.addEventListener('click', e => {
+      diagnoses.splice(parseInt(e.target.dataset.idx), 1);
+      renderDx();
+      update();
+    });
+  });
+}
+
+/* ============================================================
+   FORMAT HELPERS
+   ============================================================ */
+const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+function dateLong(dateStr) {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr + 'T12:00:00');
+  return `${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+}
+
+function dateShort(dateStr) {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr + 'T12:00:00');
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  return `${dd}/${mm}/${d.getFullYear()}`;
+}
+
+const numerosLetras = ['cero','uno','dos','tres','cuatro','cinco','seis','siete','ocho','nueve','diez',
+  'once','doce','trece','catorce','quince','dieciseis','diecisiete','dieciocho','diecinueve','veinte',
+  'veintiuno','veintidos','veintitres','veinticuatro','veinticinco','veintiseis','veintisiete','veintiocho','veintinueve','treinta'];
+function numToLetter(n) {
+  n = parseInt(n) || 0;
+  if (n >= 0 && n <= 30) return numerosLetras[n];
+  return n.toString();
+}
+
+/* ============================================================
+   AUTO-CALCULATE END DATE FROM DAYS
+   ============================================================ */
+function syncDates() {
+  const inicio = document.getElementById('c-inicio').value;
+  const dias = parseInt(document.getElementById('c-dias').value) || 0;
+  if (inicio && dias > 0) {
+    const d = new Date(inicio + 'T12:00:00');
+    d.setDate(d.getDate() + dias - 1);
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    document.getElementById('c-hasta').value = `${d.getFullYear()}-${mm}-${dd}`;
+  }
+}
+
+document.getElementById('c-inicio').addEventListener('change', () => { syncDates(); update(); });
+document.getElementById('c-dias').addEventListener('input', () => { syncDates(); update(); });
+
+/* ============================================================
+   MAIN UPDATE
+   ============================================================ */
+function update() {
+  const v = id => document.getElementById(id).value || '';
+
+  // Reposo block visibility
+  const conReposo = document.getElementById('c-reposo').checked;
+  document.getElementById('reposo-block').style.display = conReposo ? 'block' : 'none';
+
+  // Síntomas
+  const sintomas = document.querySelector('input[name="sintomas"]:checked')?.value || 'si';
+  // Causa
+  const causa = document.querySelector('input[name="causa"]:checked')?.value || 'enf';
+  // Tipo reposo
+  const tipoReposo = document.querySelector('input[name="tipo-reposo"]:checked')?.value || 'absoluto';
+
+  const today = new Date();
+  const hoy = `${today.getDate()} de ${meses[today.getMonth()]} de ${today.getFullYear()}`;
+  const ciudad = v('cs-ciudad') || 'Lugar';
+
+  // Diagnósticos
+  const dxText = diagnoses.length
+    ? diagnoses.map(d => d.desc).join('; ')
+    : '—';
+  const dxCodes = diagnoses.length
+    ? diagnoses.map(d => d.code).join(', ')
+    : '—';
+
+  // ============ MSP UPDATE ============
+  document.getElementById('msp-place-date').textContent = `${ciudad}, ${hoy}`;
+  document.getElementById('msp-paciente').textContent = v('p-nombre') || '[Paciente]';
+  document.getElementById('msp-cedula').textContent = v('p-cedula') || '—';
+  document.getElementById('msp-centro').textContent = v('cs-nombre') || 'Centro de Salud';
+  document.getElementById('msp-fecha').textContent = hoy;
+
+  document.getElementById('msp-domicilio').textContent = v('p-domicilio') || '—';
+  document.getElementById('msp-institucion').textContent = v('p-institucion') || '—';
+  document.getElementById('msp-puesto').textContent = v('p-puesto') || '—';
+  document.getElementById('msp-hc').textContent = v('p-hc') || '—';
+  document.getElementById('msp-diagnostico').textContent = dxText;
+  document.getElementById('msp-cie').textContent = dxCodes;
+
+  // Síntomas
+  document.getElementById('msp-sintomas-si').innerHTML = sintomas === 'si' ? 'SI (X)' : 'SI ( )';
+  document.getElementById('msp-sintomas-no').innerHTML = sintomas === 'no' ? 'NO (X)' : 'NO ( )';
+
+  // Tipo reposo (only show X if conReposo + matching)
+  ['aislamiento','absoluto','teletrabajo'].forEach(t => {
+    const el = document.getElementById('opt-' + t);
+    const box = el.querySelector('.box');
+    if (conReposo && tipoReposo === t) { box.textContent = 'X'; el.classList.add('checked'); }
+    else { box.textContent = ''; el.classList.remove('checked'); }
+  });
+
+  // Causa
+  ['enf','trabajo','transito','maternidad','catastrofica'].forEach(c => {
+    const el = document.getElementById('causa-' + c);
+    const box = el.querySelector('.box');
+    if (causa === c) { box.textContent = 'X'; el.classList.add('checked'); }
+    else { box.textContent = ''; el.classList.remove('checked'); }
+  });
+
+  // Cuadro clínico
+  document.getElementById('msp-cuadro').textContent = v('c-cuadro') || '—';
+
+  // Reposo block
+  if (conReposo) {
+    document.getElementById('msp-rest-block').style.display = 'block';
+    const dias = parseInt(v('c-dias')) || 0;
+    document.getElementById('msp-dias').textContent = `${dias} (${numToLetter(dias)})`;
+    document.getElementById('msp-desde').textContent = dateLong(v('c-inicio'));
+    document.getElementById('msp-hasta').textContent = dateLong(v('c-hasta'));
+  } else {
+    document.getElementById('msp-rest-block').style.display = 'none';
+  }
+
+  // Observaciones
+  if (v('c-obs')) {
+    document.getElementById('msp-obs-block').style.display = 'block';
+    document.getElementById('msp-obs').textContent = v('c-obs');
+  } else {
+    document.getElementById('msp-obs-block').style.display = 'none';
+  }
+
+  // Firma MSP
+  const medicoNombre = v('m-nombre') || '—';
+  document.getElementById('msp-firma-nombre').textContent = medicoNombre.startsWith('Md') || medicoNombre.startsWith('MD') || medicoNombre.startsWith('Dr')
+    ? medicoNombre : `Md. ${medicoNombre}`;
+  document.getElementById('msp-firma-cargo').textContent = v('m-cargo') || '—';
+  document.getElementById('msp-firma-ci').textContent = v('m-cedula') || '—';
+  document.getElementById('msp-firma-reg').textContent = v('m-registro') || '—';
+  document.getElementById('msp-firma-correo').textContent = v('m-correo') || '—';
+
+  // Footer
+  document.getElementById('ft-dir').textContent = v('cs-direccion') || '—';
+  document.getElementById('ft-cp').textContent = v('cs-cp') || '—';
+  document.getElementById('ft-tel').textContent = v('cs-telefono') || '—';
+
+  // ============ IESS UPDATE ============
+  document.getElementById('iess-cs').textContent = v('cs-nombre') || '—';
+  document.getElementById('iess-cs-tel').textContent = v('cs-telefono') || '—';
+  document.getElementById('iess-cs-correo').textContent = v('m-correo') || '—';
+  document.getElementById('iess-cs-dir').textContent = v('cs-direccion') || '—';
+  document.getElementById('iess-fecha').textContent = dateShort(today.toISOString().split('T')[0]) || '—';
+  document.getElementById('iess-lugar').textContent = ciudad;
+
+  document.getElementById('iess-pac').textContent = v('p-nombre') || '—';
+  document.getElementById('iess-pac-tel').textContent = v('p-contacto') || '—';
+  document.getElementById('iess-pac-ci').textContent = v('p-cedula') || '—';
+  document.getElementById('iess-pac-hc').textContent = v('p-hc') || '—';
+  document.getElementById('iess-pac-dir').textContent = v('p-domicilio') || '—';
+  document.getElementById('iess-pac-edad').textContent = v('p-edad') || '—';
+  document.getElementById('iess-pac-inst').textContent = v('p-institucion') || '—';
+  document.getElementById('iess-pac-puesto').textContent = v('p-puesto') || '—';
+
+  document.getElementById('iess-dx').textContent = dxText;
+  document.getElementById('iess-cie').textContent = dxCodes;
+
+  // IESS Síntomas
+  document.getElementById('iess-sint-si').querySelector('.box').textContent = sintomas === 'si' ? 'X' : '';
+  document.getElementById('iess-sint-no').querySelector('.box').textContent = sintomas === 'no' ? 'X' : '';
+
+  // IESS Causa
+  ['enf','trabajo','transito','maternidad'].forEach(c => {
+    const el = document.getElementById('iess-causa-' + c);
+    const box = el.querySelector('.box');
+    if (causa === c) box.textContent = 'X'; else box.textContent = '';
+  });
+
+  // IESS Aislamiento / Teletrabajo
+  document.getElementById('iess-aislamiento').querySelector('.box').textContent = (conReposo && tipoReposo === 'aislamiento') ? 'X' : '';
+  document.getElementById('iess-teletrabajo').querySelector('.box').textContent = (conReposo && tipoReposo === 'teletrabajo') ? 'X' : '';
+
+  document.getElementById('iess-desc').textContent = v('c-cuadro') || '—';
+
+  if (conReposo) {
+    document.getElementById('iess-rest-block').style.display = 'block';
+    const dias = parseInt(v('c-dias')) || 0;
+    document.getElementById('iess-dias').textContent = dias;
+    document.getElementById('iess-dias-letras').textContent = numToLetter(dias);
+    document.getElementById('iess-desde').textContent = dateShort(v('c-inicio'));
+    document.getElementById('iess-hasta').textContent = dateShort(v('c-hasta'));
+  } else {
+    document.getElementById('iess-rest-block').style.display = 'none';
+  }
+
+  // IESS Firma
+  document.getElementById('iess-firma').textContent = medicoNombre;
+  document.getElementById('iess-prof-nombre').textContent = medicoNombre;
+  document.getElementById('iess-prof-ci').textContent = v('m-cedula') || '—';
+  document.getElementById('iess-prof-reg').textContent = v('m-registro') || '—';
+  document.getElementById('iess-prof-esp').textContent = v('m-cargo') || '—';
+  document.getElementById('iess-prof-correo').textContent = v('m-correo') || '—';
+}
+
+/* ============================================================
+   ATTACH UPDATE LISTENERS
+   ============================================================ */
+document.querySelectorAll('input, textarea, select').forEach(el => {
+  el.addEventListener('input', update);
+  el.addEventListener('change', update);
+});
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+document.getElementById('btn-print').addEventListener('click', () => {
+  window.print();
+});
+
+/* ============================================================
+   IMÁGENES PERSONALIZADAS (encabezado / pie)
+   ============================================================ */
+const STORAGE_HEADER = 'mednotes_cert_header_img';
+const STORAGE_FOOTER = 'mednotes_cert_footer_img';
+
+function applyHeaderImage(dataUrl) {
+  const img = document.getElementById('msp-header-img');
+  const def = document.getElementById('msp-header-default');
+  const text = document.getElementById('msp-text');
+  const preview = document.getElementById('img-header-preview');
+  const btn = document.getElementById('btn-clear-header');
+  if (dataUrl) {
+    img.src = dataUrl;
+    img.style.display = 'block';
+    def.style.display = 'none';
+    text.style.display = 'none';
+    preview.innerHTML = `<img src="${dataUrl}" style="max-width:100%; max-height:60px; border:1px solid var(--border); border-radius:4px;">`;
+    btn.style.display = 'block';
+  } else {
+    img.style.display = 'none';
+    img.src = '';
+    def.style.display = 'flex';
+    text.style.display = 'block';
+    preview.innerHTML = '';
+    btn.style.display = 'none';
+  }
+}
+
+function applyFooterImage(dataUrl) {
+  const img = document.getElementById('msp-footer-img');
+  const logo = document.getElementById('msp-footer-logo');
+  const preview = document.getElementById('img-footer-preview');
+  const btn = document.getElementById('btn-clear-footer');
+  if (dataUrl) {
+    img.src = dataUrl;
+    img.style.display = 'block';
+    logo.style.display = 'none';
+    preview.innerHTML = `<img src="${dataUrl}" style="max-width:100%; max-height:50px; border:1px solid var(--border); border-radius:4px;">`;
+    btn.style.display = 'block';
+  } else {
+    img.style.display = 'none';
+    img.src = '';
+    logo.style.display = 'block';
+    preview.innerHTML = '';
+    btn.style.display = 'none';
+  }
+}
+
+function readImg(input, applyFn, storageKey) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const data = e.target.result;
+    applyFn(data);
+    try { localStorage.setItem(storageKey, data); } catch(err) { console.warn('No se pudo guardar imagen:', err); }
+  };
+  reader.readAsDataURL(file);
+}
+
+document.getElementById('img-header').addEventListener('change', function() {
+  readImg(this, applyHeaderImage, STORAGE_HEADER);
+});
+document.getElementById('img-footer').addEventListener('change', function() {
+  readImg(this, applyFooterImage, STORAGE_FOOTER);
+});
+document.getElementById('btn-clear-header').addEventListener('click', () => {
+  applyHeaderImage(null);
+  localStorage.removeItem(STORAGE_HEADER);
+  document.getElementById('img-header').value = '';
+});
+document.getElementById('btn-clear-footer').addEventListener('click', () => {
+  applyFooterImage(null);
+  localStorage.removeItem(STORAGE_FOOTER);
+  document.getElementById('img-footer').value = '';
+});
+
+/* Cargar imágenes guardadas al iniciar */
+try {
+  const savedHeader = localStorage.getItem(STORAGE_HEADER);
+  if (savedHeader) applyHeaderImage(savedHeader);
+  const savedFooter = localStorage.getItem(STORAGE_FOOTER);
+  if (savedFooter) applyFooterImage(savedFooter);
+} catch(e) { console.warn('No localStorage'); }
+
+/* Init */
+loadStored();
+// Set default dates to today
+const todayStr = new Date().toISOString().split('T')[0];
+document.getElementById('c-inicio').value = todayStr;
+document.getElementById('c-hasta').value = todayStr;
+const now = new Date();
+document.getElementById('c-hora').value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+update();
+</script>
+</body>
+</html>
