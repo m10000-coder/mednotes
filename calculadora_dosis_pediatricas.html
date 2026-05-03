@@ -422,6 +422,62 @@
     border-color: var(--blue);
   }
 
+  /* Anemia context banner */
+  .anemia-context {
+    background: var(--green-soft);
+    border: 1px solid var(--green-border);
+    border-left: 4px solid var(--green);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--green-dark);
+    line-height: 1.5;
+  }
+  .anemia-context strong { color: var(--green-dark); font-weight: 700; }
+  .anemia-context.warn {
+    background: #fff7ed;
+    border-color: #fed7aa;
+    border-left-color: #f97316;
+    color: #9a3412;
+  }
+  .anemia-context.warn strong { color: #7c2d12; }
+
+  /* Anemia precautions */
+  .anemia-notes {
+    margin-top: 18px;
+    padding: 16px 20px;
+    background: #fef9c3;
+    border: 1px solid #fde047;
+    border-left: 4px solid #facc15;
+    border-radius: 10px;
+  }
+  .anemia-notes h4 {
+    color: #854d0e;
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 10px;
+  }
+  .anemia-notes ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .anemia-notes li {
+    position: relative;
+    padding: 5px 0 5px 18px;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .anemia-notes li::before {
+    content: '•';
+    position: absolute; left: 4px; top: 5px;
+    color: #ca8a04;
+    font-weight: 800;
+  }
+  .anemia-notes strong { color: var(--text); font-weight: 700; }
+
   /* Responsive */
   @media (max-width: 720px) {
     .grid { grid-template-columns: 1fr; }
@@ -588,35 +644,62 @@
     <div class="section-divider green"></div>
 
     <div class="toggle-row">
-      <span class="toggle-label">Tipo de tratamiento (6–23 meses):</span>
-      <button class="toggle-btn" data-anemia="solo">Solo Hierro</button>
-      <button class="toggle-btn active" data-anemia="chispas">Hierro + Chispas</button>
+      <span class="toggle-label">Tipo de tratamiento:</span>
+      <button class="toggle-btn active" data-anemia="solo">Solo Hierro</button>
+      <button class="toggle-btn" data-anemia="chispas">Hierro + Chispas</button>
     </div>
+
+    <div class="anemia-context" id="anemia-context"></div>
 
     <div class="grid">
 
       <div class="med-card">
         <div class="med-banner green">
-          <div class="med-name">Hierro (Jarabe) <span data-anemia-suffix>+ Chispas</span></div>
-          <div class="med-presentation">Presentación: 50 mg / 5 ml</div>
+          <div class="med-name">Sulfato Ferroso</div>
+          <div class="med-presentation">Presentación: 25 mg / 1 ml (1 gota = 1.25 mg Fe elemental)</div>
         </div>
-        <div class="med-dose-text muted">Dosis (3 mg/kg/día) <span data-anemia-extra>– 12.5 mg de Chispas</span></div>
-        <div class="result-label">Dosis calculada de Jarabe:</div>
-        <div class="result-value" data-result="hierro-jarabe">0.00 ml</div>
-        <div class="result-frequency" data-anemia-freq>+ 1 sobre de Chispas cada 24h</div>
+        <div class="med-dose-text muted">Dosis según peso <span data-anemia-extra></span></div>
+        <div class="result-label">Dosis de referencia:</div>
+        <div class="result-value" data-result="hierro-ref">— mg/día</div>
+        <div class="result-label" style="margin-top:8px">Cantidad a administrar:</div>
+        <div class="result-value" data-result="sulfato">— gotas</div>
+        <div class="result-frequency" data-anemia-freq>cada 24 h por 3 meses</div>
       </div>
 
       <div class="med-card">
         <div class="med-banner green">
-          <div class="med-name">Hierro (Gotas) <span data-anemia-suffix>+ Chispas</span></div>
-          <div class="med-presentation">Presentación: 50 mg / 1 ml</div>
+          <div class="med-name">Hierro Polimaltosado (Gotas)</div>
+          <div class="med-presentation">Presentación: 50 mg / 1 ml (1 gota = 2.5 mg Fe elemental)</div>
         </div>
-        <div class="med-dose-text muted">Dosis (3 mg/kg/día) <span data-anemia-extra>– 12.5 mg de Chispas</span></div>
-        <div class="result-label">Dosis calculada de Gotas:</div>
-        <div class="result-value" data-result="hierro-gotas">0 gotas</div>
-        <div class="result-frequency" data-anemia-freq>+ 1 sobre de Chispas cada 24h</div>
+        <div class="med-dose-text muted">Dosis según peso <span data-anemia-extra></span></div>
+        <div class="result-label">Cantidad a administrar:</div>
+        <div class="result-value" data-result="polim-gotas">— gotas</div>
+        <div class="result-frequency" data-anemia-freq>cada 24 h por 3 meses</div>
       </div>
 
+      <div class="med-card">
+        <div class="med-banner green">
+          <div class="med-name">Jarabe Polimaltosado</div>
+          <div class="med-presentation">Presentación: 50 mg / 5 ml (10 mg Fe elemental / mL)</div>
+        </div>
+        <div class="med-dose-text muted">Dosis según peso <span data-anemia-extra></span></div>
+        <div class="result-label">Cantidad a administrar:</div>
+        <div class="result-value" data-result="jarabe">— ml</div>
+        <div class="result-frequency" data-anemia-freq>cada 24 h por 3 meses</div>
+      </div>
+
+    </div>
+
+    <div class="anemia-notes">
+      <h4>⚠ Precauciones con el uso del hierro</h4>
+      <ul>
+        <li>En zona de alto riesgo de <strong>malaria</strong>, realizar gota gruesa antes de iniciar el tratamiento con hierro. Si la gota gruesa es positiva, tratar primero la malaria.</li>
+        <li>En caso de utilizar <strong>sulfato ferroso</strong>, administrar <strong>media hora antes de la comida</strong> para mejor absorción. Si hay malestar estomacal, administrar 2 horas después.</li>
+        <li><strong>No dar la solución de hierro junto con la leche.</strong></li>
+        <li>Advertir a los familiares que el hierro puede producir <strong>cambio en el color de las heces (café oscuro).</strong></li>
+        <li>En caso de enfermedad, <strong>seguir administrando los sobres de micronutrientes y/o el hierro.</strong></li>
+        <li>Aproximadamente <strong>3 mg/kg/día de hierro elemental</strong> (máx. 50 mg/día) por <strong>3 meses</strong>.</li>
+      </ul>
     </div>
   </section>
 
@@ -791,7 +874,7 @@ document.querySelectorAll('input[data-medslider]').forEach(s => {
   });
 });
 
-let anemiaMode = 'chispas';
+let anemiaMode = 'solo';
 document.querySelectorAll('button[data-anemia]').forEach(btn => {
   btn.addEventListener('click', () => {
     anemiaMode = btn.dataset.anemia;
@@ -801,13 +884,89 @@ document.querySelectorAll('button[data-anemia]').forEach(btn => {
       el.textContent = anemiaMode === 'chispas' ? '+ Chispas' : '';
     });
     document.querySelectorAll('[data-anemia-extra]').forEach(el => {
-      el.textContent = anemiaMode === 'chispas' ? '– 12.5 mg de Chispas' : '';
+      el.textContent = anemiaMode === 'chispas' ? ' (incluye 12.5 mg del sobre Chispas)' : '';
     });
     document.querySelectorAll('[data-anemia-freq]').forEach(el => {
-      el.textContent = anemiaMode === 'chispas' ? '+ 1 sobre de Chispas cada 24h' : 'cada 24 horas';
+      el.textContent = anemiaMode === 'chispas' ? '+ 1 sobre de Chispas cada 24 h por 3 meses' : 'cada 24 h por 3 meses';
     });
+    update();
   });
 });
+
+/* ============================================================
+   TABLAS AIEPI DE HIERRO
+   - Solo Hierro: dosis suplementaria sola
+   - Hierro + Chispas: 1 sobre/día (12.5 mg Fe) + dosis adicional
+   ============================================================ */
+const TABLA_SOLO = [
+  { min:4,  max:5.99,  ref:15, sulfato:12, polim:5,  jarabe:1   },
+  { min:6,  max:8.99,  ref:20, sulfato:15, polim:7,  jarabe:2   },
+  { min:9,  max:11.99, ref:30, sulfato:25, polim:12, jarabe:3   },
+  { min:12, max:14.99, ref:40, sulfato:30, polim:15, jarabe:4   },
+  { min:15, max:17.99, ref:45, sulfato:35, polim:18, jarabe:5   },
+  { min:18, max:20.99, ref:50, sulfato:40, polim:20, jarabe:5   }
+];
+
+const TABLA_CHISPAS = [
+  { min:6,  max:8.99,  ref:12.5, sulfato:10, polim:5,  jarabe:1   },
+  { min:9,  max:11.99, ref:15,   sulfato:15, polim:7,  jarabe:1.5 },
+  { min:12, max:14.99, ref:25,   sulfato:20, polim:10, jarabe:2.5 }
+];
+
+function buscarFila(tabla, peso) {
+  return tabla.find(f => peso >= f.min && peso <= f.max);
+}
+
+function calcularAnemia(peso, edad) {
+  const ctx = document.getElementById('anemia-context');
+  const setVal = (key, value) => {
+    const el = document.querySelector(`[data-result="${key}"]`);
+    if (el) el.textContent = value;
+  };
+
+  // Validaciones de edad para chispas (6-23 m, anemia moderada)
+  if (anemiaMode === 'chispas') {
+    if (!isNaN(edad) && (edad < 6 || edad > 23)) {
+      ctx.className = 'anemia-context warn';
+      ctx.innerHTML = '<strong>Atención:</strong> El esquema con <strong>Chispas (sobres de micronutrientes)</strong> está indicado solo para niños de <strong>6 a 23 meses con anemia moderada</strong>. Para esta edad, considera usar "Solo Hierro".';
+    } else {
+      ctx.className = 'anemia-context';
+      ctx.innerHTML = '<strong>Esquema con Chispas:</strong> 1 sobre/día (12.5 mg Fe elemental) por 3 meses + dosis suplementaria de hierro según peso. Indicado en niños de <strong>6 a 23 meses con anemia moderada.</strong>';
+    }
+  } else {
+    ctx.className = 'anemia-context';
+    ctx.innerHTML = '<strong>Tratamiento con hierro solo:</strong> Aproximadamente <strong>3 mg/kg/día de hierro elemental</strong> (máx. 50 mg/día) por 3 meses. Indicado en menores de 6 meses, mayores de 23 meses, o cuando no hay disponibilidad de Chispas.';
+  }
+
+  if (isNaN(peso) || peso <= 0) {
+    setVal('hierro-ref', '— mg/día');
+    setVal('sulfato', '— gotas');
+    setVal('polim-gotas', '— gotas');
+    setVal('jarabe', '— ml');
+    return;
+  }
+
+  const tabla = anemiaMode === 'chispas' ? TABLA_CHISPAS : TABLA_SOLO;
+  const fila = buscarFila(tabla, peso);
+
+  if (!fila) {
+    // Fuera de rango: calcular por fórmula 3 mg/kg/día
+    let mgDia = Math.min(peso * 3, 50);
+    if (anemiaMode === 'chispas') mgDia = Math.max(0, mgDia - 12.5);
+    const sulfatoGotas = Math.round(mgDia / 1.25);
+    const polimGotas = Math.round(mgDia / 2.5);
+    const jarabeML = mgDia / 10;
+    setVal('hierro-ref', mgDia.toFixed(1) + ' mg/día');
+    setVal('sulfato', sulfatoGotas + ' gotas (calc.)');
+    setVal('polim-gotas', polimGotas + ' gotas (calc.)');
+    setVal('jarabe', jarabeML.toFixed(1) + ' ml (calc.)');
+  } else {
+    setVal('hierro-ref', fila.ref + ' mg/día');
+    setVal('sulfato', fila.sulfato + ' gotas');
+    setVal('polim-gotas', fila.polim + ' gotas');
+    setVal('jarabe', fila.jarabe + ' ml');
+  }
+}
 
 /* ============================================================
    CIPROFLOXACINA - Dosis fija por edad (en miligramos)
@@ -887,21 +1046,8 @@ function update() {
     setVal('azi-neumo', fmt(ml) + ' ml');
   } else setVal('azi-neumo', '0.00 ml');
 
-  // ===== ANEMIA =====
-  // Hierro 3 mg/kg/día
-  // Jarabe 50 mg/5 ml → ml/día = (peso × 3 / 50) × 5 = peso × 0.3
-  // Gotas 50 mg/1 ml. 1 ml = 25 gotas (estándar) → gotas = ml × 25
-  if (peso) {
-    const mgDia = peso * 3;
-    const mlJarabe = (mgDia / 50) * 5;
-    setVal('hierro-jarabe', fmt(mlJarabe) + ' ml');
-    const mlGotas = mgDia / 50;
-    const gotas = Math.round(mlGotas * 25);
-    setVal('hierro-gotas', gotas + ' gotas');
-  } else {
-    setVal('hierro-jarabe', '0.00 ml');
-    setVal('hierro-gotas', '0 gotas');
-  }
+  // ===== ANEMIA (AIEPI) =====
+  calcularAnemia(peso, edad);
 
   // ===== CRUP =====
   // Prednisona 1 mg/kg/día, máx 50 mg, tab 5 mg
