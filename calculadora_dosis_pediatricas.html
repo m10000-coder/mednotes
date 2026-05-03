@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Dosis Pediátricas</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text: #0f172a;
+    --text-secondary: #475569;
+    --muted: #94a3b8;
+
+    --blue: #2563eb;
+    --blue-soft: #eff6ff;
+    --blue-border: #bfdbfe;
+
+    --red: #dc2626;
+    --red-soft: #fee2e2;
+    --red-border: #fecaca;
+    --red-dark: #991b1b;
+
+    --teal: #0d9488;
+    --teal-soft: #ccfbf1;
+    --teal-border: #5eead4;
+
+    --green: #16a34a;
+    --green-soft: #dcfce7;
+    --green-border: #86efac;
+    --green-dark: #15803d;
+
+    --purple: #9333ea;
+    --purple-soft: #f3e8ff;
+    --purple-border: #d8b4fe;
+
+    --cyan: #06b6d4;
+    --cyan-soft: #cffafe;
+    --cyan-border: #67e8f9;
+    --cyan-dark: #155e75;
+
+    --pink: #e11d48;
+    --pink-soft: #ffe4e6;
+    --pink-border: #fda4af;
+    --pink-dark: #9f1239;
+  }
+
+  body {
+    background: var(--surface-alt);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.55;
+    font-size: 14px;
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  .wrapper { max-width: 1200px; margin: 0 auto; padding: 22px 16px 0; }
+
+  /* ============ Header ============ */
+  .page-header {
+    text-align: center;
+    margin-bottom: 22px;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.025em;
+    margin-bottom: 6px;
+  }
+  .page-sub {
+    color: var(--text-secondary);
+    font-size: 13px;
+  }
+
+  /* ============ Sticky input bar ============ */
+  .input-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 22px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    position: sticky;
+    top: 12px;
+    z-index: 10;
+  }
+  .brand-logo {
+    background: #000;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  .brand-logo .reg {
+    font-size: 9px;
+    vertical-align: super;
+    margin-left: 1px;
+  }
+  .input-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .input-group label {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 13.5px;
+  }
+  .input-group input {
+    width: 90px;
+    padding: 8px 12px;
+    border: 1.5px solid var(--blue-border);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--blue-soft);
+    text-align: center;
+    transition: all 0.15s;
+  }
+  .input-group input:focus {
+    outline: none;
+    border-color: var(--blue);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+  }
+  .estimate-btn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background: var(--blue);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .estimate-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(37,99,235,0.3);
+  }
+  .estimate-btn.gray {
+    background: var(--surface-alt);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .estimate-btn.gray:hover { background: #e2e8f0; }
+
+  /* ============ Section ============ */
+  .section { margin-bottom: 30px; }
+  .section-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+  .section-divider {
+    height: 2px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+  .section-divider.red    { background: var(--red); }
+  .section-divider.teal   { background: var(--teal); }
+  .section-divider.green  { background: var(--green); }
+  .section-divider.purple { background: var(--purple); }
+  .section-divider.cyan   { background: var(--cyan); }
+  .section-divider.pink   { background: var(--pink); }
+
+  /* ============ Card grid ============ */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  .med-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  .med-banner {
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+  }
+  .med-banner.red    { background: var(--red-soft);    color: var(--red-dark); }
+  .med-banner.teal   { background: var(--teal-soft);   color: var(--teal); }
+  .med-banner.green  { background: var(--green-soft);  color: var(--green-dark); }
+  .med-banner.purple { background: var(--purple-soft); color: var(--purple); }
+  .med-banner.cyan   { background: var(--cyan-soft);   color: var(--cyan-dark); }
+  .med-banner.pink   { background: var(--pink-soft);   color: var(--pink-dark); }
+
+  .med-name {
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .med-presentation {
+    font-size: 13.5px;
+    opacity: 0.92;
+  }
+
+  .med-dose-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .med-dose-text.muted { font-weight: 500; color: var(--text-secondary); }
+
+  /* Slider */
+  .slider-wrap {
+    margin-bottom: 14px;
+  }
+  .slider {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    outline: none;
+    cursor: pointer;
+  }
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--blue);
+    cursor: pointer;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 6px rgba(37,99,235,0.4);
+    transition: transform 0.1s;
+  }
+  .slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+  .slider::-moz-range-thumb {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--blue);
+    cursor: pointer;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 6px rgba(37,99,235,0.4);
+  }
+
+  .result-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+  }
+  .result-value {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--blue);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    margin-bottom: 4px;
+  }
+  .result-frequency {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .result-frequency.warn { color: var(--red); font-weight: 600; }
+
+  .duration-list {
+    margin-top: 12px;
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+  .duration-list strong { color: var(--text); font-weight: 700; }
+
+  /* Toggle (anemia, faringitis) */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+  }
+  .toggle-label {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 14px;
+  }
+  .toggle-btn {
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .toggle-btn:hover { background: var(--border); }
+  .toggle-btn.active {
+    background: var(--blue);
+    color: #fff;
+    border-color: var(--blue);
+  }
+
+  /* Important alert */
+  .alert {
+    background: var(--pink-soft);
+    border: 1px solid var(--pink-border);
+    border-left: 4px solid var(--pink);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    font-size: 13.5px;
+    color: var(--text);
+  }
+  .alert strong { color: var(--pink); font-weight: 700; }
+
+  /* Cipro fixed dose */
+  .cipro-table {
+    width: 100%;
+    margin-top: 8px;
+  }
+  .cipro-table td {
+    padding: 5px 8px;
+    font-size: 13px;
+  }
+  .cipro-table td:first-child {
+    font-weight: 700;
+    color: var(--text);
+  }
+  .cipro-result {
+    background: var(--cyan-soft);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-top: 8px;
+    text-align: center;
+  }
+  .cipro-result .result-value { font-size: 22px; }
+
+  /* Disclaimer */
+  .disclaimer {
+    margin: 24px 0 0;
+    padding: 14px 18px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 10px;
+    font-size: 12px;
+    color: #9a3412;
+    line-height: 1.55;
+  }
+  .disclaimer strong { color: #7c2d12; font-weight: 700; }
+
+  .quick-nav {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  .quick-nav .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-right: 4px;
+    font-weight: 600;
+  }
+  .quick-nav a {
+    text-decoration: none;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 5px 11px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .quick-nav a:hover {
+    background: var(--blue);
+    color: #fff;
+    border-color: var(--blue);
+  }
+
+  /* Responsive */
+  @media (max-width: 720px) {
+    .grid { grid-template-columns: 1fr; }
+    .input-bar { padding: 12px 16px; gap: 10px; }
+    h1 { font-size: 22px; }
+    .section-title { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="page-header">
+    <h1>Calculadora de Dosis Pediátricas</h1>
+    <p class="page-sub">Ingresa peso y edad — las dosis se actualizan automáticamente</p>
+  </div>
+
+  <!-- Quick nav -->
+  <div class="quick-nav">
+    <span class="lbl">Ir a:</span>
+    <a href="#fiebre">Fiebre / Dolor</a>
+    <a href="#neumonia">Neumonía / Otitis</a>
+    <a href="#anemia">Anemia (AIEPI)</a>
+    <a href="#crup">CRUP</a>
+    <a href="#disenteria">Disentería</a>
+    <a href="#faringitis">Faringitis Bacteriana</a>
+  </div>
+
+  <!-- Sticky input bar -->
+  <div class="input-bar">
+    <span class="brand-logo">MED NOTES<span class="reg">®</span></span>
+    <div class="input-group">
+      <label>Peso (kg):</label>
+      <input type="number" id="peso" min="0" max="100" step="0.1" placeholder="—">
+    </div>
+    <div class="input-group">
+      <label>Edad (meses):</label>
+      <input type="number" id="edad" min="0" max="240" step="1" placeholder="—">
+    </div>
+    <button class="estimate-btn" id="btn-estimate" title="Calcular peso estimado por edad">⚖ Estimar peso</button>
+    <button class="estimate-btn gray" id="btn-reset" title="Limpiar">↻ Reiniciar</button>
+  </div>
+
+  <!-- ============ FIEBRE / DOLOR ============ -->
+  <section class="section" id="fiebre">
+    <h2 class="section-title">Fiebre / Dolor</h2>
+    <div class="section-divider red"></div>
+
+    <div class="grid">
+
+      <div class="med-card">
+        <div class="med-banner red">
+          <div class="med-name">Paracetamol</div>
+          <div class="med-presentation">Presentación: 120 mg / 5 ml</div>
+        </div>
+        <div class="med-dose-text">Dosis a calcular (<span data-mgkg="15">15</span> mg/kg/dosis)</div>
+        <div class="slider-wrap">
+          <input type="range" class="slider" min="10" max="15" step="1" value="15" data-medslider="para120">
+        </div>
+        <div class="result-label">Dosis calculada:</div>
+        <div class="result-value" data-result="para120">0.00 ml</div>
+        <div class="result-frequency">cada 4–6 horas</div>
+      </div>
+
+      <div class="med-card">
+        <div class="med-banner red">
+          <div class="med-name">Paracetamol</div>
+          <div class="med-presentation">Presentación: 150 mg / 5 ml</div>
+        </div>
+        <div class="med-dose-text">Dosis a calcular (<span data-mgkg="15">15</span> mg/kg/dosis)</div>
+        <div class="slider-wrap">
+          <input type="range" class="slider" min="10" max="15" step="1" value="15" data-medslider="para150">
+        </div>
+        <div class="result-label">Dosis calculada:</div>
+        <div class="result-value" data-result="para150">0.00 ml</div>
+        <div class="result-frequency">cada 4–6 horas</div>
+      </div>
+
+      <div class="med-card">
+        <div class="med-banner red">
+          <div class="med-name">Paracetamol</div>
+          <div class="med-presentation">Presentación: 160 mg / 5 ml</div>
+        </div>
+        <div class="med-dose-text">Dosis a calcular (<span data-mgkg="15">15</span> mg/kg/dosis)</div>
+        <div class="slider-wrap">
+          <input type="range" class="slider" min="10" max="15" step="1" value="15" data-medslider="para160">
+        </div>
+        <div class="result-label">Dosis calculada:</div>
+        <div class="result-value" data-result="para160">0.00 ml</div>
+        <div class="result-frequency">cada 4–6 horas</div>
+      </div>
+
+      <div class="med-card">
+        <div class="med-banner red">
+          <div class="med-name">Paracetamol (Gotas)</div>
+          <div class="med-presentation">Presentación: 100 mg / 1 ml (20 gotas)</div>
+        </div>
+        <div class="med-dose-text">Dosis a calcular (<span data-mgkg="15">15</span> mg/kg/dosis)</div>
+        <div class="slider-wrap">
+          <input type="range" class="slider" min="10" max="15" step="1" value="15" data-medslider="paragotas">
+        </div>
+        <div class="result-label">Dosis calculada:</div>
+        <div class="result-value" data-result="paragotas">0 gotas</div>
+        <div class="result-frequency">cada 4–6 horas</div>
+      </div>
+
+      <div class="med-card">
+        <div class="med-banner red">
+          <div class="med-name">Ibuprofeno</div>
+          <div class="med-presentation">Presentación: 200 mg / 5 ml</div>
+        </div>
+        <div class="med-dose-text">Dosis a calcular (<span data-mgkg="10">10</span> mg/kg/dosis)</div>
+        <div class="slider-wrap">
+          <input type="range" class="slider" min="5" max="10" step="1" value="10" data-medslider="ibu">
+        </div>
+        <div class="result-label">Dosis calculada:</div>
+        <div class="result-value" data-result="ibu">0.00 ml</div>
+        <div class="result-frequency">cada 6–8 horas</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ NEUMONÍA / OTITIS ============ -->
+  <section class="section" id="neumonia">
+    <h2 class="section-title">Neumonía / Otitis</h2>
+    <div class="section-divider teal"></div>
+
+    <div class="grid">
+
+      <div class="med-card">
+        <div class="med-banner teal">
+          <div class="med-name">Amoxicilina</div>
+          <div class="med-presentation">Presentación: 250 mg / 5 ml</div>
+        </div>
+        <div class="med-dose-text">Dosis a calcular (90 mg/kg/día)</div>
+        <div class="result-label">Dosis calculada (por toma):</div>
+        <div class="result-value" data-result="amoxi-neumo">0.00 ml</div>
+        <div class="result-frequency">cada 12 horas</div>
+        <div class="duration-list">
+          <strong>x 5 días:</strong> Neumonía con tiraje, desnutrición severa<br>
+          <strong>x 3 días:</strong> Neumonía con respiración rápida<br>
+          <strong>x 5–10 días:</strong> Otitis media aguda
+        </div>
+      </div>
+
+      <div class="med-card">
+        <div class="med-banner teal">
+          <div class="med-name">Azitromicina (Alergia)</div>
+          <div class="med-presentation">Presentación: 200 mg / 5 ml</div>
+        </div>
+        <div class="med-dose-text muted">Dosis (10 mg/kg/día)</div>
+        <div class="result-label">Dosis calculada:</div>
+        <div class="result-value" data-result="azi-neumo">0.00 ml</div>
+        <div class="result-frequency">cada 24 horas (por 3 días)</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ ANEMIA (AIEPI) ============ -->
+  <section class="section" id="anemia">
+    <h2 class="section-title">Anemia (AIEPI)</h2>
+    <div class="section-divider green"></div>
+
+    <div class="toggle-row">
+      <span class="toggle-label">Tipo de tratamiento (6–23 meses):</span>
+      <button class="toggle-btn" data-anemia="solo">Solo Hierro</button>
+      <button class="toggle-btn active" data-anemia="chispas">Hierro + Chispas</button>
+    </div>
+
+    <div class="grid">
+
+      <div class="med-card">
+        <div class="med-banner green">
+          <div class="med-name">Hierro (Jarabe) <span data-anemia-suffix>+ Chispas</span></div>
+          <div class="med-presentation">Presentación: 50 mg / 5 ml</div>
+        </div>
+        <div class="med-dose-text muted">Dosis (3 mg/kg/día) <span data-anemia-extra>– 12.5 mg de Chispas</span></div>
+        <div class="result-label">Dosis calculada de Jarabe:</div>
+        <div class="result-value" data-result="hierro-jarabe">0.00 ml</div>
+        <div class="result-frequency" data-anemia-freq>+ 1 sobre de Chispas cada 24h</div>
+      </div>
+
+      <div class="med-card">
+        <div class="med-banner green">
+          <div class="med-name">Hierro (Gotas) <span data-anemia-suffix>+ Chispas</span></div>
+          <div class="med-presentation">Presentación: 50 mg / 1 ml</div>
+        </div>
+        <div class="med-dose-text muted">Dosis (3 mg/kg/día) <span data-anemia-extra>– 12.5 mg de Chispas</span></div>
+        <div class="result-label">Dosis calculada de Gotas:</div>
+        <div class="result-value" data-result="hierro-gotas">0 gotas</div>
+        <div class="result-frequency" data-anemia-freq>+ 1 sobre de Chispas cada 24h</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ CRUP ============ -->
+  <section class="section" id="crup">
+    <h2 class="section-title">CRUP</h2>
+    <div class="section-divider purple"></div>
+
+    <div class="grid">
+
+      <div class="med-card">
+        <div class="med-banner purple">
+          <div class="med-name">Prednisona / Prednisolona</div>
+          <div class="med-presentation">Presentación (tab): 5 mg</div>
+        </div>
+        <div class="med-dose-text muted">Dosis (1 mg/kg/día, máx. 50 mg)</div>
+        <div class="result-label">Dosis calculada:</div>
+        <div class="result-value" data-result="prednisona">0 mg (0 comp.)</div>
+        <div class="result-frequency">Leve: 2 dosis · Moderado: dosis única</div>
+      </div>
+
+      <div class="med-card">
+        <div class="med-banner purple">
+          <div class="med-name">Dexametasona</div>
+          <div class="med-presentation">Presentación (IM/IV): 4 mg / 1 ml</div>
+        </div>
+        <div class="med-dose-text">Dosis a calcular (<span data-mgkg="0.15">0.15</span> mg/kg/dosis)</div>
+        <div class="slider-wrap">
+          <input type="range" class="slider" min="0.15" max="0.6" step="0.05" value="0.15" data-medslider="dexa">
+        </div>
+        <div class="result-label">Dosis calculada:</div>
+        <div class="result-value" data-result="dexa">0.00 mg (0.00 ml)</div>
+        <div class="result-frequency">Leve o Moderado: dosis única</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ DISENTERÍA ============ -->
+  <section class="section" id="disenteria">
+    <h2 class="section-title">Disentería</h2>
+    <div class="section-divider cyan"></div>
+
+    <div class="grid">
+
+      <div class="med-card">
+        <div class="med-banner cyan">
+          <div class="med-name">Ciprofloxacina</div>
+          <div class="med-presentation">Dosis Fija por Edad</div>
+        </div>
+        <div class="cipro-result">
+          <div class="result-label" id="cipro-info">Ingresa la edad para ver la dosis</div>
+          <div class="result-value" data-result="cipro">—</div>
+        </div>
+        <div class="result-frequency" style="text-align:center; margin-top:8px;">Administrar por 3 días</div>
+
+        <details style="margin-top:14px">
+          <summary style="cursor:pointer; color: var(--cyan-dark); font-size:12px; font-weight:600;">▸ Ver tabla de dosis por edad</summary>
+          <table class="cipro-table">
+            <tr><td>4–11 m</td><td>30 mg / 12 h</td></tr>
+            <tr><td>1–2 a</td><td>50 mg / 12 h</td></tr>
+            <tr><td>3–4 a</td><td>75 mg / 12 h</td></tr>
+            <tr><td>5–7 a</td><td>125 mg / 12 h</td></tr>
+            <tr><td>8–9 a</td><td>150 mg / 12 h</td></tr>
+            <tr><td>10–14 a</td><td>200 mg / 12 h</td></tr>
+            <tr><td>≥ 15 a</td><td>500 mg / 12 h</td></tr>
+          </table>
+        </details>
+      </div>
+
+      <div class="med-card">
+        <div class="med-banner cyan">
+          <div class="med-name">Azitromicina</div>
+          <div class="med-presentation">Presentación: 200 mg / 5 ml</div>
+        </div>
+        <div class="med-dose-text muted">Dosis (20 mg/kg/día)</div>
+        <div class="result-label">Dosis calculada:</div>
+        <div class="result-value" data-result="azi-disenteria">0.00 ml</div>
+        <div class="result-frequency">cada 24 horas (por 3 días)</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ FARINGITIS BACTERIANA ============ -->
+  <section class="section" id="faringitis">
+    <h2 class="section-title">Faringitis Bacteriana</h2>
+    <div class="section-divider pink"></div>
+
+    <div class="alert">
+      <strong>Importante:</strong><br>
+      Diferenciar Faringitis Viral vs. Bacteriana con la <strong>Escala de CENTOR</strong>.
+    </div>
+
+    <div class="grid">
+
+      <div class="med-card">
+        <div class="med-banner pink">
+          <div class="med-name">Amoxicilina</div>
+          <div class="med-presentation">Presentación: 250 mg / 5 ml</div>
+        </div>
+        <div class="med-dose-text muted">Dosis (50 mg/kg/día en 2 dosis)</div>
+        <div class="result-label">Dosis calculada (por toma):</div>
+        <div class="result-value" data-result="amoxi-faringitis">0.00 ml</div>
+        <div class="result-frequency">cada 12 horas (por 6 días)</div>
+      </div>
+
+      <div class="med-card">
+        <div class="med-banner pink">
+          <div class="med-name">Azitromicina (Alergia a Penicilina)</div>
+          <div class="med-presentation">Presentación: 200 mg / 5 ml</div>
+        </div>
+        <div class="med-dose-text muted">Dosis (20 mg/kg/día)</div>
+        <div class="result-label">Dosis calculada:</div>
+        <div class="result-value" data-result="azi-faringitis">0.00 ml</div>
+        <div class="result-frequency">cada 24 horas (por 3 días)</div>
+      </div>
+
+      <div class="med-card">
+        <div class="med-banner pink">
+          <div class="med-name">Penicilina B</div>
+          <div class="med-presentation">&gt; 3 años y no tolera vía oral</div>
+        </div>
+        <div class="result-label">Dosis:</div>
+        <div class="result-value" data-result="penicilina">600.000 UI IM</div>
+        <div class="result-frequency">Dosis única</div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="disclaimer">
+    <strong>⚠ Aviso clínico:</strong> Esta calculadora es una herramienta de apoyo educativo basada en guías AIEPI y normativa MSP Ecuador. Las dosis deben individualizarse según peso real, condición clínica, función renal/hepática y prescripción médica. Verifique siempre las dosis máximas, contraindicaciones y la presentación disponible. No sustituye criterio profesional.
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   ESTIMACIÓN DE PESO POR EDAD
+   ============================================================ */
+function estimateWeight(months) {
+  if (isNaN(months) || months < 0) return null;
+  // <12 meses: peso (kg) = (edad meses × 0.5) + 4
+  if (months < 12) return Math.max(2.5, (months * 0.5) + 4);
+  // 1-5 años (12-60 meses): peso (kg) = (edad años × 2) + 8
+  const years = months / 12;
+  if (years < 6)  return (years * 2) + 8;
+  // 6-12 años: peso (kg) = (edad años × 3) + 7
+  if (years < 13) return (years * 3) + 7;
+  // ≥13 años: aproximación
+  return (years * 3) + 7;
+}
+
+/* ============================================================
+   ELEMENTOS
+   ============================================================ */
+const elPeso = document.getElementById('peso');
+const elEdad = document.getElementById('edad');
+const elBtnEstimate = document.getElementById('btn-estimate');
+const elBtnReset = document.getElementById('btn-reset');
+
+const sliders = {};
+document.querySelectorAll('input[data-medslider]').forEach(s => {
+  sliders[s.dataset.medslider] = s;
+  s.addEventListener('input', () => {
+    // Update mg/kg display in card
+    const card = s.closest('.med-card');
+    const span = card.querySelector('span[data-mgkg]');
+    if (span) span.textContent = s.value;
+    update();
+  });
+});
+
+let anemiaMode = 'chispas';
+document.querySelectorAll('button[data-anemia]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    anemiaMode = btn.dataset.anemia;
+    document.querySelectorAll('button[data-anemia]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('[data-anemia-suffix]').forEach(el => {
+      el.textContent = anemiaMode === 'chispas' ? '+ Chispas' : '';
+    });
+    document.querySelectorAll('[data-anemia-extra]').forEach(el => {
+      el.textContent = anemiaMode === 'chispas' ? '– 12.5 mg de Chispas' : '';
+    });
+    document.querySelectorAll('[data-anemia-freq]').forEach(el => {
+      el.textContent = anemiaMode === 'chispas' ? '+ 1 sobre de Chispas cada 24h' : 'cada 24 horas';
+    });
+  });
+});
+
+/* ============================================================
+   CIPROFLOXACINA - Dosis fija por edad (en miligramos)
+   ============================================================ */
+function getCiproDose(months) {
+  if (months >= 4 && months < 12) return { dose: 30, label: '4–11 meses' };
+  if (months >= 12 && months < 36) return { dose: 50, label: '1–2 años' };
+  if (months >= 36 && months < 60) return { dose: 75, label: '3–4 años' };
+  if (months >= 60 && months < 96) return { dose: 125, label: '5–7 años' };
+  if (months >= 96 && months < 120) return { dose: 150, label: '8–9 años' };
+  if (months >= 120 && months < 180) return { dose: 200, label: '10–14 años' };
+  if (months >= 180) return { dose: 500, label: '≥ 15 años' };
+  return null;
+}
+
+/* ============================================================
+   FORMATEO
+   ============================================================ */
+function fmt(n, decimals = 2) {
+  if (isNaN(n) || !isFinite(n)) return '0.00';
+  return n.toFixed(decimals);
+}
+
+/* ============================================================
+   CÁLCULO PRINCIPAL
+   ============================================================ */
+function update() {
+  const peso = parseFloat(elPeso.value);
+  const edad = parseFloat(elEdad.value);
+  const setVal = (key, value) => {
+    const el = document.querySelector(`[data-result="${key}"]`);
+    if (el) el.textContent = value;
+  };
+
+  // ===== FIEBRE / DOLOR =====
+  // Paracetamol: dosis (mg) = peso × mg/kg, volumen (ml) = (dosis / mg presentación) × ml
+  function paracetamolMl(mgPresentation, mlPresentation) {
+    const mgkg = parseFloat(sliders[arguments[2]].value);
+    if (!peso || isNaN(peso)) return '0.00 ml';
+    const dose = peso * mgkg;
+    const ml = (dose / mgPresentation) * mlPresentation;
+    return fmt(ml) + ' ml';
+  }
+  setVal('para120', paracetamolMl(120, 5, 'para120'));
+  setVal('para150', paracetamolMl(150, 5, 'para150'));
+  setVal('para160', paracetamolMl(160, 5, 'para160'));
+
+  // Paracetamol gotas: 100 mg/ml → 20 gotas/ml. dosis (mg) → ml → gotas
+  if (peso) {
+    const mgkg = parseFloat(sliders.paragotas.value);
+    const dose = peso * mgkg;
+    const ml = dose / 100;
+    const gotas = ml * 20;
+    setVal('paragotas', Math.round(gotas) + ' gotas');
+  } else setVal('paragotas', '0 gotas');
+
+  // Ibuprofeno 200 mg/5 ml
+  if (peso) {
+    const mgkg = parseFloat(sliders.ibu.value);
+    const dose = peso * mgkg;
+    const ml = (dose / 200) * 5;
+    setVal('ibu', fmt(ml) + ' ml');
+  } else setVal('ibu', '0.00 ml');
+
+  // ===== NEUMONÍA / OTITIS =====
+  // Amoxicilina 90 mg/kg/día en 2 dosis (cada 12h) → por toma = 45 mg/kg
+  // 250 mg / 5 ml → ml por toma = (peso × 45 / 250) × 5
+  if (peso) {
+    const mlToma = (peso * 45 / 250) * 5;
+    setVal('amoxi-neumo', fmt(mlToma) + ' ml');
+  } else setVal('amoxi-neumo', '0.00 ml');
+
+  // Azitromicina 10 mg/kg/día (1 toma)
+  // 200 mg / 5 ml → ml = (peso × 10 / 200) × 5 = peso × 0.25
+  if (peso) {
+    const ml = peso * 0.25;
+    setVal('azi-neumo', fmt(ml) + ' ml');
+  } else setVal('azi-neumo', '0.00 ml');
+
+  // ===== ANEMIA =====
+  // Hierro 3 mg/kg/día
+  // Jarabe 50 mg/5 ml → ml/día = (peso × 3 / 50) × 5 = peso × 0.3
+  // Gotas 50 mg/1 ml. 1 ml = 25 gotas (estándar) → gotas = ml × 25
+  if (peso) {
+    const mgDia = peso * 3;
+    const mlJarabe = (mgDia / 50) * 5;
+    setVal('hierro-jarabe', fmt(mlJarabe) + ' ml');
+    const mlGotas = mgDia / 50;
+    const gotas = Math.round(mlGotas * 25);
+    setVal('hierro-gotas', gotas + ' gotas');
+  } else {
+    setVal('hierro-jarabe', '0.00 ml');
+    setVal('hierro-gotas', '0 gotas');
+  }
+
+  // ===== CRUP =====
+  // Prednisona 1 mg/kg/día, máx 50 mg, tab 5 mg
+  if (peso) {
+    let mg = peso * 1;
+    if (mg > 50) mg = 50;
+    const tabs = mg / 5;
+    setVal('prednisona', fmt(mg, 0) + ' mg (' + fmt(tabs, 1) + ' comp.)');
+  } else setVal('prednisona', '0 mg (0 comp.)');
+
+  // Dexametasona 4 mg/1 ml. dosis = peso × mg/kg
+  if (peso) {
+    const mgkg = parseFloat(sliders.dexa.value);
+    const mg = peso * mgkg;
+    const ml = mg / 4;
+    setVal('dexa', fmt(mg) + ' mg (' + fmt(ml) + ' ml)');
+  } else setVal('dexa', '0.00 mg (0.00 ml)');
+
+  // ===== DISENTERÍA =====
+  // Ciprofloxacina por edad
+  const ciproEl = document.querySelector('[data-result="cipro"]');
+  const ciproInfo = document.getElementById('cipro-info');
+  if (!isNaN(edad) && edad >= 0) {
+    const c = getCiproDose(edad);
+    if (c) {
+      ciproEl.textContent = c.dose + ' mg';
+      ciproInfo.textContent = `Edad: ${c.label} · cada 12 horas`;
+    } else {
+      ciproEl.textContent = '—';
+      ciproInfo.textContent = 'Edad fuera de rango (mín 4 meses)';
+    }
+  } else {
+    ciproEl.textContent = '—';
+    ciproInfo.textContent = 'Ingresa la edad para ver la dosis';
+  }
+
+  // Azitromicina disentería 20 mg/kg/día (1 toma)
+  // 200 mg / 5 ml → ml = (peso × 20 / 200) × 5 = peso × 0.5
+  if (peso) {
+    const ml = peso * 0.5;
+    setVal('azi-disenteria', fmt(ml) + ' ml');
+  } else setVal('azi-disenteria', '0.00 ml');
+
+  // ===== FARINGITIS BACTERIANA =====
+  // Amoxicilina 50 mg/kg/día en 2 dosis → por toma 25 mg/kg
+  // 250 mg / 5 ml → ml por toma = (peso × 25 / 250) × 5 = peso × 0.5
+  if (peso) {
+    const ml = peso * 0.5;
+    setVal('amoxi-faringitis', fmt(ml) + ' ml');
+  } else setVal('amoxi-faringitis', '0.00 ml');
+
+  // Azitromicina faringitis 20 mg/kg/día (mismo que disentería)
+  if (peso) {
+    const ml = peso * 0.5;
+    setVal('azi-faringitis', fmt(ml) + ' ml');
+  } else setVal('azi-faringitis', '0.00 ml');
+}
+
+/* ============================================================
+   ESTIMAR PESO
+   ============================================================ */
+elBtnEstimate.addEventListener('click', () => {
+  const edad = parseFloat(elEdad.value);
+  if (isNaN(edad) || edad < 0) {
+    alert('Ingresa la edad en meses para estimar el peso.');
+    return;
+  }
+  const w = estimateWeight(edad);
+  if (w !== null) {
+    elPeso.value = w.toFixed(1);
+    update();
+  }
+});
+
+elBtnReset.addEventListener('click', () => {
+  elPeso.value = '';
+  elEdad.value = '';
+  document.querySelectorAll('input[data-medslider]').forEach(s => {
+    if (s.dataset.medslider === 'ibu') s.value = 10;
+    else if (s.dataset.medslider === 'dexa') s.value = 0.15;
+    else s.value = 15;
+    const card = s.closest('.med-card');
+    const span = card.querySelector('span[data-mgkg]');
+    if (span) span.textContent = s.value;
+  });
+  update();
+});
+
+/* ============================================================
+   EVENTOS
+   ============================================================ */
+elPeso.addEventListener('input', update);
+elEdad.addEventListener('input', update);
+
+update();
+</script>
+</body>
+</html>
