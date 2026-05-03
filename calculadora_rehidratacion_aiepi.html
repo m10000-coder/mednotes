@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Rehidratación AIEPI · MED NOTES®</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text: #0f172a;
+    --text-secondary: #475569;
+    --muted: #94a3b8;
+
+    --blue: #2563eb;
+    --blue-soft: #eff6ff;
+    --blue-border: #bfdbfe;
+    --blue-dark: #1e40af;
+
+    --green: #16a34a;
+    --green-soft: #dcfce7;
+    --green-border: #86efac;
+    --green-dark: #14532d;
+
+    --yellow: #facc15;
+    --yellow-soft: #fef9c3;
+    --yellow-border: #fde047;
+    --yellow-dark: #854d0e;
+
+    --red: #ef4444;
+    --red-soft: #fee2e2;
+    --red-border: #fecaca;
+    --red-dark: #991b1b;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.55;
+    font-size: 14px;
+    min-height: 100vh;
+    padding: 22px 16px 60px;
+  }
+
+  .wrapper { max-width: 1200px; margin: 0 auto; }
+
+  /* ============ Brand ============ */
+  .brand-logo {
+    background: #000;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 7px;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+    flex-shrink: 0;
+  }
+  .brand-logo .reg {
+    font-size: 8px;
+    vertical-align: super;
+    margin-left: 1px;
+  }
+
+  /* ============ Header ============ */
+  .page-header {
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .page-header .brand-logo { margin-bottom: 12px; }
+  h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.025em;
+    margin-bottom: 6px;
+  }
+  .page-sub {
+    color: var(--text-secondary);
+    font-size: 13px;
+  }
+
+  /* ============ Sticky input bar ============ */
+  .input-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 22px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 12px;
+    z-index: 10;
+    justify-content: center;
+  }
+  .input-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .input-group label {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 13.5px;
+  }
+  .input-group input {
+    width: 90px;
+    padding: 8px 12px;
+    border: 1.5px solid var(--blue-border);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--blue-soft);
+    text-align: center;
+    transition: all 0.15s;
+  }
+  .input-group input:focus {
+    outline: none;
+    border-color: var(--blue);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+  }
+  .btn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-blue { background: var(--blue); color: #fff; }
+  .btn-blue:hover { background: var(--blue-dark); transform: translateY(-1px); }
+  .btn-gray { background: var(--surface-alt); color: var(--text); border: 1px solid var(--border); }
+  .btn-gray:hover { background: #e2e8f0; }
+
+  /* ============ Section title ============ */
+  .section { margin-bottom: 30px; }
+  .section-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+
+  /* ============ AIEPI Table ============ */
+  .aiepi-table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    margin-bottom: 18px;
+  }
+  .aiepi-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  .aiepi-table thead.head1 th {
+    background: var(--blue);
+    color: #fff;
+    padding: 14px 12px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 13px;
+    border-right: 1px solid rgba(255,255,255,0.2);
+  }
+  .aiepi-table thead.head1 th:last-child { border-right: none; }
+  .aiepi-table thead.head1 th.col-a { background: var(--green); }
+  .aiepi-table thead.head1 th.col-b { background: var(--yellow); color: var(--text); }
+  .aiepi-table thead.head1 th.col-c { background: var(--red); }
+  .aiepi-table thead.head1 th .col-sub {
+    display: block;
+    font-weight: 600;
+    font-size: 11px;
+    margin-top: 2px;
+    opacity: 0.92;
+  }
+
+  .section-header td {
+    background: var(--blue);
+    color: #fff;
+    text-align: center;
+    padding: 10px 12px;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+  }
+
+  .aiepi-table tbody td {
+    padding: 0;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    vertical-align: middle;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .aiepi-table tbody td:last-child { border-right: none; }
+  .aiepi-table tbody tr:last-child td { border-bottom: none; }
+
+  .row-label {
+    background: #fff;
+    padding: 14px 14px;
+    font-weight: 700;
+    color: var(--text);
+    text-align: center;
+    width: 18%;
+  }
+
+  .sign-cell {
+    padding: 14px 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+    position: relative;
+  }
+  .sign-cell.col-a { background: rgba(22,163,74,0.08); color: var(--green-dark); }
+  .sign-cell.col-b { background: rgba(250,204,21,0.12); color: var(--yellow-dark); }
+  .sign-cell.col-c { background: rgba(239,68,68,0.08); color: var(--red-dark); }
+
+  .sign-cell:hover {
+    transform: scale(1.02);
+    z-index: 1;
+    box-shadow: inset 0 0 0 2px var(--blue);
+  }
+
+  .sign-cell.selected {
+    box-shadow: inset 0 0 0 3px var(--blue);
+    font-weight: 700;
+  }
+  .sign-cell.selected.col-a { background: var(--green-soft); }
+  .sign-cell.selected.col-b { background: var(--yellow-soft); }
+  .sign-cell.selected.col-c { background: var(--red-soft); }
+
+  .sign-cell.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 4px; right: 8px;
+    color: var(--blue);
+    font-weight: 800;
+    font-size: 14px;
+  }
+
+  .sign-cell .danger-marker {
+    color: var(--red);
+    font-weight: 800;
+    margin-left: 2px;
+  }
+
+  .diagnostic-row td {
+    background: var(--surface-alt);
+    padding: 14px 12px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .diagnostic-row .diag-a { background: var(--green-soft); color: var(--green-dark); }
+  .diagnostic-row .diag-b { background: var(--yellow-soft); color: var(--yellow-dark); }
+  .diagnostic-row .diag-c { background: var(--red-soft); color: var(--red-dark); }
+
+  .plan-row td {
+    padding: 16px 12px;
+    font-weight: 800;
+    font-size: 16px;
+    text-align: center;
+  }
+  .plan-row .plan-a { background: var(--green-soft); color: var(--green-dark); }
+  .plan-row .plan-b { background: var(--yellow-soft); color: var(--yellow-dark); }
+  .plan-row .plan-c { background: var(--red-soft); color: var(--red-dark); }
+
+  /* Counter / suggestion */
+  .selection-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 18px;
+    background: var(--blue-soft);
+    border: 1px solid var(--blue-border);
+    border-radius: 10px;
+    margin-bottom: 22px;
+  }
+  .selection-summary .counter {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12.5px;
+    font-weight: 700;
+  }
+  .selection-summary .counter .num {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--blue);
+    margin-left: 4px;
+  }
+  .selection-summary .counter.col-a .num { color: var(--green); }
+  .selection-summary .counter.col-b .num { color: var(--yellow-dark); }
+  .selection-summary .counter.col-c .num { color: var(--red); }
+
+  .recommendation {
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 700;
+  }
+  .recommendation .pill {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 6px;
+    margin-left: 4px;
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+  .recommendation .pill.a { background: var(--green); }
+  .recommendation .pill.b { background: var(--yellow); color: var(--yellow-dark); }
+  .recommendation .pill.c { background: var(--red); }
+
+  /* ============ Plan cards ============ */
+  .plans-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 22px;
+  }
+  @media (max-width: 940px) { .plans-grid { grid-template-columns: 1fr; } }
+
+  .plan-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    transition: all 0.25s;
+    opacity: 0.55;
+  }
+  .plan-card.active {
+    opacity: 1;
+    transform: scale(1.02);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+    border-color: var(--blue);
+  }
+  .plan-card.active.plan-a-card { border-color: var(--green); }
+  .plan-card.active.plan-b-card { border-color: var(--yellow); }
+  .plan-card.active.plan-c-card { border-color: var(--red); }
+
+  .plan-banner {
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    color: #fff;
+    font-weight: 800;
+    font-size: 16px;
+  }
+  .plan-banner.plan-a { background: var(--green); }
+  .plan-banner.plan-b { background: var(--yellow); color: var(--yellow-dark); }
+  .plan-banner.plan-c { background: var(--red); }
+
+  .plan-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .plan-card li {
+    position: relative;
+    padding: 6px 0 6px 18px;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .plan-card li::before {
+    content: '•';
+    position: absolute; left: 4px; top: 6px;
+    color: var(--blue);
+    font-weight: 800;
+  }
+  .plan-card strong { color: var(--text); font-weight: 700; }
+
+  .plan-result {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--blue);
+    font-family: 'JetBrains Mono', monospace;
+    margin: 10px 0;
+    text-align: center;
+  }
+
+  .zinc-row {
+    margin-top: 12px;
+    padding: 12px 14px;
+    background: var(--surface-alt);
+    border-radius: 8px;
+  }
+  .zinc-row label {
+    display: block;
+    font-weight: 700;
+    color: var(--text);
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  .zinc-row select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    background: #fff;
+  }
+  .zinc-result {
+    text-align: center;
+    margin-top: 8px;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--blue);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ============ Signos de alarma ============ */
+  .alarm-block {
+    background: var(--red-soft);
+    border: 1px solid var(--red-border);
+    border-left: 5px solid var(--red);
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin-bottom: 22px;
+  }
+  .alarm-title {
+    color: var(--red-dark);
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 6px;
+    letter-spacing: -0.01em;
+  }
+  .alarm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+  }
+  .alarm-col h4 {
+    color: var(--red-dark);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+    margin-bottom: 10px;
+  }
+  .alarm-col ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 14px;
+  }
+  .alarm-col li {
+    position: relative;
+    padding: 4px 0 4px 18px;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .alarm-col li::before {
+    content: '•';
+    position: absolute; left: 4px; top: 4px;
+    color: var(--red);
+    font-weight: 700;
+  }
+  .alarm-col li strong {
+    background: #fef9c3;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  /* ============ Footer ============ */
+  .footer {
+    margin-top: 36px;
+    padding: 22px 24px;
+    background: #000;
+    color: #fff;
+    border-radius: 14px;
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .footer .brand-logo {
+    background: #fff;
+    color: #000;
+    margin-bottom: 8px;
+  }
+  .footer p { margin: 4px 0; opacity: 0.85; }
+
+  .disclaimer {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    font-size: 11.5px;
+    color: #9a3412;
+    line-height: 1.55;
+  }
+  .disclaimer strong { color: #7c2d12; }
+
+  /* Responsive */
+  @media (max-width: 720px) {
+    h1 { font-size: 22px; }
+    .aiepi-table { font-size: 11.5px; }
+    .aiepi-table thead.head1 th { padding: 10px 6px; font-size: 11px; }
+    .aiepi-table thead.head1 th .col-sub { font-size: 9.5px; }
+    .row-label { padding: 10px 6px; }
+    .sign-cell { padding: 10px 6px; font-size: 11.5px; }
+    .plan-banner { font-size: 14px; padding: 10px 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- ============ Header ============ -->
+  <div class="page-header">
+    <span class="brand-logo">MED NOTES<span class="reg">®</span></span>
+    <h1>Calculadora de Rehidratación · AIEPI</h1>
+    <p class="page-sub">Evalúa los signos de deshidratación para determinar Plan A, B o C automáticamente</p>
+  </div>
+
+  <!-- Input bar -->
+  <div class="input-bar">
+    <div class="input-group">
+      <label>Peso (kg):</label>
+      <input type="number" id="peso" min="0" max="100" step="0.1" placeholder="—">
+    </div>
+    <div class="input-group">
+      <label>Edad (meses):</label>
+      <input type="number" id="edad" min="0" max="240" step="1" placeholder="—">
+    </div>
+    <button class="btn btn-blue" id="btn-estimate">⚖ Estimar peso</button>
+    <button class="btn btn-gray" id="btn-reset">↻ Reiniciar</button>
+  </div>
+
+  <!-- ============ AIEPI Table ============ -->
+  <section class="section">
+    <h2 class="section-title">Evaluar Signos de Deshidratación</h2>
+
+    <div class="aiepi-table-wrap">
+      <table class="aiepi-table">
+        <thead class="head1">
+          <tr>
+            <th>ETAPAS</th>
+            <th class="col-a">A<span class="col-sub">(sin deshidratación)</span></th>
+            <th class="col-b">B<span class="col-sub">(con deshidratación)</span></th>
+            <th class="col-c">C<span class="col-sub">(deshidratación grave)</span></th>
+          </tr>
+        </thead>
+
+        <tbody id="aiepi-body">
+          <tr class="section-header"><td colspan="4">OBSERVAR</td></tr>
+
+          <tr data-row="estado">
+            <td class="row-label">Estado general</td>
+            <td class="sign-cell col-a" data-col="A">Activo, alerta</td>
+            <td class="sign-cell col-b" data-col="B">Irritable, intranquilo</td>
+            <td class="sign-cell col-c" data-col="C" data-danger="true">Comatoso, letárgico, hipotónico <span class="danger-marker">*</span></td>
+          </tr>
+          <tr data-row="ojos">
+            <td class="row-label">Ojos</td>
+            <td class="sign-cell col-a" data-col="A">Sin alteración</td>
+            <td class="sign-cell col-b" data-col="B">Hundidos</td>
+            <td class="sign-cell col-c" data-col="C">Hundidos</td>
+          </tr>
+          <tr data-row="sed">
+            <td class="row-label">Sed</td>
+            <td class="sign-cell col-a" data-col="A">Sin sed</td>
+            <td class="sign-cell col-b" data-col="B">Sediento, bebe rápido</td>
+            <td class="sign-cell col-c" data-col="C" data-danger="true">No es capaz de beber <span class="danger-marker">*</span></td>
+          </tr>
+          <tr data-row="lagrimas">
+            <td class="row-label">Lágrimas</td>
+            <td class="sign-cell col-a" data-col="A">Presentes</td>
+            <td class="sign-cell col-b" data-col="B">Ausentes</td>
+            <td class="sign-cell col-c" data-col="C">Ausentes</td>
+          </tr>
+          <tr data-row="boca">
+            <td class="row-label">Boca / lengua</td>
+            <td class="sign-cell col-a" data-col="A">Húmeda</td>
+            <td class="sign-cell col-b" data-col="B">Seca o ligeramente seca</td>
+            <td class="sign-cell col-c" data-col="C">Muy seca</td>
+          </tr>
+
+          <tr class="section-header"><td colspan="4">EXPLORAR</td></tr>
+
+          <tr data-row="pliegue">
+            <td class="row-label">Pliegue abdominal</td>
+            <td class="sign-cell col-a" data-col="A">Desaparece inmediatamente</td>
+            <td class="sign-cell col-b" data-col="B">Desaparece lentamente</td>
+            <td class="sign-cell col-c" data-col="C">Desaparece &gt; 2 seg.</td>
+          </tr>
+          <tr data-row="pulso">
+            <td class="row-label">Pulso</td>
+            <td class="sign-cell col-a" data-col="A">Lleno</td>
+            <td class="sign-cell col-b" data-col="B">Lleno</td>
+            <td class="sign-cell col-c" data-col="C" data-danger="true">Débil o ausente <span class="danger-marker">*</span></td>
+          </tr>
+
+          <tr class="section-header"><td colspan="4">DECIDIR</td></tr>
+
+          <tr class="diagnostic-row">
+            <td class="row-label">Diagnóstico</td>
+            <td class="diag-a">Sin signos</td>
+            <td class="diag-b">2 o más signos</td>
+            <td class="diag-c">2 o más signos (incl. 1 con <span class="danger-marker" style="color:#991b1b">*</span>)</td>
+          </tr>
+
+          <tr class="section-header"><td colspan="4">TRATAR</td></tr>
+
+          <tr class="plan-row">
+            <td class="row-label">Tratamiento</td>
+            <td class="plan-a">PLAN A</td>
+            <td class="plan-b">PLAN B</td>
+            <td class="plan-c">PLAN C</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Counter -->
+    <div class="selection-summary">
+      <span class="counter col-a">A: <span class="num" id="count-a">0</span></span>
+      <span class="counter col-b">B: <span class="num" id="count-b">0</span></span>
+      <span class="counter col-c">C: <span class="num" id="count-c">0</span></span>
+      <span class="counter" style="background: #fee2e2; border-color: var(--red-border); color: var(--red-dark);">Signos de peligro <span class="num" id="count-danger" style="color: var(--red)">0</span></span>
+      <span class="recommendation">Recomendación: <span class="pill a" id="recommend-pill">PLAN A</span></span>
+    </div>
+  </section>
+
+  <!-- ============ Plans ============ -->
+  <section class="section">
+    <h2 class="section-title">Tratamiento según Plan</h2>
+
+    <div class="plans-grid">
+
+      <!-- PLAN A -->
+      <div class="plan-card plan-a-card" id="plan-a-card">
+        <div class="plan-banner plan-a">PLAN A: Hogar</div>
+        <ul>
+          <li>Dar <strong>muchos líquidos</strong> (SRO, agua, sopas).</li>
+          <li><strong>&lt; 2 años:</strong> 50–100 ml post-deposición.</li>
+          <li><strong>&gt; 2 años:</strong> 100–200 ml post-deposición.</li>
+          <li>Siga comiendo.</li>
+        </ul>
+        <div class="zinc-row">
+          <label>Dar ZINC por 14 días:</label>
+          <select id="zinc-a">
+            <option value="syrup-20-5">20 mg / 5 ml (jarabe)</option>
+            <option value="syrup-10-5">10 mg / 5 ml (jarabe)</option>
+            <option value="tab-20">20 mg (tableta)</option>
+            <option value="tab-10">10 mg (tableta)</option>
+          </select>
+          <div class="zinc-result" id="zinc-a-result">—</div>
+        </div>
+      </div>
+
+      <!-- PLAN B -->
+      <div class="plan-card plan-b-card" id="plan-b-card">
+        <div class="plan-banner plan-b">PLAN B: SRO en 4 horas</div>
+        <ul>
+          <li>Dosis SRO: <strong>75 ml/kg / 4 horas</strong></li>
+        </ul>
+        <div class="plan-result" id="sro-vol">— ml</div>
+        <ul>
+          <li>Valorar después de 4 horas.</li>
+          <li>Siga comiendo.</li>
+        </ul>
+        <div class="zinc-row">
+          <label>Dar ZINC por 14 días:</label>
+          <select id="zinc-b">
+            <option value="tab-20">20 mg (tableta)</option>
+            <option value="tab-10">10 mg (tableta)</option>
+            <option value="syrup-20-5">20 mg / 5 ml (jarabe)</option>
+            <option value="syrup-10-5">10 mg / 5 ml (jarabe)</option>
+          </select>
+          <div class="zinc-result" id="zinc-b-result">—</div>
+        </div>
+      </div>
+
+      <!-- PLAN C -->
+      <div class="plan-card plan-c-card" id="plan-c-card">
+        <div class="plan-banner plan-c">PLAN C: Líquidos IV</div>
+        <ul>
+          <li>Administrar <strong>100 ml/kg en 4 horas</strong> (SS 0.9% o LR):</li>
+          <li>Volumen Total: <strong id="vol-total">— ml</strong></li>
+          <li><strong>1ra hora:</strong> 50 ml/kg (<span id="vol-h1">—</span> ml)</li>
+          <li><strong>2da hora:</strong> 25 ml/kg (<span id="vol-h2">—</span> ml)</li>
+          <li><strong>3ra hora:</strong> 25 ml/kg (<span id="vol-h3">—</span> ml)</li>
+          <li>Al tolerar, SRO 5 ml/kg/hora (<span id="sro-mantenim">—</span> ml/h).</li>
+          <li>Si NO puede, <strong>REFERIR.</strong></li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ Signos de alarma ============ -->
+  <section class="section">
+    <div class="alarm-block">
+      <div class="alarm-title">▶ SIGNOS DE ALARMA</div>
+
+      <div class="alarm-grid">
+
+        <div class="alarm-col">
+          <h4>Signos generales</h4>
+          <ul>
+            <li><strong>Letargo, somnolencia excesiva</strong> o inconsciencia</li>
+            <li><strong>Irritabilidad marcada</strong> o decaimiento</li>
+            <li><strong>Convulsiones</strong></li>
+            <li><strong>Fiebre alta persistente</strong> o hipotermia</li>
+          </ul>
+
+          <h4>Signos de deshidratación grave</h4>
+          <ul>
+            <li><strong>Incapaz de beber</strong> o bebe muy mal</li>
+            <li><strong>Ojos muy hundidos</strong></li>
+            <li><strong>Pliegue cutáneo vuelve muy lentamente</strong></li>
+            <li><strong>Ausencia de orina</strong> (anuria) o muy escasa</li>
+            <li><strong>Fontanela anterior hundida</strong> (lactantes)</li>
+          </ul>
+
+          <h4>Signos digestivos de gravedad</h4>
+          <ul>
+            <li><strong>Vómitos persistentes</strong> o incoercibles</li>
+            <li><strong>Sangre en las heces</strong> (disentería)</li>
+            <li><strong>Diarrea muy abundante</strong> o que empeora rápidamente</li>
+            <li><strong>Dolor abdominal intenso</strong> o distensión marcada</li>
+          </ul>
+        </div>
+
+        <div class="alarm-col">
+          <h4>Signos circulatorios</h4>
+          <ul>
+            <li><strong>Taquicardia</strong></li>
+            <li><strong>Llenado capilar prolongado</strong></li>
+            <li><strong>Extremidades frías</strong></li>
+            <li><strong>Palidez marcada</strong></li>
+          </ul>
+
+          <h4>Otros signos importantes</h4>
+          <ul>
+            <li><strong>Imposibilidad de retener líquidos</strong></li>
+            <li><strong>Empeoramiento clínico</strong> a pesar del manejo inicial</li>
+            <li><strong>Niño menor de 6 meses</strong> con diarrea</li>
+            <li><strong>Desnutrición severa</strong> o enfermedad crónica asociada</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="disclaimer">
+    <strong>⚠ Aviso clínico:</strong> Esta calculadora es una herramienta de apoyo educativo basada en la estrategia AIEPI / OPS-OMS y normativa MSP Ecuador. Las dosis y planes deben individualizarse según peso real, condición clínica y prescripción médica. Verifique siempre las contraindicaciones. No sustituye criterio profesional.
+  </div>
+
+  <!-- ============ Footer ============ -->
+  <div class="footer">
+    <span class="brand-logo">MED NOTES<span class="reg">®</span></span>
+    <p>Hecho por <strong>MED NOTES®</strong> — Apuntes médicos basados en evidencia</p>
+    <p style="font-size:11px; opacity:0.7;">Fuente: AIEPI · OPS/OMS · Ministerio de Salud Pública del Ecuador</p>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   ESTIMACIÓN DE PESO POR EDAD
+   ============================================================ */
+function estimateWeight(months) {
+  if (isNaN(months) || months < 0) return null;
+  if (months < 12) return Math.max(2.5, (months * 0.5) + 4);
+  const years = months / 12;
+  if (years < 6)  return (years * 2) + 8;
+  if (years < 13) return (years * 3) + 7;
+  return (years * 3) + 7;
+}
+
+/* ============================================================
+   SELECCIÓN DE SIGNOS (1 por fila)
+   ============================================================ */
+const selections = {}; // {row: 'A'|'B'|'C'}
+const dangerRows = new Set(); // rows where danger sign was selected
+
+document.querySelectorAll('.sign-cell').forEach(cell => {
+  cell.addEventListener('click', () => {
+    const row = cell.closest('tr').dataset.row;
+    const col = cell.dataset.col;
+    const isDanger = cell.dataset.danger === 'true';
+
+    // Toggle: if same already selected, deselect
+    if (selections[row] === col) {
+      delete selections[row];
+      dangerRows.delete(row);
+    } else {
+      selections[row] = col;
+      if (isDanger) dangerRows.add(row);
+      else dangerRows.delete(row);
+    }
+    refreshSelections();
+  });
+});
+
+function refreshSelections() {
+  // Visual update
+  document.querySelectorAll('.sign-cell').forEach(c => c.classList.remove('selected'));
+  Object.entries(selections).forEach(([row, col]) => {
+    const cell = document.querySelector(`tr[data-row="${row}"] .sign-cell[data-col="${col}"]`);
+    if (cell) cell.classList.add('selected');
+  });
+
+  // Count
+  const counts = { A: 0, B: 0, C: 0 };
+  Object.values(selections).forEach(v => counts[v]++);
+  document.getElementById('count-a').textContent = counts.A;
+  document.getElementById('count-b').textContent = counts.B;
+  document.getElementById('count-c').textContent = counts.C;
+  document.getElementById('count-danger').textContent = dangerRows.size;
+
+  // Determine plan
+  const plan = determinePlan(counts, dangerRows.size);
+  highlightPlan(plan);
+}
+
+function determinePlan(counts, dangerCount) {
+  // PLAN C: 2+ in C, OR (1 danger sign + at least 1 other sign in B/C)
+  if (counts.C >= 2) return 'C';
+  if (dangerCount >= 1 && (counts.B + counts.C) >= 2) return 'C';
+  // PLAN B: 2+ signs in B (and no qualifying for C)
+  if ((counts.B + counts.C) >= 2) return 'B';
+  // Default PLAN A
+  return 'A';
+}
+
+function highlightPlan(plan) {
+  // Update pill
+  const pill = document.getElementById('recommend-pill');
+  pill.className = 'pill ' + plan.toLowerCase();
+  pill.textContent = 'PLAN ' + plan;
+
+  // Highlight card
+  document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('plan-' + plan.toLowerCase() + '-card').classList.add('active');
+}
+
+/* ============================================================
+   CÁLCULOS DE PLANES
+   ============================================================ */
+function getEdadMeses() {
+  return parseFloat(document.getElementById('edad').value) || 0;
+}
+function getPeso() {
+  return parseFloat(document.getElementById('peso').value);
+}
+
+function calcular() {
+  const peso = getPeso();
+  const edad = getEdadMeses();
+
+  // PLAN B: SRO 75 ml/kg
+  if (!isNaN(peso) && peso > 0) {
+    document.getElementById('sro-vol').textContent = (peso * 75).toFixed(0) + ' ml';
+  } else {
+    document.getElementById('sro-vol').textContent = '— ml';
+  }
+
+  // PLAN C: 100 ml/kg total
+  if (!isNaN(peso) && peso > 0) {
+    const total = peso * 100;
+    document.getElementById('vol-total').textContent = total.toFixed(0) + ' ml';
+    document.getElementById('vol-h1').textContent = (peso * 50).toFixed(0);
+    document.getElementById('vol-h2').textContent = (peso * 25).toFixed(0);
+    document.getElementById('vol-h3').textContent = (peso * 25).toFixed(0);
+    document.getElementById('sro-mantenim').textContent = (peso * 5).toFixed(0);
+  } else {
+    document.getElementById('vol-total').textContent = '— ml';
+    document.getElementById('vol-h1').textContent = '—';
+    document.getElementById('vol-h2').textContent = '—';
+    document.getElementById('vol-h3').textContent = '—';
+    document.getElementById('sro-mantenim').textContent = '—';
+  }
+
+  // ZINC: <6 meses = 10 mg/día, ≥6 meses = 20 mg/día
+  const zincDose = edad < 6 ? 10 : 20;
+  calcZinc('zinc-a', zincDose);
+  calcZinc('zinc-b', zincDose);
+}
+
+function calcZinc(selectId, doseMg) {
+  const sel = document.getElementById(selectId);
+  const result = document.getElementById(selectId + '-result');
+  if (!doseMg || isNaN(doseMg)) { result.textContent = '—'; return; }
+  const opt = sel.value;
+  if (opt === 'syrup-20-5') {
+    const ml = (doseMg / 20) * 5;
+    result.textContent = ml.toFixed(1) + ' ml';
+  } else if (opt === 'syrup-10-5') {
+    const ml = (doseMg / 10) * 5;
+    result.textContent = ml.toFixed(1) + ' ml';
+  } else if (opt === 'tab-20') {
+    const tabs = doseMg / 20;
+    result.textContent = tabs + ' tableta(s)';
+  } else if (opt === 'tab-10') {
+    const tabs = doseMg / 10;
+    result.textContent = tabs + ' tableta(s)';
+  }
+}
+
+/* ============================================================
+   EVENTOS
+   ============================================================ */
+document.getElementById('peso').addEventListener('input', calcular);
+document.getElementById('edad').addEventListener('input', calcular);
+document.getElementById('zinc-a').addEventListener('change', calcular);
+document.getElementById('zinc-b').addEventListener('change', calcular);
+
+document.getElementById('btn-estimate').addEventListener('click', () => {
+  const edad = parseFloat(document.getElementById('edad').value);
+  if (isNaN(edad) || edad < 0) {
+    alert('Ingresa la edad en meses para estimar el peso.');
+    return;
+  }
+  const w = estimateWeight(edad);
+  if (w !== null) {
+    document.getElementById('peso').value = w.toFixed(1);
+    calcular();
+  }
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  document.getElementById('peso').value = '';
+  document.getElementById('edad').value = '';
+  Object.keys(selections).forEach(k => delete selections[k]);
+  dangerRows.clear();
+  refreshSelections();
+  calcular();
+});
+
+/* Init */
+calcular();
+refreshSelections();
+</script>
+</body>
+</html>
