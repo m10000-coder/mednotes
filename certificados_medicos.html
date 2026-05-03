@@ -104,25 +104,19 @@
   /* ============ Layout: 2 columns ============ */
   .layout {
     display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 18px;
+    grid-template-columns: minmax(520px, 1fr) minmax(640px, 1.3fr);
+    gap: 22px;
     align-items: flex-start;
   }
-  @media (max-width: 980px) { .layout { grid-template-columns: 1fr; } }
+  @media (max-width: 1180px) {
+    .layout { grid-template-columns: 1fr; }
+  }
 
   /* ============ Form column ============ */
   .form-col {
     display: flex;
     flex-direction: column;
     gap: 14px;
-    position: sticky;
-    top: 12px;
-    max-height: calc(100vh - 24px);
-    overflow-y: auto;
-    padding-right: 2px;
-  }
-  @media (max-width: 980px) {
-    .form-col { position: static; max-height: none; }
   }
 
   details.card {
@@ -136,12 +130,13 @@
   details.card summary {
     list-style: none;
     cursor: pointer;
-    padding: 14px 18px;
+    padding: 16px 22px;
     font-weight: 700;
+    font-size: 15px;
     color: var(--text);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     user-select: none;
   }
   details.card summary::-webkit-details-marker { display: none; }
@@ -149,36 +144,36 @@
     content: '▾';
     margin-left: auto;
     color: var(--muted);
-    font-size: 12px;
+    font-size: 13px;
     transition: transform 0.2s;
   }
   details.card[open] summary::after { transform: rotate(180deg); }
   details.card .card-body {
-    padding: 4px 18px 18px;
+    padding: 8px 22px 22px;
     border-top: 1px solid var(--border);
   }
 
   /* Form fields */
-  .field { margin-bottom: 12px; }
+  .field { margin-bottom: 14px; }
   .field-label {
     display: block;
-    font-size: 12px;
+    font-size: 13.5px;
     font-weight: 600;
     color: var(--text);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
   .input, .textarea, .select {
     width: 100%;
-    padding: 9px 12px;
+    padding: 11px 14px;
     border: 1.5px solid var(--border);
-    border-radius: 7px;
+    border-radius: 8px;
     background: var(--surface-alt);
     font-family: 'Inter', sans-serif;
-    font-size: 13px;
+    font-size: 14.5px;
     color: var(--text);
     transition: all 0.15s;
   }
-  .textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+  .textarea { resize: vertical; min-height: 110px; line-height: 1.55; }
   .input:focus, .textarea:focus, .select:focus {
     outline: none;
     border-color: var(--primary);
@@ -327,6 +322,13 @@
     border-radius: 14px;
     padding: 18px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    position: sticky;
+    top: 12px;
+    max-height: calc(100vh - 24px);
+    overflow-y: auto;
+  }
+  @media (max-width: 1180px) {
+    .preview-col { position: static; max-height: none; }
   }
 
   /* ============ CERTIFICATE PREVIEW ============ */
