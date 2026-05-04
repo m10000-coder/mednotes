@@ -1108,12 +1108,16 @@ const PANELS = {
         '<strong>Control visual (reflejo rojo)</strong>',
         'Detección de anemia o ictericia prolongada si hay factores de riesgo'
       ]},
-      { title: '🧠 NEURODESARROLLO (DENVER II)', items: ['Hitos esperados a los 2 meses:'],
-        sublist: [
-          '<strong>Personal social:</strong> sonríe espontáneamente, se lleva las manos a la boca',
-          '<strong>Motor fino:</strong> sigue con la mirada a 180°, junta las manos',
-          '<strong>Lenguaje:</strong> vocaliza (gorgoritos), reacciona a la campanilla',
-          '<strong>Motor grueso:</strong> levanta y sostiene la cabeza brevemente en prono'
+      { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
+        denverTable: [
+          ['social',       'Sonríe espontáneamente',       '1', '1.5', '2.5', '3.5'],
+          ['social',       'Se lleva las manos a la boca', '2', '3',   '4',   '5'],
+          ['motor-fino',   'Sigue con la mirada a 180°',   '1', '2',   '3',   '4'],
+          ['motor-fino',   'Junta las manos',              '2.5','3.5','4.5', '5'],
+          ['lenguaje',     'Vocaliza (gorgoritos)',        '1', '2',   '3',   '4'],
+          ['lenguaje',     'Reacciona a la campanilla',    '0', '0.5', '1',   '1.5'],
+          ['motor-grueso', 'Levanta la cabeza',            '1', '2',   '3',   '3.5'],
+          ['motor-grueso', 'Sostiene la cabeza',           '2', '3',   '4',   '4.5']
         ]
       }
     ]
@@ -1153,12 +1157,16 @@ const PANELS = {
         'Detección de anemia si factores de riesgo',
         'Control visual y auditivo'
       ]},
-      { title: '🧠 NEURODESARROLLO (DENVER II)', items: ['Hitos esperados a los 4 meses:'],
-        sublist: [
-          '<strong>Personal social:</strong> ríe a carcajadas, mira sus manos',
-          '<strong>Motor fino:</strong> agarra objetos con palma, junta manos línea media',
-          '<strong>Lenguaje:</strong> balbuceos prolongados, gira a sonidos',
-          '<strong>Motor grueso:</strong> sostiene cabeza erecta, se voltea de prono a supino'
+      { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
+        denverTable: [
+          ['social',       'Ríe a carcajadas',              '3', '4',   '5',   '6'],
+          ['social',       'Juega con sus pies y manos',    '4', '4.5', '5.5', '6.5'],
+          ['motor-fino',   'Junta las manos en línea media','2.5','3.5','4.5', '5'],
+          ['motor-fino',   'Coge un sonajero',              '3', '4',   '5',   '6'],
+          ['lenguaje',     'Se vuelve hacia la voz',        '4', '5',   '6',   '7'],
+          ['lenguaje',     'Vocaliza (gorgoritos)',         '1', '2',   '3',   '4'],
+          ['motor-grueso', 'Sostiene la cabeza',            '2', '3',   '4',   '4.5'],
+          ['motor-grueso', 'Rueda sobre sí mismo',          '4.5','5.5','7',   '8']
         ]
       }
     ]
@@ -1203,12 +1211,17 @@ const PANELS = {
         'Control de visión y audición',
         'Evaluación oral (erupción dental)'
       ]},
-      { title: '🧠 NEURODESARROLLO (DENVER II)', items: ['Hitos esperados a los 6 meses:'],
-        sublist: [
-          '<strong>Personal social:</strong> se reconoce en el espejo, se aferra a juguetes',
-          '<strong>Motor fino:</strong> transfiere objetos de una mano a otra',
-          '<strong>Lenguaje:</strong> vocaliza sílabas (ba, da, ma)',
-          '<strong>Motor grueso:</strong> se voltea ambos lados, se sienta con apoyo'
+      { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
+        denverTable: [
+          ['social',       'Come solo una galleta',           '5', '6',   '7.5', '8.5'],
+          ['social',       'Juega con sus pies y manos',      '4', '4.5', '5.5', '6.5'],
+          ['motor-fino',   'Pasa un objeto de una mano a otra','5','6',   '7',   '8'],
+          ['motor-fino',   'Coge un sonajero',                '3', '4',   '5',   '6'],
+          ['lenguaje',     'Balbucea sílabas (ba, da)',       '4', '6',   '8',   '10'],
+          ['lenguaje',     'Se vuelve hacia la voz',          '4', '5',   '6',   '7'],
+          ['motor-grueso', 'Rueda sobre sí mismo',            '4.5','5.5','7',   '8'],
+          ['motor-grueso', 'Se sienta con apoyo',             '4', '5',   '6',   '7'],
+          ['motor-grueso', 'Se sienta sin apoyo',             '6', '7',   '8',   '9']
         ]
       }
     ]
@@ -1243,12 +1256,16 @@ const PANELS = {
         'LME complementaria mantenida',
         '<strong>Hierro</strong> oral si Hb &lt; 11 g/dL'
       ]},
-      { title: '🧠 NEURODESARROLLO (DENVER II)', items: ['Hitos esperados a los 9 meses:'],
-        sublist: [
-          '<strong>Personal social:</strong> juega "tortitas/palmas-palmas", angustia ante extraños',
-          '<strong>Motor fino:</strong> pinza inferior (pulgar-índice), recoge objetos pequeños',
-          '<strong>Lenguaje:</strong> dice "papá / mamá" sin significado, repite sílabas',
-          '<strong>Motor grueso:</strong> se sienta solo, gatea, se levanta apoyándose'
+      { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
+        denverTable: [
+          ['social',       'Juega "tortitas / palmas-palmas"', '7',  '8',  '11', '13'],
+          ['social',       'Come solo una galleta',            '5',  '6',  '7.5','8.5'],
+          ['motor-fino',   'Pinza inferior (pulgar-índice)',    '7',  '9',  '11', '13'],
+          ['motor-fino',   'Pasa objetos de una mano a otra',  '5',  '6',  '7',  '8'],
+          ['lenguaje',     'Dice "papá/mamá" inespecífico',    '7',  '8',  '10', '11'],
+          ['lenguaje',     'Balbucea sílabas (ba, da)',        '4',  '6',  '8',  '10'],
+          ['motor-grueso', 'Se sienta sin apoyo',              '6',  '7',  '8',  '9'],
+          ['motor-grueso', 'Se para sosteniéndose',            '7',  '8',  '10', '11']
         ]
       }
     ]
@@ -1289,12 +1306,16 @@ const PANELS = {
         'Examen visual y auditivo si factores de riesgo',
         'Evaluación de neurodesarrollo'
       ]},
-      { title: '🧠 NEURODESARROLLO (DENVER II)', items: ['Hitos esperados a los 12 meses:'],
-        sublist: [
-          '<strong>Personal social:</strong> dice adiós con la mano, comprende órdenes simples',
-          '<strong>Motor fino:</strong> pinza superior, mete objetos en recipientes',
-          '<strong>Lenguaje:</strong> 1–3 palabras con significado',
-          '<strong>Motor grueso:</strong> camina con apoyo o solo, se pone de pie'
+      { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
+        denverTable: [
+          ['social',       'Dice adiós con la mano',         '7',  '10', '13', '14'],
+          ['social',       'Bebe de una taza',               '10', '12', '16', '18'],
+          ['motor-fino',   'Pinza superior (pulgar-índice)', '9',  '11', '13', '15'],
+          ['motor-fino',   'Mete un cubo en una taza',       '10', '11', '13', '14'],
+          ['lenguaje',     'Dice "papá/mamá" específico',    '9',  '10', '12', '14'],
+          ['lenguaje',     'Primera palabra con significado','11', '12', '14', '16'],
+          ['motor-grueso', 'Camina con ayuda',               '9',  '10', '12', '13'],
+          ['motor-grueso', 'Camina solo',                    '11', '12', '14', '15']
         ]
       }
     ]
@@ -1330,12 +1351,16 @@ const PANELS = {
         'Visión y audición',
         'Salud bucodental (revisión odontológica recomendada al año)'
       ]},
-      { title: '🧠 NEURODESARROLLO (DENVER II)', items: ['Hitos esperados a los 18 meses:'],
-        sublist: [
-          '<strong>Personal social:</strong> se viste con ayuda, imita tareas del hogar',
-          '<strong>Motor fino:</strong> hace torre de 2-3 cubos, garabatea',
-          '<strong>Lenguaje:</strong> 5-10 palabras, señala partes del cuerpo',
-          '<strong>Motor grueso:</strong> camina solo bien, sube escaleras con ayuda'
+      { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
+        denverTable: [
+          ['social',       'Se viste con ayuda',              '18', '24', '30', '36'],
+          ['social',       'Ayuda en casa',                   '12', '14', '20', '22'],
+          ['motor-fino',   'Hace torre de 2 cubos',           '13', '15', '18', '20'],
+          ['motor-fino',   'Hace garabatos',                  '14', '16', '21', '24'],
+          ['lenguaje',     'Dice 2-3 palabras',               '12', '14', '18', '20'],
+          ['lenguaje',     'Señala 2 partes del cuerpo',      '16', '18', '22', '24'],
+          ['motor-grueso', 'Camina solo',                     '11', '12', '14', '15'],
+          ['motor-grueso', 'Corre',                           '14', '16', '20', '22']
         ]
       }
     ]
@@ -1368,12 +1393,17 @@ const PANELS = {
         'Vitamina A semestral (campañas MSP)',
         'Suplementación según riesgo'
       ]},
-      { title: '🧠 NEURODESARROLLO (DENVER II)', items: ['Hitos esperados a los 2 años:'],
-        sublist: [
-          '<strong>Personal social:</strong> juega en paralelo, se desviste',
-          '<strong>Motor fino:</strong> torre de 4-6 cubos, pasa páginas',
-          '<strong>Lenguaje:</strong> 50+ palabras, frases de 2 palabras',
-          '<strong>Motor grueso:</strong> corre, salta, sube y baja escaleras alternando'
+      { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
+        denverTable: [
+          ['social',       'Se quita la ropa',                  '15', '18', '22', '24'],
+          ['social',       'Se desviste solo',                  '24', '30', '36', '40'],
+          ['motor-fino',   'Hace torre de 4 cubos',             '17', '21', '26', '30'],
+          ['motor-fino',   'Hace garabatos',                    '14', '16', '21', '24'],
+          ['lenguaje',     'Combina dos palabras',              '18', '21', '24', '28'],
+          ['lenguaje',     'Señala 6 partes del cuerpo',        '18', '23', '30', '36'],
+          ['motor-grueso', 'Corre',                             '14', '16', '20', '22'],
+          ['motor-grueso', 'Patea una pelota',                  '18', '20', '24', '26'],
+          ['motor-grueso', 'Salta en el lugar con dos pies',    '20', '24', '30', '36']
         ]
       }
     ]
@@ -1411,12 +1441,16 @@ const PANELS = {
         'Higiene bucal supervisada',
         'Dieta equilibrada con frutas y verduras'
       ]},
-      { title: '🧠 NEURODESARROLLO (DENVER II)', items: ['Hitos esperados a los 5 años:'],
-        sublist: [
-          '<strong>Personal social:</strong> se viste solo, juega cooperativamente',
-          '<strong>Motor fino:</strong> dibuja figura humana con 6 partes, copia cuadrado',
-          '<strong>Lenguaje:</strong> cuenta historias, identifica colores',
-          '<strong>Motor grueso:</strong> brinca en un pie, monta triciclo/bicicleta'
+      { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
+        denverTable: [
+          ['social',       'Se pone una camiseta',          '30', '36', '42', '48'],
+          ['social',       'Juega a juegos en grupo',       '36', '48', '60', '72'],
+          ['motor-fino',   'Copia un círculo',              '36', '42', '48', '60'],
+          ['motor-fino',   'Dibuja figura humana (3 partes)','42','48', '54', '66'],
+          ['lenguaje',     'Dice su nombre completo',       '30', '36', '42', '48'],
+          ['lenguaje',     'Identifica colores (4)',        '36', '42', '54', '66'],
+          ['motor-grueso', 'Brinca en un pie',              '36', '42', '54', '66'],
+          ['motor-grueso', 'Camina punta-talón',            '42', '48', '60', '72']
         ]
       }
     ]
@@ -1451,7 +1485,7 @@ const PANELS = {
         'Educación sexual y reproductiva apropiada',
         'Prevención de bullying y salud mental'
       ]},
-      { title: '🧠 NEURODESARROLLO', items: [
+      { title: '🧠 DESARROLLO COGNITIVO Y SOCIAL', items: [
         'Rendimiento académico',
         'Habilidades sociales y juego en grupo',
         'Lectura comprensiva, lógica matemática'
@@ -1751,65 +1785,106 @@ function selectedWhoAge(k) {
 
 const WHO_SELECTED = {}; // por tabla, índice de fila seleccionada
 
+/* Calcula un "step" entero apropiado para el rango */
+function niceStep(range, targetSteps) {
+  const raw = range / targetSteps;
+  const candidates = [1, 2, 5, 10, 15, 20, 25, 50, 100];
+  for (const c of candidates) {
+    if (raw <= c) return c;
+  }
+  return Math.ceil(raw / 10) * 10;
+}
+
+/* Interpolación lineal entre dos puntos */
+function lerp(x, x0, x1, y0, y1) {
+  if (x1 === x0) return y0;
+  return y0 + (y1 - y0) * (x - x0) / (x1 - x0);
+}
+
+/* Dado un mes, calcula el valor interpolado en cualquier z-score */
+function valueAtAge(data, ages, ageMonths, zIdx) {
+  if (ageMonths <= ages[0]) return data[0][zIdx + 1];
+  if (ageMonths >= ages[ages.length - 1]) return data[ages.length - 1][zIdx + 1];
+  for (let i = 0; i < ages.length - 1; i++) {
+    if (ageMonths >= ages[i] && ageMonths <= ages[i + 1]) {
+      return lerp(ageMonths, ages[i], ages[i + 1], data[i][zIdx + 1], data[i + 1][zIdx + 1]);
+    }
+  }
+  return data[0][zIdx + 1];
+}
+
 function drawWhoChart(k, units) {
   const data = WHO[k][whoSex];
   const container = document.getElementById('chart-' + k);
 
-  const w = 720, h = 360;
-  const m = { top: 30, right: 50, bottom: 40, left: 50 };
+  const w = 720, h = 380;
+  const m = { top: 30, right: 30, bottom: 50, left: 50 };
   const innerW = w - m.left - m.right;
   const innerH = h - m.top - m.bottom;
 
   // Eje X: meses (0 a max)
   const ages = data.map(r => ageLabelToMonths(r[0]));
-  const maxAge = Math.max(...ages);
-  // Eje Y: rango de valores
-  let minY = Infinity, maxY = -Infinity;
+  const maxAge = Math.ceil(Math.max(...ages));
+  // Eje Y: rango de valores → enteros
+  let minRaw = Infinity, maxRaw = -Infinity;
   data.forEach(r => {
     for (let i = 1; i <= 7; i++) {
-      if (r[i] < minY) minY = r[i];
-      if (r[i] > maxY) maxY = r[i];
+      if (r[i] < minRaw) minRaw = r[i];
+      if (r[i] > maxRaw) maxRaw = r[i];
     }
   });
-  // Padding del eje Y
-  const padY = (maxY - minY) * 0.05;
-  minY -= padY; maxY += padY;
+  // Redondear a enteros con margen
+  const minY = Math.floor(minRaw);
+  const maxY = Math.ceil(maxRaw);
+  // Calcular step entero apropiado
+  const yStep = niceStep(maxY - minY, 8);
+  const yMin = Math.floor(minY / yStep) * yStep;
+  const yMax = Math.ceil(maxY / yStep) * yStep;
 
-  const xScale = age => m.left + (age / maxAge) * innerW;
-  const yScale = v => m.top + innerH - ((v - minY) / (maxY - minY)) * innerH;
+  // Step de X (meses)
+  let xStep;
+  if (maxAge <= 24)       xStep = 2;
+  else if (maxAge <= 60)  xStep = 6;
+  else if (maxAge <= 120) xStep = 12;
+  else                    xStep = 24;
+  const xMax = Math.ceil(maxAge / xStep) * xStep;
+
+  const xScale = age => m.left + (age / xMax) * innerW;
+  const yScale = v => m.top + innerH - ((v - yMin) / (yMax - yMin)) * innerH;
+  const xUnscale = px => ((px - m.left) / innerW) * xMax;
 
   let svg = `<div class="chart-legend">`;
   Z_LABELS.forEach((lab, i) => {
     svg += `<span class="leg-item"><span class="leg-color" style="background:${Z_COLORS[i]}"></span>${lab}</span>`;
   });
   svg += `</div>`;
-  svg += `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">`;
+  svg += `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" class="chart-svg-${k}">`;
 
-  // Grid horizontal
-  const ySteps = 6;
-  for (let i = 0; i <= ySteps; i++) {
-    const y = m.top + (innerH * i / ySteps);
-    const val = maxY - ((maxY - minY) * i / ySteps);
+  // Grid horizontal con valores ENTEROS
+  for (let v = yMin; v <= yMax; v += yStep) {
+    const y = yScale(v);
     svg += `<line class="grid-line" x1="${m.left}" y1="${y}" x2="${m.left + innerW}" y2="${y}"/>`;
-    svg += `<text class="axis-text" x="${m.left - 6}" y="${y + 3}" text-anchor="end">${val.toFixed(1)}</text>`;
+    svg += `<text class="axis-text" x="${m.left - 6}" y="${y + 3}" text-anchor="end">${v}</text>`;
   }
 
-  // Eje X labels
-  ages.forEach((a, idx) => {
-    if (idx % Math.max(1, Math.floor(ages.length / 10)) === 0 || idx === ages.length - 1) {
-      const x = xScale(a);
-      svg += `<line class="grid-line" x1="${x}" y1="${m.top}" x2="${x}" y2="${m.top + innerH}"/>`;
-      svg += `<text class="axis-text" x="${x}" y="${m.top + innerH + 14}" text-anchor="middle">${data[idx][0]}</text>`;
-    }
-  });
+  // Grid vertical con valores ENTEROS de meses
+  for (let x = 0; x <= xMax; x += xStep) {
+    const px = xScale(x);
+    svg += `<line class="grid-line" x1="${px}" y1="${m.top}" x2="${px}" y2="${m.top + innerH}"/>`;
+    let label;
+    if (x === 0) label = '0';
+    else if (x < 24) label = x + 'm';
+    else label = (x / 12) + 'a';
+    svg += `<text class="axis-text" x="${px}" y="${m.top + innerH + 14}" text-anchor="middle">${label}</text>`;
+  }
 
   // Ejes
   svg += `<line class="axis-line" x1="${m.left}" y1="${m.top + innerH}" x2="${m.left + innerW}" y2="${m.top + innerH}"/>`;
   svg += `<line class="axis-line" x1="${m.left}" y1="${m.top}" x2="${m.left}" y2="${m.top + innerH}"/>`;
 
-  // Etiqueta Y
+  // Etiquetas
   svg += `<text class="axis-text" x="${m.left - 35}" y="${m.top - 10}" font-weight="700">${units}</text>`;
-  svg += `<text class="axis-text" x="${m.left + innerW / 2}" y="${h - 8}" text-anchor="middle" font-weight="700">Edad</text>`;
+  svg += `<text class="axis-text" x="${m.left + innerW / 2}" y="${h - 8}" text-anchor="middle" font-weight="700">Edad (meses / años)</text>`;
 
   // Líneas Z (de -3 a +3)
   for (let zi = 0; zi < 7; zi++) {
@@ -1822,17 +1897,7 @@ function drawWhoChart(k, units) {
     svg += `<path class="z-line" d="${path}" stroke="${Z_COLORS[zi]}" data-z="${Z_LABELS[zi]}"/>`;
   }
 
-  // Puntos para cada valor (con tooltip)
-  data.forEach((r, idx) => {
-    const x = xScale(ages[idx]);
-    for (let zi = 0; zi < 7; zi++) {
-      const y = yScale(r[zi + 1]);
-      svg += `<circle class="z-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="${Z_COLORS[zi]}"
-        data-age="${r[0]}" data-z="${Z_LABELS[zi]}" data-val="${r[zi+1]}" data-units="${units}"/>`;
-    }
-  });
-
-  // Marcador de edad seleccionada
+  // Marcador de edad seleccionada (si hay)
   const selIdx = selectedWhoAge(k);
   if (selIdx !== null && selIdx !== undefined) {
     const r = data[selIdx];
@@ -1841,38 +1906,69 @@ function drawWhoChart(k, units) {
     svg += `<text class="z-label" x="${x}" y="${m.top - 8}" text-anchor="middle" fill="#1d4ed8">${r[0]}</text>`;
   }
 
+  // Línea de hover (oculta hasta que haya hover)
+  svg += `<line class="hover-line" x1="0" y1="${m.top}" x2="0" y2="${m.top + innerH}" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="3 3" style="display:none"/>`;
+  // Puntos hover (uno por z-score)
+  for (let zi = 0; zi < 7; zi++) {
+    svg += `<circle class="hover-dot hover-dot-${zi}" cx="0" cy="0" r="4" fill="${Z_COLORS[zi]}" stroke="#fff" stroke-width="1.5" style="display:none"/>`;
+  }
+
+  // Overlay TRANSPARENTE para capturar mouse en cualquier punto
+  svg += `<rect class="hover-overlay" x="${m.left}" y="${m.top}" width="${innerW}" height="${innerH}"
+    fill="transparent" style="cursor: crosshair;"/>`;
+
   svg += `</svg>`;
   container.innerHTML = svg;
 
-  // Tooltip events
+  // ====== Hover sobre overlay ======
   const tooltip = document.getElementById('who-tooltip');
-  container.querySelectorAll('.z-dot').forEach(dot => {
-    dot.addEventListener('mouseenter', e => {
-      const a = e.target.getAttribute('data-age');
-      const z = e.target.getAttribute('data-z');
-      const v = e.target.getAttribute('data-val');
-      const u = e.target.getAttribute('data-units');
-      tooltip.innerHTML = `<div><span class="key">Edad:</span>${a}</div>
-        <div><span class="key">${z}:</span>${v} ${u}</div>`;
-      tooltip.classList.add('show');
-    });
-    dot.addEventListener('mousemove', e => {
-      tooltip.style.left = (e.clientX + 14) + 'px';
-      tooltip.style.top = (e.clientY + 14) + 'px';
-    });
-    dot.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+  const overlay = container.querySelector('.hover-overlay');
+  const hoverLine = container.querySelector('.hover-line');
+  const hoverDots = container.querySelectorAll('.hover-dot');
+  const svgEl = container.querySelector('svg');
+
+  function svgPoint(e) {
+    const pt = svgEl.createSVGPoint();
+    pt.x = e.clientX; pt.y = e.clientY;
+    return pt.matrixTransform(svgEl.getScreenCTM().inverse());
+  }
+
+  overlay.addEventListener('mousemove', e => {
+    const pt = svgPoint(e);
+    if (pt.x < m.left || pt.x > m.left + innerW) return;
+    const ageMonths = Math.max(0, Math.min(xMax, xUnscale(pt.x)));
+
+    // Mostrar línea vertical y puntos
+    hoverLine.style.display = '';
+    hoverLine.setAttribute('x1', pt.x);
+    hoverLine.setAttribute('x2', pt.x);
+
+    // Tooltip con todos los Z-scores en esa edad
+    let ageLabel;
+    if (ageMonths < 1) ageLabel = Math.round(ageMonths * 30) + ' días';
+    else if (ageMonths < 24) ageLabel = ageMonths.toFixed(1) + ' m';
+    else ageLabel = (ageMonths / 12).toFixed(1) + ' a';
+
+    let html = `<div style="font-weight:700; margin-bottom:4px; color:#fde047;">📍 ${ageLabel}</div>`;
+    for (let zi = 0; zi < 7; zi++) {
+      const v = valueAtAge(data, ages, ageMonths, zi);
+      const y = yScale(v);
+      hoverDots[zi].style.display = '';
+      hoverDots[zi].setAttribute('cx', pt.x);
+      hoverDots[zi].setAttribute('cy', y);
+      const isMid = zi === 3;
+      const style = isMid ? 'color:#34d399; font-weight:700;' : '';
+      html += `<div style="${style}"><span class="key">${Z_LABELS[zi]}:</span>${v.toFixed(2)} ${units}</div>`;
+    }
+    tooltip.innerHTML = html;
+    tooltip.classList.add('show');
+    tooltip.style.left = (e.clientX + 18) + 'px';
+    tooltip.style.top = (e.clientY + 18) + 'px';
   });
-  container.querySelectorAll('.z-line').forEach(line => {
-    line.addEventListener('mouseenter', e => {
-      const z = e.target.getAttribute('data-z');
-      tooltip.innerHTML = `<div><span class="key">Línea:</span>${z}</div>`;
-      tooltip.classList.add('show');
-    });
-    line.addEventListener('mousemove', e => {
-      tooltip.style.left = (e.clientX + 14) + 'px';
-      tooltip.style.top = (e.clientY + 14) + 'px';
-    });
-    line.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+  overlay.addEventListener('mouseleave', () => {
+    tooltip.classList.remove('show');
+    hoverLine.style.display = 'none';
+    hoverDots.forEach(d => d.style.display = 'none');
   });
 }
 
