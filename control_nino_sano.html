@@ -848,8 +848,8 @@ const PANELS = {
   m1: {
     group: 'g-1to6',
     title: 'Niño/a · 1 mes',
-    sub: 'Primer control postnatal extendido',
-    tip: 'si el peso es < p3 o > p97 → evaluar riesgo nutricional y revisar técnica de lactancia.',
+    sub: 'CONTROL DEL NIÑO SANO – 1 MES',
+    tip: 'Si el peso es < p3 o > p97 → evaluar riesgo nutricional y revisar técnica de lactancia.',
     sections: [
       { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
         '<strong>Peso actual:</strong> aumento esperado ≈ 600–900 g desde el nacimiento',
@@ -857,7 +857,9 @@ const PANELS = {
         '<strong>Perímetro cefálico:</strong> + 1.5–2 cm (meta: 36–38 cm)',
         'Registrar en <strong>curvas OMS / MSP</strong> (percentiles o z-score)',
         'Interpretar el crecimiento según el patrón y alertar si hay pérdida o estancamiento'
-      ]},
+      ],
+        link: '➡ Ver Tablas de crecimiento OMS (Z-score) en pestaña 📊 Tablas OMS'
+      },
       { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo'],
         sublist: [
           '<strong>Cabeza:</strong> fontanela anterior normotensa (1–2 cm), posterior cerrada o mínima',
@@ -877,7 +879,7 @@ const PANELS = {
         '<strong>BCG</strong> aplicada (cicatriz en formación)',
         '<strong>Hepatitis B</strong> aplicada dentro de las 24 h del nacimiento',
         'Si alguna pendiente → remitir al servicio de vacunación',
-        'Programar próximas dosis: <strong>Hexavalente / Pentavalente + Polio + Neumococo + Rotavirus</strong> a los 2 meses'
+        'Programar próximas dosis: <strong>Pentavalente + Polio + Neumococo + Rotavirus</strong> a los 2 meses'
       ]},
       { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
         'Confirmar resultados del tamizaje neonatal (TSH, fenilcetonuria, fibrosis quística)',
@@ -885,12 +887,13 @@ const PANELS = {
         '<strong>Control visual (reflejo rojo)</strong>',
         'Detección de anemia o ictericia prolongada si hay factores de riesgo'
       ]},
-      { title: '🧠 NEURODESARROLLO (DENVER II)', items: ['Hitos esperados al mes de edad:'],
-        sublist: [
-          '<strong>Personal social:</strong> sonríe ante estímulo',
-          '<strong>Motor fino:</strong> sigue con la mirada hasta línea media',
-          '<strong>Lenguaje:</strong> reacciona ante sonido o campanilla',
-          '<strong>Motor grueso:</strong> levanta la cabeza brevemente en prono'
+      { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
+        denverTable: [
+          ['social',       'Sonríe espontáneamente',     '1', '1.5', '2.5', '3.5'],
+          ['motor-fino',   'Sigue con la mirada a 180°', '1', '2',   '3',   '4'],
+          ['lenguaje',     'Reacciona a la campanilla',  '0', '0.5', '1',   '1.5'],
+          ['lenguaje',     'Vocaliza (gorgoritos)',      '1', '2',   '3',   '4'],
+          ['motor-grueso', 'Levanta la cabeza',          '1', '2',   '3',   '3.5']
         ]
       }
     ]
@@ -1350,14 +1353,19 @@ function renderPanels() {
 
     p.sections.forEach(s => {
       html += `<div class="section">
-        <div class="section-title">${s.title}</div>
-        <ul class="check-list">`;
-      s.items.forEach(it => html += `<li>${it}</li>`);
-      html += `</ul>`;
+        <div class="section-title">${s.title}</div>`;
+      if (s.items && s.items.length) {
+        html += `<ul class="check-list">`;
+        s.items.forEach(it => html += `<li>${it}</li>`);
+        html += `</ul>`;
+      }
       if (s.sublist) {
         html += `<ul class="sub-list">`;
         s.sublist.forEach(sl => html += `<li>${sl}</li>`);
         html += `</ul>`;
+      }
+      if (s.link) {
+        html += `<div style="margin-top:10px; padding:10px 14px; background: var(--primary-soft); border:1px solid var(--primary-border); border-left:4px solid var(--primary); border-radius:8px; font-size:13px; font-weight:600; color: var(--primary-dark); cursor:pointer;" onclick="document.querySelector('[data-tab=who]').click(); window.scrollTo({top:0,behavior:'smooth'});">${s.link}</div>`;
       }
       if (s.twoColumns) {
         html += `<div class="vac-schemes" style="margin-top:8px">
@@ -1370,6 +1378,31 @@ function renderPanels() {
             <ul>${s.twoColumns.old.map(i => `<li>${i}</li>`).join('')}</ul>
           </div>
         </div>`;
+      }
+      if (s.denverTable) {
+        const areaLbl = { 'social':'Personal social', 'motor-fino':'Motor Fino', 'lenguaje':'Lenguaje', 'motor-grueso':'Motor grueso' };
+        html += `<div class="table-wrap" style="overflow-x:auto; margin-top:6px">
+          <table class="denver-table">
+            <thead>
+              <tr>
+                <th style="width:120px">ÁREA</th>
+                <th>HITO DE DESARROLLO</th>
+                <th class="pct">25%</th>
+                <th class="pct">50%</th>
+                <th class="pct p75">75%</th>
+                <th class="pct p100">100%</th>
+              </tr>
+            </thead>
+            <tbody>` +
+            s.denverTable.map(r => `<tr>
+              <td class="area ${r[0]}">${areaLbl[r[0]]}</td>
+              <td><strong>${r[1]}</strong></td>
+              <td class="pct">${r[2]}</td>
+              <td class="pct">${r[3]}</td>
+              <td class="pct">${r[4]}</td>
+              <td class="pct">${r[5]}</td>
+            </tr>`).join('') +
+          `</tbody></table></div>`;
       }
       html += `</div>`;
     });
@@ -1389,7 +1422,15 @@ document.querySelectorAll('.age-chip').forEach(c => {
     c.classList.add('active');
     document.querySelectorAll('.age-panel').forEach(p => p.classList.remove('active'));
     const target = document.getElementById('panel-' + c.dataset.age);
-    if (target) target.classList.add('active');
+    if (target) {
+      target.classList.add('active');
+      // Smooth scroll to panel after a brief delay
+      setTimeout(() => {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 80);
+    } else {
+      console.warn('Panel not found:', c.dataset.age);
+    }
   });
 });
 
