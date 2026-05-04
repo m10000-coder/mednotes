@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control de Niño Sano · MED NOTES®</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f1f5f9;
+    --surface: #fff;
+    --surface-alt: #f8fafc;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text: #0f172a;
+    --text-secondary: #475569;
+    --muted: #94a3b8;
+    --primary: #2563eb;
+    --primary-soft: #eff6ff;
+    --primary-border: #bfdbfe;
+    --primary-dark: #1e40af;
+
+    --teal: #0d9488;       --teal-soft: #ccfbf1;     --teal-border: #5eead4;
+    --red: #dc2626;        --red-soft: #fee2e2;      --red-border: #fecaca; --red-dark: #991b1b;
+    --amber: #b45309;      --amber-soft: #fef3c7;    --amber-border: #fde68a;
+    --purple: #9333ea;     --purple-soft: #f3e8ff;   --purple-border: #d8b4fe;
+    --orange: #ea580c;     --orange-soft: #ffedd5;   --orange-border: #fed7aa;
+    --green: #16a34a;      --green-soft: #f0fdf4;    --green-border: #bbf7d0; --green-dark: #14532d;
+    --pink: #db2777;       --pink-soft: #fce7f3;
+    --yellow-bg: #fef3c7;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.55;
+    font-size: 14px;
+    min-height: 100vh;
+    padding: 18px 14px 60px;
+  }
+  .wrapper { max-width: 1280px; margin: 0 auto; }
+
+  /* Brand */
+  .brand-logo {
+    background: #000; color: #fff;
+    padding: 6px 12px; border-radius: 7px;
+    font-weight: 800; font-size: 12px;
+    letter-spacing: 0.08em; display: inline-flex; align-items: center;
+  }
+  .brand-logo .reg { font-size: 8px; vertical-align: super; margin-left: 1px; }
+
+  /* Header */
+  .page-header { text-align: center; margin-bottom: 18px; }
+  .page-header .brand-logo { margin-bottom: 10px; }
+  h1 {
+    font-size: 28px; font-weight: 800; color: var(--text);
+    letter-spacing: -0.025em; margin-bottom: 4px;
+  }
+  .page-sub { color: var(--text-secondary); font-size: 13px; }
+
+  /* Top tabs */
+  .top-tabs {
+    display: flex; gap: 6px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 5px;
+    margin: 0 auto 18px; max-width: 700px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .top-tab {
+    padding: 9px 14px; border: none; background: transparent;
+    border-radius: 7px; font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer; transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .top-tab.active {
+    background: var(--primary); color: #fff;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.2);
+  }
+
+  /* Tab views */
+  .tab-view { display: none; }
+  .tab-view.active { display: block; }
+
+  /* ============ AGE PICKER (sticky horizontal) ============ */
+  .age-picker {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 14px 16px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    position: sticky;
+    top: 8px;
+    z-index: 10;
+  }
+  .age-picker-title {
+    font-size: 11px; font-weight: 700;
+    color: var(--muted); letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 8px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .age-row {
+    display: flex; gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .age-chip {
+    flex-shrink: 0;
+    background: var(--surface-alt);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 9px 14px;
+    font-size: 12.5px; font-weight: 700;
+    cursor: pointer; transition: all 0.15s;
+    color: var(--text-secondary);
+    display: flex; align-items: center; gap: 6px;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .age-chip:hover { background: var(--surface); border-color: var(--border-strong); }
+  .age-chip.active {
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+  .age-chip.g-rn.active   { background: var(--teal); border-color: var(--teal); }
+  .age-chip.g-1to6.active { background: var(--red); border-color: var(--red); }
+  .age-chip.g-7to12.active{ background: var(--amber); border-color: var(--amber); }
+  .age-chip.g-2to5.active { background: var(--purple); border-color: var(--purple); }
+  .age-chip.g-ado.active  { background: var(--orange); border-color: var(--orange); }
+
+  .age-chip .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .age-chip.g-rn .dot   { background: var(--teal); }
+  .age-chip.g-1to6 .dot { background: var(--red); }
+  .age-chip.g-7to12 .dot{ background: var(--amber); }
+  .age-chip.g-2to5 .dot { background: var(--purple); }
+  .age-chip.g-ado .dot  { background: var(--orange); }
+  .age-chip.active .dot { background: rgba(255,255,255,0.7); }
+
+  /* ============ AGE PANEL ============ */
+  .age-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    display: none;
+  }
+  .age-panel.active { display: block; }
+
+  .panel-banner {
+    padding: 22px 28px;
+    color: #fff;
+  }
+  .panel-banner.g-rn   { background: linear-gradient(135deg, #0d9488, #0f766e); }
+  .panel-banner.g-1to6 { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+  .panel-banner.g-7to12{ background: linear-gradient(135deg, #b45309, #92400e); }
+  .panel-banner.g-2to5 { background: linear-gradient(135deg, #9333ea, #7e22ce); }
+  .panel-banner.g-ado  { background: linear-gradient(135deg, #ea580c, #c2410c); }
+
+  .panel-banner h2 {
+    font-size: 26px; font-weight: 800;
+    letter-spacing: -0.02em; margin-bottom: 4px;
+  }
+  .panel-banner .sub {
+    font-size: 13px; opacity: 0.92;
+  }
+
+  .panel-body { padding: 22px 28px 26px; }
+
+  .section {
+    margin-bottom: 22px;
+  }
+  .section-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--pink);
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid var(--pink-soft);
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title .emoji { font-size: 16px; }
+
+  .check-list {
+    list-style: none;
+  }
+  .check-list li {
+    position: relative;
+    padding: 6px 0 6px 28px;
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .check-list li::before {
+    content: '✅';
+    position: absolute; left: 0; top: 6px;
+    font-size: 14px;
+  }
+  .check-list li strong {
+    background: var(--yellow-bg);
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-weight: 700;
+  }
+
+  .sub-list {
+    list-style: none;
+    margin-left: 28px; margin-top: 4px;
+  }
+  .sub-list li {
+    position: relative;
+    padding: 3px 0 3px 16px;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .sub-list li::before {
+    content: '•';
+    position: absolute; left: 4px; top: 3px;
+    color: var(--pink);
+    font-weight: 700;
+  }
+  .sub-list li strong { font-weight: 700; }
+
+  .tip-card {
+    background: var(--yellow-bg);
+    border: 1px solid #fde68a;
+    border-left: 4px solid #facc15;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 10px 0;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .tip-card::before {
+    content: '💡 ';
+  }
+
+  /* Vaccine schemes side by side */
+  .vac-schemes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 720px) { .vac-schemes { grid-template-columns: 1fr; } }
+  .vac-card {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .vac-card.new {
+    background: var(--green-soft);
+    border-color: var(--green-border);
+  }
+  .vac-card.old {
+    background: var(--surface-alt);
+  }
+  .vac-card h4 {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 8px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .vac-card.new h4 { color: var(--green-dark); }
+  .vac-card ul { list-style: none; }
+  .vac-card li {
+    padding: 4px 0 4px 22px;
+    position: relative;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .vac-card li::before {
+    content: '✅';
+    position: absolute; left: 0; top: 4px;
+    font-size: 12px;
+  }
+  .vac-card li strong { background: var(--yellow-bg); padding: 1px 3px; border-radius: 3px; }
+
+  /* ============ Denver II Table ============ */
+  .denver-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    margin-top: 4px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .denver-table thead { background: var(--surface-alt); }
+  .denver-table th {
+    padding: 9px 10px;
+    text-align: left;
+    font-weight: 700;
+    color: var(--primary-dark);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    border-bottom: 1px solid var(--border);
+  }
+  .denver-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.45;
+    font-size: 12.5px;
+  }
+  .denver-table tr:last-child td { border-bottom: none; }
+  .denver-table .area {
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .denver-table .area.social { color: #2563eb; background: #dbeafe; }
+  .denver-table .area.motor-fino { color: #be185d; background: #fce7f3; }
+  .denver-table .area.lenguaje  { color: #b45309; background: #fef3c7; }
+  .denver-table .area.motor-grueso { color: #dc2626; background: #fee2e2; }
+
+  .denver-table th.pct, .denver-table td.pct {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+  .denver-table th.pct { background: #f0fdf4; }
+  .denver-table th.pct.p75 { background: #fce7f3; }
+  .denver-table th.pct.p100 { background: #fee2e2; }
+
+  /* ============ HB CALCULATOR ============ */
+  .calc-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 28px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    margin-bottom: 18px;
+  }
+  .calc-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+  .calc-sub {
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 600px) { .field-grid { grid-template-columns: 1fr; } }
+  .field {
+    display: flex; flex-direction: column; gap: 5px;
+  }
+  .field label {
+    font-size: 13px; font-weight: 600; color: var(--text);
+  }
+  .field input, .field select {
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    background: var(--surface-alt);
+    color: var(--text);
+  }
+  .field input:focus, .field select:focus {
+    outline: none; border-color: var(--primary);
+    background: #fff; box-shadow: 0 0 0 3px var(--primary-soft);
+  }
+
+  .hb-result {
+    margin-top: 18px;
+    padding: 18px 22px;
+    border-radius: 12px;
+    border: 1.5px solid;
+    border-left-width: 6px;
+    font-size: 14px;
+  }
+  .hb-result.normal { background: var(--green-soft); border-color: var(--green-border); color: var(--green-dark); }
+  .hb-result.leve  { background: var(--yellow-bg); border-color: #fde68a; color: #854d0e; }
+  .hb-result.mod   { background: var(--orange-soft); border-color: var(--orange-border); color: #9a3412; }
+  .hb-result.grave { background: var(--red-soft); border-color: var(--red-border); color: var(--red-dark); }
+
+  .hb-result h3 {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hb-result .hb-pct {
+    font-size: 28px;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    margin: 6px 0;
+  }
+  .hb-result .threshold {
+    font-size: 12px;
+    margin-top: 6px;
+    opacity: 0.85;
+  }
+
+  .anemia-table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px; margin-top: 14px;
+    border-radius: 8px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .anemia-table thead { background: var(--primary); color: #fff; }
+  .anemia-table th { padding: 10px; text-align: left; font-weight: 700; font-size: 12px; }
+  .anemia-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .anemia-table tr:nth-child(even) td { background: var(--surface-alt); }
+  .anemia-table tr:last-child td { border-bottom: none; }
+  .anemia-table .normal-c { color: var(--green-dark); font-weight: 700; }
+  .anemia-table .leve-c { color: #854d0e; font-weight: 700; }
+  .anemia-table .mod-c { color: #9a3412; font-weight: 700; }
+  .anemia-table .grave-c { color: var(--red-dark); font-weight: 700; }
+
+  /* ============ WHO TABLES ============ */
+  .who-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .who-section h3 {
+    background: var(--primary);
+    color: #fff;
+    padding: 14px 20px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .who-section .who-content { padding: 18px 22px; }
+
+  .who-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    margin-top: 8px;
+  }
+  .who-table thead { background: var(--surface-alt); }
+  .who-table th {
+    padding: 8px 10px;
+    text-align: center;
+    font-weight: 700;
+    color: var(--primary-dark);
+    font-size: 11px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .who-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+  .who-table tr:nth-child(even) td { background: var(--surface-alt); }
+  .who-table td.lbl {
+    font-weight: 700;
+    text-align: left;
+    color: var(--primary-dark);
+  }
+  .who-table .header-z th { background: var(--primary-soft); color: var(--primary-dark); }
+
+  .z-zone {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .z-3neg { background: var(--red-soft); color: var(--red-dark); }
+  .z-2neg { background: var(--orange-soft); color: #9a3412; }
+  .z-norm { background: var(--green-soft); color: var(--green-dark); }
+  .z-2pos { background: var(--orange-soft); color: #9a3412; }
+  .z-3pos { background: var(--red-soft); color: var(--red-dark); }
+
+  /* Sex toggle */
+  .sex-toggle {
+    display: inline-flex;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px;
+    margin-bottom: 12px;
+  }
+  .sex-toggle button {
+    padding: 7px 14px; border: none; background: transparent;
+    border-radius: 6px; font-family: 'Inter', sans-serif;
+    font-size: 12.5px; font-weight: 600;
+    cursor: pointer; color: var(--text-secondary);
+  }
+  .sex-toggle button.active {
+    background: var(--primary); color: #fff;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 26px;
+    padding: 20px 24px;
+    background: #000; color: #fff;
+    border-radius: 14px;
+    text-align: center;
+    font-size: 13px;
+  }
+  .footer .brand-logo {
+    background: #fff; color: #000;
+    margin-bottom: 6px;
+  }
+  .footer p { margin: 3px 0; opacity: 0.85; }
+
+  .disclaimer {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    font-size: 11.5px; color: #9a3412;
+    line-height: 1.55;
+  }
+  .disclaimer strong { color: #7c2d12; }
+
+  @media (max-width: 600px) {
+    body { padding: 14px 10px 50px; }
+    h1 { font-size: 22px; }
+    .panel-banner { padding: 18px 20px; }
+    .panel-banner h2 { font-size: 22px; }
+    .panel-body { padding: 18px 18px 22px; }
+    .top-tab { padding: 8px 11px; font-size: 12px; }
+    .age-picker { padding: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- ============ Header ============ -->
+  <div class="page-header">
+    <span class="brand-logo">MED NOTES<span class="reg">®</span></span>
+    <h1>Control de Niño Sano</h1>
+    <p class="page-sub">Lineamientos MSP Ecuador · Esquema MSP 2025 + Antiguo · Tablas OMS · Denver II · Hemoglobina</p>
+  </div>
+
+  <!-- ============ Top tabs ============ -->
+  <div class="top-tabs">
+    <button class="top-tab active" data-tab="age">👶 Control por Edad</button>
+    <button class="top-tab" data-tab="who">📊 Tablas OMS</button>
+    <button class="top-tab" data-tab="hb">🩸 Hemoglobina</button>
+    <button class="top-tab" data-tab="denver">🧠 Denver II</button>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TAB 1: CONTROL POR EDAD                       -->
+  <!-- ============================================ -->
+  <div class="tab-view active" id="view-age">
+
+    <div class="age-picker">
+      <div class="age-picker-title">Selecciona la edad del paciente:</div>
+      <div class="age-row" id="age-row">
+        <button class="age-chip g-rn active"   data-age="rn">    <span class="dot"></span> Recién nacido</button>
+        <button class="age-chip g-1to6"        data-age="m1">    <span class="dot"></span> 1 mes</button>
+        <button class="age-chip g-1to6"        data-age="m2">    <span class="dot"></span> 2 meses</button>
+        <button class="age-chip g-1to6"        data-age="m4">    <span class="dot"></span> 4 meses</button>
+        <button class="age-chip g-1to6"        data-age="m6">    <span class="dot"></span> 6 meses</button>
+        <button class="age-chip g-7to12"       data-age="m9">    <span class="dot"></span> 9 meses</button>
+        <button class="age-chip g-7to12"       data-age="m12">   <span class="dot"></span> 12 meses</button>
+        <button class="age-chip g-2to5"        data-age="m18">   <span class="dot"></span> 18 meses</button>
+        <button class="age-chip g-2to5"        data-age="y2">    <span class="dot"></span> 2 años</button>
+        <button class="age-chip g-2to5"        data-age="y5">    <span class="dot"></span> 5 años</button>
+        <button class="age-chip g-ado"         data-age="y9">    <span class="dot"></span> 9 años</button>
+        <button class="age-chip g-ado"         data-age="ado">   <span class="dot"></span> Adolescente 12-15 a</button>
+      </div>
+    </div>
+
+    <!-- Panels - injected by JS -->
+    <div id="panels"></div>
+
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TAB 2: TABLAS OMS                             -->
+  <!-- ============================================ -->
+  <div class="tab-view" id="view-who">
+
+    <div class="calc-card">
+      <h2 class="calc-title">📊 Tablas Antropométricas OMS</h2>
+      <p class="calc-sub">Valores de referencia por Z-score (DE = Desviaciones Estándar) · WHO Child Growth Standards</p>
+
+      <div class="sex-toggle" id="who-sex">
+        <button class="active" data-sex="boys">👦 Niños</button>
+        <button data-sex="girls">👧 Niñas</button>
+      </div>
+
+      <p class="calc-sub" style="margin-top:0; font-size:12px;">
+        <span class="z-zone z-3neg">-3 DE</span> Severo &nbsp;
+        <span class="z-zone z-2neg">-2 DE</span> Bajo &nbsp;
+        <span class="z-zone z-norm">Mediana</span> &nbsp;
+        <span class="z-zone z-2pos">+2 DE</span> Alto &nbsp;
+        <span class="z-zone z-3pos">+3 DE</span> Severo
+      </p>
+    </div>
+
+    <!-- WHO Tables -->
+    <div class="who-section">
+      <h3>⚖ Peso para la edad (kg)</h3>
+      <div class="who-content">
+        <div class="table-wrap" style="overflow-x:auto">
+          <table class="who-table" id="t-peso"></table>
+        </div>
+      </div>
+    </div>
+
+    <div class="who-section">
+      <h3>📏 Talla / Longitud para la edad (cm)</h3>
+      <div class="who-content">
+        <div class="table-wrap" style="overflow-x:auto">
+          <table class="who-table" id="t-talla"></table>
+        </div>
+      </div>
+    </div>
+
+    <div class="who-section">
+      <h3>🧠 Perímetro cefálico para la edad (cm)</h3>
+      <div class="who-content">
+        <div class="table-wrap" style="overflow-x:auto">
+          <table class="who-table" id="t-pc"></table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-card">
+      <strong>Interpretación de Z-scores</strong> (OMS):<br>
+      • <strong>Peso/edad &lt; -2 DE</strong>: bajo peso. <strong>&lt; -3 DE</strong>: muy bajo peso (desnutrición severa)<br>
+      • <strong>Talla/edad &lt; -2 DE</strong>: baja talla (desnutrición crónica)<br>
+      • <strong>Peso/talla o IMC &gt; +2 DE</strong>: sobrepeso. <strong>&gt; +3 DE</strong>: obesidad<br>
+      • <strong>PC &lt; -2 DE</strong>: microcefalia. <strong>&gt; +2 DE</strong>: macrocefalia (descartar hidrocefalia, MEC)
+    </div>
+
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TAB 3: HEMOGLOBINA                            -->
+  <!-- ============================================ -->
+  <div class="tab-view" id="view-hb">
+
+    <div class="calc-card">
+      <h2 class="calc-title">🩸 Calculadora de Hemoglobina · Anemia</h2>
+      <p class="calc-sub">Clasificación según OMS con corrección por altitud (Ecuador)</p>
+
+      <div class="field-grid">
+        <div class="field">
+          <label>Grupo etario / situación</label>
+          <select id="hb-grupo">
+            <option value="6m_5y">Niño 6 meses – 5 años</option>
+            <option value="5_11y">Niño 5 – 11 años</option>
+            <option value="12_14y">Adolescente 12 – 14 años</option>
+            <option value="muj_15">Mujer no embarazada (≥15 a)</option>
+            <option value="hom_15">Hombre (≥15 a)</option>
+            <option value="emb">Embarazada</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Hemoglobina (g/dL)</label>
+          <input type="number" id="hb-valor" min="2" max="22" step="0.1" placeholder="Ej. 10.5">
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Altitud sobre el nivel del mar (msnm)</label>
+          <select id="hb-altitud">
+            <option value="0">0 m (nivel del mar)</option>
+            <option value="500">500 m</option>
+            <option value="1000">1000 m</option>
+            <option value="1500">1500 m</option>
+            <option value="2000">2000 m</option>
+            <option value="2500" selected>2500 m</option>
+            <option value="2850">2850 m (Quito)</option>
+            <option value="3000">3000 m</option>
+            <option value="3500">3500 m</option>
+            <option value="4000">4000 m</option>
+          </select>
+        </div>
+        <div class="field" style="display:flex; flex-direction:column; justify-content:flex-end;">
+          <button id="btn-hb-calc" style="padding:11px 14px; background:var(--primary); color:#fff; border:none; border-radius:8px; font-weight:700; font-size:14px; cursor:pointer;">🧮 Calcular</button>
+        </div>
+      </div>
+
+      <div id="hb-result"></div>
+
+      <h3 style="margin-top:22px; margin-bottom:8px; font-size:14px; color: var(--primary-dark);">📋 Umbrales de referencia OMS (g/dL)</h3>
+      <table class="anemia-table">
+        <thead>
+          <tr><th>Grupo</th><th>Normal</th><th>Anemia leve</th><th>Anemia moderada</th><th>Anemia grave</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Niños 6 m – 5 a</td><td class="normal-c">≥ 11.0</td><td class="leve-c">10.0 – 10.9</td><td class="mod-c">7.0 – 9.9</td><td class="grave-c">&lt; 7.0</td></tr>
+          <tr><td>Niños 5 – 11 a</td><td class="normal-c">≥ 11.5</td><td class="leve-c">11.0 – 11.4</td><td class="mod-c">8.0 – 10.9</td><td class="grave-c">&lt; 8.0</td></tr>
+          <tr><td>Adolescentes 12 – 14 a</td><td class="normal-c">≥ 12.0</td><td class="leve-c">11.0 – 11.9</td><td class="mod-c">8.0 – 10.9</td><td class="grave-c">&lt; 8.0</td></tr>
+          <tr><td>Mujeres no embarazadas ≥ 15 a</td><td class="normal-c">≥ 12.0</td><td class="leve-c">11.0 – 11.9</td><td class="mod-c">8.0 – 10.9</td><td class="grave-c">&lt; 8.0</td></tr>
+          <tr><td>Embarazadas</td><td class="normal-c">≥ 11.0</td><td class="leve-c">10.0 – 10.9</td><td class="mod-c">7.0 – 9.9</td><td class="grave-c">&lt; 7.0</td></tr>
+          <tr><td>Hombres ≥ 15 a</td><td class="normal-c">≥ 13.0</td><td class="leve-c">11.0 – 12.9</td><td class="mod-c">8.0 – 10.9</td><td class="grave-c">&lt; 8.0</td></tr>
+        </tbody>
+      </table>
+
+      <div class="tip-card" style="margin-top:14px">
+        <strong>Corrección por altitud:</strong> Se resta del valor medido para obtener la Hb corregida, y luego se compara con la tabla. La OMS recomienda corregir desde los 1000 msnm (aprox. -0.2 g/dL por cada 500 m).<br>
+        Ej. en Quito (2850 m) la corrección es ≈ -1.6 g/dL.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TAB 4: DENVER II                              -->
+  <!-- ============================================ -->
+  <div class="tab-view" id="view-denver">
+
+    <div class="calc-card">
+      <h2 class="calc-title">🧠 Test de Denver II — Hitos del Desarrollo</h2>
+      <p class="calc-sub">Edad esperada (en meses) en que el niño alcanza cada hito según percentil 25, 50, 75 y 100%</p>
+
+      <div class="tip-card" style="margin: 0 0 14px;">
+        <strong>Cómo leer:</strong> 25% = primera edad en que el hito puede aparecer. 50% = edad media. 75-100% = la mayoría ya lo cumple. Si un hito esperado al 90% no se ha alcanzado → derivar a evaluación neurodesarrollo.
+      </div>
+
+      <div class="table-wrap" style="overflow-x:auto">
+        <table class="denver-table">
+          <thead>
+            <tr>
+              <th>Área</th>
+              <th>Hito de desarrollo</th>
+              <th class="pct">25%</th>
+              <th class="pct">50%</th>
+              <th class="pct p75">75%</th>
+              <th class="pct p100">100%</th>
+            </tr>
+          </thead>
+          <tbody id="denver-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============ Disclaimer ============ -->
+  <div class="disclaimer">
+    <strong>⚠ Aviso clínico:</strong> Esta herramienta es de apoyo educativo basada en los lineamientos del MSP Ecuador, OMS y guías AIEPI. Las dosis, esquemas y valores deben individualizarse según evaluación clínica y prescripción médica. No sustituye criterio profesional.
+  </div>
+
+  <!-- ============ Footer ============ -->
+  <div class="footer">
+    <span class="brand-logo">MED NOTES<span class="reg">®</span></span>
+    <p>Hecho por <strong>MED NOTES®</strong> — Apuntes médicos basados en evidencia</p>
+    <p style="font-size:11px; opacity:0.7;">Fuente: MSP Ecuador · OMS · AIEPI · Denver Developmental Materials</p>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   DATA: Control por edad (checklist por consulta)
+   ============================================================ */
+const PANELS = {
+
+  rn: {
+    group: 'g-rn',
+    title: 'Recién Nacido',
+    sub: '0 – 28 días · Primer control postnatal',
+    sections: [
+      { title: '👶 IDENTIFICACIÓN Y ANTECEDENTES', items: [
+        'Nombre del recién nacido / Fecha de nacimiento / Edad en días',
+        'Lugar y tipo de parto (institucional o domiciliario)',
+        'Edad gestacional (pre, a término, postérmino)',
+        'Peso, talla y perímetro cefálico al nacer',
+        '<strong>APGAR 1 y 5 minutos</strong>',
+        'Antecedentes perinatales: sufrimiento fetal, ictericia, reanimación',
+        'Lactancia materna inmediata (sí/no)',
+        '<strong>Registro del tamizaje neonatal:</strong> Fenilcetonuria, hipotiroidismo congénito, fibrosis quística, otros'
+      ]},
+      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
+        '<strong>Peso y talla actual</strong>',
+        '<strong>Perímetro cefálico (PC)</strong>',
+        'Interpretar en <strong>curvas OMS / MSP</strong> (percentiles o z-scores)',
+        'Valorar <strong>ganancia de peso</strong> (recuperación esperada al día 10–14)'
+      ]},
+      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo, de pies a cabeza:'],
+        sublist: [
+          '<strong>Fontanelas:</strong> tamaño y tensión',
+          '<strong>Cabeza y cuello:</strong> simetría, masas, tiroides',
+          '<strong>Ojos:</strong> reflejo rojo, ictericia',
+          '<strong>Nariz y boca:</strong> permeabilidad nasal, paladar íntegro, frenillo',
+          '<strong>Abdomen:</strong> cordón umbilical, hernias, visceromegalias',
+          '<strong>Genitales:</strong> desarrollo, criptorquidia, himen, flujo fisiológico',
+          '<strong>Caderas:</strong> maniobras de Barlow y Ortolani',
+          '<strong>Columna:</strong> descartar espina bífida oculta',
+          '<strong>Piel:</strong> ictericia, cianosis, manchas mongólicas, eritema tóxico',
+          '<strong>Reflejos primitivos:</strong> succión, Moro, prensión, búsqueda'
+        ]
+      },
+      { title: '🍼 ALIMENTACIÓN Y NUTRICIÓN', items: [
+        '<strong>Lactancia materna exclusiva (LME)</strong> — iniciar en la 1ª hora de vida',
+        'Técnica de amamantamiento observada y corregida',
+        'Frecuencia: cada 2–3 horas o a libre demanda',
+        '<strong>Orinas y deposiciones (≥ 6 pañales/día = hidratación adecuada)</strong>'
+      ]},
+      { title: '💉 INMUNIZACIONES (ESQUEMA MSP)', items: ['Aplicadas antes del alta hospitalaria o en primer control:'],
+        sublist: [
+          '✅ <strong>BCG</strong> (previene tuberculosis grave)',
+          '✅ <strong>Hepatitis B</strong> (1.ª dosis dentro de las primeras 24 h)'
+        ]
+      },
+      { title: '🦷 SALUD ORAL Y SENSORIAL', items: [
+        'Revisar mucosa oral (moniliasis, aftas)',
+        'Verificar reflejos de succión y deglución',
+        'Comprobar <strong>prueba de tamizaje auditivo neonatal</strong> (otoemisiones)',
+        'Evaluar fijación visual y reflejo pupilar'
+      ]},
+      { title: '🩸 TAMIZAJES Y PRUEBAS BÁSICAS', items: [
+        '<strong>Tamizaje metabólico neonatal:</strong> entre las 24–72 h de vida',
+        '<strong>Tamizaje auditivo neonatal:</strong> antes del mes de vida',
+        '<strong>Tamizaje visual (reflejo rojo):</strong> en cada control',
+        '<strong>Prueba de hemoglobina:</strong> si riesgo de anemia (madre anémica, prematuro)'
+      ]}
+    ]
+  },
+
+  m1: {
+    group: 'g-1to6',
+    title: 'Niño/a · 1 mes',
+    sub: 'Primer control postnatal extendido',
+    tip: 'si el peso es < p3 o > p97 → evaluar riesgo nutricional y revisar técnica de lactancia.',
+    sections: [
+      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
+        '<strong>Peso actual:</strong> aumento esperado ≈ 600–900 g desde el nacimiento',
+        '<strong>Talla:</strong> incremento ≈ 3–4 cm',
+        '<strong>Perímetro cefálico:</strong> + 1.5–2 cm (meta: 36–38 cm)',
+        'Registrar en <strong>curvas OMS / MSP</strong> (percentiles o z-score)',
+        'Interpretar el crecimiento según el patrón y alertar si hay pérdida o estancamiento'
+      ]},
+      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo'],
+        sublist: [
+          '<strong>Cabeza:</strong> fontanela anterior normotensa (1–2 cm), posterior cerrada o mínima',
+          '<strong>Ojos:</strong> reflejo rojo presente, mirada fija ante estímulos luminosos',
+          '<strong>Oídos:</strong> respuesta a sonidos fuertes',
+          '<strong>Boca:</strong> succión y deglución adecuadas',
+          '<strong>Tórax:</strong> murmullo vesicular normal, sin retracciones',
+          '<strong>Corazón:</strong> frecuencia regular, sin soplos',
+          '<strong>Abdomen:</strong> blando, cordón cicatrizado, sin hernias',
+          '<strong>Genitales:</strong> simetría, descenso testicular, sin secreciones anormales',
+          '<strong>Extremidades:</strong> movilidad simétrica, tono normal',
+          '<strong>Reflejos primitivos:</strong> succión, Moro, prensión, búsqueda → presentes',
+          '<strong>Piel:</strong> sin ictericia persistente, descamación o lesiones'
+        ]
+      },
+      { title: '💉 INMUNIZACIONES (VERIFICAR)', items: [
+        '<strong>BCG</strong> aplicada (cicatriz en formación)',
+        '<strong>Hepatitis B</strong> aplicada dentro de las 24 h del nacimiento',
+        'Si alguna pendiente → remitir al servicio de vacunación',
+        'Programar próximas dosis: <strong>Hexavalente / Pentavalente + Polio + Neumococo + Rotavirus</strong> a los 2 meses'
+      ]},
+      { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
+        'Confirmar resultados del tamizaje neonatal (TSH, fenilcetonuria, fibrosis quística)',
+        '<strong>Tamizaje auditivo neonatal</strong> (si no se hizo)',
+        '<strong>Control visual (reflejo rojo)</strong>',
+        'Detección de anemia o ictericia prolongada si hay factores de riesgo'
+      ]},
+      { title: '🧠 NEURODESARROLLO (DENVER II)', items: ['Hitos esperados al mes de edad:'],
+        sublist: [
+          '<strong>Personal social:</strong> sonríe ante estímulo',
+          '<strong>Motor fino:</strong> sigue con la mirada hasta línea media',
+          '<strong>Lenguaje:</strong> reacciona ante sonido o campanilla',
+          '<strong>Motor grueso:</strong> levanta la cabeza brevemente en prono'
+        ]
+      }
+    ]
+  },
+
+  m2: {
+    group: 'g-1to6',
+    title: 'Niño/a · 2 meses',
+    sub: 'Inicio del esquema de inmunización ampliada',
+    tip: 'si el peso es < p3 o > p97 → evaluar riesgo nutricional y revisar técnica de lactancia.',
+    sections: [
+      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
+        '<strong>Peso actual:</strong> aumento esperado ≈ 800–1000 g desde el mes anterior',
+        '<strong>Talla:</strong> incremento ≈ 3 cm',
+        '<strong>Perímetro cefálico:</strong> + 1.5 cm',
+        'Registrar en <strong>curvas OMS / MSP</strong> (percentiles o z-score)',
+        'Interpretar el crecimiento según el patrón y alertar si hay pérdida o estancamiento'
+      ]},
+      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo'],
+        sublist: [
+          '<strong>Cabeza:</strong> fontanela anterior normotensa (1–2 cm), posterior cerrada',
+          'Ojos: sigue objetos o rostros brevemente',
+          'Oídos: reacciona a sonidos (parpadeo o movimiento)',
+          '<strong>Boca:</strong> succión y deglución eficaces',
+          'Tórax: movimientos simétricos, sin retracciones',
+          'Corazón: RCR normal, sin soplos',
+          'Abdomen: blando, sin masas ni hernias',
+          'Genitales: normales para edad y sexo',
+          'Extremidades: movilidad activa y simétrica',
+          'Reflejos primitivos: succión y Moro aún presentes',
+          'Piel: hidratada, sin lesiones ni ictericia'
+        ]
+      },
+      { title: '💉 INMUNIZACIONES — PRIMERA DOSIS', items: ['Comparar esquemas:'],
+        twoColumns: {
+          new: ['<strong>Hexavalente</strong> (DTP-HB-Hib-Polio)', '<strong>Neumococo conjugada 13</strong>', '<strong>Rotavirus oral</strong>'],
+          old: ['Pentavalente (DTP-HB-Hib)', 'fIPV (polio)', 'Neumococo conjugada 10', 'Rotavirus oral']
+        }
+      },
+      { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
+        'Confirmar resultados del tamizaje neonatal (TSH, fenilcetonuria, fibrosis quística)',
+        '<strong>Tamizaje auditivo neonatal</strong> (si no se hizo)',
+        '<strong>Control visual (reflejo rojo)</strong>',
+        'Detección de anemia o ictericia prolongada si hay factores de riesgo'
+      ]},
+      { title: '🧠 NEURODESARROLLO (DENVER II)', items: ['Hitos esperados a los 2 meses:'],
+        sublist: [
+          '<strong>Personal social:</strong> sonríe espontáneamente, se lleva las manos a la boca',
+          '<strong>Motor fino:</strong> sigue con la mirada a 180°, junta las manos',
+          '<strong>Lenguaje:</strong> vocaliza (gorgoritos), reacciona a la campanilla',
+          '<strong>Motor grueso:</strong> levanta y sostiene la cabeza brevemente en prono'
+        ]
+      }
+    ]
+  },
+
+  m4: {
+    group: 'g-1to6',
+    title: 'Niño/a · 4 meses',
+    sub: 'Segunda dosis del esquema primario',
+    sections: [
+      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
+        '<strong>Peso:</strong> ≈ duplica el peso del nacimiento',
+        '<strong>Talla:</strong> incremento ≈ 2 cm desde el mes anterior',
+        '<strong>Perímetro cefálico:</strong> + 1 cm',
+        'Registrar en curvas OMS / MSP'
+      ]},
+      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo'],
+        sublist: [
+          'Cabeza: fontanela anterior normotensa, posterior cerrada',
+          'Ojos: fija y sigue objetos en 180°',
+          'Oídos: gira la cabeza al sonido',
+          'Boca: introduce manos y objetos',
+          'Tórax y abdomen: sin alteraciones',
+          'Cadera: descartar luxación residual',
+          'Reflejos: succión y Moro disminuyendo',
+          'Piel: hidratación, lesiones o eccema atópico'
+        ]
+      },
+      { title: '💉 INMUNIZACIONES — SEGUNDA DOSIS',
+        twoColumns: {
+          new: ['<strong>Hexavalente</strong> 2.ª dosis', '<strong>Neumococo 13</strong> 2.ª', '<strong>Rotavirus oral</strong> 2.ª'],
+          old: ['Pentavalente 2.ª', 'fIPV 2.ª', 'Neumococo 10 2.ª', 'Rotavirus oral 2.ª']
+        }
+      },
+      { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
+        'Reflejo rojo, valoración de pares craneales',
+        'Detección de anemia si factores de riesgo',
+        'Control visual y auditivo'
+      ]},
+      { title: '🧠 NEURODESARROLLO (DENVER II)', items: ['Hitos esperados a los 4 meses:'],
+        sublist: [
+          '<strong>Personal social:</strong> ríe a carcajadas, mira sus manos',
+          '<strong>Motor fino:</strong> agarra objetos con palma, junta manos línea media',
+          '<strong>Lenguaje:</strong> balbuceos prolongados, gira a sonidos',
+          '<strong>Motor grueso:</strong> sostiene cabeza erecta, se voltea de prono a supino'
+        ]
+      }
+    ]
+  },
+
+  m6: {
+    group: 'g-1to6',
+    title: 'Niño/a · 6 meses',
+    sub: 'Inicio de alimentación complementaria',
+    tip: 'Iniciar alimentación complementaria con suplementos de hierro/zinc según AIEPI.',
+    sections: [
+      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
+        '<strong>Peso:</strong> ≈ duplica el peso del nacimiento',
+        '<strong>Talla:</strong> + ≈ 1.5 cm/mes',
+        '<strong>Perímetro cefálico:</strong> + 0.5–1 cm',
+        'Curvas OMS — z-score'
+      ]},
+      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico'],
+        sublist: [
+          'Cabeza: fontanela anterior aún abierta',
+          'Ojos: convergencia y seguimiento',
+          'Boca: aparición de primeros dientes (incisivos inferiores)',
+          'Abdomen y reflejos abdominales',
+          'Caderas: marcha en aire, simetría'
+        ]
+      },
+      { title: '💉 INMUNIZACIONES — TERCERA DOSIS',
+        twoColumns: {
+          new: ['<strong>Hexavalente</strong> 3.ª dosis', '<strong>Neumococo 13</strong> 3.ª', '<strong>bOPV</strong> (polio oral)', '<strong>Influenza pediátrica</strong> 1.ª dosis'],
+          old: ['Pentavalente 3.ª', 'bOPV 1.ª', 'Neumococo 10 3.ª', 'Influenza pediátrica 1.ª']
+        }
+      },
+      { title: '🍼 ALIMENTACIÓN Y SUPLEMENTACIÓN', items: [
+        'Inicio de <strong>alimentación complementaria</strong> (papillas, frutas, verduras, carnes)',
+        'Continuar <strong>lactancia materna a libre demanda</strong>',
+        '<strong>Suplemento de hierro:</strong> 1 mg/kg/día en niños con factores de riesgo',
+        '<strong>Suplemento de zinc:</strong> 10 mg/día por 14 días si diarrea (AIEPI)',
+        '<strong>Vitamina A:</strong> según calendario nacional'
+      ]},
+      { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
+        '<strong>Hemoglobina o hematocrito</strong> (descartar anemia ferropénica)',
+        'Control de visión y audición',
+        'Evaluación oral (erupción dental)'
+      ]},
+      { title: '🧠 NEURODESARROLLO (DENVER II)', items: ['Hitos esperados a los 6 meses:'],
+        sublist: [
+          '<strong>Personal social:</strong> se reconoce en el espejo, se aferra a juguetes',
+          '<strong>Motor fino:</strong> transfiere objetos de una mano a otra',
+          '<strong>Lenguaje:</strong> vocaliza sílabas (ba, da, ma)',
+          '<strong>Motor grueso:</strong> se voltea ambos lados, se sienta con apoyo'
+        ]
+      }
+    ]
+  },
+
+  m9: {
+    group: 'g-7to12',
+    title: 'Niño/a · 9 meses',
+    sub: 'Diversificación alimentaria',
+    sections: [
+      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
+        '<strong>Peso:</strong> incremento esperado ≈ 400 g/mes',
+        '<strong>Talla:</strong> + 1.2 cm/mes',
+        '<strong>Perímetro cefálico:</strong> ≈ 44 cm',
+        'Curvas OMS — z-score'
+      ]},
+      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico'],
+        sublist: [
+          'Aparición de incisivos centrales superiores',
+          'Caderas y columna en posición sedente',
+          'Reflejo paracaídas presente',
+          'Visión y coordinación'
+        ]
+      },
+      { title: '💉 INMUNIZACIONES (VERIFICAR)', items: [
+        'Esquema de los 6 meses completo',
+        'Si pendiente alguna dosis → completar',
+        'Programar SRP, Fiebre Amarilla y Varicela a los 12 meses'
+      ]},
+      { title: '🍼 ALIMENTACIÓN', items: [
+        'Diversificación: cereales, frutas, verduras, carnes blandas',
+        'LME complementaria mantenida',
+        '<strong>Hierro</strong> oral si Hb &lt; 11 g/dL'
+      ]},
+      { title: '🧠 NEURODESARROLLO (DENVER II)', items: ['Hitos esperados a los 9 meses:'],
+        sublist: [
+          '<strong>Personal social:</strong> juega "tortitas/palmas-palmas", angustia ante extraños',
+          '<strong>Motor fino:</strong> pinza inferior (pulgar-índice), recoge objetos pequeños',
+          '<strong>Lenguaje:</strong> dice "papá / mamá" sin significado, repite sílabas',
+          '<strong>Motor grueso:</strong> se sienta solo, gatea, se levanta apoyándose'
+        ]
+      }
+    ]
+  },
+
+  m12: {
+    group: 'g-7to12',
+    title: 'Niño/a · 12 meses',
+    sub: 'Cierre del primer año · refuerzos clave',
+    sections: [
+      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
+        '<strong>Peso:</strong> ≈ triplica el peso del nacimiento',
+        '<strong>Talla:</strong> + 50 % desde el nacimiento (≈ 75 cm)',
+        '<strong>Perímetro cefálico:</strong> ≈ 46 cm',
+        'Cierre de la fontanela posterior'
+      ]},
+      { title: '❤️ EVALUACIÓN CLÍNICA', items: ['Examen físico'],
+        sublist: [
+          'Visión y audición presentes',
+          'Cavidad oral: 6–8 piezas dentales',
+          'Reflejos posturales completos',
+          'Marcha asistida o autónoma'
+        ]
+      },
+      { title: '💉 INMUNIZACIONES — REFUERZOS', items: [
+        '<strong>SRP</strong> (Sarampión, Rubéola, Parotiditis) — 1.ª dosis',
+        '<strong>Fiebre Amarilla</strong> (en zona endémica)',
+        '<strong>Neumococo</strong> refuerzo (PCV 12 m)',
+        'Considerar <strong>Varicela</strong> (15 m según esquema)'
+      ]},
+      { title: '🍼 ALIMENTACIÓN', items: [
+        'Dieta familiar variada con consistencia adaptada',
+        'Lactancia materna recomendada hasta 2 años',
+        'Suplemento de hierro y vitamina A según AIEPI'
+      ]},
+      { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
+        '<strong>Hb / Hto</strong> (cribado universal de anemia ferropénica)',
+        'Examen visual y auditivo si factores de riesgo',
+        'Evaluación de neurodesarrollo'
+      ]},
+      { title: '🧠 NEURODESARROLLO (DENVER II)', items: ['Hitos esperados a los 12 meses:'],
+        sublist: [
+          '<strong>Personal social:</strong> dice adiós con la mano, comprende órdenes simples',
+          '<strong>Motor fino:</strong> pinza superior, mete objetos en recipientes',
+          '<strong>Lenguaje:</strong> 1–3 palabras con significado',
+          '<strong>Motor grueso:</strong> camina con apoyo o solo, se pone de pie'
+        ]
+      }
+    ]
+  },
+
+  m18: {
+    group: 'g-2to5',
+    title: 'Niño/a · 18 meses',
+    sub: 'Refuerzos pentavalente/hexavalente y bOPV',
+    sections: [
+      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
+        '<strong>Peso:</strong> ≈ 11 kg promedio',
+        '<strong>Talla:</strong> ≈ 80–82 cm',
+        '<strong>PC:</strong> ≈ 47 cm',
+        'Curvas OMS'
+      ]},
+      { title: '❤️ EVALUACIÓN CLÍNICA', items: ['Examen físico'],
+        sublist: [
+          'Marcha autónoma, equilibrio',
+          'Lenguaje y comprensión',
+          'Caderas, columna, postura',
+          'Cavidad oral: 12–16 piezas'
+        ]
+      },
+      { title: '💉 INMUNIZACIONES — REFUERZOS', items: [
+        '<strong>DPT / Hexavalente refuerzo</strong> (1.er refuerzo)',
+        '<strong>bOPV</strong> refuerzo',
+        '<strong>SRP</strong> 2.ª dosis (si esquema vigente)',
+        '<strong>Fiebre Amarilla</strong> (si pendiente)'
+      ]},
+      { title: '🩸 TAMIZAJES Y CONTROL', items: [
+        'Hb / Hto si anemia previa',
+        'Visión y audición',
+        'Salud bucodental (revisión odontológica recomendada al año)'
+      ]},
+      { title: '🧠 NEURODESARROLLO (DENVER II)', items: ['Hitos esperados a los 18 meses:'],
+        sublist: [
+          '<strong>Personal social:</strong> se viste con ayuda, imita tareas del hogar',
+          '<strong>Motor fino:</strong> hace torre de 2-3 cubos, garabatea',
+          '<strong>Lenguaje:</strong> 5-10 palabras, señala partes del cuerpo',
+          '<strong>Motor grueso:</strong> camina solo bien, sube escaleras con ayuda'
+        ]
+      }
+    ]
+  },
+
+  y2: {
+    group: 'g-2to5',
+    title: 'Niño/a · 2 años',
+    sub: 'Etapa preescolar temprana',
+    sections: [
+      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
+        '<strong>Peso:</strong> ≈ 12 kg',
+        '<strong>Talla:</strong> ≈ 86 cm',
+        '<strong>IMC:</strong> evaluar curvas OMS para descartar sobrepeso/obesidad'
+      ]},
+      { title: '❤️ EVALUACIÓN CLÍNICA', items: ['Examen físico completo, salud oral'],
+        sublist: [
+          'Dientes deciduos completos (20 piezas)',
+          'Postura, marcha y equilibrio',
+          'Habla y socialización'
+        ]
+      },
+      { title: '💉 INMUNIZACIONES (VERIFICAR)', items: [
+        'Esquema completo a los 2 años',
+        'Influenza anual',
+        'COVID-19 según indicación'
+      ]},
+      { title: '🍽 NUTRICIÓN', items: [
+        'Alimentación variada, 3 comidas + 1-2 colaciones',
+        'Vitamina A semestral (campañas MSP)',
+        'Suplementación según riesgo'
+      ]},
+      { title: '🧠 NEURODESARROLLO (DENVER II)', items: ['Hitos esperados a los 2 años:'],
+        sublist: [
+          '<strong>Personal social:</strong> juega en paralelo, se desviste',
+          '<strong>Motor fino:</strong> torre de 4-6 cubos, pasa páginas',
+          '<strong>Lenguaje:</strong> 50+ palabras, frases de 2 palabras',
+          '<strong>Motor grueso:</strong> corre, salta, sube y baja escaleras alternando'
+        ]
+      }
+    ]
+  },
+
+  y5: {
+    group: 'g-2to5',
+    title: 'Niño/a · 5 años',
+    sub: 'Edad escolar — refuerzos finales del esquema básico',
+    sections: [
+      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
+        '<strong>Peso:</strong> ≈ 18 kg',
+        '<strong>Talla:</strong> ≈ 110 cm',
+        '<strong>IMC:</strong> evaluación nutricional con curvas OMS',
+        'Tamizaje de obesidad infantil'
+      ]},
+      { title: '❤️ EVALUACIÓN CLÍNICA', items: ['Examen físico'],
+        sublist: [
+          'Agudeza visual (Snellen) — descartar miopía',
+          'Audición (audiometría/ otoemisiones)',
+          'Salud oral (control odontológico)',
+          'Postura, columna, marcha',
+          'Pubertad precoz (signos)'
+        ]
+      },
+      { title: '💉 INMUNIZACIONES (REFUERZOS)', items: [
+        '<strong>DPT</strong> 2.º refuerzo',
+        '<strong>bOPV</strong> 2.º refuerzo',
+        '<strong>SRP</strong> verificar 2.ª dosis',
+        '<strong>Influenza</strong> anual'
+      ]},
+      { title: '🍽 NUTRICIÓN Y ESTILO DE VIDA', items: [
+        'Promoción de actividad física (≥ 60 min/día)',
+        'Evitar pantallas excesivas',
+        'Higiene bucal supervisada',
+        'Dieta equilibrada con frutas y verduras'
+      ]},
+      { title: '🧠 NEURODESARROLLO (DENVER II)', items: ['Hitos esperados a los 5 años:'],
+        sublist: [
+          '<strong>Personal social:</strong> se viste solo, juega cooperativamente',
+          '<strong>Motor fino:</strong> dibuja figura humana con 6 partes, copia cuadrado',
+          '<strong>Lenguaje:</strong> cuenta historias, identifica colores',
+          '<strong>Motor grueso:</strong> brinca en un pie, monta triciclo/bicicleta'
+        ]
+      }
+    ]
+  },
+
+  y9: {
+    group: 'g-ado',
+    title: 'Niño/a · 9 años',
+    sub: 'Inicio de adolescencia / VPH',
+    sections: [
+      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
+        '<strong>Peso:</strong> ≈ 28 kg promedio',
+        '<strong>Talla:</strong> ≈ 130 cm',
+        'IMC y curvas OMS para descartar sobrepeso',
+        'Estadios de Tanner para inicio puberal'
+      ]},
+      { title: '❤️ EVALUACIÓN CLÍNICA', items: ['Examen físico'],
+        sublist: [
+          'Tamizaje de pubertad (Tanner I-V)',
+          'Visión, audición, columna (escoliosis)',
+          'Salud oral, mentalidad y conducta',
+          'Acné, cambios hormonales'
+        ]
+      },
+      { title: '💉 INMUNIZACIONES', items: [
+        '<strong>VPH (Virus Papiloma Humano)</strong> — niñas 9 años (esquema MSP)',
+        'Influenza anual',
+        'Esquema básico verificado'
+      ]},
+      { title: '🍽 NUTRICIÓN Y SALUD MENTAL', items: [
+        'Dieta saludable, hidratación',
+        'Educación sexual y reproductiva apropiada',
+        'Prevención de bullying y salud mental'
+      ]},
+      { title: '🧠 NEURODESARROLLO', items: [
+        'Rendimiento académico',
+        'Habilidades sociales y juego en grupo',
+        'Lectura comprensiva, lógica matemática'
+      ]}
+    ]
+  },
+
+  ado: {
+    group: 'g-ado',
+    title: 'Adolescente · 12-15 años',
+    sub: 'Adolescencia temprana e intermedia',
+    sections: [
+      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
+        '<strong>IMC</strong> con curvas OMS (sobrepeso ≥ +1 DE, obesidad ≥ +2 DE)',
+        'Estatura y velocidad de crecimiento',
+        'Estadios de <strong>Tanner</strong>'
+      ]},
+      { title: '❤️ EVALUACIÓN CLÍNICA', items: ['Examen físico'],
+        sublist: [
+          'Tamizaje de tiroides, columna',
+          'Salud sexual y reproductiva',
+          'Salud mental: depresión, ansiedad, ideación suicida',
+          'Tamizaje de consumo de sustancias',
+          'Acné, problemas de piel'
+        ]
+      },
+      { title: '💉 INMUNIZACIONES', items: [
+        '<strong>dT (difteria-tétanos)</strong> a los 14-15 años',
+        '<strong>VPH</strong> si pendiente',
+        'Influenza anual',
+        'Refuerzos según esquema'
+      ]},
+      { title: '🩸 TAMIZAJES', items: [
+        'Hemoglobina (riesgo de anemia, especialmente en niñas)',
+        'Tamizaje visual y auditivo',
+        'Tamizaje cardiovascular antes de actividad física intensa'
+      ]},
+      { title: '💚 SALUD MENTAL Y SOCIAL', items: [
+        'Diálogo confidencial sobre salud sexual',
+        'Prevención de embarazo adolescente',
+        'Detección de violencia y bullying',
+        'Acompañamiento en uso de redes y pantallas'
+      ]}
+    ]
+  }
+};
+
+/* ============================================================
+   RENDER PANELS
+   ============================================================ */
+const panelsContainer = document.getElementById('panels');
+
+function renderPanels() {
+  Object.entries(PANELS).forEach(([key, p]) => {
+    const div = document.createElement('div');
+    div.className = 'age-panel';
+    div.id = 'panel-' + key;
+    if (key === 'rn') div.classList.add('active');
+
+    let html = `
+      <div class="panel-banner ${p.group}">
+        <h2>${p.title}</h2>
+        <div class="sub">${p.sub}</div>
+      </div>
+      <div class="panel-body">`;
+
+    if (p.tip) html += `<div class="tip-card">${p.tip}</div>`;
+
+    p.sections.forEach(s => {
+      html += `<div class="section">
+        <div class="section-title">${s.title}</div>
+        <ul class="check-list">`;
+      s.items.forEach(it => html += `<li>${it}</li>`);
+      html += `</ul>`;
+      if (s.sublist) {
+        html += `<ul class="sub-list">`;
+        s.sublist.forEach(sl => html += `<li>${sl}</li>`);
+        html += `</ul>`;
+      }
+      if (s.twoColumns) {
+        html += `<div class="vac-schemes" style="margin-top:8px">
+          <div class="vac-card new">
+            <h4>✨ Nuevo esquema MSP</h4>
+            <ul>${s.twoColumns.new.map(i => `<li>${i}</li>`).join('')}</ul>
+          </div>
+          <div class="vac-card old">
+            <h4>📖 Esquema antiguo</h4>
+            <ul>${s.twoColumns.old.map(i => `<li>${i}</li>`).join('')}</ul>
+          </div>
+        </div>`;
+      }
+      html += `</div>`;
+    });
+
+    html += `</div>`;
+    div.innerHTML = html;
+    panelsContainer.appendChild(div);
+  });
+}
+
+renderPanels();
+
+/* Age chips */
+document.querySelectorAll('.age-chip').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.age-chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    document.querySelectorAll('.age-panel').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById('panel-' + c.dataset.age);
+    if (target) target.classList.add('active');
+  });
+});
+
+/* Top tabs */
+document.querySelectorAll('.top-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.top-tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + t.dataset.tab).classList.add('active');
+  });
+});
+
+/* ============================================================
+   WHO TABLES — Z-score reference
+   ============================================================ */
+const WHO = {
+  /* Peso (kg) por edad — niños 0-60 m */
+  peso: {
+    boys: [
+      // [age, -3, -2, -1, median, +1, +2, +3]
+      ['0',     2.1, 2.5, 2.9, 3.3, 3.9, 4.4, 5.0],
+      ['1 m',   2.9, 3.4, 3.9, 4.5, 5.1, 5.8, 6.6],
+      ['2 m',   3.8, 4.3, 4.9, 5.6, 6.3, 7.1, 8.0],
+      ['3 m',   4.4, 5.0, 5.7, 6.4, 7.2, 8.0, 9.0],
+      ['4 m',   4.9, 5.6, 6.2, 7.0, 7.8, 8.7, 9.7],
+      ['6 m',   5.7, 6.4, 7.1, 7.9, 8.8, 9.8, 10.9],
+      ['9 m',   6.4, 7.1, 7.9, 8.9, 9.9, 11.0, 12.3],
+      ['12 m',  6.9, 7.7, 8.6, 9.6, 10.8, 12.0, 13.3],
+      ['18 m',  7.7, 8.8, 9.8, 10.9, 12.2, 13.7, 15.3],
+      ['24 m',  8.6, 9.7, 10.8, 12.2, 13.6, 15.3, 17.1],
+      ['3 a',   10.0, 11.3, 12.7, 14.3, 16.2, 18.3, 20.7],
+      ['5 a',   12.4, 14.1, 16.0, 18.3, 21.0, 24.2, 27.9],
+      ['7 a',   14.6, 16.8, 19.4, 22.4, 26.1, 30.8, 36.6],
+      ['9 a',   17.0, 19.6, 22.7, 26.7, 31.9, 38.7, 47.2],
+      ['11 a',  19.9, 23.0, 26.7, 31.6, 38.3, 47.0, 57.7],
+      ['14 a',  27.1, 32.4, 38.3, 45.8, 55.4, 66.6, 78.2]
+    ],
+    girls: [
+      ['0',     2.0, 2.4, 2.8, 3.2, 3.7, 4.2, 4.8],
+      ['1 m',   2.7, 3.2, 3.6, 4.2, 4.8, 5.5, 6.2],
+      ['2 m',   3.4, 3.9, 4.5, 5.1, 5.8, 6.6, 7.5],
+      ['3 m',   4.0, 4.5, 5.2, 5.8, 6.6, 7.5, 8.5],
+      ['4 m',   4.4, 5.0, 5.7, 6.4, 7.3, 8.2, 9.3],
+      ['6 m',   5.1, 5.7, 6.5, 7.3, 8.2, 9.3, 10.6],
+      ['9 m',   5.8, 6.5, 7.3, 8.2, 9.3, 10.5, 12.0],
+      ['12 m',  6.3, 7.0, 7.9, 8.9, 10.1, 11.5, 13.1],
+      ['18 m',  7.2, 8.1, 9.1, 10.2, 11.6, 13.2, 15.1],
+      ['24 m',  8.1, 9.0, 10.2, 11.5, 13.0, 14.8, 17.0],
+      ['3 a',   9.6, 10.8, 12.2, 13.9, 15.8, 18.1, 20.9],
+      ['5 a',   12.0, 13.7, 15.8, 18.2, 21.2, 24.9, 29.5],
+      ['7 a',   14.4, 16.6, 19.3, 22.6, 26.7, 32.1, 39.0],
+      ['9 a',   17.0, 19.7, 23.2, 27.6, 33.3, 40.4, 49.5],
+      ['11 a',  20.7, 24.1, 28.3, 33.7, 40.8, 50.0, 61.3],
+      ['14 a',  31.2, 36.2, 41.9, 48.8, 57.0, 66.4, 76.7]
+    ]
+  },
+  /* Talla (cm) */
+  talla: {
+    boys: [
+      ['0',      44.2, 46.1, 48.0, 49.9, 51.8, 53.7, 55.6],
+      ['1 m',    48.9, 50.8, 52.8, 54.7, 56.7, 58.6, 60.6],
+      ['2 m',    52.4, 54.4, 56.4, 58.4, 60.4, 62.4, 64.4],
+      ['3 m',    55.3, 57.3, 59.4, 61.4, 63.5, 65.5, 67.6],
+      ['4 m',    57.6, 59.7, 61.8, 63.9, 66.0, 68.0, 70.1],
+      ['6 m',    61.2, 63.3, 65.5, 67.6, 69.8, 71.9, 74.0],
+      ['9 m',    65.2, 67.5, 69.7, 72.0, 74.2, 76.5, 78.7],
+      ['12 m',   68.6, 71.0, 73.4, 75.7, 78.1, 80.5, 82.9],
+      ['18 m',   74.2, 76.9, 79.6, 82.3, 85.0, 87.7, 90.4],
+      ['24 m',   78.7, 81.7, 84.8, 87.8, 90.9, 93.9, 97.0],
+      ['3 a',    86.3, 89.6, 92.9, 96.1, 99.4, 102.7, 106.0],
+      ['5 a',    98.7, 102.4, 106.1, 110.0, 113.9, 117.7, 121.5],
+      ['7 a',    108.7, 113.0, 117.4, 121.7, 126.1, 130.4, 134.7],
+      ['9 a',    117.9, 122.6, 127.2, 131.9, 136.6, 141.3, 146.0],
+      ['11 a',   126.0, 131.0, 136.0, 141.1, 146.1, 151.2, 156.2],
+      ['14 a',   136.0, 142.0, 148.0, 154.0, 161.0, 167.0, 173.0]
+    ],
+    girls: [
+      ['0',      43.6, 45.4, 47.3, 49.1, 51.0, 52.9, 54.7],
+      ['1 m',    47.8, 49.8, 51.7, 53.7, 55.6, 57.6, 59.5],
+      ['2 m',    51.0, 53.0, 55.0, 57.1, 59.1, 61.1, 63.2],
+      ['3 m',    53.5, 55.6, 57.7, 59.8, 61.9, 64.0, 66.1],
+      ['4 m',    55.6, 57.8, 59.9, 62.1, 64.3, 66.4, 68.6],
+      ['6 m',    58.9, 61.2, 63.5, 65.7, 68.0, 70.3, 72.5],
+      ['9 m',    63.0, 65.3, 67.7, 70.1, 72.6, 75.0, 77.4],
+      ['12 m',   66.3, 68.9, 71.4, 74.0, 76.6, 79.2, 81.7],
+      ['18 m',   72.0, 74.9, 77.7, 80.7, 83.6, 86.5, 89.4],
+      ['24 m',   76.7, 79.9, 83.2, 86.4, 89.6, 92.9, 96.1],
+      ['3 a',    85.3, 88.7, 92.0, 95.4, 98.8, 102.2, 105.6],
+      ['5 a',    97.4, 101.1, 104.9, 108.7, 112.5, 116.2, 120.0],
+      ['7 a',    107.6, 111.9, 116.2, 120.5, 124.9, 129.2, 133.5],
+      ['9 a',    117.4, 122.0, 126.7, 131.5, 136.4, 141.4, 146.5],
+      ['11 a',   126.6, 131.7, 136.7, 141.8, 146.9, 152.0, 157.1],
+      ['14 a',   137.0, 143.0, 149.0, 155.0, 161.0, 167.0, 172.0]
+    ]
+  },
+  /* Perímetro cefálico (cm) */
+  pc: {
+    boys: [
+      ['0',      30.7, 31.9, 33.2, 34.5, 35.7, 37.0, 38.3],
+      ['1 m',    33.8, 35.1, 36.4, 37.6, 38.9, 40.2, 41.5],
+      ['2 m',    35.6, 36.9, 38.3, 39.6, 40.9, 42.2, 43.6],
+      ['3 m',    37.0, 38.3, 39.7, 41.0, 42.3, 43.6, 45.0],
+      ['4 m',    38.0, 39.3, 40.7, 42.0, 43.3, 44.7, 46.0],
+      ['6 m',    39.7, 41.0, 42.3, 43.7, 45.0, 46.3, 47.7],
+      ['9 m',    41.2, 42.5, 43.9, 45.2, 46.6, 47.9, 49.3],
+      ['12 m',   42.3, 43.6, 45.0, 46.3, 47.7, 49.0, 50.4],
+      ['18 m',   43.6, 44.9, 46.3, 47.6, 49.0, 50.4, 51.7],
+      ['24 m',   44.4, 45.8, 47.2, 48.5, 49.9, 51.3, 52.7],
+      ['3 a',    45.5, 46.8, 48.2, 49.5, 50.9, 52.3, 53.7],
+      ['5 a',    46.8, 48.1, 49.4, 50.7, 52.0, 53.3, 54.6]
+    ],
+    girls: [
+      ['0',      30.3, 31.5, 32.7, 33.9, 35.1, 36.2, 37.4],
+      ['1 m',    33.0, 34.2, 35.4, 36.5, 37.7, 38.9, 40.1],
+      ['2 m',    34.6, 35.8, 37.0, 38.3, 39.5, 40.7, 42.0],
+      ['3 m',    35.8, 37.1, 38.3, 39.5, 40.8, 42.0, 43.3],
+      ['4 m',    36.8, 38.1, 39.3, 40.6, 41.8, 43.1, 44.4],
+      ['6 m',    38.3, 39.6, 40.9, 42.2, 43.5, 44.8, 46.1],
+      ['9 m',    39.9, 41.2, 42.5, 43.8, 45.1, 46.4, 47.7],
+      ['12 m',   40.9, 42.3, 43.6, 44.9, 46.3, 47.6, 49.0],
+      ['18 m',   42.3, 43.6, 45.0, 46.3, 47.7, 49.1, 50.4],
+      ['24 m',   43.2, 44.5, 45.9, 47.3, 48.7, 50.1, 51.4],
+      ['3 a',    44.4, 45.8, 47.2, 48.6, 50.0, 51.4, 52.8],
+      ['5 a',    45.8, 47.2, 48.6, 50.0, 51.3, 52.7, 54.1]
+    ]
+  }
+};
+
+let whoSex = 'boys';
+
+function renderWHO() {
+  ['peso', 'talla', 'pc'].forEach(k => {
+    const tbl = document.getElementById('t-' + k);
+    const data = WHO[k][whoSex];
+    let html = `<thead class="header-z"><tr>
+      <th style="text-align:left">Edad</th>
+      <th>-3 DE</th>
+      <th>-2 DE</th>
+      <th>-1 DE</th>
+      <th>Mediana</th>
+      <th>+1 DE</th>
+      <th>+2 DE</th>
+      <th>+3 DE</th>
+    </tr></thead><tbody>`;
+    data.forEach(r => {
+      html += `<tr><td class="lbl">${r[0]}</td>` +
+        r.slice(1).map((v, i) => {
+          let cls = '';
+          if (i === 0) cls = 'z-3neg';
+          else if (i === 1) cls = 'z-2neg';
+          else if (i === 3) cls = 'z-norm';
+          else if (i === 5) cls = 'z-2pos';
+          else if (i === 6) cls = 'z-3pos';
+          return `<td><span class="z-zone ${cls}">${v}</span></td>`;
+        }).join('') + `</tr>`;
+    });
+    html += `</tbody>`;
+    tbl.innerHTML = html;
+  });
+}
+
+document.querySelectorAll('#who-sex button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#who-sex button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    whoSex = b.dataset.sex;
+    renderWHO();
+  });
+});
+
+renderWHO();
+
+/* ============================================================
+   HEMOGLOBINA — Calculadora
+   ============================================================ */
+const HB_THRESHOLDS = {
+  '6m_5y':  { normal: 11.0, leve: [10.0, 10.9], mod: [7.0, 9.9],  grave: 7.0,  label: 'Niño 6 m – 5 a' },
+  '5_11y':  { normal: 11.5, leve: [11.0, 11.4], mod: [8.0, 10.9], grave: 8.0,  label: 'Niño 5 – 11 a' },
+  '12_14y': { normal: 12.0, leve: [11.0, 11.9], mod: [8.0, 10.9], grave: 8.0,  label: 'Adolescente 12-14 a' },
+  'muj_15': { normal: 12.0, leve: [11.0, 11.9], mod: [8.0, 10.9], grave: 8.0,  label: 'Mujer ≥15 a no embarazada' },
+  'hom_15': { normal: 13.0, leve: [11.0, 12.9], mod: [8.0, 10.9], grave: 8.0,  label: 'Hombre ≥15 a' },
+  'emb':    { normal: 11.0, leve: [10.0, 10.9], mod: [7.0, 9.9],  grave: 7.0,  label: 'Embarazada' }
+};
+
+function altitudeAdjust(altitud) {
+  // OMS: a partir de 1000 msnm, restar ~0.3-0.5 g/dL por cada 500 m
+  if (altitud < 1000) return 0;
+  return ((altitud - 500) / 500) * 0.4;
+}
+
+function classifyHb(hb, group) {
+  const t = HB_THRESHOLDS[group];
+  if (hb >= t.normal) return { type: 'normal', label: 'Sin anemia', icon: '✅' };
+  if (hb >= t.leve[0]) return { type: 'leve', label: 'Anemia LEVE', icon: '🟡' };
+  if (hb >= t.mod[0]) return { type: 'mod', label: 'Anemia MODERADA', icon: '🟠' };
+  return { type: 'grave', label: 'Anemia GRAVE', icon: '🔴' };
+}
+
+document.getElementById('btn-hb-calc').addEventListener('click', () => {
+  const grupo = document.getElementById('hb-grupo').value;
+  const valor = parseFloat(document.getElementById('hb-valor').value);
+  const altitud = parseInt(document.getElementById('hb-altitud').value);
+  const result = document.getElementById('hb-result');
+
+  if (isNaN(valor) || valor <= 0) {
+    result.innerHTML = '<div class="hb-result grave"><h3>⚠ Ingresa un valor válido</h3><p>El valor de hemoglobina es requerido y debe ser mayor a 0.</p></div>';
+    return;
+  }
+
+  const adj = altitudeAdjust(altitud);
+  const corrected = valor - adj;
+  const c = classifyHb(corrected, grupo);
+  const t = HB_THRESHOLDS[grupo];
+
+  let html = `<div class="hb-result ${c.type}">
+    <h3>${c.icon} ${c.label}</h3>
+    <div>Hb medida: <strong>${valor.toFixed(1)} g/dL</strong></div>`;
+  if (adj > 0) {
+    html += `<div>Corrección por altitud (${altitud} m): <strong>−${adj.toFixed(1)} g/dL</strong></div>`;
+    html += `<div class="hb-pct">Hb corregida: ${corrected.toFixed(1)} g/dL</div>`;
+  } else {
+    html += `<div class="hb-pct">${valor.toFixed(1)} g/dL</div>`;
+  }
+  html += `<div class="threshold">
+    Grupo: <strong>${t.label}</strong> · Umbral normal: ≥ ${t.normal} g/dL
+  </div></div>`;
+
+  // Recomendación clínica
+  const recom = {
+    normal: 'Sin acciones específicas. Mantener vigilancia y promoción de alimentación rica en hierro.',
+    leve:   'Iniciar suplementación con hierro elemental (3 mg/kg/día por 3 meses). Educación nutricional. Control en 1 mes.',
+    mod:    'Suplementación de hierro intensiva. Buscar etiología (parasitosis, hemorragia oculta, deficiencia nutricional). Control en 2-4 semanas.',
+    grave:  'REFERIR para evaluación hematológica urgente. Considerar transfusión si descompensación clínica. Estudiar causa.'
+  };
+  html += `<div class="hb-result ${c.type}" style="margin-top:8px;">
+    <strong>Recomendación clínica:</strong> ${recom[c.type]}
+  </div>`;
+  result.innerHTML = html;
+});
+
+/* ============================================================
+   DENVER II — Hitos del Desarrollo (tabla completa)
+   ============================================================ */
+const DENVER = [
+  // [area, hito, p25, p50, p75, p100]
+  ['social',       'Sonríe espontáneamente', '1 m', '1.5 m', '2.5 m', '3.5 m'],
+  ['social',       'Mira a la cara', 'RN', '0.5 m', '1 m', '2 m'],
+  ['social',       'Se lleva las manos a la boca', '2 m', '3 m', '4 m', '5 m'],
+  ['social',       'Juega "tortitas"', '7 m', '8 m', '11 m', '13 m'],
+  ['social',       'Dice adiós con la mano', '7 m', '10 m', '13 m', '14 m'],
+  ['social',       'Bebe de una taza', '10 m', '13 m', '16 m', '18 m'],
+  ['social',       'Se viste con ayuda', '18 m', '24 m', '30 m', '36 m'],
+  ['social',       'Se desviste solo', '24 m', '30 m', '36 m', '40 m'],
+  ['social',       'Se pone una camiseta', '30 m', '36 m', '42 m', '48 m'],
+  ['social',       'Juega a juegos en grupo', '36 m', '48 m', '60 m', '72 m'],
+
+  ['motor-fino',   'Sigue con la mirada a 180°', '1 m', '2 m', '3 m', '4 m'],
+  ['motor-fino',   'Junta las manos en línea media', '2.5 m', '3.5 m', '4.5 m', '5 m'],
+  ['motor-fino',   'Transfiere objetos de una mano a otra', '5 m', '6 m', '7 m', '8 m'],
+  ['motor-fino',   'Pinza inferior', '7 m', '9 m', '11 m', '13 m'],
+  ['motor-fino',   'Pinza superior (pulgar e índice)', '9 m', '11 m', '13 m', '15 m'],
+  ['motor-fino',   'Torre de 2 cubos', '12 m', '14 m', '17 m', '20 m'],
+  ['motor-fino',   'Torre de 4 cubos', '17 m', '21 m', '26 m', '30 m'],
+  ['motor-fino',   'Garabatea', '12 m', '14 m', '18 m', '24 m'],
+  ['motor-fino',   'Copia un círculo', '36 m', '42 m', '48 m', '60 m'],
+  ['motor-fino',   'Dibuja figura humana (3 partes)', '42 m', '48 m', '54 m', '66 m'],
+
+  ['lenguaje',     'Reacciona a la campanilla', '0 m', '0.5 m', '1 m', '1.5 m'],
+  ['lenguaje',     'Vocaliza (gorgoritos)', '1 m', '2 m', '3 m', '4 m'],
+  ['lenguaje',     'Balbucea sílabas (ba, da)', '4 m', '6 m', '8 m', '10 m'],
+  ['lenguaje',     'Dice "papá / mamá" sin significado', '6 m', '8 m', '10 m', '12 m'],
+  ['lenguaje',     'Primera palabra con significado', '11 m', '12 m', '14 m', '16 m'],
+  ['lenguaje',     'Tres palabras (vocabulario)', '12 m', '15 m', '18 m', '21 m'],
+  ['lenguaje',     'Combina dos palabras', '18 m', '21 m', '24 m', '28 m'],
+  ['lenguaje',     'Señala 6 partes del cuerpo', '18 m', '23 m', '30 m', '36 m'],
+  ['lenguaje',     'Dice su nombre completo', '30 m', '36 m', '42 m', '48 m'],
+  ['lenguaje',     'Identifica colores (4)', '36 m', '42 m', '54 m', '66 m'],
+
+  ['motor-grueso', 'Levanta la cabeza en prono', '1 m', '2 m', '3 m', '3.5 m'],
+  ['motor-grueso', 'Sostiene cabeza erecta', '2 m', '3 m', '4 m', '4.5 m'],
+  ['motor-grueso', 'Se voltea', '4 m', '5 m', '6 m', '7 m'],
+  ['motor-grueso', 'Se sienta sin apoyo', '5 m', '6 m', '7.5 m', '9 m'],
+  ['motor-grueso', 'Gatea', '7 m', '9 m', '10 m', '12 m'],
+  ['motor-grueso', 'Se pone de pie con apoyo', '8 m', '9 m', '11 m', '12 m'],
+  ['motor-grueso', 'Camina con apoyo', '9 m', '11 m', '13 m', '14 m'],
+  ['motor-grueso', 'Camina solo', '11 m', '12 m', '14 m', '16 m'],
+  ['motor-grueso', 'Sube escaleras con ayuda', '14 m', '17 m', '21 m', '24 m'],
+  ['motor-grueso', 'Corre', '14 m', '16 m', '20 m', '22 m'],
+  ['motor-grueso', 'Salta en el lugar con dos pies', '20 m', '24 m', '30 m', '36 m'],
+  ['motor-grueso', 'Brinca en un pie', '36 m', '42 m', '54 m', '66 m'],
+  ['motor-grueso', 'Camina punta-talón', '42 m', '48 m', '60 m', '72 m']
+];
+
+const denverBody = document.getElementById('denver-body');
+const areaLabels = {
+  'social': 'Personal social',
+  'motor-fino': 'Motor fino',
+  'lenguaje': 'Lenguaje',
+  'motor-grueso': 'Motor grueso'
+};
+DENVER.forEach(row => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td class="area ${row[0]}">${areaLabels[row[0]]}</td>
+    <td><strong>${row[1]}</strong></td>
+    <td class="pct">${row[2]}</td>
+    <td class="pct">${row[3]}</td>
+    <td class="pct">${row[4]}</td>
+    <td class="pct">${row[5]}</td>
+  `;
+  denverBody.appendChild(tr);
+});
+</script>
+</body>
+</html>
