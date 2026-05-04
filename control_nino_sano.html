@@ -332,6 +332,63 @@
   .denver-table th.pct { background: #f0fdf4; }
   .denver-table th.pct.p75 { background: #fce7f3; }
   .denver-table th.pct.p100 { background: #fee2e2; }
+  /* Denver clickable rows */
+  .denver-table tbody tr {
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .denver-table tbody tr:hover { background: #f0f9ff !important; }
+  .denver-table tbody tr.checked {
+    background: #dcfce7 !important;
+  }
+  .denver-table tbody tr.checked td:nth-child(2) {
+    text-decoration: line-through;
+    color: var(--green-dark);
+  }
+  .denver-table tbody tr.expected {
+    background: #dbeafe !important;
+    border-left: 3px solid var(--primary);
+  }
+  .denver-instructions {
+    background: var(--primary-soft);
+    border: 1px solid var(--primary-border);
+    border-left: 4px solid var(--primary);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .denver-age-selector {
+    display: inline-flex;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 2px;
+  }
+  .denver-age-selector button {
+    padding: 6px 11px; border: none; background: transparent;
+    border-radius: 6px; font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer; color: var(--text-secondary);
+  }
+  .denver-age-selector button.active {
+    background: var(--primary); color: #fff;
+  }
+  .denver-summary {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: var(--green-soft);
+    border: 1px solid var(--green-border);
+    border-radius: 8px;
+    font-size: 13.5px;
+    color: var(--green-dark);
+    font-weight: 600;
+  }
 
   /* ============ HB CALCULATOR ============ */
   .calc-card {
@@ -450,6 +507,76 @@
     letter-spacing: 0.02em;
   }
   .who-section .who-content { padding: 18px 22px; }
+
+  /* WHO Chart */
+  .who-chart {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 14px;
+    overflow-x: auto;
+  }
+  .who-chart svg { display: block; max-width: 100%; height: auto; }
+  .who-chart .axis-line { stroke: #cbd5e1; stroke-width: 1; }
+  .who-chart .grid-line { stroke: #f1f5f9; stroke-width: 1; }
+  .who-chart .axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: #64748b; }
+  .who-chart .z-line { fill: none; stroke-width: 2; }
+  .who-chart .z-line:hover { stroke-width: 3.5; cursor: pointer; }
+  .who-chart .z-dot { transition: r 0.15s; }
+  .who-chart .z-dot:hover { r: 5; }
+  .who-chart .z-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; }
+  .who-chart .age-marker {
+    stroke: var(--primary);
+    stroke-width: 2;
+    stroke-dasharray: 4 3;
+  }
+
+  /* Chart legend */
+  .chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .chart-legend .leg-item {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--surface-alt);
+  }
+  .chart-legend .leg-color {
+    display: inline-block; width: 14px; height: 3px;
+    border-radius: 2px;
+  }
+
+  /* Tooltip */
+  .who-tooltip {
+    position: fixed;
+    background: #0f172a; color: #fff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    opacity: 0;
+    transition: opacity 0.12s;
+    z-index: 1000;
+    white-space: nowrap;
+  }
+  .who-tooltip.show { opacity: 1; }
+  .who-tooltip .key { color: #94a3b8; margin-right: 4px; }
+
+  /* Selected row in WHO table */
+  .who-table tr.selected td { background: var(--primary-soft) !important; font-weight: 700; }
+  .who-table tbody tr {
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .who-table tbody tr:hover td { background: #f0f9ff !important; }
 
   .who-table {
     width: 100%;
@@ -621,10 +748,15 @@
       </p>
     </div>
 
+    <div class="tip-card" style="margin-bottom:14px">
+      💡 <strong>Tip:</strong> Haz clic en cualquier fila de edad para ver la curva graficada. Pasa el cursor sobre las líneas para ver los valores exactos por z-score.
+    </div>
+
     <!-- WHO Tables -->
     <div class="who-section">
       <h3>⚖ Peso para la edad (kg)</h3>
       <div class="who-content">
+        <div id="chart-peso" class="who-chart"></div>
         <div class="table-wrap" style="overflow-x:auto">
           <table class="who-table" id="t-peso"></table>
         </div>
@@ -634,6 +766,7 @@
     <div class="who-section">
       <h3>📏 Talla / Longitud para la edad (cm)</h3>
       <div class="who-content">
+        <div id="chart-talla" class="who-chart"></div>
         <div class="table-wrap" style="overflow-x:auto">
           <table class="who-table" id="t-talla"></table>
         </div>
@@ -643,6 +776,7 @@
     <div class="who-section">
       <h3>🧠 Perímetro cefálico para la edad (cm)</h3>
       <div class="who-content">
+        <div id="chart-pc" class="who-chart"></div>
         <div class="table-wrap" style="overflow-x:auto">
           <table class="who-table" id="t-pc"></table>
         </div>
@@ -685,6 +819,16 @@
           <input type="number" id="hb-valor" min="2" max="22" step="0.1" placeholder="Ej. 10.5">
         </div>
       </div>
+      <div class="field-grid" id="hb-trimestre-row" style="display:none">
+        <div class="field" style="grid-column: 1 / -1;">
+          <label>Trimestre del embarazo</label>
+          <select id="hb-trimestre">
+            <option value="1">1.º trimestre (umbral &lt; 11 g/dL)</option>
+            <option value="2">2.º trimestre (umbral &lt; 10.5 g/dL)</option>
+            <option value="3">3.º trimestre (umbral &lt; 11 g/dL)</option>
+          </select>
+        </div>
+      </div>
       <div class="field-grid">
         <div class="field">
           <label>Altitud sobre el nivel del mar (msnm)</label>
@@ -718,7 +862,8 @@
           <tr><td>Niños 5 – 11 a</td><td class="normal-c">≥ 11.5</td><td class="leve-c">11.0 – 11.4</td><td class="mod-c">8.0 – 10.9</td><td class="grave-c">&lt; 8.0</td></tr>
           <tr><td>Adolescentes 12 – 14 a</td><td class="normal-c">≥ 12.0</td><td class="leve-c">11.0 – 11.9</td><td class="mod-c">8.0 – 10.9</td><td class="grave-c">&lt; 8.0</td></tr>
           <tr><td>Mujeres no embarazadas ≥ 15 a</td><td class="normal-c">≥ 12.0</td><td class="leve-c">11.0 – 11.9</td><td class="mod-c">8.0 – 10.9</td><td class="grave-c">&lt; 8.0</td></tr>
-          <tr><td>Embarazadas</td><td class="normal-c">≥ 11.0</td><td class="leve-c">10.0 – 10.9</td><td class="mod-c">7.0 – 9.9</td><td class="grave-c">&lt; 7.0</td></tr>
+          <tr><td>Embarazada · 1.º y 3.º trimestre</td><td class="normal-c">≥ 11.0</td><td class="leve-c">10.0 – 10.9</td><td class="mod-c">7.0 – 9.9</td><td class="grave-c">&lt; 7.0</td></tr>
+          <tr><td>Embarazada · 2.º trimestre</td><td class="normal-c">≥ 10.5</td><td class="leve-c">9.5 – 10.4</td><td class="mod-c">7.0 – 9.4</td><td class="grave-c">&lt; 7.0</td></tr>
           <tr><td>Hombres ≥ 15 a</td><td class="normal-c">≥ 13.0</td><td class="leve-c">11.0 – 12.9</td><td class="mod-c">8.0 – 10.9</td><td class="grave-c">&lt; 8.0</td></tr>
         </tbody>
       </table>
@@ -737,11 +882,31 @@
   <div class="tab-view" id="view-denver">
 
     <div class="calc-card">
-      <h2 class="calc-title">🧠 Test de Denver II — Hitos del Desarrollo</h2>
-      <p class="calc-sub">Edad esperada (en meses) en que el niño alcanza cada hito según percentil 25, 50, 75 y 100%</p>
+      <h2 class="calc-title">🧠 Test de Neurodesarrollo (Denver II)</h2>
+      <p class="calc-sub">Marca los hitos que el/la niño/a ha cumplido. Los hitos relevantes para la edad seleccionada están resaltados en azul.</p>
 
-      <div class="tip-card" style="margin: 0 0 14px;">
-        <strong>Cómo leer:</strong> 25% = primera edad en que el hito puede aparecer. 50% = edad media. 75-100% = la mayoría ya lo cumple. Si un hito esperado al 90% no se ha alcanzado → derivar a evaluación neurodesarrollo.
+      <div class="denver-instructions">
+        <strong>Cómo usar:</strong> 1) Selecciona la edad del paciente. 2) Haz clic en cada hito que el niño/a haya alcanzado — quedará tachado en verde. 3) Los hitos esperados para esa edad se resaltan en azul. Si un hito al percentil 90% no se ha alcanzado → derivar a evaluación neurodesarrollo.
+      </div>
+
+      <div style="margin-bottom:8px; font-size:13px; font-weight:600;">Edad del paciente (en meses):</div>
+      <div class="denver-age-selector" id="denver-age-sel">
+        <button class="active" data-age="1">1 m</button>
+        <button data-age="2">2 m</button>
+        <button data-age="4">4 m</button>
+        <button data-age="6">6 m</button>
+        <button data-age="9">9 m</button>
+        <button data-age="12">12 m</button>
+        <button data-age="15">15 m</button>
+        <button data-age="18">18 m</button>
+        <button data-age="24">24 m</button>
+        <button data-age="36">3 a</button>
+        <button data-age="48">4 a</button>
+        <button data-age="60">5 a</button>
+      </div>
+
+      <div style="margin: 8px 0 14px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button id="btn-denver-reset" style="padding:8px 14px; background:var(--surface-alt); border:1px solid var(--border); border-radius:8px; font-weight:600; cursor:pointer; font-size:12.5px;">↻ Reiniciar marcas</button>
       </div>
 
       <div class="table-wrap" style="overflow-x:auto">
@@ -749,15 +914,16 @@
           <thead>
             <tr>
               <th>Área</th>
-              <th>Hito de desarrollo</th>
-              <th class="pct">25%</th>
-              <th class="pct">50%</th>
-              <th class="pct p75">75%</th>
-              <th class="pct p100">100%</th>
+              <th>Hito de Desarrollo</th>
+              <th colspan="4" style="text-align:center">Edad en Meses (25% – 90%)</th>
             </tr>
           </thead>
           <tbody id="denver-body"></tbody>
         </table>
+      </div>
+
+      <div class="denver-summary" id="denver-summary">
+        Hitos cumplidos: <strong id="denver-count">0</strong> / <span id="denver-total">0</span>
       </div>
     </div>
 
@@ -776,6 +942,9 @@
   </div>
 
 </div>
+
+<!-- Tooltip global para gráficas OMS -->
+<div class="who-tooltip" id="who-tooltip"></div>
 
 <script>
 /* ============================================================
@@ -1562,7 +1731,153 @@ const WHO = {
 
 let whoSex = 'boys';
 
+/* Convierte etiqueta de edad a meses para graficar */
+function ageLabelToMonths(s) {
+  if (!s || s === '0') return 0;
+  if (s === 'RN') return 0;
+  const numMatch = s.toString().match(/(\d+\.?\d*)/);
+  if (!numMatch) return 0;
+  const num = parseFloat(numMatch[1]);
+  if (s.includes('a')) return num * 12; // años → meses
+  return num; // ya en meses
+}
+
+const Z_LABELS = ['-3 DE', '-2 DE', '-1 DE', 'Mediana', '+1 DE', '+2 DE', '+3 DE'];
+const Z_COLORS = ['#dc2626', '#f97316', '#facc15', '#16a34a', '#facc15', '#f97316', '#dc2626'];
+
+function selectedWhoAge(k) {
+  return WHO_SELECTED[k] !== undefined ? WHO_SELECTED[k] : null;
+}
+
+const WHO_SELECTED = {}; // por tabla, índice de fila seleccionada
+
+function drawWhoChart(k, units) {
+  const data = WHO[k][whoSex];
+  const container = document.getElementById('chart-' + k);
+
+  const w = 720, h = 360;
+  const m = { top: 30, right: 50, bottom: 40, left: 50 };
+  const innerW = w - m.left - m.right;
+  const innerH = h - m.top - m.bottom;
+
+  // Eje X: meses (0 a max)
+  const ages = data.map(r => ageLabelToMonths(r[0]));
+  const maxAge = Math.max(...ages);
+  // Eje Y: rango de valores
+  let minY = Infinity, maxY = -Infinity;
+  data.forEach(r => {
+    for (let i = 1; i <= 7; i++) {
+      if (r[i] < minY) minY = r[i];
+      if (r[i] > maxY) maxY = r[i];
+    }
+  });
+  // Padding del eje Y
+  const padY = (maxY - minY) * 0.05;
+  minY -= padY; maxY += padY;
+
+  const xScale = age => m.left + (age / maxAge) * innerW;
+  const yScale = v => m.top + innerH - ((v - minY) / (maxY - minY)) * innerH;
+
+  let svg = `<div class="chart-legend">`;
+  Z_LABELS.forEach((lab, i) => {
+    svg += `<span class="leg-item"><span class="leg-color" style="background:${Z_COLORS[i]}"></span>${lab}</span>`;
+  });
+  svg += `</div>`;
+  svg += `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">`;
+
+  // Grid horizontal
+  const ySteps = 6;
+  for (let i = 0; i <= ySteps; i++) {
+    const y = m.top + (innerH * i / ySteps);
+    const val = maxY - ((maxY - minY) * i / ySteps);
+    svg += `<line class="grid-line" x1="${m.left}" y1="${y}" x2="${m.left + innerW}" y2="${y}"/>`;
+    svg += `<text class="axis-text" x="${m.left - 6}" y="${y + 3}" text-anchor="end">${val.toFixed(1)}</text>`;
+  }
+
+  // Eje X labels
+  ages.forEach((a, idx) => {
+    if (idx % Math.max(1, Math.floor(ages.length / 10)) === 0 || idx === ages.length - 1) {
+      const x = xScale(a);
+      svg += `<line class="grid-line" x1="${x}" y1="${m.top}" x2="${x}" y2="${m.top + innerH}"/>`;
+      svg += `<text class="axis-text" x="${x}" y="${m.top + innerH + 14}" text-anchor="middle">${data[idx][0]}</text>`;
+    }
+  });
+
+  // Ejes
+  svg += `<line class="axis-line" x1="${m.left}" y1="${m.top + innerH}" x2="${m.left + innerW}" y2="${m.top + innerH}"/>`;
+  svg += `<line class="axis-line" x1="${m.left}" y1="${m.top}" x2="${m.left}" y2="${m.top + innerH}"/>`;
+
+  // Etiqueta Y
+  svg += `<text class="axis-text" x="${m.left - 35}" y="${m.top - 10}" font-weight="700">${units}</text>`;
+  svg += `<text class="axis-text" x="${m.left + innerW / 2}" y="${h - 8}" text-anchor="middle" font-weight="700">Edad</text>`;
+
+  // Líneas Z (de -3 a +3)
+  for (let zi = 0; zi < 7; zi++) {
+    let path = '';
+    data.forEach((r, idx) => {
+      const x = xScale(ages[idx]);
+      const y = yScale(r[zi + 1]);
+      path += (idx === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1) + ' ';
+    });
+    svg += `<path class="z-line" d="${path}" stroke="${Z_COLORS[zi]}" data-z="${Z_LABELS[zi]}"/>`;
+  }
+
+  // Puntos para cada valor (con tooltip)
+  data.forEach((r, idx) => {
+    const x = xScale(ages[idx]);
+    for (let zi = 0; zi < 7; zi++) {
+      const y = yScale(r[zi + 1]);
+      svg += `<circle class="z-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="${Z_COLORS[zi]}"
+        data-age="${r[0]}" data-z="${Z_LABELS[zi]}" data-val="${r[zi+1]}" data-units="${units}"/>`;
+    }
+  });
+
+  // Marcador de edad seleccionada
+  const selIdx = selectedWhoAge(k);
+  if (selIdx !== null && selIdx !== undefined) {
+    const r = data[selIdx];
+    const x = xScale(ages[selIdx]);
+    svg += `<line class="age-marker" x1="${x}" y1="${m.top}" x2="${x}" y2="${m.top + innerH}"/>`;
+    svg += `<text class="z-label" x="${x}" y="${m.top - 8}" text-anchor="middle" fill="#1d4ed8">${r[0]}</text>`;
+  }
+
+  svg += `</svg>`;
+  container.innerHTML = svg;
+
+  // Tooltip events
+  const tooltip = document.getElementById('who-tooltip');
+  container.querySelectorAll('.z-dot').forEach(dot => {
+    dot.addEventListener('mouseenter', e => {
+      const a = e.target.getAttribute('data-age');
+      const z = e.target.getAttribute('data-z');
+      const v = e.target.getAttribute('data-val');
+      const u = e.target.getAttribute('data-units');
+      tooltip.innerHTML = `<div><span class="key">Edad:</span>${a}</div>
+        <div><span class="key">${z}:</span>${v} ${u}</div>`;
+      tooltip.classList.add('show');
+    });
+    dot.addEventListener('mousemove', e => {
+      tooltip.style.left = (e.clientX + 14) + 'px';
+      tooltip.style.top = (e.clientY + 14) + 'px';
+    });
+    dot.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+  });
+  container.querySelectorAll('.z-line').forEach(line => {
+    line.addEventListener('mouseenter', e => {
+      const z = e.target.getAttribute('data-z');
+      tooltip.innerHTML = `<div><span class="key">Línea:</span>${z}</div>`;
+      tooltip.classList.add('show');
+    });
+    line.addEventListener('mousemove', e => {
+      tooltip.style.left = (e.clientX + 14) + 'px';
+      tooltip.style.top = (e.clientY + 14) + 'px';
+    });
+    line.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+  });
+}
+
 function renderWHO() {
+  const units = { peso: 'kg', talla: 'cm', pc: 'cm' };
   ['peso', 'talla', 'pc'].forEach(k => {
     const tbl = document.getElementById('t-' + k);
     const data = WHO[k][whoSex];
@@ -1576,8 +1891,9 @@ function renderWHO() {
       <th>+2 DE</th>
       <th>+3 DE</th>
     </tr></thead><tbody>`;
-    data.forEach(r => {
-      html += `<tr><td class="lbl">${r[0]}</td>` +
+    data.forEach((r, idx) => {
+      const isSel = WHO_SELECTED[k] === idx;
+      html += `<tr data-idx="${idx}" data-table="${k}"${isSel ? ' class="selected"' : ''}><td class="lbl">${r[0]}</td>` +
         r.slice(1).map((v, i) => {
           let cls = '';
           if (i === 0) cls = 'z-3neg';
@@ -1590,6 +1906,17 @@ function renderWHO() {
     });
     html += `</tbody>`;
     tbl.innerHTML = html;
+
+    // Click handlers en filas
+    tbl.querySelectorAll('tbody tr').forEach(tr => {
+      tr.addEventListener('click', () => {
+        const idx = parseInt(tr.dataset.idx);
+        WHO_SELECTED[k] = (WHO_SELECTED[k] === idx) ? null : idx;
+        renderWHO();
+      });
+    });
+
+    drawWhoChart(k, units[k]);
   });
 }
 
@@ -1613,8 +1940,15 @@ const HB_THRESHOLDS = {
   '12_14y': { normal: 12.0, leve: [11.0, 11.9], mod: [8.0, 10.9], grave: 8.0,  label: 'Adolescente 12-14 a' },
   'muj_15': { normal: 12.0, leve: [11.0, 11.9], mod: [8.0, 10.9], grave: 8.0,  label: 'Mujer ≥15 a no embarazada' },
   'hom_15': { normal: 13.0, leve: [11.0, 12.9], mod: [8.0, 10.9], grave: 8.0,  label: 'Hombre ≥15 a' },
-  'emb':    { normal: 11.0, leve: [10.0, 10.9], mod: [7.0, 9.9],  grave: 7.0,  label: 'Embarazada' }
+  'emb_1':  { normal: 11.0, leve: [10.0, 10.9], mod: [7.0, 9.9],  grave: 7.0,  label: 'Embarazada · 1.º trimestre' },
+  'emb_2':  { normal: 10.5, leve: [9.5, 10.4],  mod: [7.0, 9.4],  grave: 7.0,  label: 'Embarazada · 2.º trimestre' },
+  'emb_3':  { normal: 11.0, leve: [10.0, 10.9], mod: [7.0, 9.9],  grave: 7.0,  label: 'Embarazada · 3.º trimestre' }
 };
+
+/* Mostrar / ocultar selector de trimestre */
+document.getElementById('hb-grupo').addEventListener('change', e => {
+  document.getElementById('hb-trimestre-row').style.display = (e.target.value === 'emb') ? 'grid' : 'none';
+});
 
 function altitudeAdjust(altitud) {
   // OMS: a partir de 1000 msnm, restar ~0.3-0.5 g/dL por cada 500 m
@@ -1631,7 +1965,12 @@ function classifyHb(hb, group) {
 }
 
 document.getElementById('btn-hb-calc').addEventListener('click', () => {
-  const grupo = document.getElementById('hb-grupo').value;
+  let grupo = document.getElementById('hb-grupo').value;
+  // Si es embarazada, usar la clave correcta según trimestre
+  if (grupo === 'emb') {
+    const tri = document.getElementById('hb-trimestre').value;
+    grupo = 'emb_' + tri;
+  }
   const valor = parseFloat(document.getElementById('hb-valor').value);
   const altitud = parseInt(document.getElementById('hb-altitud').value);
   const result = document.getElementById('hb-result');
@@ -1727,23 +2066,77 @@ const DENVER = [
 
 const denverBody = document.getElementById('denver-body');
 const areaLabels = {
-  'social': 'Personal social',
-  'motor-fino': 'Motor fino',
+  'social': 'Personal-Social',
+  'motor-fino': 'Motor Fino Adaptativo',
   'lenguaje': 'Lenguaje',
-  'motor-grueso': 'Motor grueso'
+  'motor-grueso': 'Motor Grueso'
 };
-DENVER.forEach(row => {
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td class="area ${row[0]}">${areaLabels[row[0]]}</td>
-    <td><strong>${row[1]}</strong></td>
-    <td class="pct">${row[2]}</td>
-    <td class="pct">${row[3]}</td>
-    <td class="pct">${row[4]}</td>
-    <td class="pct">${row[5]}</td>
-  `;
-  denverBody.appendChild(tr);
+
+/* Convierte texto como "1 m" o "RN" a número de meses */
+function ageToMonths(s) {
+  if (!s) return null;
+  if (s === 'RN' || s === 'rn') return 0;
+  const m = s.toString().match(/(\d+\.?\d*)/);
+  return m ? parseFloat(m[1]) : null;
+}
+
+let denverChecked = new Set();
+let denverAge = 1; // edad en meses
+
+function renderDenver() {
+  denverBody.innerHTML = '';
+  let total = 0;
+  DENVER.forEach((row, idx) => {
+    const p25 = ageToMonths(row[2]);
+    const p100 = ageToMonths(row[5]);
+    // Es relevante si la edad cae dentro del rango p25-p100
+    const isExpected = denverAge >= p25 && denverAge <= p100;
+    if (isExpected) total++;
+
+    const tr = document.createElement('tr');
+    tr.dataset.idx = idx;
+    if (isExpected) tr.classList.add('expected');
+    if (denverChecked.has(idx)) tr.classList.add('checked');
+
+    tr.innerHTML = `
+      <td class="area ${row[0]}">${areaLabels[row[0]]}</td>
+      <td><strong>${row[1]}</strong></td>
+      <td class="pct">${row[2]}</td>
+      <td class="pct">${row[3]}</td>
+      <td class="pct">${row[4]}</td>
+      <td class="pct">${row[5]}</td>
+    `;
+    tr.addEventListener('click', () => {
+      if (denverChecked.has(idx)) denverChecked.delete(idx);
+      else denverChecked.add(idx);
+      tr.classList.toggle('checked');
+      updateDenverCount();
+    });
+    denverBody.appendChild(tr);
+  });
+  document.getElementById('denver-total').textContent = total + ' relevantes / ' + DENVER.length + ' total';
+  updateDenverCount();
+}
+
+function updateDenverCount() {
+  document.getElementById('denver-count').textContent = denverChecked.size;
+}
+
+document.querySelectorAll('#denver-age-sel button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#denver-age-sel button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    denverAge = parseFloat(b.dataset.age);
+    renderDenver();
+  });
 });
+
+document.getElementById('btn-denver-reset').addEventListener('click', () => {
+  denverChecked.clear();
+  renderDenver();
+});
+
+renderDenver();
 </script>
 </body>
 </html>
