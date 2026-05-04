@@ -708,8 +708,11 @@
         <button class="age-chip g-rn active"   data-age="rn">    <span class="dot"></span> Recién nacido</button>
         <button class="age-chip g-1to6"        data-age="m1">    <span class="dot"></span> 1 mes</button>
         <button class="age-chip g-1to6"        data-age="m2">    <span class="dot"></span> 2 meses</button>
+        <button class="age-chip g-1to6"        data-age="m3">    <span class="dot"></span> 3 meses</button>
         <button class="age-chip g-1to6"        data-age="m4">    <span class="dot"></span> 4 meses</button>
+        <button class="age-chip g-1to6"        data-age="m5">    <span class="dot"></span> 5 meses</button>
         <button class="age-chip g-1to6"        data-age="m6">    <span class="dot"></span> 6 meses</button>
+        <button class="age-chip g-7to12"       data-age="m7">    <span class="dot"></span> 7 meses</button>
         <button class="age-chip g-7to12"       data-age="m9">    <span class="dot"></span> 9 meses</button>
         <button class="age-chip g-7to12"       data-age="m12">   <span class="dot"></span> 12 meses</button>
         <button class="age-chip g-2to5"        data-age="m18">   <span class="dot"></span> 18 meses</button>
@@ -734,12 +737,24 @@
       <h2 class="calc-title">📊 Tablas Antropométricas OMS</h2>
       <p class="calc-sub">Valores de referencia por Z-score (DE = Desviaciones Estándar) · WHO Child Growth Standards</p>
 
-      <div class="sex-toggle" id="who-sex">
-        <button class="active" data-sex="boys">👦 Niños</button>
-        <button data-sex="girls">👧 Niñas</button>
+      <div style="display:flex; flex-wrap:wrap; gap:14px; align-items:center;">
+        <div>
+          <div style="font-size:11px; font-weight:700; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:5px; font-family:'JetBrains Mono', monospace;">Sexo</div>
+          <div class="sex-toggle" id="who-sex">
+            <button class="active" data-sex="boys">👦 Niños</button>
+            <button data-sex="girls">👧 Niñas</button>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px; font-weight:700; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:5px; font-family:'JetBrains Mono', monospace;">Formato</div>
+          <div class="sex-toggle" id="who-format">
+            <button class="active" data-format="de">📐 Desviación Estándar (DE)</button>
+            <button data-format="zscore">📊 Z-score</button>
+          </div>
+        </div>
       </div>
 
-      <p class="calc-sub" style="margin-top:0; font-size:12px;">
+      <p class="calc-sub" style="margin-top:14px; font-size:12px;" id="who-legend-text">
         <span class="z-zone z-3neg">-3 DE</span> Severo &nbsp;
         <span class="z-zone z-2neg">-2 DE</span> Bajo &nbsp;
         <span class="z-zone z-norm">Mediana</span> &nbsp;
@@ -907,6 +922,23 @@
 
       <div style="margin: 8px 0 14px; display:flex; gap:8px; flex-wrap:wrap;">
         <button id="btn-denver-reset" style="padding:8px 14px; background:var(--surface-alt); border:1px solid var(--border); border-radius:8px; font-weight:600; cursor:pointer; font-size:12.5px;">↻ Reiniciar marcas</button>
+        <button id="btn-denver-print" style="padding:8px 14px; background:var(--primary); color:#fff; border:none; border-radius:8px; font-weight:600; cursor:pointer; font-size:12.5px;">🖨 Imprimir / PDF</button>
+      </div>
+
+      <!-- Inputs para datos del paciente al imprimir -->
+      <div id="denver-patient-info" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+        <div class="field">
+          <label style="font-size:12px; font-weight:600;">Nombre del paciente</label>
+          <input id="denver-pat-name" class="input" style="padding:9px 12px; border:1.5px solid var(--border); border-radius:8px; width:100%; font-size:13px;" placeholder="Nombre completo">
+        </div>
+        <div class="field">
+          <label style="font-size:12px; font-weight:600;">Fecha de nacimiento</label>
+          <input id="denver-pat-fnac" type="date" class="input" style="padding:9px 12px; border:1.5px solid var(--border); border-radius:8px; width:100%; font-size:13px;">
+        </div>
+        <div class="field">
+          <label style="font-size:12px; font-weight:600;">Fecha de evaluación</label>
+          <input id="denver-pat-feval" type="date" class="input" style="padding:9px 12px; border:1.5px solid var(--border); border-radius:8px; width:100%; font-size:13px;">
+        </div>
       </div>
 
       <div class="table-wrap" style="overflow-x:auto">
@@ -1123,50 +1155,153 @@ const PANELS = {
     ]
   },
 
-  m4: {
+  m3: {
     group: 'g-1to6',
-    title: 'Niño/a · 4 meses',
-    sub: 'Segunda dosis del esquema primario',
+    title: 'Niño/a · 3 meses',
+    sub: 'CONTROL DEL NIÑO SANO – 3.º MES',
+    tip: 'Si el peso es < p3 o > p97 → evaluar riesgo nutricional y revisar técnica de lactancia.',
     sections: [
       { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
-        '<strong>Peso:</strong> ≈ duplica el peso del nacimiento',
-        '<strong>Talla:</strong> incremento ≈ 2 cm desde el mes anterior',
-        '<strong>Perímetro cefálico:</strong> + 1 cm',
-        'Registrar en curvas OMS / MSP'
-      ]},
+        '<strong>Peso actual:</strong> incremento esperado ≈ 700–900 g respecto al mes anterior',
+        '<strong>Talla:</strong> incremento ≈ 2.5–3 cm',
+        '<strong>Perímetro cefálico:</strong> + 1–1.5 cm (meta promedio: 39–40 cm)',
+        'Registrar en <strong>curvas OMS / MSP</strong> (percentiles o z-score)',
+        'Interpretar el crecimiento según el patrón y alertar si hay pérdida o estancamiento'
+      ],
+        link: '➡ Ver Tablas de crecimiento OMS (Z-score) en pestaña 📊 Tablas OMS'
+      },
       { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo'],
         sublist: [
-          'Cabeza: fontanela anterior normotensa, posterior cerrada',
-          'Ojos: fija y sigue objetos en 180°',
-          'Oídos: gira la cabeza al sonido',
-          'Boca: introduce manos y objetos',
-          'Tórax y abdomen: sin alteraciones',
-          'Cadera: descartar luxación residual',
-          'Reflejos: succión y Moro disminuyendo',
-          'Piel: hidratación, lesiones o eccema atópico'
+          '<strong>Cabeza:</strong> control parcial sostenido (≈ 45° en prono), fontanela anterior normotensa',
+          '<strong>Ojos:</strong> sigue objetos 180°, sonrisa social mantenida',
+          '<strong>Oídos:</strong> responde a voces familiares y ruidos suaves',
+          '<strong>Boca:</strong> salivación ligera (inicio fisiológico)',
+          '<strong>Extremidades:</strong> movimientos coordinados',
+          '<strong>Piel:</strong> sin lesiones, sin descamación',
+          '<strong>Reflejos primitivos:</strong> disminuyen gradualmente (Moro comienza a desaparecer)'
         ]
       },
-      { title: '💉 INMUNIZACIONES — SEGUNDA DOSIS',
-        twoColumns: {
-          new: ['<strong>Hexavalente</strong> 2.ª dosis', '<strong>Neumococo 13</strong> 2.ª', '<strong>Rotavirus oral</strong> 2.ª'],
-          old: ['Pentavalente 2.ª', 'fIPV 2.ª', 'Neumococo 10 2.ª', 'Rotavirus oral 2.ª']
-        }
-      },
       { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
-        'Reflejo rojo, valoración de pares craneales',
-        'Detección de anemia si factores de riesgo',
-        'Control visual y auditivo'
+        '<strong>Revisar reflejo rojo</strong> (visión)',
+        'Verificar respuesta auditiva y orientación hacia sonidos',
+        'Evaluar signos de anemia (palidez, irritabilidad, succión débil)',
+        'Controlar sueño, eliminación, deposiciones y conducta del lactante'
       ]},
       { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
         denverTable: [
-          ['social',       'Ríe a carcajadas',              '3', '4',   '5',   '6'],
-          ['social',       'Juega con sus pies y manos',    '4', '4.5', '5.5', '6.5'],
-          ['motor-fino',   'Junta las manos en línea media','2.5','3.5','4.5', '5'],
-          ['motor-fino',   'Coge un sonajero',              '3', '4',   '5',   '6'],
-          ['lenguaje',     'Se vuelve hacia la voz',        '4', '5',   '6',   '7'],
-          ['lenguaje',     'Vocaliza (gorgoritos)',         '1', '2',   '3',   '4'],
-          ['motor-grueso', 'Sostiene la cabeza',            '2', '3',   '4',   '4.5'],
-          ['motor-grueso', 'Rueda sobre sí mismo',          '4.5','5.5','7',   '8']
+          ['social',       'Sonrisa social mantenida',         '1.5', '2',   '3',   '4'],
+          ['social',       'Se lleva las manos a la boca',     '2',   '3',   '4',   '5'],
+          ['motor-fino',   'Sigue con la mirada a 180°',       '1',   '2',   '3',   '4'],
+          ['motor-fino',   'Junta las manos en línea media',   '2.5', '3.5', '4.5', '5'],
+          ['lenguaje',     'Vocaliza (gorgoritos)',            '1',   '2',   '3',   '4'],
+          ['lenguaje',     'Ríe a carcajadas',                 '3',   '4',   '5',   '6'],
+          ['motor-grueso', 'Sostiene la cabeza (45° prono)',   '2',   '3',   '4',   '4.5'],
+          ['motor-grueso', 'Sostiene la cabeza erecta',        '2',   '3',   '4',   '4.5']
+        ]
+      }
+    ]
+  },
+
+  m4: {
+    group: 'g-1to6',
+    title: 'Niño/a · 4 meses',
+    sub: 'CONTROL DEL NIÑO SANO – 4.º MES',
+    tip: 'Si el peso es < p3 o > p97 → evaluar riesgo nutricional y revisar técnica de lactancia.',
+    sections: [
+      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
+        '<strong>Peso actual:</strong> aumento esperado ≈ 600–900 g respecto al mes anterior',
+        '<strong>Talla:</strong> incremento ≈ + 2–3 cm',
+        '<strong>Perímetro cefálico:</strong> + 1 cm (meta promedio: 40–41 cm)',
+        'Registrar en <strong>curvas OMS / MSP</strong> (percentiles o z-score)',
+        'Interpretar el crecimiento según el patrón y alertar si hay pérdida o estancamiento'
+      ],
+        link: '➡ Ver Tablas de crecimiento OMS (Z-score) en pestaña 📊 Tablas OMS'
+      },
+      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo'],
+        sublist: [
+          '<strong>Fontanela anterior:</strong> normotensa',
+          '<strong>Cabeza:</strong> sostiene la cabeza con firmeza cuando está sentado con apoyo',
+          '<strong>Ojos:</strong> sigue objetos a 180° y mantiene contacto visual',
+          '<strong>Oídos:</strong> gira la cabeza hacia sonidos familiares',
+          '<strong>Boca:</strong> presencia de salivación, sin lesiones',
+          '<strong>Extremidades:</strong> movimientos coordinados, sin hipotonía',
+          '<strong>Reflejos:</strong> prensión palmar y Moro comienzan a desaparecer',
+          '<strong>Piel:</strong> íntegra, sin dermatitis'
+        ]
+      },
+      { title: '💉 INMUNIZACIONES (VERIFICAR) — SEGUNDA DOSIS',
+        twoColumns: {
+          new: ['<strong>Hexavalente</strong> (DTP-HB-Hib-Polio)', '<strong>Neumococo conjugada 13</strong>', '<strong>Rotavirus oral</strong>'],
+          old: ['Pentavalente (DTP-HB-Hib)', 'fIPV (polio)', 'Neumococo conjugada 10', 'Rotavirus oral']
+        }
+      },
+      { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
+        '<strong>Revisar reflejo rojo ocular</strong> (visión)',
+        'Evaluar respuesta auditiva y vocalizaciones',
+        'Explorar signos de raquitismo o anemia'
+      ]},
+      { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
+        denverTable: [
+          ['social',       'Ríe a carcajadas',                  '3',   '4',   '5',   '6'],
+          ['social',       'Juega con sus pies y manos',        '4',   '4.5', '5.5', '6.5'],
+          ['motor-fino',   'Junta las manos en línea media',    '2.5', '3.5', '4.5', '5'],
+          ['motor-fino',   'Coge un sonajero',                  '3',   '4',   '5',   '6'],
+          ['lenguaje',     'Se vuelve hacia la voz',            '4',   '5',   '6',   '7'],
+          ['lenguaje',     'Vocaliza / balbucea',               '1',   '2',   '3',   '4'],
+          ['motor-grueso', 'Sostiene la cabeza con firmeza',    '2',   '3',   '4',   '4.5'],
+          ['motor-grueso', 'Rueda sobre sí mismo (prono→supino)','4.5','5.5', '7',   '8']
+        ]
+      }
+    ]
+  },
+
+  m5: {
+    group: 'g-1to6',
+    title: 'Niño/a · 5 meses',
+    sub: 'CONTROL DEL NIÑO SANO – 5.º MES',
+    sections: [
+      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
+        '<strong>Peso actual:</strong> aumento esperado ≈ 500–800 g respecto al mes anterior',
+        '<strong>Talla:</strong> incremento ≈ + 2 cm',
+        '<strong>Perímetro cefálico:</strong> + 1 cm (meta promedio: 41–42 cm)',
+        'Registrar en <strong>curvas OMS / MSP</strong> (percentiles o z-score)',
+        'Interpretar el crecimiento según el patrón y alertar si hay pérdida o estancamiento'
+      ],
+        link: '➡ Ver Tablas de crecimiento OMS (Z-score) en pestaña 📊 Tablas OMS'
+      },
+      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo'],
+        sublist: [
+          '<strong>Fontanela anterior:</strong> normotensa',
+          '<strong>Cabeza:</strong> buen control cefálico',
+          '<strong>Ojos:</strong> sigue objetos y mantiene contacto visual',
+          '<strong>Oídos:</strong> gira cabeza hacia sonidos',
+          '<strong>Boca:</strong> mayor salivación, sin erupción dentaria todavía',
+          '<strong>Extremidades:</strong> movilidad activa, tono normal',
+          '<strong>Reflejos primitivos:</strong> persistencia leve de prensión palmar (en desaparición)'
+        ]
+      },
+      { title: '💊 SUPLEMENTACIÓN', items: [
+        'Dar <strong>💊 Vitamina A (50.000 UI)</strong> si no recibe lactancia materna'
+      ]},
+      { title: '💉 INMUNIZACIONES (VERIFICAR)', items: [
+        'Verificar que se hayan aplicado las <strong>segundas dosis a los 4 meses</strong>: Si alguna está pendiente, <strong>aplicarla de inmediato</strong>'
+      ]},
+      { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
+        'Revisión de <strong>reflejo rojo</strong> (visión)',
+        'Evaluar audición y respuesta a sonidos',
+        'Control de sueño (promedio 14–15 h/día)',
+        'Vigilar signos de raquitismo o anemia'
+      ]},
+      { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
+        denverTable: [
+          ['social',       'Ríe a carcajadas',                  '3',  '4',   '5',   '6'],
+          ['social',       'Juega con sus pies y manos',        '4',  '4.5', '5.5', '6.5'],
+          ['motor-fino',   'Coge un sonajero',                  '3',  '4',   '5',   '6'],
+          ['motor-fino',   'Pasa objeto de una mano a otra',    '5',  '6',   '7',   '8'],
+          ['lenguaje',     'Se vuelve hacia la voz',            '4',  '5',   '6',   '7'],
+          ['lenguaje',     'Balbucea sílabas',                  '4',  '6',   '8',   '10'],
+          ['motor-grueso', 'Rueda sobre sí mismo',              '4.5','5.5', '7',   '8'],
+          ['motor-grueso', 'Se sienta con apoyo',               '4',  '5',   '6',   '7']
         ]
       }
     ]
@@ -1175,41 +1310,56 @@ const PANELS = {
   m6: {
     group: 'g-1to6',
     title: 'Niño/a · 6 meses',
-    sub: 'Inicio de alimentación complementaria',
-    tip: 'Iniciar alimentación complementaria con suplementos de hierro/zinc según AIEPI.',
+    sub: 'CONTROL DEL NIÑO SANO – 6.º MES · Inicio de alimentación complementaria',
+    tip: 'Si el peso es < p3 o > p97 → evaluar riesgo nutricional y revisar técnica de lactancia.',
     sections: [
       { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
-        '<strong>Peso:</strong> ≈ duplica el peso del nacimiento',
-        '<strong>Talla:</strong> + ≈ 1.5 cm/mes',
-        '<strong>Perímetro cefálico:</strong> + 0.5–1 cm',
-        'Curvas OMS — z-score'
-      ]},
-      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico'],
+        '<strong>Peso actual:</strong> aumento esperado ≈ 400–700 g respecto al mes anterior',
+        '<strong>Talla:</strong> incremento ≈ 1.5–2 cm',
+        '<strong>Perímetro cefálico:</strong> + 0.5–1 cm (promedio 42–43 cm)',
+        'Registrar en <strong>curvas OMS / MSP</strong> (percentiles o z-score)',
+        'Interpretar el crecimiento según el patrón y alertar si hay pérdida o estancamiento'
+      ],
+        link: '➡ Ver Tablas de crecimiento OMS (Z-score) en pestaña 📊 Tablas OMS'
+      },
+      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo'],
         sublist: [
-          'Cabeza: fontanela anterior aún abierta',
-          'Ojos: convergencia y seguimiento',
-          'Boca: aparición de primeros dientes (incisivos inferiores)',
-          'Abdomen y reflejos abdominales',
-          'Caderas: marcha en aire, simetría'
+          '<strong>Fontanela anterior:</strong> normotensa (1–2 cm)',
+          '<strong>Cabeza:</strong> buen control, se mantiene erguida',
+          '<strong>Ojos:</strong> sigue objetos, refleja interés visual',
+          '<strong>Oídos:</strong> responde a voces familiares',
+          '<strong>Boca:</strong> puede iniciar erupción dentaria (primer incisivo inferior)',
+          '<strong>Extremidades:</strong> tono normal, se apoya parcialmente con brazos',
+          '<strong>Reflejos:</strong> desaparece reflejo de Moro'
         ]
       },
-      { title: '💉 INMUNIZACIONES — TERCERA DOSIS',
+      { title: '🍼 ALIMENTACIÓN Y NUTRICIÓN', items: [
+        '<strong>Iniciar alimentación complementaria (AC)</strong> según guías MSP:'
+      ],
+        sublist: [
+          '<strong>Textura:</strong> purés o papillas espesas, trituradas con tenedor',
+          '<strong>Frecuencia:</strong> 2–3 comidas/día + lactancia a libre demanda',
+          '<strong>No agregar</strong> sal, azúcar ni condimentos',
+          'Introducir nuevos alimentos de forma gradual (uno nuevo cada 3 días)'
+        ]
+      },
+      { title: '💊 SUPLEMENTACIÓN', items: [
+        '<strong>1ª suplementación de 💊 Vitamina A:</strong> dar (100.000 UI) en todos los niños',
+        '<strong>Inicio de suplementación con micronutrientes en polvo (💊 Chispas):</strong> 90 sobres (1 sobre pasando un día por 6 meses)'
+      ]},
+      { title: '💉 INMUNIZACIONES (VERIFICAR)', items: [
+        '<strong>Vacuna Influenza estacional:</strong> 1.ª dosis',
+        '<strong>Primera dosis:</strong> bOPV (polio oral)'
+      ],
         twoColumns: {
-          new: ['<strong>Hexavalente</strong> 3.ª dosis', '<strong>Neumococo 13</strong> 3.ª', '<strong>bOPV</strong> (polio oral)', '<strong>Influenza pediátrica</strong> 1.ª dosis'],
-          old: ['Pentavalente 3.ª', 'bOPV 1.ª', 'Neumococo 10 3.ª', 'Influenza pediátrica 1.ª']
+          new: ['<strong>Tercera dosis Hexavalente</strong> (DTP-HB-Hib-Polio)', '<strong>Neumococo conjugada 13</strong>'],
+          old: ['Tercera dosis Pentavalente (DTP-HB-Hib)', 'Neumococo conjugada 10']
         }
       },
-      { title: '🍼 ALIMENTACIÓN Y SUPLEMENTACIÓN', items: [
-        'Inicio de <strong>alimentación complementaria</strong> (papillas, frutas, verduras, carnes)',
-        'Continuar <strong>lactancia materna a libre demanda</strong>',
-        '<strong>Suplemento de hierro:</strong> 1 mg/kg/día en niños con factores de riesgo',
-        '<strong>Suplemento de zinc:</strong> 10 mg/día por 14 días si diarrea (AIEPI)',
-        '<strong>Vitamina A:</strong> según calendario nacional'
-      ]},
       { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
-        '<strong>Hemoglobina o hematocrito</strong> (descartar anemia ferropénica)',
-        'Control de visión y audición',
-        'Evaluación oral (erupción dental)'
+        '<strong>Realizar 1ª valoración de 🩸 hemoglobina</strong>',
+        'Revisar reflejo rojo ocular',
+        'Evaluar audición y respuesta a sonidos'
       ]},
       { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
         denverTable: [
@@ -1222,6 +1372,67 @@ const PANELS = {
           ['motor-grueso', 'Rueda sobre sí mismo',            '4.5','5.5','7',   '8'],
           ['motor-grueso', 'Se sienta con apoyo',             '4', '5',   '6',   '7'],
           ['motor-grueso', 'Se sienta sin apoyo',             '6', '7',   '8',   '9']
+        ]
+      }
+    ]
+  },
+
+  m7: {
+    group: 'g-7to12',
+    title: 'Niño/a · 7 meses',
+    sub: 'CONTROL DEL NIÑO SANO – 7.º MES',
+    tip: 'Si el peso es < p3 o > p97 → evaluar riesgo nutricional y revisar técnica de lactancia.',
+    sections: [
+      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
+        '<strong>Peso actual:</strong> aumento esperado ≈ 400–600 g respecto al mes anterior',
+        '<strong>Talla:</strong> incremento ≈ 1.5–2 cm',
+        '<strong>Perímetro cefálico:</strong> + 0.5 cm (promedio 43–44 cm)',
+        'Registrar en <strong>curvas OMS / MSP</strong> (percentiles o z-score)',
+        'Interpretar el crecimiento según el patrón y alertar si hay pérdida o estancamiento'
+      ],
+        link: '➡ Ver Tablas de crecimiento OMS (Z-score) en pestaña 📊 Tablas OMS'
+      },
+      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo'],
+        sublist: [
+          '<strong>Fontanela anterior:</strong> normotensa (1–2 cm)',
+          '<strong>Cabeza:</strong> buen control, se mantiene erguida',
+          '<strong>Ojos:</strong> sigue objetos, refleja interés visual',
+          '<strong>Boca:</strong> posible erupción de primeros dientes',
+          '<strong>Oídos:</strong> reacciona a su nombre y sonidos familiares'
+        ]
+      },
+      { title: '🍼 ALIMENTACIÓN Y NUTRICIÓN', items: [
+        'Continuar <strong>lactancia materna junto a alimentación complementaria (AC)</strong>'
+      ],
+        sublist: [
+          '<strong>Textura:</strong> purés o papillas espesas, trituradas con tenedor',
+          '<strong>Frecuencia:</strong> 2–3 comidas/día + lactancia a libre demanda',
+          '<strong>No agregar</strong> sal, azúcar ni condimentos',
+          'Introducir nuevos alimentos de forma gradual (uno nuevo cada 3 días)'
+        ]
+      },
+      { title: '💊 SUPLEMENTACIÓN', items: [
+        'Dar <strong>suplementación de 💊 Vitamina A</strong> (100.000 UI) en todos los niños si no han recibido',
+        'Continuar <strong>suplementación con micronutrientes en polvo (💊 Chispas)</strong>: 90 sobres (1 sobre pasando un día por 6 meses)'
+      ]},
+      { title: '💉 INMUNIZACIONES (VERIFICAR)', items: [
+        '<strong>Vacuna Influenza estacional:</strong> 2.ª dosis'
+      ]},
+      { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
+        'Realizar <strong>1ª valoración de 🩸 hemoglobina</strong> si no se ha realizado',
+        'Revisar reflejo rojo ocular (visión)',
+        'Evaluar audición y respuesta al nombre'
+      ]},
+      { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
+        denverTable: [
+          ['social',       'Come solo una galleta',          '5', '6',   '7.5', '8.5'],
+          ['social',       'Juega "tortitas / palmas-palmas"','7', '8',  '11',  '13'],
+          ['motor-fino',   'Pasa un objeto de una mano a otra','5','6', '7',   '8'],
+          ['motor-fino',   'Pinza inferior',                 '7', '9',   '11',  '13'],
+          ['lenguaje',     'Balbucea sílabas (ba, da)',      '4', '6',   '8',   '10'],
+          ['lenguaje',     'Se vuelve hacia la voz',         '4', '5',   '6',   '7'],
+          ['motor-grueso', 'Se sienta sin apoyo',            '6', '7',   '8',   '9'],
+          ['motor-grueso', 'Se para sosteniéndose',          '7', '8',   '10',  '11']
         ]
       }
     ]
@@ -1274,37 +1485,57 @@ const PANELS = {
   m12: {
     group: 'g-7to12',
     title: 'Niño/a · 12 meses',
-    sub: 'Cierre del primer año · refuerzos clave',
+    sub: 'CONTROL DEL NIÑO SANO – 12.º MES · Cierre del primer año',
+    tip: 'Si el peso es < p3 o > p97 → evaluar riesgo nutricional y revisar técnica de lactancia.',
     sections: [
       { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
-        '<strong>Peso:</strong> ≈ triplica el peso del nacimiento',
-        '<strong>Talla:</strong> + 50 % desde el nacimiento (≈ 75 cm)',
+        '<strong>Peso:</strong> aumento esperado ≈ 250–400 g respecto al mes anterior',
+        '<strong>Talla:</strong> + 1–1.5 cm',
         '<strong>Perímetro cefálico:</strong> ≈ 46 cm',
-        'Cierre de la fontanela posterior'
-      ]},
-      { title: '❤️ EVALUACIÓN CLÍNICA', items: ['Examen físico'],
+        'Registrar en <strong>curvas OMS / MSP</strong> (percentiles o z-score)',
+        'Interpretar el crecimiento según el patrón y alertar si hay pérdida o estancamiento'
+      ],
+        link: '➡ Ver Tablas de crecimiento OMS (Z-score) en pestaña 📊 Tablas OMS'
+      },
+      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo'],
         sublist: [
-          'Visión y audición presentes',
-          'Cavidad oral: 6–8 piezas dentales',
-          'Reflejos posturales completos',
-          'Marcha asistida o autónoma'
+          '<strong>Fontanela anterior:</strong> parcialmente abierta o en cierre',
+          '<strong>Cabeza:</strong> buen control, se mantiene erguida',
+          '<strong>Ojos:</strong> sigue objetos, refleja interés visual',
+          '<strong>Boca:</strong> Dentición: 6–8 dientes erupcionados',
+          '<strong>Oídos:</strong> reacciona a su nombre y sonidos familiares',
+          '<strong>Marcha:</strong> inicia pasos con apoyo o primeros intentos'
         ]
       },
-      { title: '💉 INMUNIZACIONES — REFUERZOS', items: [
-        '<strong>SRP</strong> (Sarampión, Rubéola, Parotiditis) — 1.ª dosis',
-        '<strong>Fiebre Amarilla</strong> (en zona endémica)',
-        '<strong>Neumococo</strong> refuerzo (PCV 12 m)',
-        'Considerar <strong>Varicela</strong> (15 m según esquema)'
+      { title: '🍼 ALIMENTACIÓN Y NUTRICIÓN', items: [
+        '<strong>Lactancia materna continua</strong> (hasta los 2 años o más)',
+        '<strong>Comidas familiares:</strong> 3 comidas + 2 meriendas',
+        '<strong>Textura:</strong> sólidos blandos / picados finamente',
+        '<strong>Dieta variada y equilibrada:</strong>'
+      ],
+        sublist: [
+          'Verduras, frutas, cereales, legumbres, carnes, grasas saludables 🥦🍎🥚',
+          'Incluir alimentos ricos en hierro (hígado, lentejas, espinaca)',
+          'Evitar: gaseosas, dulces, miel, embutidos y sal añadida',
+          'Agua potable hervida como bebida principal'
+        ]
+      },
+      { title: '💊 SUPLEMENTACIÓN', items: [
+        'Dar <strong>2da suplementación de 💊 Vitamina A</strong> (200.000 UI) en todos los niños',
+        'Continuar <strong>suplementación con micronutrientes en polvo (💊 Chispas)</strong>: 90 sobres (1 sobre pasando un día por 6 meses)'
       ]},
-      { title: '🍼 ALIMENTACIÓN', items: [
-        'Dieta familiar variada con consistencia adaptada',
-        'Lactancia materna recomendada hasta 2 años',
-        'Suplemento de hierro y vitamina A según AIEPI'
-      ]},
+      { title: '💉 INMUNIZACIONES (VERIFICAR)', items: [
+        '<strong>1ra dosis:</strong>'
+      ],
+        sublist: [
+          '<strong>Vacuna SRP</strong> (Sarampión, Rubeola, Paperas)',
+          '<strong>Vacuna Fiebre Amarilla</strong>'
+        ]
+      },
       { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
-        '<strong>Hb / Hto</strong> (cribado universal de anemia ferropénica)',
-        'Examen visual y auditivo si factores de riesgo',
-        'Evaluación de neurodesarrollo'
+        'Realizar <strong>2ª valoración de 🩸 hemoglobina</strong>',
+        '<strong>Control visual:</strong> reflejo rojo y coordinación ocular',
+        '<strong>Control auditivo:</strong> respuesta a sonidos y lenguaje inicial'
       ]},
       { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
         denverTable: [
@@ -1315,7 +1546,7 @@ const PANELS = {
           ['lenguaje',     'Dice "papá/mamá" específico',    '9',  '10', '12', '14'],
           ['lenguaje',     'Primera palabra con significado','11', '12', '14', '16'],
           ['motor-grueso', 'Camina con ayuda',               '9',  '10', '12', '13'],
-          ['motor-grueso', 'Camina solo',                    '11', '12', '14', '15']
+          ['motor-grueso', 'Inicia primeros pasos / camina solo', '11', '12', '14', '15']
         ]
       }
     ]
@@ -1776,14 +2007,86 @@ function ageLabelToMonths(s) {
   return num; // ya en meses
 }
 
-const Z_LABELS = ['-3 DE', '-2 DE', '-1 DE', 'Mediana', '+1 DE', '+2 DE', '+3 DE'];
+const Z_LABELS_DE = ['-3 DE', '-2 DE', '-1 DE', 'Mediana', '+1 DE', '+2 DE', '+3 DE'];
+const Z_LABELS_ZSCORE = ['Z = -3', 'Z = -2', 'Z = -1', 'Z = 0', 'Z = +1', 'Z = +2', 'Z = +3'];
 const Z_COLORS = ['#dc2626', '#f97316', '#facc15', '#16a34a', '#facc15', '#f97316', '#dc2626'];
+
+let whoFormat = 'de'; // 'de' o 'zscore'
+function getZLabels() {
+  return whoFormat === 'zscore' ? Z_LABELS_ZSCORE : Z_LABELS_DE;
+}
+// Compatibilidad con código que usa Z_LABELS directamente
+const Z_LABELS = new Proxy([], {
+  get(_, prop) {
+    const labels = getZLabels();
+    return labels[prop];
+  }
+});
 
 function selectedWhoAge(k) {
   return WHO_SELECTED[k] !== undefined ? WHO_SELECTED[k] : null;
 }
 
 const WHO_SELECTED = {}; // por tabla, índice de fila seleccionada
+
+/* ============================================================
+   Interpretación clínica según Z-score por tipo de tabla
+   ============================================================ */
+const WHO_INTERPRETATION = {
+  peso: [
+    { max: -3, label: 'Bajo peso SEVERO',          sublabel: 'Desnutrición aguda severa', color: '#dc2626', bg: '#fee2e2', icon: '🔴' },
+    { max: -2, label: 'Bajo peso',                  sublabel: 'Desnutrición aguda moderada', color: '#ea580c', bg: '#ffedd5', icon: '🟠' },
+    { max:  1, label: 'Normal',                     sublabel: 'Peso adecuado para la edad',  color: '#16a34a', bg: '#dcfce7', icon: '🟢' },
+    { max:  2, label: 'Riesgo de sobrepeso',        sublabel: 'Vigilar tendencia',           color: '#facc15', bg: '#fef9c3', icon: '🟡' },
+    { max:  3, label: 'Sobrepeso',                  sublabel: 'Intervención nutricional',    color: '#ea580c', bg: '#ffedd5', icon: '🟠' },
+    { max: 99, label: 'OBESIDAD',                   sublabel: 'Manejo multidisciplinario',   color: '#dc2626', bg: '#fee2e2', icon: '🔴' }
+  ],
+  talla: [
+    { max: -3, label: 'Talla baja SEVERA',          sublabel: 'Desnutrición crónica severa', color: '#dc2626', bg: '#fee2e2', icon: '🔴' },
+    { max: -2, label: 'Talla baja',                 sublabel: 'Desnutrición crónica',        color: '#ea580c', bg: '#ffedd5', icon: '🟠' },
+    { max:  2, label: 'Talla normal',               sublabel: 'Adecuada para la edad',       color: '#16a34a', bg: '#dcfce7', icon: '🟢' },
+    { max:  3, label: 'Talla alta',                 sublabel: 'Vigilar (variante familiar / endocrino)', color: '#ea580c', bg: '#ffedd5', icon: '🟠' },
+    { max: 99, label: 'Talla muy alta',             sublabel: 'Descartar causa endocrina',   color: '#dc2626', bg: '#fee2e2', icon: '🔴' }
+  ],
+  pc: [
+    { max: -3, label: 'MICROCEFALIA SEVERA',        sublabel: 'Evaluación neurológica urgente', color: '#dc2626', bg: '#fee2e2', icon: '🔴' },
+    { max: -2, label: 'Microcefalia',               sublabel: 'Evaluación neurológica',      color: '#ea580c', bg: '#ffedd5', icon: '🟠' },
+    { max:  2, label: 'Perímetro cefálico normal',  sublabel: 'Crecimiento adecuado',        color: '#16a34a', bg: '#dcfce7', icon: '🟢' },
+    { max:  3, label: 'Macrocefalia',               sublabel: 'Descartar hidrocefalia / MEC', color: '#ea580c', bg: '#ffedd5', icon: '🟠' },
+    { max: 99, label: 'MACROCEFALIA SEVERA',        sublabel: 'Estudio por imagen urgente',  color: '#dc2626', bg: '#fee2e2', icon: '🔴' }
+  ]
+};
+
+/* Dado un valor real y los z-values en esa edad, devuelve cuántas DE de la mediana */
+function zScoreFromValue(value, zValues) {
+  // zValues = [z-3, z-2, z-1, z0, z+1, z+2, z+3]
+  // Devuelve un número aprox: -3, -2, -1, 0, +1, +2, +3 con interpolación lineal
+  if (value <= zValues[0]) {
+    // por debajo de -3: extrapolación lineal usando la diferencia z-3 - z-2
+    const dz = zValues[1] - zValues[0];
+    if (dz === 0) return -3;
+    return -3 - (zValues[0] - value) / dz;
+  }
+  for (let i = 0; i < 6; i++) {
+    if (value >= zValues[i] && value <= zValues[i + 1]) {
+      const t = (value - zValues[i]) / (zValues[i + 1] - zValues[i]);
+      return (i - 3) + t;
+    }
+  }
+  // por encima de +3
+  const dz = zValues[6] - zValues[5];
+  if (dz === 0) return 3;
+  return 3 + (value - zValues[6]) / dz;
+}
+
+function classifyWho(type, value, zValues) {
+  const z = zScoreFromValue(value, zValues);
+  const ranges = WHO_INTERPRETATION[type];
+  for (const r of ranges) {
+    if (z <= r.max) return { ...r, z: z };
+  }
+  return ranges[ranges.length - 1];
+}
 
 /* Calcula un "step" entero apropiado para el rango */
 function niceStep(range, targetSteps) {
@@ -1852,9 +2155,11 @@ function drawWhoChart(k, units) {
   const xScale = age => m.left + (age / xMax) * innerW;
   const yScale = v => m.top + innerH - ((v - yMin) / (yMax - yMin)) * innerH;
   const xUnscale = px => ((px - m.left) / innerW) * xMax;
+  const yUnscale = py => yMax - ((py - m.top) / innerH) * (yMax - yMin);
 
+  const labels = getZLabels();
   let svg = `<div class="chart-legend">`;
-  Z_LABELS.forEach((lab, i) => {
+  labels.forEach((lab, i) => {
     svg += `<span class="leg-item"><span class="leg-color" style="background:${Z_COLORS[i]}"></span>${lab}</span>`;
   });
   svg += `</div>`;
@@ -1906,11 +2211,14 @@ function drawWhoChart(k, units) {
     svg += `<text class="z-label" x="${x}" y="${m.top - 8}" text-anchor="middle" fill="#1d4ed8">${r[0]}</text>`;
   }
 
-  // Línea de hover (oculta hasta que haya hover)
+  // Línea de hover vertical y horizontal (cruz)
   svg += `<line class="hover-line" x1="0" y1="${m.top}" x2="0" y2="${m.top + innerH}" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="3 3" style="display:none"/>`;
+  svg += `<line class="hover-line-h" x1="${m.left}" y1="0" x2="${m.left + innerW}" y2="0" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="3 3" style="display:none"/>`;
+  // Punto principal en la posición del cursor (más grande, indica el valor evaluado)
+  svg += `<circle class="hover-cursor" cx="0" cy="0" r="7" fill="#2563eb" stroke="#fff" stroke-width="2.5" style="display:none; pointer-events:none"/>`;
   // Puntos hover (uno por z-score)
   for (let zi = 0; zi < 7; zi++) {
-    svg += `<circle class="hover-dot hover-dot-${zi}" cx="0" cy="0" r="4" fill="${Z_COLORS[zi]}" stroke="#fff" stroke-width="1.5" style="display:none"/>`;
+    svg += `<circle class="hover-dot hover-dot-${zi}" cx="0" cy="0" r="4" fill="${Z_COLORS[zi]}" stroke="#fff" stroke-width="1.5" style="display:none; pointer-events:none"/>`;
   }
 
   // Overlay TRANSPARENTE para capturar mouse en cualquier punto
@@ -1924,6 +2232,8 @@ function drawWhoChart(k, units) {
   const tooltip = document.getElementById('who-tooltip');
   const overlay = container.querySelector('.hover-overlay');
   const hoverLine = container.querySelector('.hover-line');
+  const hoverLineH = container.querySelector('.hover-line-h');
+  const hoverCursor = container.querySelector('.hover-cursor');
   const hoverDots = container.querySelectorAll('.hover-dot');
   const svgEl = container.querySelector('svg');
 
@@ -1936,22 +2246,44 @@ function drawWhoChart(k, units) {
   overlay.addEventListener('mousemove', e => {
     const pt = svgPoint(e);
     if (pt.x < m.left || pt.x > m.left + innerW) return;
+    if (pt.y < m.top || pt.y > m.top + innerH) return;
     const ageMonths = Math.max(0, Math.min(xMax, xUnscale(pt.x)));
+    const cursorValue = yUnscale(pt.y);
 
-    // Mostrar línea vertical y puntos
+    // Mostrar líneas en cruz y cursor principal
     hoverLine.style.display = '';
     hoverLine.setAttribute('x1', pt.x);
     hoverLine.setAttribute('x2', pt.x);
+    hoverLineH.style.display = '';
+    hoverLineH.setAttribute('y1', pt.y);
+    hoverLineH.setAttribute('y2', pt.y);
+    hoverCursor.style.display = '';
+    hoverCursor.setAttribute('cx', pt.x);
+    hoverCursor.setAttribute('cy', pt.y);
 
-    // Tooltip con todos los Z-scores en esa edad
+    // Z-values en esa edad
+    const zVals = [];
+    for (let zi = 0; zi < 7; zi++) zVals.push(valueAtAge(data, ages, ageMonths, zi));
+
+    // Clasificación clínica según el valor del cursor
+    const cls = classifyWho(k, cursorValue, zVals);
+
+    // Edad legible
     let ageLabel;
     if (ageMonths < 1) ageLabel = Math.round(ageMonths * 30) + ' días';
     else if (ageMonths < 24) ageLabel = ageMonths.toFixed(1) + ' m';
     else ageLabel = (ageMonths / 12).toFixed(1) + ' a';
 
-    let html = `<div style="font-weight:700; margin-bottom:4px; color:#fde047;">📍 ${ageLabel}</div>`;
+    // HTML del tooltip — clasificación destacada arriba
+    let html = `<div style="background:${cls.bg}; color:${cls.color}; padding:6px 10px; margin:-8px -12px 6px -12px; border-radius:6px 6px 0 0; font-weight:800; font-size:12.5px;">
+      ${cls.icon} ${cls.label}
+      <div style="font-weight:500; font-size:11px; opacity:0.9; margin-top:1px">${cls.sublabel}</div>
+    </div>`;
+    html += `<div style="font-weight:700; margin-bottom:3px; color:#fde047;">📍 Edad: ${ageLabel}</div>`;
+    html += `<div style="font-weight:700; margin-bottom:5px; color:#60a5fa;">📊 Valor: ${cursorValue.toFixed(2)} ${units} <span style="opacity:0.7; font-weight:500">(Z = ${cls.z >= 0 ? '+' : ''}${cls.z.toFixed(2)})</span></div>`;
+    html += `<hr style="border:none; border-top:1px solid #334155; margin:5px 0">`;
     for (let zi = 0; zi < 7; zi++) {
-      const v = valueAtAge(data, ages, ageMonths, zi);
+      const v = zVals[zi];
       const y = yScale(v);
       hoverDots[zi].style.display = '';
       hoverDots[zi].setAttribute('cx', pt.x);
@@ -1968,24 +2300,27 @@ function drawWhoChart(k, units) {
   overlay.addEventListener('mouseleave', () => {
     tooltip.classList.remove('show');
     hoverLine.style.display = 'none';
+    hoverLineH.style.display = 'none';
+    hoverCursor.style.display = 'none';
     hoverDots.forEach(d => d.style.display = 'none');
   });
 }
 
 function renderWHO() {
   const units = { peso: 'kg', talla: 'cm', pc: 'cm' };
+  const labels = getZLabels();
   ['peso', 'talla', 'pc'].forEach(k => {
     const tbl = document.getElementById('t-' + k);
     const data = WHO[k][whoSex];
     let html = `<thead class="header-z"><tr>
       <th style="text-align:left">Edad</th>
-      <th>-3 DE</th>
-      <th>-2 DE</th>
-      <th>-1 DE</th>
-      <th>Mediana</th>
-      <th>+1 DE</th>
-      <th>+2 DE</th>
-      <th>+3 DE</th>
+      <th>${labels[0]}</th>
+      <th>${labels[1]}</th>
+      <th>${labels[2]}</th>
+      <th>${labels[3]}</th>
+      <th>${labels[4]}</th>
+      <th>${labels[5]}</th>
+      <th>${labels[6]}</th>
     </tr></thead><tbody>`;
     data.forEach((r, idx) => {
       const isSel = WHO_SELECTED[k] === idx;
@@ -2021,6 +2356,30 @@ document.querySelectorAll('#who-sex button').forEach(b => {
     document.querySelectorAll('#who-sex button').forEach(x => x.classList.remove('active'));
     b.classList.add('active');
     whoSex = b.dataset.sex;
+    renderWHO();
+  });
+});
+
+document.querySelectorAll('#who-format button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#who-format button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    whoFormat = b.dataset.format;
+    // Actualizar leyenda
+    const legend = document.getElementById('who-legend-text');
+    if (whoFormat === 'percentil') {
+      legend.innerHTML = `<span class="z-zone z-3neg">P0.1</span> Severo &nbsp;
+        <span class="z-zone z-2neg">P3</span> Bajo &nbsp;
+        <span class="z-zone z-norm">P50 (Mediana)</span> &nbsp;
+        <span class="z-zone z-2pos">P97</span> Alto &nbsp;
+        <span class="z-zone z-3pos">P99.9</span> Severo`;
+    } else {
+      legend.innerHTML = `<span class="z-zone z-3neg">-3 DE</span> Severo &nbsp;
+        <span class="z-zone z-2neg">-2 DE</span> Bajo &nbsp;
+        <span class="z-zone z-norm">Mediana</span> &nbsp;
+        <span class="z-zone z-2pos">+2 DE</span> Alto &nbsp;
+        <span class="z-zone z-3pos">+3 DE</span> Severo`;
+    }
     renderWHO();
   });
 });
@@ -2231,6 +2590,114 @@ document.getElementById('btn-denver-reset').addEventListener('click', () => {
   denverChecked.clear();
   renderDenver();
 });
+
+document.getElementById('btn-denver-print').addEventListener('click', () => {
+  const name = document.getElementById('denver-pat-name').value || '_______________________';
+  const fnac = document.getElementById('denver-pat-fnac').value;
+  const feval = document.getElementById('denver-pat-feval').value || new Date().toISOString().split('T')[0];
+
+  // Calcular edad
+  let edadStr = '_____';
+  if (fnac && feval) {
+    const d1 = new Date(fnac), d2 = new Date(feval);
+    const diffMs = d2 - d1;
+    const diffDays = Math.floor(diffMs / (1000*60*60*24));
+    const months = Math.floor(diffDays / 30.44);
+    const years = Math.floor(months / 12);
+    const remM = months - years * 12;
+    if (years >= 1) edadStr = `${years} año${years !== 1 ? 's' : ''} ${remM} m (${months} m)`;
+    else edadStr = `${months} meses (${diffDays} días)`;
+  }
+
+  const fmtDate = d => d ? new Date(d).toLocaleDateString('es-EC', { day:'2-digit', month:'2-digit', year:'numeric' }) : '__/__/____';
+
+  // Construir tabla con marcado
+  const areaLbl = { 'social':'Personal-Social', 'motor-fino':'Motor Fino Adaptativo', 'lenguaje':'Lenguaje', 'motor-grueso':'Motor Grueso' };
+  let tableRows = '';
+  DENVER.forEach((row, idx) => {
+    const p25 = ageToMonths(row[2]);
+    const p100 = ageToMonths(row[5]);
+    const isExpected = denverAge >= p25 && denverAge <= p100;
+    const isChecked = denverChecked.has(idx);
+    const bg = isChecked ? '#dcfce7' : (isExpected ? '#dbeafe' : '#fff');
+    const tachado = isChecked ? 'text-decoration: line-through; color: #15803d;' : '';
+    const check = isChecked ? '☑' : '☐';
+    tableRows += `<tr style="background:${bg};">
+      <td style="padding:6px; border:1px solid #cbd5e1; text-align:center; font-size:11px;">${check}</td>
+      <td style="padding:6px; border:1px solid #cbd5e1; font-weight:600; font-size:11px;">${areaLbl[row[0]]}</td>
+      <td style="padding:6px; border:1px solid #cbd5e1; ${tachado} font-size:11px;">${row[1]}</td>
+      <td style="padding:6px; border:1px solid #cbd5e1; text-align:center; font-size:11px;">${row[2]}</td>
+      <td style="padding:6px; border:1px solid #cbd5e1; text-align:center; font-size:11px;">${row[3]}</td>
+      <td style="padding:6px; border:1px solid #cbd5e1; text-align:center; font-size:11px;">${row[4]}</td>
+      <td style="padding:6px; border:1px solid #cbd5e1; text-align:center; font-size:11px;">${row[5]}</td>
+    </tr>`;
+  });
+
+  const totalRelevant = DENVER.filter((r) => {
+    const p25 = ageToMonths(r[2]), p100 = ageToMonths(r[5]);
+    return denverAge >= p25 && denverAge <= p100;
+  }).length;
+
+  const printHtml = `
+    <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Test Denver II</title>
+    <style>
+      @page { size: A4; margin: 12mm; }
+      body { font-family: 'Inter', Arial, sans-serif; font-size: 12px; color: #0f172a; padding: 0; margin: 0; }
+      h1 { font-size: 18px; margin-bottom: 4px; color: #1e3a8a; }
+      .brand { background:#000; color:#fff; padding: 4px 10px; border-radius: 6px; font-weight:800; font-size:10px; letter-spacing: 0.08em; display: inline-block; margin-bottom: 8px; }
+      .header-info { background:#f1f5f9; padding: 10px 14px; border-radius:8px; margin-bottom: 12px; display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:8px; font-size:11.5px; }
+      .header-info strong { color:#1e3a8a; }
+      table { width:100%; border-collapse: collapse; margin-bottom: 14px; }
+      th { background:#1e3a8a; color:#fff; padding: 8px 6px; font-size: 11px; text-align:left; border:1px solid #1e3a8a; }
+      .summary { padding: 10px 14px; background:#f0fdf4; border-radius:8px; font-size:12px; margin-bottom: 14px; border-left:4px solid #16a34a; }
+      .legend { font-size:10.5px; color:#475569; margin-bottom:10px; padding: 8px 12px; background:#fef9c3; border-radius:6px; }
+      .footer { margin-top: 30px; font-size: 10px; color:#64748b; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 8px; }
+      .signatures { margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; font-size: 11px; }
+      .signatures .line { border-top: 1px solid #000; padding-top: 4px; text-align: center; }
+    </style></head><body>
+      <span class="brand">MED NOTES®</span>
+      <h1>Test de Neurodesarrollo (Denver II)</h1>
+      <div class="header-info">
+        <div><strong>Paciente:</strong><br>${name}</div>
+        <div><strong>Fecha nacimiento:</strong><br>${fmtDate(fnac)}</div>
+        <div><strong>Fecha evaluación:</strong><br>${fmtDate(feval)}</div>
+        <div><strong>Edad:</strong><br>${edadStr}</div>
+      </div>
+      <div class="summary"><strong>Resumen:</strong> ${denverChecked.size} hitos cumplidos · ${totalRelevant} hitos relevantes para esta edad · ${DENVER.length} hitos totales evaluados</div>
+      <div class="legend">📘 <strong>Leyenda:</strong> Filas en azul claro = hitos esperados para la edad. Filas en verde = hitos cumplidos (texto tachado).</div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:30px; text-align:center">✓</th>
+            <th style="width:120px">Área</th>
+            <th>Hito de Desarrollo</th>
+            <th style="width:50px; text-align:center">25%</th>
+            <th style="width:50px; text-align:center">50%</th>
+            <th style="width:50px; text-align:center">75%</th>
+            <th style="width:50px; text-align:center">90%</th>
+          </tr>
+        </thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+      <div class="signatures">
+        <div class="line">Profesional evaluador</div>
+        <div class="line">Firma y sello</div>
+      </div>
+      <div class="footer">Generado por MED NOTES® · Test de Denver II · Apuntes médicos basados en evidencia</div>
+    </body></html>`;
+
+  const w = window.open('', '_blank', 'width=900,height=700');
+  w.document.write(printHtml);
+  w.document.close();
+  setTimeout(() => { w.print(); }, 250);
+});
+
+/* Set today's date as default in Denver patient info */
+(() => {
+  const _today = new Date().toISOString().split('T')[0];
+  const _fevalEl = document.getElementById('denver-pat-feval');
+  if (_fevalEl) _fevalEl.value = _today;
+})();
 
 renderDenver();
 </script>
