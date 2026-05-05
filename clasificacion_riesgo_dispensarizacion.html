@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clasificación de Riesgo y Dispensarización · MED NOTES®</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --primary-soft: #dbeafe;
+    --text: #1e293b;
+    --text-light: #475569;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --bg: #f1f5f9;
+
+    --r0: #16a34a;   /* sin riesgo */
+    --r1: #84cc16;   /* muy bajo */
+    --r2: #eab308;   /* bajo */
+    --r3: #f97316;   /* moderado */
+    --r4: #dc2626;   /* alto */
+
+    --g1: #16a34a;
+    --g1-bg: #dcfce7;
+    --g2: #c2410c;
+    --g2-bg: #ffedd5;
+    --g3: #b91c1c;
+    --g3-bg: #fee2e2;
+    --g4: #4338ca;
+    --g4-bg: #e0e7ff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ============ Top Header ============ */
+  .top-header {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 22px;
+    display: flex; align-items: center; gap: 14px;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .brand-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #000; color: #fff;
+    padding: 6px 12px;
+    font: 700 12px 'JetBrains Mono', monospace;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    border-radius: 4px;
+  }
+  .brand-badge .reg { font-size: 8px; vertical-align: top; opacity: 0.85; }
+  .top-header h1 {
+    font-size: 17px; font-weight: 800;
+    color: var(--text); flex: 1;
+  }
+
+  /* ============ Layout ============ */
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px 22px 80px;
+  }
+
+  .section {
+    background: #fff;
+    border-radius: 14px;
+    padding: 26px 28px;
+    margin-bottom: 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid var(--border);
+  }
+
+  .section-h {
+    font-size: 22px; font-weight: 800;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .section-sub {
+    color: var(--text-light);
+    margin-bottom: 22px;
+    font-size: 14px;
+  }
+
+  /* ============ Dispensarización tabs ============ */
+  .grupo-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 700px) {
+    .grupo-tabs { grid-template-columns: repeat(2, 1fr); }
+  }
+  .grupo-tab {
+    padding: 14px 16px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font: 700 14.5px 'Inter', sans-serif;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(37,99,235,0.20);
+    transition: transform .12s, box-shadow .12s, outline-color .12s;
+    outline: 3px solid transparent;
+    outline-offset: 2px;
+  }
+  .grupo-tab:hover { transform: translateY(-1px); }
+  .grupo-tab.active { outline-color: #93c5fd; }
+
+  .grupo-panel {
+    border-radius: 10px;
+    padding: 20px 24px;
+    border-left: 5px solid;
+    display: none;
+  }
+  .grupo-panel.active { display: block; }
+
+  .grupo-title {
+    font-size: 19px; font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .grupo-desc {
+    font-weight: 600;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .grupo-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+  }
+  .grupo-card h4 {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .grupo-card p {
+    font-size: 13.5px;
+    color: var(--text-light);
+    line-height: 1.5;
+  }
+  .grupo-card .sub-label {
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .riesgo-block {
+    margin-bottom: 14px;
+  }
+  .riesgo-block h4 {
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .riesgo-block p {
+    color: var(--text-light);
+    font-size: 13.5px;
+    margin-bottom: 8px;
+  }
+
+  /* Group palette */
+  #panel-1 { background: var(--g1-bg); border-left-color: var(--g1); }
+  #panel-1 .grupo-title, #panel-1 .grupo-desc { color: var(--g1); }
+  #panel-2 { background: var(--g2-bg); border-left-color: var(--g2); }
+  #panel-2 .grupo-title, #panel-2 .grupo-desc { color: var(--g2); }
+  #panel-3 { background: var(--g3-bg); border-left-color: var(--g3); }
+  #panel-3 .grupo-title, #panel-3 .grupo-desc { color: var(--g3); }
+  #panel-4 { background: var(--g4-bg); border-left-color: var(--g4); }
+  #panel-4 .grupo-title, #panel-4 .grupo-desc { color: var(--g4); }
+
+  /* ============ Risk classification table ============ */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  table.risk {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    min-width: 1100px;
+  }
+
+  table.risk thead th {
+    background: var(--surface-alt);
+    text-align: left;
+    padding: 12px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    border-bottom: 2px solid var(--border);
+    border-right: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+  table.risk thead th:last-child { border-right: none; }
+
+  table.risk thead .col-cat { width: 200px; }
+  table.risk thead .col-score { width: 18%; }
+  table.risk thead .col-score .pts {
+    display: inline-block;
+    background: #fff;
+    color: var(--text);
+    border-radius: 4px;
+    padding: 1px 8px;
+    margin-right: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 700;
+  }
+  table.risk thead .col-score.s0 .pts { background: var(--r0); color: #fff; }
+  table.risk thead .col-score.s1 .pts { background: var(--r1); color: #fff; }
+  table.risk thead .col-score.s2 .pts { background: var(--r2); color: #fff; }
+  table.risk thead .col-score.s3 .pts { background: var(--r3); color: #fff; }
+  table.risk thead .col-score.s4 .pts { background: var(--r4); color: #fff; }
+
+  table.risk tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    font-size: 12.5px;
+    line-height: 1.4;
+    color: var(--text-light);
+    vertical-align: top;
+    cursor: pointer;
+    transition: background .15s;
+    position: relative;
+  }
+  table.risk tbody td:last-child { border-right: none; }
+  table.risk tbody tr:last-child td { border-bottom: none; }
+  table.risk tbody td.cat-name {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 13.5px;
+    cursor: default;
+    background: var(--surface-alt);
+  }
+
+  table.risk tbody td.cell-score:hover {
+    background: #f1f5f9;
+  }
+
+  /* Selected cell colors */
+  table.risk tbody td.cell-score.selected[data-score="0"] {
+    background: rgba(22, 163, 74, 0.18);
+    box-shadow: inset 4px 0 0 var(--r0);
+    color: var(--text);
+  }
+  table.risk tbody td.cell-score.selected[data-score="1"] {
+    background: rgba(132, 204, 22, 0.20);
+    box-shadow: inset 4px 0 0 var(--r1);
+    color: var(--text);
+  }
+  table.risk tbody td.cell-score.selected[data-score="2"] {
+    background: rgba(234, 179, 8, 0.20);
+    box-shadow: inset 4px 0 0 var(--r2);
+    color: var(--text);
+  }
+  table.risk tbody td.cell-score.selected[data-score="3"] {
+    background: rgba(249, 115, 22, 0.22);
+    box-shadow: inset 4px 0 0 var(--r3);
+    color: var(--text);
+  }
+  table.risk tbody td.cell-score.selected[data-score="4"] {
+    background: rgba(220, 38, 38, 0.18);
+    box-shadow: inset 4px 0 0 var(--r4);
+    color: var(--text);
+  }
+
+  /* ============ Score display ============ */
+  .score-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-top: 24px;
+  }
+  @media (max-width: 800px) {
+    .score-bar { grid-template-columns: 1fr; }
+  }
+
+  .score-card {
+    background: var(--surface-alt);
+    border-radius: 10px;
+    padding: 18px 22px;
+    border: 1px solid var(--border);
+  }
+  .score-card .label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .score-card .value {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+  }
+  .score-card .value .out-of {
+    font-size: 16px; font-weight: 600; color: var(--muted);
+  }
+  .score-card .sub {
+    font-size: 13px;
+    color: var(--text-light);
+    margin-top: 4px;
+  }
+
+  .score-card.classification {
+    color: #fff;
+    border: none;
+    transition: background .25s;
+  }
+  .score-card.classification.lvl-0 { background: var(--r0); }
+  .score-card.classification.lvl-1 { background: var(--r2); }
+  .score-card.classification.lvl-2 { background: var(--r3); }
+  .score-card.classification.lvl-3 { background: var(--r4); }
+  .score-card.classification .label,
+  .score-card.classification .sub { color: rgba(255,255,255,0.85); }
+
+  /* Action buttons */
+  .actions {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-top: 18px;
+  }
+  .btn {
+    padding: 9px 18px;
+    background: var(--primary); color: #fff;
+    border: none; cursor: pointer;
+    font: 700 13px 'Inter', sans-serif;
+    border-radius: 8px;
+    transition: background .15s;
+  }
+  .btn:hover { background: var(--primary-dark); }
+  .btn.ghost {
+    background: var(--surface-alt);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+  }
+  .btn.ghost:hover { background: #e2e8f0; }
+
+  /* Scale legend */
+  .scale-info {
+    background: var(--surface-alt);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 18px;
+    border-left: 4px solid var(--primary);
+    font-size: 13px;
+    color: var(--text-light);
+    line-height: 1.55;
+  }
+  .scale-info ul { padding-left: 18px; margin-top: 6px; }
+  .scale-info li { margin-bottom: 3px; }
+  .scale-info b { color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="top-header">
+  <div class="brand-badge">MED NOTES<span class="reg">®</span></div>
+  <h1>📊 Clasificación de Riesgo y Dispensarización</h1>
+</div>
+
+<div class="container">
+
+  <!-- ============ DISPENSARIZACIÓN ============ -->
+  <div class="section">
+    <div class="section-h">Dispensarización</div>
+    <p class="section-sub">Clasificación de personas y familias según sus condiciones de salud. Selecciona un grupo para ver sus características.</p>
+
+    <div class="grupo-tabs">
+      <button class="grupo-tab active" data-group="1">Grupo I</button>
+      <button class="grupo-tab" data-group="2">Grupo II</button>
+      <button class="grupo-tab" data-group="3">Grupo III</button>
+      <button class="grupo-tab" data-group="4">Grupo IV</button>
+    </div>
+
+    <!-- Grupo I -->
+    <div class="grupo-panel active" id="panel-1">
+      <div class="grupo-title">Grupo I: Aparentemente Sano</div>
+      <div class="grupo-desc">Personas que no manifiestan ninguna condición patológica o de riesgo individual.</div>
+
+      <div class="grupo-card">
+        <h4>Niñez (0 a 23 meses)</h4>
+        <p>Recién nacido y lactante sin factores de riesgo biológico, socioeconómico y ambiental identificados, atención integral sin alteraciones.</p>
+      </div>
+      <div class="grupo-card">
+        <h4>Niñez (2 a 9 años)</h4>
+        <p>Niñez sin factores de riesgo biológico, socioeconómico y ambiental identificados, atención integral sin alteraciones.</p>
+      </div>
+      <div class="grupo-card">
+        <h4>Adolescente (10 a 19 años)</h4>
+        <p>Adolescente sin factores de riesgo biológico, socioeconómico, psicosocial ni ambiental identificados.</p>
+      </div>
+      <div class="grupo-card">
+        <h4>Adultos (20 a 64 años)</h4>
+        <p>Adulto sin antecedentes patológicos personales ni factores de riesgo identificados.</p>
+      </div>
+      <div class="grupo-card">
+        <h4>Adultos mayores (Más de 65 años)</h4>
+        <p>Adulto mayor independiente, sin patología crónica ni factores de riesgo identificados.</p>
+      </div>
+      <div class="grupo-card">
+        <h4>Embarazadas</h4>
+        <p>Gestante sin factor de riesgo identificado.</p>
+      </div>
+    </div>
+
+    <!-- Grupo II -->
+    <div class="grupo-panel" id="panel-2">
+      <div class="grupo-title">Grupo II: Con Factores de Riesgo</div>
+      <div class="grupo-desc">Personas con uno o más factores de riesgo individuales, familiares o ambientales.</div>
+
+      <div class="riesgo-block">
+        <h4>Riesgos sociales:</h4>
+        <p>violencia, enfermedades de transmisión sexual, riesgos en el medio ambiente</p>
+      </div>
+      <div class="riesgo-block">
+        <h4>Riesgos socioeconómicos:</h4>
+        <p>pobreza, falta de agua, alcantarillado</p>
+      </div>
+      <div class="riesgo-block">
+        <h4>Riesgos biológicos:</h4>
+        <p>exposiciones agentes patógenos, contacto con sustancias químicas, riesgo de exposición a radiaciones.</p>
+      </div>
+      <div class="riesgo-block">
+        <h4>Riesgos psicológicos:</h4>
+        <p>ansiedad y depresión moderada.</p>
+      </div>
+      <div class="riesgo-block">
+        <h4>Riesgos ambientales:</h4>
+        <p>contaminación del aire, agua o suelo, sismos, inundaciones, deforestación.</p>
+      </div>
+
+      <hr style="border:none; border-top:1px solid rgba(0,0,0,0.1); margin:14px 0;">
+
+      <div class="grupo-card">
+        <h4>Niñez (0 a 23 meses)</h4>
+        <p><span class="sub-label">RN:</span> controles prenatales insuficientes, bajo peso al nacer (&lt;4000gr), parto pretérmino &lt;37 Semanas, complicaciones perinatales, gemelar o más, antecedentes de enfermedad aguda o crónica de la madre, madre adolescente, dificultad con lactancia materna, malas condiciones higiénico-sanitarias, riesgo socioeconómico, maltrato y negligencia en el cuidado.</p>
+        <p style="margin-top:6px;"><span class="sub-label">Lactante:</span> enfermedades diarreicas y respiratorias recurrentes, esquema de vacunación incompleto, dificultad con lactancia materna, problemas identificados en la alimentación complementaria, lactante con número de controles insuficientes, maltrato y negligencia en el cuidado.</p>
+      </div>
+      <div class="grupo-card">
+        <h4>Niñez (2 a 9 años)</h4>
+        <p>Enfermedades diarreicas y respiratorias recurrentes, vacunación incompleta, problemas identificados en la alimentación por exceso y por déficit, sedentarismo, controles de salud insuficientes, maltrato y negligencia en el cuidado, malas condiciones higiénico-sanitarias, riesgo socioeconómico, acoso escolar, uso de dispositivos electrónicos (más de 2 horas al día).</p>
+      </div>
+      <div class="grupo-card">
+        <h4>Adolescente (10 a 19 años)</h4>
+        <p>Antecedentes de enfermedades agudas recurrentes, problemas identificados en la alimentación por exceso y por déficit, sedentarismo, inicio precoz de actividad sexual, conducta sexual de riesgo, consumo problemático de tabaco, alcohol y drogas, riesgo socioeconómico, intento autolítico, miembro de familia disfuncional.</p>
+      </div>
+      <div class="grupo-card">
+        <h4>Adultos (20 a 64 años)</h4>
+        <p>Individuo con antecedentes familiares de enfermedad crónica, problemas identificados en la alimentación por exceso y por déficit, sedentarismo, conductas sexuales de riesgo, consumo problemático de tabaco, alcohol y drogas, riesgo socioeconómico, intento autolítico, violencia intrafamiliar.</p>
+      </div>
+      <div class="grupo-card">
+        <h4>Adultos mayores (Más de 65 años)</h4>
+        <p>Riesgo de caída, fragilidad, problemas identificados en la alimentación por exceso o por déficit, condición de abandono o mendicidad, sin redes de apoyo.</p>
+      </div>
+      <div class="grupo-card">
+        <h4>Embarazadas</h4>
+        <p>Escala de Riesgo obstétrico, riesgo bajo o tipo 0 (0–3) (valorar antecedentes obstétricos, factores socioeconómicos, factores nutricionales, patología pélvico-vaginal, patología materna no crónica, factor por discapacidad).</p>
+      </div>
+    </div>
+
+    <!-- Grupo III -->
+    <div class="grupo-panel" id="panel-3">
+      <div class="grupo-title">Grupo III: Con Patologías Crónicas</div>
+      <div class="grupo-desc">Esta categoría incluye a todo individuo con enfermedades crónicas (transmisibles o no transmisibles) compensadas o no compensadas, o trastornos neurológicos severos, consumo problemático de sustancias y riesgo suicida.</div>
+    </div>
+
+    <!-- Grupo IV -->
+    <div class="grupo-panel" id="panel-4">
+      <div class="grupo-title">Grupo IV: Con Discapacidad</div>
+      <div class="grupo-desc">Esta categoría incluye a todo individuo con una alteración temporal o definitiva de sus capacidades motoras, funcionales, sensoriales o psíquicas.</div>
+    </div>
+  </div>
+
+  <!-- ============ CLASIFICACIÓN DE RIESGO ============ -->
+  <div class="section">
+    <div class="section-h">Clasificación de Riesgo Familiar (2008)</div>
+    <p class="section-sub">Haz clic en la celda correspondiente de cada categoría. El puntaje total se calcula automáticamente.</p>
+
+    <div class="table-wrap">
+      <table class="risk" id="risk-table">
+        <thead>
+          <tr>
+            <th class="col-cat">RIESGO</th>
+            <th class="col-score s0"><span class="pts">0</span> Sin Riesgo</th>
+            <th class="col-score s1"><span class="pts">1</span> Riesgo Muy Bajo</th>
+            <th class="col-score s2"><span class="pts">2</span> Riesgo Bajo</th>
+            <th class="col-score s3"><span class="pts">3</span> Riesgo Moderado</th>
+            <th class="col-score s4"><span class="pts">4</span> Riesgo Alto</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-row="1">
+            <td class="cat-name">1. Personas con vacunación incompleta</td>
+            <td class="cell-score" data-score="0">vacunas completas para la edad</td>
+            <td class="cell-score" data-score="1">Al momento de la visita no presentan carnet.</td>
+            <td class="cell-score" data-score="2">Vacunas con retraso con posibilidad de intervención</td>
+            <td class="cell-score" data-score="3">Esquema atrasado sin posibilidad de intervención, cualquiera que fuere.</td>
+            <td class="cell-score" data-score="4">No se aplicó alguna vacuna del esquema nacional</td>
+          </tr>
+          <tr data-row="2">
+            <td class="cat-name">2. Personas con malnutrición</td>
+            <td class="cell-score" data-score="0">Sin problemas de malnutrición</td>
+            <td class="cell-score" data-score="1">Malos hábitos alimenticios</td>
+            <td class="cell-score" data-score="2">No recibe micronutrientes</td>
+            <td class="cell-score" data-score="3">Personas con sobrepeso o riesgo de desnutrición</td>
+            <td class="cell-score" data-score="4">Personas con obesidad, desnutrición, anemia leve, grave o moderada</td>
+          </tr>
+          <tr data-row="3">
+            <td class="cat-name">3. Personas con enfermedades de impacto</td>
+            <td class="cell-score" data-score="0">Sin enfermedades de impacto</td>
+            <td class="cell-score" data-score="1">Enfermedad aguda en el momento de la visita domiciliaria / antecedentes familiares de personas con enfermedades de impacto.</td>
+            <td class="cell-score" data-score="2">Enfermedades de impacto no transmisibles que no afectan sus actividades diarias y sin complicaciones</td>
+            <td class="cell-score" data-score="3">Enfermedades de impacto no transmisibles que afectan sus actividades diarias y/o complicaciones</td>
+            <td class="cell-score" data-score="4">Enfermedades de impacto transmisibles que necesitan tratamiento permanente, enfermedades catastróficas.</td>
+          </tr>
+          <tr data-row="4">
+            <td class="cat-name">4. Embarazadas con problemas</td>
+            <td class="cell-score" data-score="0">No existen embarazadas</td>
+            <td class="cell-score" data-score="1">Existe al menos una embarazada sin problemas</td>
+            <td class="cell-score" data-score="2">Existe al menos una embarazada con antecedentes obstétricos personales y/o familiares</td>
+            <td class="cell-score" data-score="3">Embarazo en adolescentes, mayor de 35 años, multípara, embarazo gemelar. Infecciones de vías urinarias, anemia, problemas nutricionales, ganancia no adecuada de peso.</td>
+            <td class="cell-score" data-score="4">Embarazadas con enfermedades crónicas transmisibles y no transmisibles graves</td>
+          </tr>
+          <tr data-row="5">
+            <td class="cat-name">5. Personas con discapacidad</td>
+            <td class="cell-score" data-score="0">Sin problemas</td>
+            <td class="cell-score" data-score="1">Discapacidad que no afecta AVD.</td>
+            <td class="cell-score" data-score="2">Persona ≤65 años con discapacidad leve, o persona ≥65 años con discapacidad leve/moderada con familiar que le ayude / labio leporino o paladar hendido</td>
+            <td class="cell-score" data-score="3">Persona ≤65 años con discapacidad moderada que no vive sola, o persona ≥65 años con discapacidad severa con persona que le asista / discapacidad de nacimiento, auditiva o visual</td>
+            <td class="cell-score" data-score="4">Persona ≤65 años con discapacidad severa, o persona ≥65 años con discapacidad sin asistencia familiar y que afecte AVD</td>
+          </tr>
+          <tr data-row="6">
+            <td class="cat-name">6. Personas con problemas mentales</td>
+            <td class="cell-score" data-score="0">No existen personas con problemas</td>
+            <td class="cell-score" data-score="1">Retraso en el aprendizaje / antecedentes familiares de problemas de salud mental</td>
+            <td class="cell-score" data-score="2">Retraso mental leve, depresión, bipolaridad, ansiedad, fobias que afectan actividades cotidianas / trastornos de conducta</td>
+            <td class="cell-score" data-score="3">Retraso mental moderado, adulto mayor con pérdida de memoria / problemas no orgánicos (neuróticos)</td>
+            <td class="cell-score" data-score="4">Retraso mental grave, demencia senil / problemas mentales orgánicos (psicóticos). Intentos suicidas.</td>
+          </tr>
+          <tr data-row="7">
+            <td class="cat-name">7. Consumo de agua insegura</td>
+            <td class="cell-score" data-score="0">Agua potable y conectada por tubería dentro del hogar</td>
+            <td class="cell-score" data-score="1">Agua potable, pero no conectada por tubería dentro de la vivienda</td>
+            <td class="cell-score" data-score="2">Agua entubada no potable (red pública o comunitaria sin proceso de potabilización), conectada por tubería en la vivienda</td>
+            <td class="cell-score" data-score="3">Agua no potable y no entubada (red pública o comunitaria) sin conexión de tubería en la vivienda</td>
+            <td class="cell-score" data-score="4">Agua de pozo, río, acequia, lluvia o de carro repartidor</td>
+          </tr>
+          <tr data-row="8">
+            <td class="cat-name">8. Mala eliminación de basura y excretas</td>
+            <td class="cell-score" data-score="0">Carro recolector al menos una vez por semana</td>
+            <td class="cell-score" data-score="1">Recolección de basura con frecuencia mayor a una semana y alcantarillado con tratamiento de aguas residuales</td>
+            <td class="cell-score" data-score="2">Arrojan basura a terreno baldío / alcantarillado sin tratamiento de aguas residuales, fosa séptica</td>
+            <td class="cell-score" data-score="3">Queman o entierran / pozo ciego</td>
+            <td class="cell-score" data-score="4">Arrojan a río, acequia o canal o la eliminan de otra forma</td>
+          </tr>
+          <tr data-row="9">
+            <td class="cat-name">9. Mala eliminación de desechos líquidos</td>
+            <td class="cell-score" data-score="0">Elimina en alcantarillado con tratamiento de aguas residuales</td>
+            <td class="cell-score" data-score="1">Elimina en alcantarillado sin tratamiento de aguas residuales / biodigestor</td>
+            <td class="cell-score" data-score="2">Elimina en pozo ciego o séptico independiente</td>
+            <td class="cell-score" data-score="3">Elimina en el mismo pozo de los desechos sólidos o en zanjas hechas en el terreno / descarga directa a río o quebrada</td>
+            <td class="cell-score" data-score="4">Elimina en el terreno directamente</td>
+          </tr>
+          <tr data-row="10">
+            <td class="cat-name">10. Impacto ecológico por industrias</td>
+            <td class="cell-score" data-score="0">No existe presencia de industria contaminante dentro de la comunidad</td>
+            <td class="cell-score" data-score="1">Industrias que tratan sus desechos</td>
+            <td class="cell-score" data-score="2">Existe una industria contaminante dentro de la comunidad / invernaderos cercanos</td>
+            <td class="cell-score" data-score="3">Industria contaminante a menos de 500 metros del hogar</td>
+            <td class="cell-score" data-score="4">Industria contaminante a menos de 100 metros del hogar / industrias que no tratan sus desechos</td>
+          </tr>
+          <tr data-row="11">
+            <td class="cat-name">11. Animales intradomiciliarios</td>
+            <td class="cell-score" data-score="0">No hay animales en el domicilio o están a una distancia correcta</td>
+            <td class="cell-score" data-score="1">La familia posee animales domésticos (gato, perro) fuera del domicilio</td>
+            <td class="cell-score" data-score="2">Establos o animales de granja a menos de 20 metros de la vivienda / gallinas que entran a la casa</td>
+            <td class="cell-score" data-score="3">Ingreso esporádico de animales domésticos a espacios internos / chancheras, corrales cerca</td>
+            <td class="cell-score" data-score="4">Permanencia de animales domésticos dentro de la vivienda o presencia de animales no domésticos / cuyes dentro del domicilio</td>
+          </tr>
+          <tr data-row="12">
+            <td class="cat-name">12. Pobreza</td>
+            <td class="cell-score" data-score="0">No hay pobreza</td>
+            <td class="cell-score" data-score="1">Ingresos familiares duplican la canasta básica</td>
+            <td class="cell-score" data-score="2">Ingresos de la familia cubren la canasta básica</td>
+            <td class="cell-score" data-score="3">Cobra el bono o ingresos familiares menores a $57,29 por persona</td>
+            <td class="cell-score" data-score="4">No cobra el bono y lo necesita; ingreso familiar menor a $32,28 por persona</td>
+          </tr>
+          <tr data-row="13">
+            <td class="cat-name">13. Analfabetismo del padre o de la madre</td>
+            <td class="cell-score" data-score="0">Padre y madre saben leer y escribir; al menos uno aprobó educación superior</td>
+            <td class="cell-score" data-score="1">Padre y madre saben leer y escribir; al menos uno aprobó educación secundaria (colegio)</td>
+            <td class="cell-score" data-score="2">Padre y madre saben leer y escribir, pero uno o ambos solo asistieron a educación primaria</td>
+            <td class="cell-score" data-score="3">Solo el padre o solo la madre no sabe leer y escribir</td>
+            <td class="cell-score" data-score="4">El padre y la madre no saben leer ni escribir</td>
+          </tr>
+          <tr data-row="14">
+            <td class="cat-name">14. Desestructuración familiar</td>
+            <td class="cell-score" data-score="0">Familia sin desestructuración / hogares nucleares</td>
+            <td class="cell-score" data-score="1">En el último año ha fallecido algún familiar de hasta segundo grado de consanguinidad / pareja en conflicto</td>
+            <td class="cell-score" data-score="2">Niño o adolescente con padres que laboran dentro del país pero los ven cada semana, 15 días o un mes / viudez, dos adultos mayores solos, adulto mayor solo</td>
+            <td class="cell-score" data-score="3">Niño con padres divorciados o solo vive con uno porque el otro está fuera del país / padrastro o madrastra, madre soltera, adulto mayor de 80 años</td>
+            <td class="cell-score" data-score="4">Niño o adolescente con ambos padres fuera del país, o que hayan fallecido los dos padres / madre soltera, jefe de hogar migrante, divorcio</td>
+          </tr>
+          <tr data-row="15">
+            <td class="cat-name">15. Violencia / alcoholismo / drogadicción</td>
+            <td class="cell-score" data-score="0">No consumen alcohol</td>
+            <td class="cell-score" data-score="1">Consumidores sin dependencia ni afectación social, familiar, económica o afectiva</td>
+            <td class="cell-score" data-score="2">Abuso de consumo de alcohol sin dependencia, con afectación social, familiar, económica o afectiva / alcoholismo o dependencia en recuperación</td>
+            <td class="cell-score" data-score="3">Consumidores con dependencia y afectación. Síndrome de abstinencia. Fumadores / consumo frecuente de alcohol, cigarrillo u otra sustancia que cause dependencia</td>
+            <td class="cell-score" data-score="4">Dependencia absoluta de alcohol o consumo de sustancias psicotrópicas en cualquier cantidad / alcoholismo, drogadicción, violencia física o psicológica a hijos o pareja</td>
+          </tr>
+          <tr data-row="16">
+            <td class="cat-name">16. Malas condiciones de la vivienda</td>
+            <td class="cell-score" data-score="0">Techo de asbesto, eurolit u hormigón; pared de hormigón, ladrillo, bloque o adobe; piso de hormigón, tabla (con o sin tratar) o cerámica</td>
+            <td class="cell-score" data-score="1">Techo predominantemente de zinc o piso de ladrillo/cemento / casa de bloque en buenas condiciones</td>
+            <td class="cell-score" data-score="2">Techo predominantemente de teja / casa de adobe en buenas condiciones</td>
+            <td class="cell-score" data-score="3">Techo de palma, paja u hoja, o pared de tabla o bahareque / casa de adobe con servicios básicos en regular condición</td>
+            <td class="cell-score" data-score="4">Techo de otros materiales no incluidos antes, o piso de tierra y paredes que no aíslan / casa de adobe sin servicios</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Score display -->
+    <div class="score-bar">
+      <div class="score-card">
+        <div class="label">Categorías evaluadas</div>
+        <div class="value"><span id="answered">0</span><span class="out-of">/16</span></div>
+        <div class="sub">Selecciona una opción por categoría</div>
+      </div>
+      <div class="score-card">
+        <div class="label">Puntaje total</div>
+        <div class="value"><span id="total-score">0</span><span class="out-of">/64</span></div>
+        <div class="sub">Suma de los riesgos seleccionados</div>
+      </div>
+      <div class="score-card classification lvl-0" id="classification-card">
+        <div class="label">Clasificación</div>
+        <div class="value" id="classification-text">Sin evaluar</div>
+        <div class="sub" id="classification-sub">Completa la tabla para clasificar</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn ghost" id="btn-reset">🗑 Reiniciar selecciones</button>
+      <button class="btn" id="btn-print">🖨 Imprimir / PDF</button>
+    </div>
+
+    <div class="scale-info">
+      <b>Interpretación del puntaje (16 categorías × 4 puntos = 64 máx):</b>
+      <ul>
+        <li><b>0 – 15 puntos</b> · Familia sin riesgo / riesgo bajo</li>
+        <li><b>16 – 31 puntos</b> · Familia con riesgo medio</li>
+        <li><b>32 – 47 puntos</b> · Familia con riesgo alto</li>
+        <li><b>48 – 64 puntos</b> · Familia con riesgo extremo</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  /* ============ Dispensarización tabs ============ */
+  document.querySelectorAll('.grupo-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const g = btn.dataset.group;
+      document.querySelectorAll('.grupo-tab').forEach(t => t.classList.toggle('active', t === btn));
+      document.querySelectorAll('.grupo-panel').forEach(p => {
+        p.classList.toggle('active', p.id === 'panel-' + g);
+      });
+    });
+  });
+
+  /* ============ Risk classification ============ */
+  const STORAGE_KEY = 'med-notes-risk-classification-v1';
+  const TOTAL_ROWS = 16;
+  const MAX_SCORE = TOTAL_ROWS * 4; // 64
+
+  function classify(score, answered) {
+    if (answered === 0) {
+      return { lvl: 0, label: 'Sin evaluar', sub: 'Completa la tabla para clasificar' };
+    }
+    if (score <= 15)  return { lvl: 0, label: 'Sin riesgo / riesgo bajo', sub: 'Familia sin riesgo (0–15 pts)' };
+    if (score <= 31)  return { lvl: 1, label: 'Riesgo medio',             sub: 'Familia en riesgo medio (16–31 pts)' };
+    if (score <= 47)  return { lvl: 2, label: 'Riesgo alto',              sub: 'Familia en riesgo alto (32–47 pts)' };
+    return              { lvl: 3, label: 'Riesgo extremo',           sub: 'Familia en riesgo extremo (48–64 pts)' };
+  }
+
+  function recomputeScore() {
+    let total = 0;
+    let answered = 0;
+    document.querySelectorAll('#risk-table tbody tr').forEach(tr => {
+      const sel = tr.querySelector('.cell-score.selected');
+      if (sel) {
+        total += parseInt(sel.dataset.score, 10);
+        answered++;
+      }
+    });
+    document.getElementById('total-score').textContent = total;
+    document.getElementById('answered').textContent = answered;
+    const c = classify(total, answered);
+    const card = document.getElementById('classification-card');
+    card.className = 'score-card classification lvl-' + c.lvl;
+    document.getElementById('classification-text').textContent = c.label;
+    document.getElementById('classification-sub').textContent = c.sub;
+  }
+
+  function saveState() {
+    const state = {};
+    document.querySelectorAll('#risk-table tbody tr').forEach(tr => {
+      const row = tr.dataset.row;
+      const sel = tr.querySelector('.cell-score.selected');
+      if (sel) state[row] = sel.dataset.score;
+    });
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
+  }
+
+  function loadState() {
+    try {
+      const state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      Object.entries(state).forEach(([row, score]) => {
+        const tr = document.querySelector(`#risk-table tbody tr[data-row="${row}"]`);
+        if (!tr) return;
+        const cell = tr.querySelector(`.cell-score[data-score="${score}"]`);
+        if (cell) cell.classList.add('selected');
+      });
+    } catch(e){}
+  }
+
+  document.querySelectorAll('#risk-table .cell-score').forEach(cell => {
+    cell.addEventListener('click', () => {
+      const tr = cell.closest('tr');
+      tr.querySelectorAll('.cell-score').forEach(c => c.classList.remove('selected'));
+      cell.classList.add('selected');
+      recomputeScore();
+      saveState();
+    });
+  });
+
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    if (!confirm('¿Reiniciar todas las selecciones de la tabla de riesgo?')) return;
+    document.querySelectorAll('#risk-table .cell-score.selected').forEach(c => c.classList.remove('selected'));
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+    recomputeScore();
+  });
+
+  document.getElementById('btn-print').addEventListener('click', () => window.print());
+
+  loadState();
+  recomputeScore();
+</script>
+
+</body>
+</html>
