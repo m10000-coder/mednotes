@@ -178,24 +178,24 @@
     width: 100%;
     border: none;
     cursor: pointer;
-    border-radius: 10px;
-    padding: 16px 12px;
+    border-radius: 9px;
+    padding: 12px 10px;
     color: #fff;
     text-align: center;
-    font: 700 13px 'Inter', sans-serif;
+    font: 700 12px 'Inter', sans-serif;
     line-height: 1.3;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     transition: all .18s;
-    display: flex; flex-direction: column; align-items: center; gap: 10px;
-    min-height: 130px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    min-height: 100px;
     justify-content: center;
   }
   .etapa-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.16);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.14);
   }
   .etapa-card.active {
-    box-shadow: 0 0 0 3px #1e293b, 0 6px 16px rgba(0,0,0,0.18);
+    box-shadow: 0 0 0 3px #1e293b, 0 5px 12px rgba(0,0,0,0.16);
   }
   .etapa-card.g-sospecha { background: #9333ea; }
   .etapa-card.g-captacion { background: #dc2626; }
@@ -203,7 +203,7 @@
   .etapa-card.g-puerperio { background: #0d9488; }
 
   .etapa-card-icon {
-    width: 60px; height: 60px;
+    width: 44px; height: 44px;
     display: flex; align-items: center; justify-content: center;
     position: relative;
   }
@@ -211,19 +211,19 @@
   .etapa-card-icon::after {
     content: '✓';
     position: absolute;
-    bottom: -4px; right: -2px;
-    width: 18px; height: 18px;
+    bottom: -3px; right: -2px;
+    width: 15px; height: 15px;
     background: #16a34a;
     color: #fff;
     border-radius: 50%;
-    font-size: 11px;
+    font-size: 9px;
     font-weight: 800;
     display: flex; align-items: center; justify-content: center;
     border: 2px solid #fff;
   }
 
   .etapa-card-title {
-    font-size: 13px;
+    font-size: 11.5px;
     font-weight: 700;
     color: #fff;
     line-height: 1.3;
@@ -308,20 +308,68 @@
     color: var(--muted);
   }
 
+  /* Week range banner above controls box */
+  .week-range {
+    color: #dc2626;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 600;
+    margin: 4px 0 10px;
+    padding-left: 4px;
+  }
+
+  /* Quick links to calculators */
+  .quick-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .quick-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #fff;
+    border: 1.5px solid var(--primary-border);
+    color: var(--primary-dark);
+    border-radius: 999px;
+    font: 600 12.5px 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all .15s;
+    text-decoration: none;
+  }
+  .quick-link:hover {
+    background: var(--primary-soft);
+    border-color: var(--primary);
+    transform: translateY(-1px);
+  }
+  .quick-link::before {
+    content: '➡';
+    font-size: 11px;
+    opacity: 0.7;
+  }
+
   /* Big green container for "Controles y Acciones Clave" */
-  .controles-box {
+  .section.controles-box {
     background: #dcfce7;
     border: 1px solid #86efac;
+    border-bottom: 1px solid #86efac;
     border-radius: 12px;
     padding: 16px 20px;
     margin: 6px 0 14px;
   }
-  .controles-box .section-title {
+  .section.controles-box .section-title {
     color: #15803d;
     margin-bottom: 12px;
+    text-decoration: underline;
   }
-  .controles-box .check-list li strong {
+  .section.controles-box .check-list li strong {
     background: #fef9c3;
+  }
+  .section.controles-box .check-list li ul.nested li strong {
+    background: transparent;
+    padding: 0;
   }
 
   /* Vaccine list — uses syringe icon */
@@ -1439,17 +1487,20 @@ const ETAPAS = {
   sosp_normal: {
     group: 'g-sospecha',
     title: 'Sospecha de embarazo',
-    sub: 'En esta consulta te centrarás sobretodo en descartar otras causas de amenorrea, aclarar dudas y solicitar exámenes para confirmar el embarazo.',
+    sub: 'En esta consulta te centrarás sobre todo en descartar otras causas de amenorrea, aclarar dudas y solicitar exámenes para confirmar el embarazo.',
     sections: [
-      { title: '✅ CONTROLES Y ACCIONES CLAVE', items: [
-        'Historia clínica detallada, registro de <strong>FUM</strong> y sintomatología sugestiva.',
-        'Registro de <strong>peso / talla / presión arterial / altura uterina</strong> (si es el caso)',
-        '<strong>Exámenes:</strong> βHCG en sangre',
-        'Puedes pedir un <strong>eco obstétrico</strong>: &gt; 6 semanas (valoración de latido cardíaco)',
-        'Reagendar cita para verificar embarazo con resultado de βHCG'
-      ]},
+      { title: '✅ Controles y Acciones Clave',
+        box: true,
+        items: [
+          'Historia clínica detallada, registro de <strong>FUM</strong> y sintomatología sugestiva.',
+          'Registro de <strong>peso / talla / presión arterial / altura uterina</strong> (si es el caso)',
+          '<strong style="color:#15803d;">Exámenes:</strong> <strong>βHCG en sangre</strong>',
+          'Puedes pedir un <strong style="color:#2563eb;">eco obstétrico</strong>: <strong>&gt; 6 semanas</strong> (valoración de latido cardíaco)',
+          'Reagendar cita para verificar embarazo con resultado de βHCG'
+        ]
+      },
       { alert: true, html: `<strong>🚨 Es de vital importancia, que realices la captación de embarazo solo cuando tengas:</strong>
-        <ol style="margin: 8px 0 8px 20px; line-height:1.6;">
+        <ol style="margin: 8px 0 8px 22px; line-height:1.7;">
           <li><strong style="color:#dc2626;">Prueba βHCG en sangre positiva</strong> (de preferencia, se puede usar también prueba en orina, aunque tiene más fallos positivos)</li>
           <li><strong style="color:#dc2626;">Hallazgos ecográficos que confirmen embarazo</strong> (latido fetal, presencia de embrión viable, etc.)</li>
         </ol>
@@ -1461,23 +1512,26 @@ const ETAPAS = {
   sosp_ado: {
     group: 'g-sospecha',
     title: 'Sospecha de embarazo adolescente',
-    sub: 'En el embarazo adolescente, tienes que tener mucho cuidado de todo lo que vayas a realizar. Esta consulta te centrarás sobretodo en descartar violencia sexual, luego en otras causas de amenorrea, aclarar dudas y solicitar exámenes para confirmar el embarazo.',
+    sub: 'En el embarazo adolescente, tienes que tener mucho cuidado de todo lo que vayas a realizar. Esta consulta te centrarás sobre todo en descartar violencia sexual, luego en otras causas de amenorrea, aclarar dudas y solicitar exámenes para confirmar el embarazo.',
     sections: [
-      { title: '✅ CONTROLES Y ACCIONES CLAVE', items: [
-        'Historia clínica detallada, registro de <strong>FUM</strong> y sintomatología sugestiva.',
-        'Registro de <strong>peso / talla / presión arterial / altura uterina</strong> (si es el caso)',
-        '<strong>Exámenes:</strong> βHCG en sangre',
-        'Puedes pedir un <strong>eco obstétrico</strong>: &gt; 6 semanas (valoración de latido cardíaco)',
-        'Reagendar cita para verificar embarazo con resultado de βHCG'
-      ]},
+      { title: '✅ Controles y Acciones Clave',
+        box: true,
+        items: [
+          'Historia clínica detallada, registro de <strong>FUM</strong> y sintomatología sugestiva.',
+          'Registro de <strong>peso / talla / presión arterial / altura uterina</strong> (si es el caso)',
+          '<strong style="color:#15803d;">Exámenes:</strong> <strong>βHCG en sangre</strong>',
+          'Puedes pedir un <strong style="color:#2563eb;">eco obstétrico</strong>: <strong>&gt; 6 semanas</strong> (valoración de latido cardíaco)',
+          'Reagendar cita para verificar embarazo con resultado de βHCG'
+        ]
+      },
       { alert: true, html: `<strong>🚨 Es de vital importancia, que realices la captación de embarazo solo cuando tengas:</strong>
-        <ol style="margin: 8px 0 8px 20px; line-height:1.6;">
+        <ol style="margin: 8px 0 8px 22px; line-height:1.7;">
           <li><strong style="color:#dc2626;">Prueba βHCG en sangre positiva</strong> (de preferencia, se puede usar también prueba en orina, aunque tiene más fallos positivos)</li>
           <li><strong style="color:#dc2626;">Hallazgos ecográficos que confirmen embarazo</strong> (latido fetal, presencia de embrión viable, etc.)</li>
         </ol>
         Nunca catalogues a una mujer como embarazada sin esto, por más que ella te diga que tiene síntomas y amenorrea.`
       },
-      { alert: true, html: `<strong>🚨 Ten mucho cuidado con estas pacientes:</strong> si es <strong>menor de 14 años</strong>, o muestra <strong>signos sugestivos de violencia</strong>, debes activar <strong style="color:#7c2d12;">CÓDIGO PÚRPURA</strong>. Si no cumple estas condiciones, solicita los exámenes y determina si el embarazo es positivo o negativo.`
+      { alert: true, html: `<strong>🚨 Ten mucho cuidado con estas pacientes:</strong> si es <strong>menor de 14 años</strong>, o muestra <strong>signos sugestivos de violencia</strong>, debes activar <strong style="color:#7c2d12; background:#e9d5ff; padding:1px 6px; border-radius:3px;">CÓDIGO PÚRPURA</strong>. Si no cumple estas condiciones, solicita los exámenes y determina si el embarazo es positivo o negativo.`
       }
     ]
   },
@@ -1487,218 +1541,258 @@ const ETAPAS = {
     title: 'Captación de embarazo y 1° control',
     sub: 'Una vez tengas los resultados de la βHCG en sangre o la ecografía que confirmen el embarazo, debes realizar la captación de la embarazada y el primer control prenatal.',
     sections: [
-      { title: '✅ CONTROLES Y ACCIONES CLAVE', items: [
-        '<strong>Verificar prueba de embarazo positiva</strong> o ecografía con feto viable.',
-        '<strong>Historia clínica completa / examen físico</strong>'
-      ],
-        sublist: [
-          'Cálculo de <strong>FUM / Edad gestacional / FPP</strong>',
-          'Registro de <strong>peso / talla / presión arterial / FCF / altura uterina</strong>'
+      { title: '✅ Controles y Acciones Clave',
+        box: true,
+        items: [
+          '<strong>Verificar prueba de embarazo positiva</strong> o ecografía con feto viable.',
+          { text: '<strong>Historia clínica completa / examen físico</strong>',
+            children: [
+              'Cálculo de <strong>FUM / Edad gestacional / FPP</strong>',
+              'Registro de <strong>peso / talla / presión arterial / FCF / altura uterina</strong>'
+            ]
+          },
+          '<strong>Entrega de carnet perinatal y registro</strong> 📕',
+          '<strong>Referir a odontología:</strong> examen odontológico 🦷',
+          { text: '<strong style="color:#15803d;">Solicitar exámenes de laboratorio:</strong>',
+            children: [
+              'Grupo sanguíneo y factor Rh+, Biometría hemática, Descartar incompatibilidad del grupo y factor Rh+, Tamizaje VIH, VDRL, hepatitis B (antígeno de superficie sérico), glucosa en ayunas, función tiroidea, AST y ALT, Chagas, EMO – Urocultivo, Pruebas TORCH.'
+            ]
+          },
+          'Realizar 🩸 <strong style="color:#dc2626;">Valoración de Hemoglobina</strong>',
+          { text: 'Iniciar 💊 <strong style="color:#ea580c;">Suplementación</strong>',
+            children: [
+              'Prescripción de <strong>Hierro + Ácido Fólico</strong> (0.4 mg de ácido fólico + 60 mg hierro elemental)'
+            ]
+          },
+          'Solicitar 🩻 <strong style="color:#2563eb;">Primer eco obstétrico:</strong> semana 11–14 (valoración de cromosomopatías)',
+          'Solicitar <strong style="color:#2563eb;">Citología vaginal (papanicolau)</strong>',
+          '<strong>Vacunación Influenza</strong> según historial.',
+          { text: '<strong>Consejería y Planificación</strong> del parto y transporte.',
+            children: [
+              { text: 'Informar:',
+                children: [
+                  'Cambios fisiológicos, Actividad física, Hábitos, <strong style="color:#dc2626;">Signos de alarma</strong>'
+                ]
+              },
+              'Referencia si existen factores de riesgo para <strong>Sx Down</strong> (+35 años, antecedente familiar o personal de malformaciones congénitas)'
+            ]
+          },
+          { text: '<strong>Verificar adscripción territorial</strong>',
+            children: [ '📋 <strong>Admisión</strong>' ]
+          }
+        ],
+        quickLinks: [
+          { tab: 'hb', text: '🩸 Calculadora de Hemoglobina' },
+          { tab: 'hierro', text: '💊 Dosis de Hierro' },
+          { tab: 'peso', text: '📊 Ganancia de Peso (IMC)' }
         ]
       },
-      { title: '', items: [
-        '<strong>Entrega de carnet perinatal y registro</strong> 📕',
-        '<strong>Referir a odontología:</strong> examen odontológico 🦷',
-        '<strong style="color:#15803d;">Solicitar exámenes de laboratorio:</strong>'
-      ],
-        sublist: [
-          'Grupo sanguíneo y factor Rh+, Biometría hemática, Descartar incompatibilidad del grupo y factor Rh+, Tamizaje VIH, VDRL, hepatitis B (antígeno de superficie sérico), glucosa en ayunas, función tiroidea, AST y ALT, Chagas, EMO – Urocultivo, Pruebas TORCH.'
-        ],
-        noBorder: true
-      },
-      { title: '', items: [
-        'Realizar 🩸 <strong style="color:#dc2626;">Valoración de Hemoglobina</strong>',
-        'Iniciar 💊 <strong style="color:#ea580c;">Suplementación</strong>'
-      ],
-        sublist: [
-          'Prescripción de <strong>Hierro + Ácido Fólico</strong> (0.4 mg de ácido fólico + 60 mg hierro elemental)'
-        ],
-        noBorder: true
-      },
-      { title: '', items: [
-        'Solicitar 🩻 <strong style="color:#2563eb;">Primer eco obstétrico:</strong> semana 11-14 (valoración de cromosomopatías)',
-        'Solicitar <strong style="color:#2563eb;">Citología vaginal (papanicolau)</strong>',
-        '<strong>Vacunación Influenza</strong> según historial.',
-        '<strong>Consejería y Planificación</strong> del parto y transporte.'
-      ],
-        sublist: [
-          'Informar: Cambios fisiológicos, Actividad física, Hábitos, <strong style="color:#dc2626;">Signos de alarma</strong>',
-          'Referencia si existen factores de riesgo para <strong>Sx Down</strong> (+35 años, antecedente familiar o personal de malformaciones congénitas)'
-        ],
-        noBorder: true
-      },
-      { title: '', items: [
-        '<strong>Verificar adscripción territorial</strong> 📋 Admisión'
-      ],
-        noBorder: true
-      },
       // Preeclampsia interactive calculator
-      { title: '⚠ RIESGO DE PREECLAMPSIA',
-        preeclampsia: true
-      }
+      { preeclampsia: true }
     ]
   },
 
   t1: {
     group: 'g-trimestre',
-    title: 'Control prenatal · 1.er TRIMESTRE',
-    sub: 'CONTROL PRENATAL · Semanas 1 a 13 + 6 días',
-    tip: 'Confirmar viabilidad, descartar embarazo ectópico/molar, evaluar riesgos.',
+    title: '1.er Trimestre',
+    sub: 'Control prenatal del primer trimestre',
+    weekRange: 'De la semana 0 a la 13+6',
     sections: [
-      { title: '📋 EVALUACIÓN', items: [
-        'Confirmar embarazo intrauterino y viabilidad (ecografía)',
-        'Calcular EG por FUM y/o ecografía precoz',
-        'Antropometría: peso, IMC, TA',
-        'Evaluación de riesgos (preeclampsia, DM, anemia)',
-        'Síntomas: náuseas, vómitos, mastalgia, fatiga'
-      ]},
-      { title: '🧪 ECOGRAFÍA Y TAMIZAJES', items: [
-        '<strong>Ecografía 11-13.6 semanas:</strong> traslucencia nucal + hueso nasal',
-        '<strong>Tamizaje combinado del 1.er trimestre:</strong> βHCG libre + PAPP-A + TN (cromosomopatías)',
-        'NIPT (test prenatal no invasivo) si está disponible y hay indicación',
-        'Doppler de arterias uterinas: tamizaje de preeclampsia'
-      ]},
-      { title: '💊 SUPLEMENTACIÓN', items: [
-        '<strong>Ácido fólico 0.4-1 mg/día</strong> hasta la semana 12',
-        '<strong>Hierro + ácido fólico</strong> (60 mg Fe + 400 mcg) — profilaxis',
-        'AAS 100-150 mg/noche desde semana 12 si riesgo de preeclampsia'
-      ]},
-      { title: '⚠ SIGNOS DE ALARMA', items: [
-        'Sangrado vaginal',
-        'Dolor abdominal o pélvico intenso',
-        'Vómitos persistentes (hiperémesis)',
-        'Fiebre, disuria, leucorrea anormal'
-      ]}
+      { title: '✅ Controles y Acciones Clave',
+        box: true,
+        items: [
+          { text: '<strong>Historia clínica completa / anamnesis / examen físico completo</strong>',
+            children: [
+              'Cálculo de <strong>FUM / Edad gestacional / FPP</strong>',
+              'Registro de <strong>peso / talla / presión arterial / FCF / altura uterina</strong>'
+            ]
+          },
+          'Evaluar <strong style="color:#dc2626;">signos de alarma</strong> (cefalea, visión borrosa, edemas, sangrado, fiebre).',
+          'Revisar <strong>estado de vacunación</strong> (Td, influenza, COVID-19).',
+          'Verificar si ya tiene el <strong style="color:#6b7280;">Examen odontológico</strong> 🦷',
+          { text: '<strong style="color:#15803d;">Revisión de exámenes pedidos en la captación:</strong>',
+            children: [
+              '📋 Grupo sanguíneo y factor Rh+, Biometría hemática, Descartar incompatibilidad del grupo y factor Rh+, Tamizaje VIH, VDRL, hepatitis B (antígeno de superficie sérico), glucosa en ayunas, función tiroidea, AST y ALT, Chagas, EMO-Urocultivo, Pruebas TORCH.',
+              '<em>Si hay factores de riesgo o síntomas:</em> realizar pruebas adicionales (toxoplasmosis, hepatitis C, TSH, entre otros).',
+              'Solicitar nuevamente <strong>EMO</strong> (para control de bacteriuria)'
+            ]
+          },
+          'Continuar 💊 <strong style="color:#ea580c;">Suplementación:</strong> Prescripción de <strong>Hierro + Ácido Fólico</strong> (0.4 mg + 60 mg hierro elemental)',
+          'Solicitar: 🩻 <strong style="color:#2563eb;">Primer eco obstétrico:</strong> semana 11–14 (valoración de cromosomopatías)',
+          { text: '<strong>Consejería y Planificación</strong> del parto y transporte.',
+            children: [
+              { text: 'Informar:',
+                children: [
+                  'Cambios fisiológicos, Actividad física, Hábitos, <strong style="color:#dc2626;">Signos de alarma</strong>'
+                ]
+              },
+              'Referencia si existen factores de riesgo para <strong>Sx Down</strong> (+35 años, antecedente familiar o personal de malformaciones congénitas)'
+            ]
+          }
+        ],
+        quickLinks: [
+          { tab: 'hb', text: '🩸 Calculadora de Hemoglobina' },
+          { tab: 'hierro', text: '💊 Dosis de Hierro' },
+          { tab: 'peso', text: '📊 Ganancia de Peso (IMC)' }
+        ]
+      },
+      { preeclampsia: true }
     ]
   },
 
   t2: {
     group: 'g-trimestre',
-    title: 'Control prenatal · 2.º TRIMESTRE',
-    sub: 'CONTROL PRENATAL · Semanas 14 a 27 + 6 días',
-    tip: 'Tamizaje morfológico + tamizaje DM gestacional + valoración nutricional.',
+    title: '2.º Trimestre',
+    sub: 'Control prenatal del segundo trimestre',
+    weekRange: 'Desde la semana 14 hasta la semana 27+6',
     sections: [
-      { title: '📋 EVALUACIÓN', items: [
-        'Antropometría: peso, ganancia ponderal según IMC',
-        'TA, edema, signos de preeclampsia',
-        'Altura uterina (cm) — debe coincidir con EG ± 2',
-        '<strong>Movimientos fetales</strong> (a partir de las 18-20 semanas en multíparas, 20-22 en primigestas)',
-        'Maniobras de Leopold',
-        'FCF con Doppler portátil'
-      ]},
-      { title: '🧪 ECOGRAFÍA Y LABORATORIO', items: [
-        '<strong>Ecografía morfológica 20-24 semanas:</strong> evaluación anatómica detallada',
-        '<strong>PTOG (75 g)</strong> entre 24-28 semanas — tamizaje de DM gestacional',
-        'Hemograma de control, EMO',
-        'Coombs indirecto si Rh negativa (28 sem)',
-        'Cervicometría (si riesgo de parto pretérmino)'
-      ]},
-      { title: '💉 INMUNIZACIONES', items: [
-        '<strong>Tdap</strong> entre semanas 27-36 (idealmente desde semana 27)',
-        '<strong>Influenza</strong> en temporada',
-        'Anti-D (RhoGAM) a las 28 sem si Rh negativa con Coombs indirecto negativo'
-      ]},
-      { title: '⚠ SIGNOS DE ALARMA', items: [
-        'Disminución de movimientos fetales',
-        'Cefalea intensa, escotomas, epigastralgia',
-        'Edema súbito en cara/manos',
-        'Contracciones regulares antes de semana 37',
-        'Pérdida de líquido amniótico'
-      ]}
+      { title: '✅ Controles y Acciones Clave',
+        box: true,
+        items: [
+          { text: '<strong>Historia clínica completa / anamnesis / examen físico completo</strong>',
+            children: [
+              'Cálculo de <strong>FUM / Edad gestacional / FPP</strong>',
+              'Registro de <strong>peso / talla / presión arterial / FCF / altura uterina</strong>'
+            ]
+          },
+          'Evaluar <strong style="color:#dc2626;">signos de alarma</strong> (cefalea, visión borrosa, edemas, sangrado, fiebre).',
+          { text: 'Revisar <strong>estado de vacunación</strong> (Td, influenza, COVID-19).',
+            children: [
+              '💉 Aplicar: <strong style="color:#9333ea;">Tdap</strong> (nuevo esquema – luego de 20 semanas – 1 dosis en cada embarazo)'
+            ]
+          },
+          'Verificar si ya tiene el <strong style="color:#6b7280;">Examen odontológico</strong> 🦷',
+          { text: '<strong style="color:#15803d;">Revisión de exámenes pedidos en la captación:</strong>',
+            children: [
+              'Repetir <strong>VIH, VDRL, EMO y Proteinuria</strong> (después de sem 20).',
+              '<strong>Semana 24:</strong> solicitar <strong>Test de O\'Sullivan</strong> o tamizaje de diabetes gestacional',
+              '<em>Si hay factores de riesgo o síntomas:</em> realizar pruebas adicionales (toxoplasmosis, hepatitis C, TSH, entre otros).',
+              'Solicitar nuevamente <strong>EMO</strong> (para control de bacteriuria)'
+            ]
+          },
+          'Continuar 💊 <strong style="color:#ea580c;">Suplementación:</strong> Prescripción de <strong>Hierro + Ácido Fólico</strong> (0.4 mg + 60 mg hierro elemental)',
+          'Solicitar: 🩻 <strong style="color:#2563eb;">Segundo eco obstétrico</strong> (morfológico, 18–24 sem).',
+          '<strong>Educación prenatal:</strong> Sesiones desde la semana 20.',
+          { text: '<strong>Consejería y Planificación</strong> del parto y transporte.',
+            children: [
+              'Informar: Actividad física, Hábitos, <strong style="color:#dc2626;">Signos de alarma</strong>'
+            ]
+          }
+        ],
+        quickLinks: [
+          { tab: 'hb', text: '🩸 Calculadora de Hemoglobina' },
+          { tab: 'hierro', text: '💊 Dosis de Hierro' },
+          { tab: 'peso', text: '📊 Ganancia de Peso (IMC)' }
+        ]
+      },
+      { preeclampsia: true }
     ]
   },
 
   t3: {
     group: 'g-trimestre',
-    title: 'Control prenatal · 3.er TRIMESTRE',
-    sub: 'CONTROL PRENATAL · Semanas 28 al término',
-    tip: 'Vigilancia estrecha de bienestar fetal y materno. Plan de parto.',
+    title: '3.er Trimestre',
+    sub: 'Control prenatal del tercer trimestre',
+    weekRange: 'Desde la semana 28 hasta el parto',
     sections: [
-      { title: '📋 EVALUACIÓN', items: [
-        'Antropometría: peso, ganancia ponderal acumulada',
-        'TA, búsqueda activa de preeclampsia',
-        '<strong>Altura uterina</strong> y maniobras de Leopold (presentación, posición, situación)',
-        '<strong>FCF</strong> (110-160 lpm)',
-        'Movimientos fetales (≥ 10 movimientos en 12 h)',
-        'Edemas, várices, signos de compresión',
-        'Tacto vaginal en últimas semanas (Bishop)'
-      ]},
-      { title: '🧪 LABORATORIO Y MONITOREO', items: [
-        'Hemograma + Hb a las 32-36 semanas',
-        'Cultivo vagino-rectal (Streptococcus B agalactiae) entre 35-37 semanas',
-        'EMO en cada control',
-        'Ecografía 32-34 semanas (crecimiento fetal, líquido amniótico, placenta)',
-        'NST / Doppler fetal según indicación'
-      ]},
-      { title: '💉 INMUNIZACIONES PENDIENTES', items: [
-        '<strong>Tdap</strong> (si no se aplicó entre 27-36 sem)',
-        'Verificar Anti-D si Rh negativa'
-      ]},
-      { title: '📋 PLAN DE PARTO', items: [
-        'Lugar de atención (1.er, 2.º o 3.er nivel según riesgo)',
-        'Acompañamiento durante el parto',
-        'Plan de lactancia materna',
-        'Plan de anticoncepción posparto',
-        'Signos de inicio de trabajo de parto'
-      ]},
-      { title: '⚠ SIGNOS DE ALARMA', items: [
-        'Disminución de movimientos fetales',
-        'Sangrado vaginal',
-        'Pérdida de líquido amniótico',
-        'Contracciones regulares dolorosas',
-        'Preeclampsia: cefalea, escotomas, epigastralgia, edema'
-      ]}
+      { title: '✅ Controles y Acciones Clave',
+        box: true,
+        items: [
+          { text: '<strong>Historia clínica completa / anamnesis / examen físico completo</strong>',
+            children: [
+              'Cálculo de <strong>FUM / Edad gestacional / FPP</strong>',
+              'Registro de <strong>peso / talla / presión arterial / FCF / altura uterina</strong>'
+            ]
+          },
+          'Evaluar <strong style="color:#dc2626;">signos de alarma</strong> (cefalea, visión borrosa, edemas, sangrado, fiebre).',
+          { text: 'Revisar <strong>estado de vacunación</strong> (Td, influenza, COVID-19).',
+            children: [
+              '💉 Aplicar: <strong style="color:#9333ea;">Tdap</strong> (nuevo esquema – luego de 20 semanas – 1 dosis en cada embarazo)'
+            ]
+          },
+          'Verificar si ya tiene el <strong style="color:#6b7280;">Examen odontológico</strong> 🦷',
+          { text: '<strong style="color:#15803d;">Revisión de exámenes pedidos en la captación:</strong>',
+            children: [
+              '<strong>Biometría hemática</strong> (sem 28)',
+              'Solicitar nuevamente <strong>EMO y proteinuria</strong> (en cada control)'
+            ]
+          },
+          'Continuar 💊 <strong style="color:#ea580c;">Suplementación:</strong> Prescripción de <strong>Hierro + Ácido Fólico</strong> (0.4 mg + 60 mg hierro elemental)',
+          { text: 'Solicitar: 🩻 <strong style="color:#2563eb;">Tercer eco obstétrico</strong> (crecimiento, 30–36 sem).',
+            children: [
+              '<strong>Profilaxis ATB:</strong> si hubo RN previo con infección, parto prematuro, RPM &gt; 18 h, fiebre &gt; 38°'
+            ]
+          },
+          '<strong>Educación prenatal:</strong> Sesiones desde la semana 20.',
+          { text: '<strong>Consejería y Planificación</strong> del parto y transporte.',
+            children: [
+              'Informar: Actividad física, Hábitos, <strong style="color:#dc2626;">Signos de alarma</strong>'
+            ]
+          },
+          '<strong>Referencia de parto a mayor nivel</strong> a las 34 semanas según riesgo obstétrico'
+        ],
+        quickLinks: [
+          { tab: 'hb', text: '🩸 Calculadora de Hemoglobina' },
+          { tab: 'hierro', text: '💊 Dosis de Hierro' },
+          { tab: 'peso', text: '📊 Ganancia de Peso (IMC)' },
+          { tab: 'score', text: '🚨 SCORE MAMA' }
+        ]
+      },
+      { preeclampsia: true }
     ]
   },
 
   puerperio: {
     group: 'g-puerperio',
-    title: 'Control posparto / Puerperio',
-    sub: 'CONTROL POSPARTO · Inmediato (24h), mediato (2-7 d), tardío (8-42 d)',
-    tip: 'El puerperio es un periodo crítico. Vigilancia de hemorragia, infección y depresión posparto.',
+    title: 'Posparto',
+    sub: 'Control de la mujer en el puerperio',
     sections: [
-      { title: '📋 EVALUACIÓN POSPARTO', items: [
-        '<strong>Signos vitales:</strong> TA, FC, FR, T°, SatO₂',
-        '<strong>SCORE MAMA</strong> en cada control posparto (durante hospitalización)',
-        'Involución uterina (altura del fondo uterino)',
-        'Loquios: cantidad, color, olor',
-        'Mamas: lactancia, ingurgitación, grietas',
-        'Heridas (episiotomía, cesárea): infección, dehiscencia',
-        'Estado emocional, vínculo madre-RN'
-      ]},
-      { title: '🍼 LACTANCIA MATERNA', items: [
-        '<strong>Inicio precoz</strong> (1.ª hora postparto)',
-        'Lactancia materna exclusiva hasta los 6 meses',
-        'Técnica adecuada: agarre, posición, succión',
-        'Manejo de problemas: grietas, ingurgitación, mastitis'
-      ]},
-      { title: '💊 SUPLEMENTACIÓN', items: [
-        '<strong>Hierro + ácido fólico</strong> por 3 meses posparto',
-        'Tratamiento de anemia si Hb &lt; 11 g/dL',
-        'Calcio si lactancia materna'
-      ]},
-      { title: '🧠 SALUD MENTAL', items: [
-        'Tamizaje de <strong>depresión posparto</strong> (Edinburgh) a las 2 y 6 semanas',
-        '<strong>Distinguir baby blues vs. depresión vs. psicosis posparto</strong>',
-        'Apoyo emocional y red de soporte familiar'
-      ]},
-      { title: '🌸 ANTICONCEPCIÓN POSPARTO', items: [
-        '<strong>MELA (lactancia materna exclusiva)</strong>: efectivo si LME, amenorrea y &lt; 6 meses',
-        '<strong>Implante subdérmico</strong>: desde el postparto inmediato',
-        '<strong>DIU</strong>: postparto inmediato (&lt; 48 h) o ≥ 6 semanas',
-        'Progestágeno solo (compatible con lactancia)',
-        'Métodos combinados: solo después de 6 sem (con LME) o 3 sem (sin LME)',
-        'Ligadura tubárica: durante cesárea o postparto inmediato'
-      ]},
-      { title: '⚠ SIGNOS DE ALARMA POSPARTO', items: [
-        'Sangrado abundante (&gt; 500 mL parto / &gt; 1000 mL cesárea)',
-        'Fiebre &gt; 38 °C',
-        'Loquios fétidos',
-        'Dolor abdominal intenso, dolor torácico',
-        'Edema o dolor en miembros inferiores (TVP)',
-        'Síntomas de preeclampsia (puede aparecer hasta 6 sem posparto)',
-        'Ideas de hacerse daño o al RN'
-      ]}
+      { title: '✅ Controles y Acciones Clave',
+        box: true,
+        items: [
+          '<strong>Mínimo 3 controles postparto.</strong>',
+          { text: '<strong>Historia clínica / anamnesis y examen físico</strong>',
+            children: [
+              'Medir <strong>presión arterial</strong> y signos vitales completos.',
+              'Evaluar <strong>temperatura corporal</strong> (descartar infección puerperal).',
+              'Valorar el <strong>útero:</strong> altura, consistencia y contracción.',
+              'Revisar <strong>lóquios</strong> (color, cantidad, olor).',
+              'Examinar <strong>mamas:</strong> presencia de grietas, congestión o mastitis.',
+              'Evaluar <strong>herida quirúrgica o perineal</strong> (signos de infección o dehiscencia).',
+              'Valorar <strong>micción y evacuaciones intestinales.</strong>',
+              'Registrar <strong>peso y estado nutricional.</strong>'
+            ]
+          },
+          'Detectar <strong style="color:#dc2626;">signos de alarma postparto.</strong>',
+          'Aplicar <strong style="color:#2563eb;">tamizaje de depresión postparto</strong> (Escala de Edimburgo).',
+          'Continuar 💊 <strong style="color:#ea580c;">Prescripción de Hierro más ácido fólico</strong> (hasta 3 meses).',
+          { text: '<strong style="color:#15803d;">Verificar lactancia materna</strong> 🍼',
+            children: [
+              'Verificar <strong>inicio precoz y técnica de lactancia correcta.</strong>',
+              'Detectar <strong>dolor o grietas en pezones.</strong>',
+              'Evaluar <strong>producción y eyección de leche.</strong>',
+              'Brindar <strong>consejería sobre lactancia exclusiva por 6 meses.</strong>',
+              'Reforzar <strong>alimentación saludable e hidratación materna.</strong>'
+            ]
+          },
+          '<strong>Consejería:</strong> Lactancia materna, planificación familiar, cuidados del recién nacido, alimentación saludable.'
+        ],
+        quickLinks: [
+          { tab: 'hb', text: '🩸 Calculadora de Hemoglobina' },
+          { tab: 'hierro', text: '💊 Dosis de Hierro' },
+          { tab: 'score', text: '🚨 SCORE MAMA' }
+        ]
+      },
+      { alert: true, html: `<strong style="font-size:15px;">🚨 Signos de Alarma Postparto</strong>
+        <ul style="margin: 8px 0 0 20px; line-height:1.7; list-style: disc;">
+          <li><strong>Fiebre &gt; 38 °C</strong> o mal olor en los lóquios.</li>
+          <li><strong>Sangrado abundante</strong> o con coágulos.</li>
+          <li><strong>Dolor abdominal intenso</strong> o malestar general.</li>
+          <li><strong>Enrojecimiento o dolor mamario severo.</strong></li>
+          <li><strong>Dificultad respiratoria,</strong> dolor torácico o palidez marcada.</li>
+          <li><strong>Tristeza profunda,</strong> llanto fácil o pensamientos negativos.</li>
+        </ul>`
+      }
     ]
   }
 };
@@ -1721,6 +1815,10 @@ function renderEtapas() {
         <div class="sub">${e.sub}</div>
       </div>
       <div class="panel-body">`;
+
+    if (e.weekRange) {
+      html += `<div class="week-range">${e.weekRange}</div>`;
+    }
 
     e.sections.forEach((s, idx) => {
       // Alert-only block (no section title/border)
@@ -1775,6 +1873,14 @@ function renderEtapas() {
         html += `<ul class="sub-list">`;
         s.sublist.forEach(sl => html += `<li>${sl}</li>`);
         html += `</ul>`;
+      }
+      // Quick links to calculators
+      if (s.quickLinks && s.quickLinks.length) {
+        html += `<div class="quick-links">`;
+        s.quickLinks.forEach(ql => {
+          html += `<button class="quick-link" data-tab-target="${ql.tab}">${ql.text}</button>`;
+        });
+        html += `</div>`;
       }
       // Tip card after first section (only if section has title/items)
       if (idx === 0 && e.tip) {
@@ -1927,6 +2033,15 @@ document.querySelectorAll('.top-tab').forEach(t => {
     document.getElementById('view-' + t.dataset.tab).classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
+});
+
+/* Quick links inside panels — switch to target tab */
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.quick-link');
+  if (!btn) return;
+  const target = btn.dataset.tabTarget;
+  const tab = document.querySelector(`.top-tab[data-tab="${target}"]`);
+  if (tab) tab.click();
 });
 
 /* ============================================================
