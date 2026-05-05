@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Infusión en UCI · MED NOTES®</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --primary-soft: #dbeafe;
+    --text: #1e293b;
+    --text-light: #475569;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --bg: #eff6ff;
+    --success: #16a34a;
+    --warning: #f97316;
+    --danger: #dc2626;
+    --purple: #7c3aed;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ============ Top Header ============ */
+  .top-header {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 22px;
+    display: flex; align-items: center; gap: 14px;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .brand-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #000; color: #fff;
+    padding: 6px 12px;
+    font: 700 12px 'JetBrains Mono', monospace;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    border-radius: 4px;
+  }
+  .brand-badge .reg { font-size: 8px; vertical-align: top; opacity: 0.85; }
+  .top-header h1 {
+    font-size: 17px; font-weight: 800;
+    color: var(--text); flex: 1;
+  }
+
+  /* ============ Tabs ============ */
+  .tabs {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 0 22px;
+    display: flex;
+    overflow-x: auto;
+    gap: 0;
+    position: sticky; top: 60px; z-index: 49;
+  }
+  .tab {
+    background: none;
+    border: none;
+    padding: 14px 18px;
+    font: 600 13.5px 'Inter', sans-serif;
+    color: var(--text-light);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all .15s;
+  }
+  .tab:hover { color: var(--primary); background: var(--surface-alt); }
+  .tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+    background: var(--primary-soft);
+    font-weight: 700;
+  }
+
+  /* ============ Layout ============ */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 26px 22px 80px;
+  }
+
+  .pane { display: none; }
+  .pane.active { display: block; }
+
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 26px 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid var(--border);
+    margin-bottom: 18px;
+  }
+
+  .card-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 4px;
+    text-align: center;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .card-sub {
+    color: var(--muted);
+    margin-bottom: 22px;
+    font-size: 13.5px;
+    text-align: center;
+  }
+
+  /* ============ Form ============ */
+  .field { margin-bottom: 14px; }
+  .field-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 600px) { .field-row { grid-template-columns: 1fr; } }
+
+  .field-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .field-label .hint {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-left: 6px;
+  }
+
+  .input, select.input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font: 500 14.5px 'Inter', sans-serif;
+    color: var(--text); background: #fff;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .input:focus, select.input:focus {
+    outline: none; border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
+  }
+
+  /* Buttons */
+  .actions {
+    display: flex; gap: 10px;
+    margin-top: 16px;
+  }
+  .btn {
+    flex: 1;
+    padding: 12px 22px;
+    background: var(--primary); color: #fff;
+    border: none; cursor: pointer;
+    font: 700 14px 'Inter', sans-serif;
+    border-radius: 8px;
+    transition: background .15s, transform .12s;
+  }
+  .btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .btn.success { background: var(--success); }
+  .btn.success:hover { background: #15803d; }
+  .btn.danger { background: var(--danger); }
+  .btn.danger:hover { background: #991b1b; }
+
+  /* Drug presets */
+  .presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+  .preset-label {
+    font-size: 12px; color: var(--muted);
+    align-self: center; margin-right: 4px; font-weight: 600;
+  }
+  .preset {
+    background: var(--surface-alt);
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    font: 600 12.5px 'Inter', sans-serif;
+    transition: all .15s;
+  }
+  .preset:hover {
+    background: var(--primary-soft);
+    border-color: var(--primary);
+    color: var(--primary-dark);
+  }
+  .preset.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+
+  /* Result block */
+  .result-block {
+    margin-top: 22px;
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    border-left: 4px solid var(--success);
+    border-radius: 10px;
+    padding: 18px 22px;
+    color: #14532d;
+    display: none;
+  }
+  .result-block.visible { display: block; }
+  .result-block .big {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--success);
+    font-family: 'JetBrains Mono', monospace;
+    margin: 8px 0;
+  }
+  .result-block .label-line {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #166534;
+  }
+  .result-block .breakdown {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(0,0,0,0.15);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: #166534;
+    line-height: 1.7;
+  }
+  .result-block.warning {
+    background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
+    border-left-color: var(--warning);
+    color: #7c2d12;
+  }
+  .result-block.warning .big { color: var(--warning); }
+  .result-block.warning .label-line { color: #9a3412; }
+  .result-block.warning .breakdown { color: #9a3412; }
+
+  /* Formula box */
+  .formula-box {
+    background: var(--surface-alt);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 14px;
+    font: 500 13px 'Inter', sans-serif;
+    color: var(--text-light);
+    line-height: 1.6;
+  }
+  .formula-box code {
+    font-family: 'JetBrains Mono', monospace;
+    background: #fff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--primary-dark);
+    font-size: 12px;
+  }
+
+  /* Drug reference table */
+  .ref-section {
+    margin-top: 18px;
+  }
+  .ref-section h3 {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--primary);
+    margin: 18px 0 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .ref-section h3:first-child { margin-top: 0; }
+
+  .drug-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .drug-table th {
+    background: var(--primary);
+    color: #fff;
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .drug-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .drug-table tr:last-child td { border-bottom: none; }
+  .drug-table tr:nth-child(even) td { background: var(--surface-alt); }
+  .drug-table .drug-name { font-weight: 700; color: var(--text); }
+  .drug-table code {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 11.5px;
+    font-weight: 600;
+  }
+
+  /* Drug card (vasoactivos) */
+  .drug-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    margin-top: 16px;
+  }
+  .drug-card {
+    background: var(--surface-alt);
+    border-radius: 10px;
+    padding: 16px 18px;
+    border-left: 4px solid var(--purple);
+  }
+  .drug-card h4 {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--purple);
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .drug-card .row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px dashed var(--border);
+    font-size: 13px;
+  }
+  .drug-card .row:last-child { border-bottom: none; }
+  .drug-card .row b { color: var(--text); }
+  .drug-card .row .v {
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--purple);
+  }
+
+  /* Example block */
+  .example-block {
+    background: var(--surface-alt);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    border-left: 3px solid var(--primary);
+  }
+  .example-block h4 {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--primary-dark);
+    margin-bottom: 8px;
+  }
+  .example-block ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 8px;
+  }
+  .example-block ul li {
+    font-size: 13.5px;
+    padding: 2px 0;
+    color: var(--text);
+  }
+  .example-block ul li b { color: var(--primary-dark); }
+  .example-block .calc-box {
+    background: #fff;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font: 500 13px 'JetBrains Mono', monospace;
+    color: var(--text);
+    line-height: 1.7;
+    margin-top: 8px;
+    border: 1px solid var(--border);
+  }
+  .example-block .calc-box .res {
+    font-weight: 800;
+    color: var(--success);
+  }
+
+  /* Notes */
+  .notes-box {
+    background: #fef3c7;
+    border-left: 4px solid var(--warning);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #78350f;
+    line-height: 1.6;
+    margin-top: 14px;
+  }
+  .notes-box b { color: #78350f; }
+</style>
+</head>
+<body>
+
+<div class="top-header">
+  <div class="brand-badge">MED NOTES<span class="reg">®</span></div>
+  <h1>💉 Calculadora de Infusión en UCI</h1>
+</div>
+
+<div class="tabs">
+  <button class="tab active" data-pane="calc">🧮 Calculadora</button>
+  <button class="tab" data-pane="vaso">💊 Vasoactivos</button>
+  <button class="tab" data-pane="examples">📚 Ejemplos</button>
+  <button class="tab" data-pane="ref">📋 Referencia</button>
+</div>
+
+<div class="container">
+
+  <!-- ============ CALCULADORA ============ -->
+  <div class="pane active" id="pane-calc">
+    <div class="card">
+      <div class="card-title">💉 Calculadora de Infusión</div>
+      <div class="card-sub">Calcula <b>ml/h</b> a partir de la dosis o <b>mcg/kg/min</b> a partir del volumen administrado</div>
+
+      <div class="field">
+        <label class="field-label">🔁 Tipo de cálculo</label>
+        <select class="input" id="calc-type">
+          <option value="mlh">Calcular ml/h (a partir de dosis prescrita)</option>
+          <option value="dose">Calcular mcg/kg/min (a partir de volumen ml/h)</option>
+        </select>
+      </div>
+
+      <!-- Drug presets -->
+      <div>
+        <span class="preset-label">⚡ Preset de fármaco:</span>
+        <div class="presets" id="drug-presets">
+          <button class="preset" data-conc="80"   data-name="Noradrenalina">Noradrenalina (80 mcg/ml)</button>
+          <button class="preset" data-conc="100"  data-name="Adrenalina">Adrenalina (100 mcg/ml)</button>
+          <button class="preset" data-conc="4000" data-name="Dopamina">Dopamina (4000 mcg/ml)</button>
+          <button class="preset" data-conc="1000" data-name="Dobutamina">Dobutamina (1000 mcg/ml)</button>
+          <button class="preset" data-conc="200"  data-name="Nitroglicerina">Nitroglicerina (200 mcg/ml)</button>
+          <button class="preset" data-conc="500"  data-name="Nitroprusiato">Nitroprusiato (500 mcg/ml)</button>
+        </div>
+      </div>
+
+      <!-- Mode 1: ml/h calculation -->
+      <div id="mode-mlh">
+        <div class="field-row">
+          <div>
+            <label class="field-label">💊 Dosis prescrita <span class="hint">mcg/kg/min</span></label>
+            <input class="input" id="dosis" type="number" min="0" step="0.01" placeholder="Ej. 0.1">
+          </div>
+          <div>
+            <label class="field-label">⚖️ Peso del paciente <span class="hint">kg</span></label>
+            <input class="input" id="peso-1" type="number" min="0" step="0.5" placeholder="Ej. 70">
+          </div>
+        </div>
+        <div class="field-row">
+          <div>
+            <label class="field-label">🧪 Concentración del fármaco <span class="hint">mcg/ml</span></label>
+            <input class="input" id="conc-1" type="number" min="0" step="0.1" placeholder="Ej. 80">
+          </div>
+          <div>
+            <label class="field-label">💧 Volumen total preparado <span class="hint">ml · opcional</span></label>
+            <input class="input" id="vol-prep" type="number" min="0" step="1" placeholder="Ej. 100">
+          </div>
+        </div>
+      </div>
+
+      <!-- Mode 2: dose calculation -->
+      <div id="mode-dose" style="display:none;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">💧 Volumen administrado <span class="hint">ml/h</span></label>
+            <input class="input" id="volumen" type="number" min="0" step="0.1" placeholder="Ej. 6">
+          </div>
+          <div>
+            <label class="field-label">⚖️ Peso del paciente <span class="hint">kg</span></label>
+            <input class="input" id="peso-2" type="number" min="0" step="0.5" placeholder="Ej. 70">
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">🧪 Concentración del fármaco <span class="hint">mcg/ml</span></label>
+          <input class="input" id="conc-2" type="number" min="0" step="0.1" placeholder="Ej. 80">
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn success" id="btn-calc">🔍 Calcular</button>
+        <button class="btn danger" id="btn-reset">♻️ Resetear</button>
+      </div>
+
+      <div class="result-block" id="result">
+        <div class="label-line" id="result-label">Velocidad de infusión:</div>
+        <div class="big" id="result-val">— </div>
+        <div class="breakdown" id="result-break"></div>
+      </div>
+
+      <div class="formula-box">
+        <b>📐 Fórmulas:</b><br>
+        🔵 ml/h = <code>(Dosis mcg/kg/min × Peso × 60) ÷ Concentración mcg/ml</code><br>
+        🔵 mcg/kg/min = <code>(Volumen ml/h × Concentración) ÷ (Peso × 60)</code>
+      </div>
+
+      <div class="notes-box">
+        ⚠️ <b>Recordatorio clínico:</b><br>
+        • Siempre verificar la dilución estándar del servicio antes de programar la bomba.<br>
+        • <b>Dobutamina</b> no debe suspenderse bruscamente.<br>
+        • <b>Vasodilatadores</b>: probar 5 min con monitorización estricta.<br>
+        • <b>Dopamina</b>: a altas dosis tiene efecto vasopresor (útil en shock séptico, bradicardia).
+      </div>
+    </div>
+
+    <!-- ============ Cómo funciona ============ -->
+    <div class="card">
+      <div class="card-title" style="font-size:19px;">🧠 ¿Cómo funciona la Calculadora de Infusión en UCI?</div>
+
+      <p style="margin-bottom:14px; color:var(--text-light); line-height:1.65;">
+        Esta calculadora es una herramienta interactiva diseñada para apoyar al personal de
+        <b>enfermería</b> y <b>médicos</b> en la dosificación precisa de fármacos vasoactivos o inotrópicos
+        como <b>noradrenalina, dopamina, dobutamina o adrenalina</b>. Realiza automáticamente dos tipos
+        de operaciones esenciales:
+      </p>
+
+      <h3 style="font-size:15px; font-weight:800; color:var(--primary); margin:18px 0 10px;">⚙️ Funciones principales</h3>
+
+      <div class="example-block">
+        <h4>🩸 1) Cálculo de la velocidad de infusión (ml/h)</h4>
+        <p style="font-size:13.5px; color:var(--text-light); margin-bottom:8px;">
+          Determina cuántos mililitros por hora se deben administrar al paciente, basándose en la
+          <b>dosis prescrita</b> en mcg/kg/min, el <b>peso</b> del paciente y la <b>concentración</b> del medicamento.
+        </p>
+        <div class="calc-box">
+ml/h = (Dosis mcg/kg/min × Peso × 60) ÷ Concentración mcg/ml
+        </div>
+      </div>
+
+      <div class="example-block">
+        <h4>🔄 2) Cálculo de la dosis administrada (mcg/kg/min)</h4>
+        <p style="font-size:13.5px; color:var(--text-light); margin-bottom:8px;">
+          Permite verificar si la infusión que se está administrando corresponde a la <b>dosis deseada</b>,
+          ideal para ajustar bombas de infusión ya configuradas.
+        </p>
+        <div class="calc-box">
+mcg/kg/min = (Volumen ml/h × Concentración) ÷ (Peso × 60)
+        </div>
+      </div>
+
+      <div class="example-block">
+        <h4>⏱ 3) Duración de la infusión (opcional)</h4>
+        <p style="font-size:13.5px; color:var(--text-light); margin-bottom:8px;">
+          Si llenas el campo <b>"Volumen total preparado"</b>, la calculadora te dirá cuánto tiempo durará
+          la infusión antes de tener que recargar la jeringa o la bolsa.
+        </p>
+        <div class="calc-box">
+Duración (h) = Volumen total preparado (ml) ÷ Velocidad (ml/h)
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ Cómo usarla ============ -->
+    <div class="card">
+      <div class="card-title" style="font-size:19px;">📖 Cómo utilizar la calculadora</div>
+
+      <ol style="padding-left:22px; line-height:1.8;">
+        <li><b>Selecciona el tipo de cálculo</b> en el menú desplegable: ml/h o mcg/kg/min.</li>
+        <li>Si conoces el fármaco que vas a usar, haz clic en uno de los <b>presets</b>
+          (Noradrenalina, Adrenalina, Dopamina, Dobutamina…) para autocompletar la concentración estándar.</li>
+        <li>Llena los campos requeridos: <b>dosis</b> (o volumen), <b>peso</b> y <b>concentración</b>.</li>
+        <li>Opcional: ingresa el <b>volumen total preparado</b> para conocer la duración de la infusión.</li>
+        <li>Presiona <b>"Calcular"</b> para ver el resultado, el desglose paso a paso y la duración (si aplica).</li>
+        <li>Si el resultado supera <b>200 ml/h</b>, la calculadora muestra un aviso de velocidad alta para revisar.</li>
+        <li>Usa <b>"Resetear"</b> para limpiar el formulario y empezar otro cálculo.</li>
+      </ol>
+    </div>
+
+    <!-- ============ Ejemplo práctico ============ -->
+    <div class="card">
+      <div class="card-title" style="font-size:19px;">🧪 Ejemplo práctico</div>
+
+      <div class="example-block">
+        <h4>🩸 Caso clínico: Noradrenalina en shock séptico</h4>
+        <p style="font-size:13.5px; color:var(--text-light); margin-bottom:8px;">
+          Un paciente de <b>80 kg</b> ingresa con diagnóstico de shock séptico. El médico prescribe una dosis
+          de <b>0.1 mcg/kg/min</b> de noradrenalina, con una concentración de <b>80 mcg/ml</b>
+          (según la tabla de diluciones estándar). Se prepara una jeringa de <b>50 ml</b>.
+        </p>
+
+        <p style="font-size:13.5px; margin:8px 0 4px;"><b>❓ ¿A cuántos ml/h se debe programar la bomba?</b></p>
+        <p style="font-size:13.5px; margin-bottom:4px;"><b>❓ ¿Cuánto durará la infusión?</b></p>
+
+        <p style="font-size:13.5px; margin:10px 0 4px;"><b>🔢 Ingreso de datos en la calculadora:</b></p>
+        <ul style="font-size:13.5px; padding-left:22px; margin-bottom:10px;">
+          <li><b>Tipo de cálculo:</b> Calcular ml/h</li>
+          <li><b>Dosis:</b> 0.1</li>
+          <li><b>Peso:</b> 80</li>
+          <li><b>Concentración:</b> 80</li>
+          <li><b>Volumen total preparado (opcional):</b> 50</li>
+        </ul>
+
+        <p style="font-size:13.5px; margin:6px 0;"><b>✅ Resultado:</b></p>
+        <div class="calc-box">
+ml/h = (0.1 × 80 × 60) ÷ 80<br>
+&nbsp;&nbsp;&nbsp;&nbsp; = 480 ÷ 80<br>
+&nbsp;&nbsp;&nbsp;&nbsp; = <span class="res">6 ml/h</span><br>
+<br>
+Duración = 50 ÷ 6 = <span class="res">8.33 h</span> (8 h 20 min)
+        </div>
+        <p style="font-size:13.5px; margin-top:10px;">
+          🟢 Programa la bomba a <b>6 ml/h</b>. La jeringa de 50 ml durará <b>≈8 horas 20 minutos</b>,
+          por lo que deberás preparar la siguiente antes de ese tiempo.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ VASOACTIVOS ============ -->
+  <div class="pane" id="pane-vaso">
+    <div class="card">
+      <div class="card-title">💊 Vasoactivos: Concentración, Dosis y Constantes</div>
+      <div class="card-sub">Referencia rápida para preparación e infusión</div>
+
+      <div class="ref-section">
+        <h3>🟣 Vasopresores</h3>
+        <div class="drug-grid">
+          <div class="drug-card">
+            <h4>🩸 Noradrenalina</h4>
+            <div class="row"><b>Concentración:</b><span class="v">80 mcg/ml</span></div>
+            <div class="row"><b>Dosis:</b><span class="v">0.05 – 0.5 mcg/kg/min</span></div>
+            <div class="row"><b>Constante K:</b><span class="v">0.75</span></div>
+            <div class="row"><b>Indicación:</b><span style="font-size:12px;">Shock séptico, vasoplejia</span></div>
+          </div>
+          <div class="drug-card">
+            <h4>⚡ Adrenalina</h4>
+            <div class="row"><b>Concentración:</b><span class="v">100 mcg/ml</span></div>
+            <div class="row"><b>Dosis:</b><span class="v">10 mcg/min (fija)</span></div>
+            <div class="row"><b>Constante K:</b><span class="v">0.6</span></div>
+            <div class="row"><b>Indicación:</b><span style="font-size:12px;">Anafilaxia, PCR, shock</span></div>
+          </div>
+          <div class="drug-card">
+            <h4>🔵 Dopamina</h4>
+            <div class="row"><b>Concentración:</b><span class="v">4000 mcg/ml</span></div>
+            <div class="row"><b>Dosis:</b><span class="v">5 – 20 mcg/kg/min</span></div>
+            <div class="row"><b>Constante K:</b><span class="v">0.024</span></div>
+            <div class="row"><b>Indicación:</b><span style="font-size:12px;">Shock cardiogénico/séptico, bradicardia</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ref-section">
+        <h3>💖 Inotrópicos</h3>
+        <div class="drug-grid">
+          <div class="drug-card">
+            <h4>💗 Dobutamina</h4>
+            <div class="row"><b>Concentración:</b><span class="v">1000 mcg/ml</span></div>
+            <div class="row"><b>Dosis:</b><span class="v">2.5 – 10 mcg/kg/min</span></div>
+            <div class="row"><b>Constante K:</b><span class="v">0.024</span></div>
+            <div class="row"><b>Indicación:</b><span style="font-size:12px;">IC aguda, shock cardiogénico</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ref-section">
+        <h3>💙 Vasodilatadores</h3>
+        <div class="drug-grid">
+          <div class="drug-card">
+            <h4>🌊 Nitroglicerina</h4>
+            <div class="row"><b>Concentración:</b><span class="v">200 mcg/ml</span></div>
+            <div class="row"><b>Dosis:</b><span class="v">5 – 200 mcg/min</span></div>
+            <div class="row"><b>Indicación:</b><span style="font-size:12px;">SCA, EAP, HTA emergencia</span></div>
+          </div>
+          <div class="drug-card">
+            <h4>🌀 Nitroprusiato</h4>
+            <div class="row"><b>Concentración:</b><span class="v">500 mcg/ml</span></div>
+            <div class="row"><b>Dosis:</b><span class="v">0.25 – 10 mcg/kg/min</span></div>
+            <div class="row"><b>Indicación:</b><span style="font-size:12px;">Crisis hipertensiva</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ref-section">
+        <h3>😴 Sedoanalgesia</h3>
+        <div class="drug-grid">
+          <div class="drug-card">
+            <h4>💤 Midazolam</h4>
+            <div class="row"><b>Concentración:</b><span class="v">Variable</span></div>
+            <div class="row"><b>Dosis:</b><span class="v">0.2 – 0.4 mg/kg/h</span></div>
+            <div class="row"><b>Constante K:</b><span style="font-size:12px;">No aplica</span></div>
+          </div>
+          <div class="drug-card">
+            <h4>💊 Fentanilo</h4>
+            <div class="row"><b>Concentración:</b><span class="v">Variable</span></div>
+            <div class="row"><b>Dosis:</b><span class="v">Según necesidad</span></div>
+            <div class="row"><b>Constante K:</b><span style="font-size:12px;">No aplica</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes-box">
+        📌 <b>Sobre las constantes K:</b> ya incluyen factores como peso y dilución estándar.
+        Útiles para protocolos rápidos de emergencias. Siempre verificar la dilución del servicio.
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ EJEMPLOS ============ -->
+  <div class="pane" id="pane-examples">
+    <div class="card">
+      <div class="card-title">📚 Ejemplos Clínicos de Infusión</div>
+      <div class="card-sub">Casos prácticos resueltos paso a paso</div>
+
+      <div class="example-block">
+        <h4>🩸 Ejemplo 1 — Noradrenalina (shock séptico)</h4>
+        <ul>
+          <li><b>Paciente:</b> 80 kg</li>
+          <li><b>Dosis prescrita:</b> 0.1 mcg/kg/min</li>
+          <li><b>Concentración:</b> 80 mcg/ml</li>
+        </ul>
+        <div class="calc-box">
+ml/h = (0.1 × 80 × 60) ÷ 80<br>
+&nbsp;&nbsp;&nbsp;&nbsp; = 480 ÷ 80<br>
+&nbsp;&nbsp;&nbsp;&nbsp; = <span class="res">6 ml/h</span>
+        </div>
+      </div>
+
+      <div class="example-block">
+        <h4>💗 Ejemplo 2 — Dobutamina (IC aguda)</h4>
+        <ul>
+          <li><b>Paciente:</b> 60 kg</li>
+          <li><b>Dosis prescrita:</b> 10 mcg/kg/min</li>
+          <li><b>Concentración:</b> 1000 mcg/ml</li>
+        </ul>
+        <div class="calc-box">
+ml/h = (10 × 60 × 60) ÷ 1000<br>
+&nbsp;&nbsp;&nbsp;&nbsp; = 36 000 ÷ 1000<br>
+&nbsp;&nbsp;&nbsp;&nbsp; = <span class="res">36 ml/h</span>
+        </div>
+      </div>
+
+      <div class="example-block">
+        <h4>⚡ Ejemplo 3 — Epinefrina (verificar dosis)</h4>
+        <ul>
+          <li><b>Paciente:</b> 90 kg</li>
+          <li><b>Volumen administrado:</b> 15 ml/h</li>
+          <li><b>Concentración:</b> 10 mcg/ml</li>
+        </ul>
+        <div class="calc-box">
+mcg/kg/min = (15 × 10) ÷ (90 × 60)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = 150 ÷ 5400<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = <span class="res">0.027 mcg/kg/min</span>
+        </div>
+      </div>
+
+      <div class="example-block">
+        <h4>🔵 Ejemplo 4 — Dopamina (verificar dosis)</h4>
+        <ul>
+          <li><b>Paciente:</b> 50 kg</li>
+          <li><b>Volumen administrado:</b> 18 ml/h</li>
+          <li><b>Concentración:</b> 4000 mcg/ml</li>
+        </ul>
+        <div class="calc-box">
+mcg/kg/min = (18 × 4000) ÷ (50 × 60)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = 72 000 ÷ 3000<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = <span class="res">24 mcg/kg/min</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ REFERENCIA ============ -->
+  <div class="pane" id="pane-ref">
+    <div class="card">
+      <div class="card-title">📋 Tabla de Fármacos: Presentación y Dosis</div>
+      <div class="card-sub">Referencia rápida de presentaciones comunes y dosis estándar</div>
+
+      <div class="ref-section">
+        <h3>💉 Presentación de fármacos comunes</h3>
+        <table class="drug-table">
+          <thead>
+            <tr><th>Fármaco</th><th>Presentación</th><th>Volumen ampolla</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="drug-name">Adrenalina</td><td><code>1 mg</code></td><td>1 mL</td></tr>
+            <tr><td class="drug-name">Noradrenalina</td><td><code>4 mg</code></td><td>4 mL</td></tr>
+            <tr><td class="drug-name">Dopamina</td><td><code>200 mg</code></td><td>5 mL</td></tr>
+            <tr><td class="drug-name">Dobutamina</td><td><code>250 mg</code></td><td>5 mL</td></tr>
+            <tr><td class="drug-name">Tramadol</td><td><code>100 mg</code></td><td>2 mL</td></tr>
+            <tr><td class="drug-name">Midazolam (simple)</td><td><code>5 mg / 50 mg</code></td><td>1 / 2 mL</td></tr>
+            <tr><td class="drug-name">Midazolam (doble)</td><td><code>100 mg</code></td><td>—</td></tr>
+            <tr><td class="drug-name">Fentanilo</td><td><code>0.5 mg</code></td><td>1 mL</td></tr>
+            <tr><td class="drug-name">Furosemida</td><td><code>20 mg</code></td><td>2 mL</td></tr>
+            <tr><td class="drug-name">Dexametasona</td><td><code>8 mg</code></td><td>2 mL</td></tr>
+            <tr><td class="drug-name">Amiodarona</td><td><code>150 mg</code></td><td>3 mL</td></tr>
+            <tr><td class="drug-name">Diazepam</td><td><code>10 mg</code></td><td>2 mL</td></tr>
+            <tr><td class="drug-name">Fenobarbital</td><td><code>120 mg</code></td><td>2 mL</td></tr>
+            <tr><td class="drug-name">Atropina</td><td><code>0.5 mg</code></td><td>1 mL</td></tr>
+            <tr><td class="drug-name">Nitroglicerina</td><td><code>50 mg</code></td><td>10 mL</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ref-section">
+        <h3>📝 Notas de preparación</h3>
+        <div class="notes-box" style="background: #dbeafe; border-color: var(--primary); color: var(--primary-dark);">
+          • <b>Adrenalina infusión:</b> 10 mg → 10 ampollas (10 mL) + 90 cc SS 0.9% = 100 mL<br>
+          • <b>Noradrenalina (doble):</b> 6–7 ampollas<br>
+          • <b>Tramadol:</b> 300 mg = 3 ampollas → 9 mL<br>
+          • <b>Fórmula de infusión:</b> Preparación + volumen total = 100 mL
+        </div>
+      </div>
+
+      <div class="ref-section">
+        <h3>🩸 Transfusión y manejo de choque</h3>
+        <table class="drug-table">
+          <thead>
+            <tr><th>Concepto</th><th>Valor / Recomendación</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="drug-name">Volumen sangre total</td><td>500 mL (450 mL sangre + 68 mL anticoagulante)</td></tr>
+            <tr><td class="drug-name">Sangre reconstituida útil</td><td>450 mL · usar en <b>24 horas</b></td></tr>
+            <tr><td class="drug-name">Plaquetas — duración</td><td>30 días</td></tr>
+            <tr><td class="drug-name">Iniciar transfusión</td><td>Hb &lt; 7 g/dL</td></tr>
+            <tr><td class="drug-name">3 paquetes de eritrocitos</td><td>Pasar en 2 horas</td></tr>
+            <tr><td class="drug-name">Plaquetas &lt; 50 000</td><td>Pasar rápido (&lt; 15 min)</td></tr>
+            <tr><td class="drug-name">Tiempo recomendado</td><td>2–3 h por unidad (máx. 4 h)</td></tr>
+            <tr><td class="drug-name">Manejo de choque</td><td>Ringer Lactato o SS 0.9%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ref-section">
+        <h3>❤️ Distribución del Gasto Cardíaco</h3>
+        <table class="drug-table">
+          <thead>
+            <tr><th>Órgano / sistema</th><th>% del gasto cardíaco</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="drug-name">Riñones</td><td>25%</td></tr>
+            <tr><td class="drug-name">Cerebro</td><td>15%</td></tr>
+            <tr><td class="drug-name">Hígado</td><td>15%</td></tr>
+            <tr><td class="drug-name">Músculo esquelético</td><td>20%</td></tr>
+            <tr><td class="drug-name">Otros tejidos</td><td>25%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+
+  /* ============ Tabs ============ */
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x === t));
+      const id = t.dataset.pane;
+      document.querySelectorAll('.pane').forEach(p => p.classList.toggle('active', p.id === 'pane-' + id));
+    });
+  });
+
+  /* ============ Mode toggle ============ */
+  $('calc-type').addEventListener('change', () => {
+    const m = $('calc-type').value;
+    $('mode-mlh').style.display = (m === 'mlh') ? 'block' : 'none';
+    $('mode-dose').style.display = (m === 'dose') ? 'block' : 'none';
+    $('result').classList.remove('visible');
+  });
+
+  /* ============ Drug presets ============ */
+  document.querySelectorAll('#drug-presets .preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#drug-presets .preset').forEach(b => b.classList.toggle('active', b === btn));
+      const c = btn.dataset.conc;
+      $('conc-1').value = c;
+      $('conc-2').value = c;
+    });
+  });
+
+  /* ============ Calculation ============ */
+  function calc() {
+    const mode = $('calc-type').value;
+    const result = $('result');
+    const breakdown = $('result-break');
+
+    if (mode === 'mlh') {
+      const dosis = parseFloat($('dosis').value);
+      const peso = parseFloat($('peso-1').value);
+      const conc = parseFloat($('conc-1').value);
+      const volPrep = parseFloat($('vol-prep').value);
+      if (isNaN(dosis) || dosis <= 0 || isNaN(peso) || peso <= 0 || isNaN(conc) || conc <= 0) {
+        alert('Completa Dosis, Peso y Concentración (el Volumen total es opcional).');
+        return;
+      }
+      const ml_h = (dosis * peso * 60) / conc;
+      const wlim = (ml_h > 200) ? ' warning' : '';
+      $('result-label').textContent = '💧 Velocidad de infusión:';
+      $('result-val').textContent = ml_h.toFixed(2) + ' ml/h';
+      breakdown.innerHTML =
+        `ml/h = (${dosis} × ${peso} × 60) ÷ ${conc}<br>` +
+        `&nbsp;&nbsp;&nbsp;&nbsp;= ${(dosis * peso * 60).toFixed(2)} ÷ ${conc}<br>` +
+        `&nbsp;&nbsp;&nbsp;&nbsp;= <b>${ml_h.toFixed(2)} ml/h</b>`;
+
+      // Optional duration calculation
+      if (!isNaN(volPrep) && volPrep > 0) {
+        const horas = volPrep / ml_h;
+        const h = Math.floor(horas);
+        const m = Math.round((horas - h) * 60);
+        breakdown.innerHTML +=
+          `<br><br>⏱ <b>Duración de la infusión</b> (con ${volPrep} ml preparados):<br>` +
+          `&nbsp;&nbsp;&nbsp;&nbsp;= ${volPrep} ÷ ${ml_h.toFixed(2)} = <b>${horas.toFixed(2)} h</b> ` +
+          `(${h} h ${m} min)`;
+      }
+
+      result.className = 'result-block visible' + wlim;
+      if (wlim) breakdown.innerHTML += '<br><br>⚠️ <b>Velocidad alta</b> — verificar dosis y concentración antes de programar.';
+    } else {
+      const vol = parseFloat($('volumen').value);
+      const peso = parseFloat($('peso-2').value);
+      const conc = parseFloat($('conc-2').value);
+      if (isNaN(vol) || vol < 0 || isNaN(peso) || peso <= 0 || isNaN(conc) || conc <= 0) {
+        alert('Completa todos los campos con valores válidos.');
+        return;
+      }
+      const dose = (vol * conc) / (peso * 60);
+      $('result-label').textContent = '💊 Dosis administrada:';
+      $('result-val').textContent = dose.toFixed(3) + ' mcg/kg/min';
+      breakdown.innerHTML =
+        `mcg/kg/min = (${vol} × ${conc}) ÷ (${peso} × 60)<br>` +
+        `&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= ${(vol * conc).toFixed(2)} ÷ ${(peso * 60).toFixed(2)}<br>` +
+        `&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <b>${dose.toFixed(3)} mcg/kg/min</b>`;
+      result.className = 'result-block visible';
+    }
+  }
+
+  function reset() {
+    ['dosis','peso-1','peso-2','conc-1','conc-2','volumen','vol-prep'].forEach(id => $(id).value = '');
+    document.querySelectorAll('#drug-presets .preset').forEach(b => b.classList.remove('active'));
+    $('result').classList.remove('visible');
+  }
+
+  $('btn-calc').addEventListener('click', calc);
+  $('btn-reset').addEventListener('click', reset);
+
+  // Allow Enter key
+  document.querySelectorAll('#mode-mlh input, #mode-dose input').forEach(i => {
+    i.addEventListener('keypress', e => { if (e.key === 'Enter') calc(); });
+  });
+</script>
+
+</body>
+</html>
