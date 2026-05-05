@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador de Informe Médico-Psicológico · MED NOTES®</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --primary-soft: #dbeafe;
+    --text: #1e293b;
+    --text-light: #475569;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --bg: #f1f5f9;
+    --success: #16a34a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ============ Brand Header ============ */
+  .top-header {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 22px;
+    display: flex; align-items: center; gap: 14px;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .brand-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #000; color: #fff;
+    padding: 6px 12px;
+    font: 700 12px 'JetBrains Mono', monospace;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    border-radius: 4px;
+  }
+  .brand-badge .reg { font-size: 8px; vertical-align: top; opacity: 0.85; }
+  .top-header h1 {
+    font-size: 17px; font-weight: 800;
+    color: var(--text); flex: 1;
+  }
+  .actions { display: flex; gap: 8px; }
+
+  .btn {
+    padding: 9px 18px;
+    background: var(--primary); color: #fff;
+    border: none; cursor: pointer;
+    font: 700 13px 'Inter', sans-serif;
+    border-radius: 8px;
+    transition: background .15s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn:hover { background: var(--primary-dark); }
+  .btn.success { background: var(--success); }
+  .btn.success:hover { background: #15803d; }
+  .btn.ghost {
+    background: var(--surface-alt);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+  }
+  .btn.ghost:hover { background: #e2e8f0; }
+
+  /* ============ Layout ============ */
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(450px, 1fr) minmax(500px, 1.1fr);
+    gap: 0;
+    height: calc(100vh - 60px);
+  }
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: 1fr; height: auto; }
+    .preview-pane { position: relative !important; max-height: none !important; }
+  }
+
+  .editor-pane {
+    overflow-y: auto;
+    padding: 22px 24px;
+    background: #fff;
+    border-right: 1px solid var(--border);
+  }
+  .preview-pane {
+    overflow-y: auto;
+    padding: 16px 22px 60px;
+    background: var(--bg);
+    position: sticky; top: 60px;
+    max-height: calc(100vh - 60px);
+  }
+
+  /* ============ Editor sections ============ */
+  .section-title {
+    font-size: 14px; font-weight: 800;
+    color: var(--text);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin: 18px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--primary-soft);
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  .field { margin-bottom: 14px; }
+  .field-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 600px) { .field-row { grid-template-columns: 1fr; } }
+
+  .field-label {
+    display: block; font-size: 12.5px; font-weight: 700;
+    color: var(--text); margin-bottom: 5px;
+  }
+  .field-label .req { color: #dc2626; margin-left: 2px; }
+
+  .input, textarea.input, select.input {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    font: 500 13.5px 'Inter', sans-serif;
+    color: var(--text); background: #fff;
+    transition: border-color .15s;
+    resize: vertical;
+  }
+  .input:focus, textarea.input:focus, select.input:focus {
+    outline: none; border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+  }
+  textarea.input {
+    min-height: 100px;
+    line-height: 1.6;
+  }
+  textarea.input.large { min-height: 140px; }
+
+  /* Mini toolbar above textareas */
+  .editor-toolbar {
+    display: flex; align-items: center; gap: 4px;
+    padding: 6px 8px;
+    border: 1.5px solid var(--border);
+    border-bottom: none;
+    border-radius: 7px 7px 0 0;
+    background: var(--surface-alt);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .editor-toolbar + textarea.input {
+    border-radius: 0 0 7px 7px;
+    border-top: none;
+  }
+  .editor-toolbar button {
+    width: 28px; height: 28px;
+    padding: 0;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    font: 700 14px 'Inter', sans-serif;
+    color: var(--text);
+  }
+  .editor-toolbar button:hover { background: #fff; border-color: var(--border); }
+  .editor-toolbar button.italic { font-style: italic; }
+  .editor-toolbar .hint { margin-left: 6px; font-size: 11.5px; }
+
+  /* ============ Document Preview ============ */
+  .preview-header {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    margin-bottom: 12px;
+  }
+  .preview-title {
+    font-size: 13px; font-weight: 700;
+    color: var(--text);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .zoom-controls {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--surface-alt);
+    border-radius: 6px;
+    padding: 2px;
+  }
+  .zoom-controls button {
+    width: 26px; height: 26px;
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 4px; cursor: pointer;
+    font: 700 14px 'Inter', sans-serif;
+  }
+  .zoom-level {
+    min-width: 48px; text-align: center;
+    font: 700 12px 'Inter', sans-serif;
+  }
+
+  /* The actual document — A4-like styling */
+  .doc-wrap {
+    display: flex; justify-content: center;
+    background: var(--bg);
+  }
+  .doc {
+    background: #fff;
+    width: 210mm;
+    min-height: 296mm;
+    padding: 12mm 14mm;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.10);
+    transform-origin: top center;
+    font: 400 11pt/1.4 'Arial', sans-serif;
+    color: #000;
+  }
+
+  /* MSP header table */
+  .msp-header {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 6px;
+  }
+  .msp-header td {
+    border: 1px solid #000;
+    padding: 4pt 6pt;
+    font-size: 9pt;
+    vertical-align: middle;
+  }
+  .msp-logo-cell {
+    width: 20mm;
+    text-align: center;
+    background: #003a70;
+    color: #fff;
+    font: 800 13pt 'Arial Black', sans-serif;
+    letter-spacing: 0.05em;
+    line-height: 1.1;
+  }
+  .msp-logo-cell small {
+    display: block;
+    font: 600 6pt 'Arial', sans-serif;
+    letter-spacing: 0;
+    margin-top: 2pt;
+  }
+  .msp-title-cell {
+    width: 65%;
+    font: 700 9.5pt 'Arial', sans-serif;
+    text-align: center;
+  }
+  .msp-meta-cell {
+    width: 23%;
+    font-size: 8pt;
+  }
+  .msp-meta-cell strong { font-weight: 700; }
+  .msp-doc-name {
+    text-align: center;
+    font: 800 12pt 'Arial', sans-serif;
+    letter-spacing: 0.04em;
+  }
+
+  /* Body sections */
+  .doc-section {
+    border: 1px solid #000;
+    border-top: none;
+    padding: 7pt 10pt;
+    font-size: 10pt;
+  }
+  .doc-section:first-of-type { border-top: 1px solid #000; }
+  .doc-section .lbl {
+    font: 800 10pt 'Arial', sans-serif;
+    text-transform: uppercase;
+    margin-bottom: 4pt;
+    letter-spacing: 0.02em;
+  }
+  .doc-section ul {
+    margin: 0 0 0 14pt;
+    padding: 0;
+    list-style: disc;
+  }
+  .doc-section ul li { padding: 1pt 0; }
+  .doc-section .body-text {
+    text-align: justify;
+    font-size: 10pt;
+    line-height: 1.45;
+    white-space: pre-wrap;
+  }
+  .doc-section .body-text:empty::before {
+    content: 'Sin información…';
+    color: #888;
+    font-style: italic;
+  }
+  .doc-section .body-text ul { margin-left: 18pt; list-style: disc; }
+
+  /* Signature */
+  .doc-signature {
+    margin-top: 16pt;
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .doc-signature th, .doc-signature td {
+    border: 1px solid #000;
+    padding: 6pt 8pt;
+    font-size: 9pt;
+    vertical-align: top;
+  }
+  .doc-signature th {
+    background: #f0f0f0;
+    font: 800 9pt 'Arial', sans-serif;
+    text-align: left;
+  }
+  .doc-signature .firma-line {
+    text-align: center;
+    line-height: 1.3;
+    font-size: 9pt;
+  }
+
+  /* ============ Print ============ */
+  @media print {
+    body { background: #fff; }
+    .top-header, .editor-pane, .preview-header, .zoom-controls,
+    .preview-pane > .doc-wrap > .doc { box-shadow: none; }
+    .top-header, .editor-pane, .preview-header { display: none !important; }
+    .layout { grid-template-columns: 1fr !important; height: auto !important; }
+    .preview-pane {
+      padding: 0; background: #fff; max-height: none;
+      position: static; overflow: visible;
+    }
+    .doc-wrap { background: #fff; }
+    .doc {
+      width: auto; min-height: auto;
+      box-shadow: none; padding: 0;
+      transform: none !important;
+    }
+    @page { size: A4; margin: 12mm 14mm; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ Top header ============ -->
+<div class="top-header">
+  <div class="brand-badge">MED NOTES<span class="reg">®</span></div>
+  <h1>📝 Generador de Informe Médico-Psicológico</h1>
+  <div class="actions">
+    <button class="btn ghost" id="btn-load-demo" title="Cargar datos de ejemplo">📋 Demo</button>
+    <button class="btn ghost" id="btn-clear">🗑 Limpiar</button>
+    <button class="btn success" id="btn-print">🖨 Imprimir / PDF</button>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- ===================== EDITOR PANE ===================== -->
+  <div class="editor-pane">
+
+    <!-- Encabezado oficial -->
+    <div class="section-title">Encabezado oficial</div>
+
+    <div class="field-row">
+      <div>
+        <label class="field-label">Establecimiento</label>
+        <input class="input" id="f-establecimiento" type="text" value="CENTRO DE SALUD" placeholder="Nombre del establecimiento">
+      </div>
+      <div>
+        <label class="field-label">Fecha de elaboración</label>
+        <input class="input" id="f-fecha-elab" type="date">
+      </div>
+    </div>
+    <div class="field-row">
+      <div>
+        <label class="field-label">Código (Nº historia / consulta)</label>
+        <input class="input" id="f-codigo" type="text" placeholder="Ej. 008/13">
+      </div>
+      <div>
+        <label class="field-label">Nro. Serie (opcional)</label>
+        <input class="input" id="f-nro-serie" type="text" placeholder="Ej. 123412">
+      </div>
+    </div>
+
+    <!-- A. Datos de identificación -->
+    <div class="section-title">A. Datos de identificación</div>
+
+    <div class="field-row">
+      <div>
+        <label class="field-label">Fecha de atención <span class="req">*</span></label>
+        <input class="input" id="f-fecha" type="date">
+      </div>
+      <div>
+        <label class="field-label">Edad <span class="req">*</span></label>
+        <input class="input" id="f-edad" type="number" min="0" max="120" placeholder="Ej. 24">
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Nombres y apellidos completos <span class="req">*</span></label>
+      <input class="input" id="f-nombre" type="text" placeholder="Nombres completos del paciente">
+    </div>
+    <div class="field">
+      <label class="field-label">Nro. de documento de identificación <span class="req">*</span></label>
+      <input class="input" id="f-cedula" type="text" placeholder="Cédula o pasaporte">
+    </div>
+    <div class="field">
+      <label class="field-label">Sexo</label>
+      <select class="input" id="f-sexo">
+        <option value="FEMENINA">Femenina</option>
+        <option value="MASCULINO">Masculino</option>
+      </select>
+    </div>
+
+    <!-- B. Presunción -->
+    <div class="section-title">B. Presunción de los hechos referidos por el usuario/a</div>
+    <div class="field">
+      <label class="field-label">Relato del usuario/a</label>
+      <textarea class="input large" id="f-presuncion" placeholder="PACIENTE FEMENINA DE [EDAD] AÑOS, ACUDE PARA VALORACIÓN..."></textarea>
+    </div>
+
+    <!-- C. Examen físico -->
+    <div class="section-title">C. Hallazgos al examen físico</div>
+    <div class="field">
+      <textarea class="input" id="f-examen-fisico" placeholder="Paciente consciente orientada, signos vitales..."></textarea>
+    </div>
+
+    <!-- D. Hallazgos psicológico -->
+    <div class="section-title">D. Hallazgos a nivel psicológico</div>
+    <div class="field">
+      <textarea class="input" id="f-psicologico" placeholder="A la inspección, paciente con signos de ansiedad..."></textarea>
+    </div>
+
+    <!-- E. Procedimientos -->
+    <div class="section-title">E. Procedimientos realizados</div>
+    <div class="field">
+      <textarea class="input" id="f-procedimientos" placeholder="EXAMEN FÍSICO GENERAL, MEDIDAS GENERALES...">EXAMEN FÍSICO GENERAL, MEDIDAS GENERALES</textarea>
+    </div>
+
+    <!-- F. Diagnóstico CIE -->
+    <div class="section-title">F. Diagnóstico CIE</div>
+    <div class="field">
+      <label class="field-label">Códigos CIE-10 (uno por línea)</label>
+      <textarea class="input large" id="f-cie" placeholder="W030 OTRA CAÍDA EN EL MISMO NIVEL...
+Y200 AHORCAMIENTO, ESTRANGULAMIENTO Y SOFOCACIÓN...
+Y741 ABUSO FÍSICO"></textarea>
+    </div>
+    <div class="field">
+      <label class="field-label">Tipo de diagnóstico</label>
+      <select class="input" id="f-tipo-dx">
+        <option value="presuntivo">Presuntivo</option>
+        <option value="definitivo">Definitivo</option>
+      </select>
+    </div>
+
+    <!-- G. Indicaciones generales -->
+    <div class="section-title">G. Indicaciones generales</div>
+    <div class="field">
+      <textarea class="input large" id="f-indicaciones">Medidas generales
+Consejería nutricional
+Hidratación
+Uso de mascarilla
+Lavado de manos
+Analgesia
+Ficha única de violencia
+Interconsulta a psicología
+Signos de alarma</textarea>
+    </div>
+    <div class="field">
+      <label class="field-label">Días de reposo médico</label>
+      <input class="input" id="f-reposo" type="text" placeholder="Ej. REPOSO DE 48 HORAS">
+    </div>
+
+    <!-- Firma -->
+    <div class="section-title">Firma</div>
+    <div class="field-row">
+      <div>
+        <label class="field-label">Nombre del médico</label>
+        <input class="input" id="f-medico" type="text" placeholder="Dr/a. Nombre Apellido">
+      </div>
+      <div>
+        <label class="field-label">Cargo</label>
+        <input class="input" id="f-cargo" type="text" placeholder="Ej. Médico/a Residente / Médico Tratante">
+      </div>
+    </div>
+
+    <p style="font-size:11px; color:var(--muted); margin-top:18px; padding-top:14px; border-top:1px solid var(--border);">
+      💾 Tus datos se guardan automáticamente en este navegador. Para limpiar, usa el botón "Limpiar".<br>
+      🖨 El botón Imprimir abre la vista oficial lista para imprimir o exportar a PDF.
+    </p>
+  </div>
+
+  <!-- ===================== PREVIEW PANE ===================== -->
+  <div class="preview-pane">
+    <div class="preview-header">
+      <div class="preview-title">📄 Vista previa</div>
+      <div class="zoom-controls">
+        <button id="btn-zoom-out">−</button>
+        <span class="zoom-level" id="zoom-level">75%</span>
+        <button id="btn-zoom-in">+</button>
+      </div>
+    </div>
+
+    <div class="doc-wrap">
+      <div class="doc" id="doc-preview">
+
+        <!-- ===== HEADER MSP TABLE ===== -->
+        <table class="msp-header">
+          <tr>
+            <td class="msp-logo-cell" rowspan="3">MSP<small>MINISTERIO<br>DE SALUD<br>PÚBLICA</small></td>
+            <td class="msp-title-cell">MINISTERIO DE SALUD PÚBLICA</td>
+            <td class="msp-meta-cell">Fecha de elab: <strong id="p-fecha-elab">—</strong></td>
+          </tr>
+          <tr>
+            <td class="msp-title-cell">NOMBRE DEL ESTABLECIMIENTO: <span id="p-establecimiento">—</span></td>
+            <td class="msp-meta-cell">Código: <strong id="p-codigo">—</strong><br>Nro. Serie: <strong id="p-nro-serie">—</strong></td>
+          </tr>
+          <tr>
+            <td class="msp-doc-name" colspan="2">INFORME MÉDICO – PSICOLÓGICO</td>
+          </tr>
+        </table>
+
+        <!-- ===== A. DATOS DE IDENTIFICACIÓN ===== -->
+        <div class="doc-section">
+          <div class="lbl">A. Datos de identificación:</div>
+          <ul>
+            <li><strong>Fecha de atención:</strong> <span id="p-fecha">—</span></li>
+            <li><strong>Nombres y apellidos completos:</strong> <span id="p-nombre">—</span></li>
+            <li><strong>Nro. de documento identificación:</strong> <span id="p-cedula">—</span></li>
+            <li><strong>Edad:</strong> <span id="p-edad">—</span></li>
+          </ul>
+        </div>
+
+        <!-- ===== B. PRESUNCIÓN ===== -->
+        <div class="doc-section">
+          <div class="lbl">B. Presunción de los hechos referidos por el usuario/a</div>
+          <div class="body-text" id="p-presuncion"></div>
+        </div>
+
+        <!-- ===== C. EXAMEN FÍSICO ===== -->
+        <div class="doc-section">
+          <div class="lbl">C. Hallazgos al examen físico</div>
+          <div class="body-text" id="p-examen-fisico"></div>
+        </div>
+
+        <!-- ===== D. PSICOLÓGICO ===== -->
+        <div class="doc-section">
+          <div class="lbl">D. Hallazgos a nivel psicológico</div>
+          <div class="body-text" id="p-psicologico"></div>
+        </div>
+
+        <!-- ===== E. PROCEDIMIENTOS ===== -->
+        <div class="doc-section">
+          <div class="lbl">E. Procedimientos realizados:</div>
+          <div class="body-text" id="p-procedimientos"></div>
+        </div>
+
+        <!-- ===== F. DIAGNÓSTICO CIE ===== -->
+        <div class="doc-section">
+          <div class="lbl">F. Diagnóstico CIE:</div>
+          <div class="body-text" id="p-cie"></div>
+        </div>
+
+        <!-- ===== G. INDICACIONES ===== -->
+        <div class="doc-section">
+          <div class="lbl">G. Indicaciones generales:</div>
+          <div class="body-text" id="p-indicaciones"></div>
+        </div>
+
+        <!-- ===== Días de reposo ===== -->
+        <div class="doc-section">
+          <div class="lbl">Describir el número de días de reposo médico generado al usuario/a:</div>
+          <div class="body-text" id="p-reposo"></div>
+        </div>
+
+        <!-- ===== Firma ===== -->
+        <table class="doc-signature">
+          <thead>
+            <tr><th style="width:35%">NOMBRE</th><th style="width:25%">CARGO</th><th>SUMILLA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><br><span id="p-medico">—</span></td>
+              <td><br><span id="p-cargo"></span></td>
+              <td class="firma-line">_____________________<br>Firma<br><span id="p-medico-firma">—</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ Storage key ============ */
+const STORAGE_KEY = 'med-notes-informe-medico-psi-v1';
+
+/* Map of input IDs (form) to preview span IDs */
+const FIELD_MAP = {
+  'f-establecimiento': 'p-establecimiento',
+  'f-fecha-elab':      'p-fecha-elab',
+  'f-codigo':          'p-codigo',
+  'f-nro-serie':       'p-nro-serie',
+  'f-fecha':           'p-fecha',
+  'f-edad':            'p-edad',
+  'f-nombre':          'p-nombre',
+  'f-cedula':          'p-cedula',
+  'f-presuncion':      'p-presuncion',
+  'f-examen-fisico':   'p-examen-fisico',
+  'f-psicologico':     'p-psicologico',
+  'f-procedimientos':  'p-procedimientos',
+  'f-reposo':          'p-reposo',
+  'f-medico':          'p-medico',
+  'f-cargo':           'p-cargo'
+};
+
+/* Format a YYYY-MM-DD into DD/MM/YYYY */
+function formatDate(iso) {
+  if (!iso) return '—';
+  const parts = iso.split('-');
+  if (parts.length !== 3) return iso;
+  return `${parseInt(parts[2],10)}/${parseInt(parts[1],10)}/${parts[0]}`;
+}
+
+/* Render previews ========================================== */
+function render() {
+  Object.entries(FIELD_MAP).forEach(([fId, pId]) => {
+    const f = document.getElementById(fId);
+    const p = document.getElementById(pId);
+    if (!f || !p) return;
+    let v = f.value;
+    if (fId === 'f-fecha-elab' || fId === 'f-fecha') v = formatDate(v);
+    if (!v || !v.trim()) {
+      p.textContent = (p.classList.contains('body-text')) ? '' : '—';
+    } else {
+      // Multiline support for textareas
+      if (f.tagName === 'TEXTAREA') {
+        p.textContent = v;
+      } else {
+        p.textContent = v;
+      }
+    }
+  });
+
+  // Mirror nombre to firma block
+  const nom = document.getElementById('f-medico').value || '—';
+  document.getElementById('p-medico-firma').textContent = nom;
+
+  // CIE rendering with tipo de diagnóstico
+  const cieRaw = document.getElementById('f-cie').value.trim();
+  const tipo = document.getElementById('f-tipo-dx').value;
+  const cieEl = document.getElementById('p-cie');
+  if (!cieRaw) {
+    cieEl.textContent = '';
+  } else {
+    const lines = cieRaw.split('\n').map(l => l.trim()).filter(Boolean);
+    let html = lines.map(l => `${l}`).join('\n');
+    html += `\n\nDx ${tipo}: ${lines.map(l => l.split(' ')[0]).join(' – ')}`;
+    cieEl.textContent = html;
+  }
+
+  // Indicaciones as bullet list
+  const indRaw = document.getElementById('f-indicaciones').value.trim();
+  const indEl = document.getElementById('p-indicaciones');
+  if (!indRaw) {
+    indEl.innerHTML = '';
+  } else {
+    const lines = indRaw.split('\n').map(l => l.trim()).filter(Boolean);
+    indEl.innerHTML = '<ul>' + lines.map(l => `<li>${escapeHtml(l)}</li>`).join('') + '</ul>';
+  }
+
+  saveState();
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+
+/* Save / Load state ======================================== */
+function saveState() {
+  const state = {};
+  document.querySelectorAll('.editor-pane input, .editor-pane select, .editor-pane textarea').forEach(el => {
+    if (el.id) state[el.id] = el.value;
+  });
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const state = JSON.parse(raw);
+    Object.entries(state).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val;
+    });
+  } catch(e){}
+}
+
+/* Default values =========================================== */
+function setDefaults() {
+  const today = new Date();
+  const iso = today.toISOString().split('T')[0];
+  if (!document.getElementById('f-fecha-elab').value) {
+    document.getElementById('f-fecha-elab').value = iso;
+  }
+  if (!document.getElementById('f-fecha').value) {
+    document.getElementById('f-fecha').value = iso;
+  }
+}
+
+/* Demo data ================================================ */
+function loadDemo() {
+  const today = new Date().toISOString().split('T')[0];
+  const data = {
+    'f-establecimiento': 'CENTRO DE SALUD',
+    'f-fecha-elab': today,
+    'f-codigo': '008/13',
+    'f-nro-serie': '123412',
+    'f-fecha': today,
+    'f-edad': '24',
+    'f-nombre': 'MATIAS MATIS MATIAS MATISA',
+    'f-cedula': '1718476417',
+    'f-sexo': 'FEMENINA',
+    'f-presuncion': 'PACIENTE FEMENINA DE 24 AÑOS, APP NO REFIERE, ACUDE AL SERVICIO DE EMERGENCIA PARA VALORACIÓN MÉDICA LUEGO DE 2 HORAS DE SUFRIR AGRESIÓN FÍSICA Y PSICOLÓGICA POR PARTE DE SU CONVIVIENTE. PACIENTE REFIERE QUE HOY A LAS 8 AM EN SU DOMICILIO, MIENTRAS DISCUTÍA CON SU PAREJA (CONVIVIENDO 5 AÑOS, CON 1 HIJA DE 3 AÑOS EN COMÚN) PRESENTA UNA AGRESIÓN FÍSICA Y PSICOLÓGICA POR PARTE DE SU PAREJA. PACIENTE REFIERE QUE SERÍA LA TERCERA AGRESIÓN FÍSICA Y QUE AHORA SÍ DESEA DENUNCIARLO. PACIENTE REFIERE QUE MIENTRAS DISCUTÍAN, SU CONVIVIENTE LA EMPUJÓ Y ELLA SE IMPACTÓ CONTRA LA PARED LASTIMÁNDOSE ALGUNAS PARTES DEL CUERPO. RESTO DE EXAMINACIÓN APARENTEMENTE NORMAL. PACIENTE ACUDE AL SERVICIO DE EMERGENCIA PARA SOCIALIZAR EL CASO Y TRAMITAR RESPECTIVA DENUNCIA.',
+    'f-examen-fisico': 'Paciente consciente, orientada, ubicada en las 3 esferas, afebril, fascies poco álgica, rosada, apariencia general normal. Piel y mucosas hidratadas. CABEZA: normocéfala, sin lesiones evidentes. CUELLO: sin masas ni adenomegalias, sin signos de estrangulamiento. TÓRAX: simétrico, ruidos cardíacos rítmicos, murmullo vesicular conservado. ABDOMEN: blando, depresible, no doloroso. EXTREMIDADES: equimosis en cara externa de brazo derecho de aproximadamente 3 cm, sin limitación funcional. NEUROLÓGICO: alerta y orientada, fuerza muscular 5/5, sensibilidad conservada.',
+    'f-psicologico': 'A la inspección, paciente nerviosa, llanto fácil, pensamientos generalizados de temor a represalias por parte de la pareja. Refiere ansiedad y preocupación por el bienestar de su hija. Pensamiento coherente, lenguaje fluido. Niega ideación autolítica o heteroagresividad. Insight conservado. Se evidencia red de apoyo familiar limitada.',
+    'f-procedimientos': 'EXAMEN FÍSICO GENERAL, MEDIDAS GENERALES, IBUPROFENO 400 MG VO C/8H POR 3 DÍAS (AMBULATORIO).',
+    'f-cie': 'W030 OTRA CAÍDA EN EL MISMO NIVEL, POR COLISIÓN CON O POR EMPUJÓN DE OTRA PERSONA, OCURRIDA EN UNA VIVIENDA\nY200 AHORCAMIENTO, ESTRANGULAMIENTO Y SOFOCACIÓN, DE INTENCIÓN NO DETERMINADA, OCURRIDOS EN UNA VIVIENDA\nT741 ABUSO FÍSICO',
+    'f-tipo-dx': 'presuntivo',
+    'f-indicaciones': 'Medidas generales\nConsejería nutricional\nHidratación\nUso de mascarilla\nLavado de manos\nAnalgesia\nFicha única de violencia\nInterconsulta a psicología\nSignos de alarma',
+    'f-reposo': 'REPOSO DE 48 HORAS',
+    'f-medico': 'Dr. Esteban Cifuentes',
+    'f-cargo': 'Médico Residente'
+  };
+  Object.entries(data).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  });
+  render();
+}
+
+function clearAll() {
+  if (!confirm('¿Limpiar todos los campos? Esta acción no se puede deshacer.')) return;
+  document.querySelectorAll('.editor-pane input, .editor-pane select, .editor-pane textarea').forEach(el => {
+    if (el.tagName === 'SELECT') el.selectedIndex = 0;
+    else el.value = '';
+  });
+  // Restore defaults
+  document.getElementById('f-establecimiento').value = 'CENTRO DE SALUD';
+  document.getElementById('f-procedimientos').value = 'EXAMEN FÍSICO GENERAL, MEDIDAS GENERALES';
+  document.getElementById('f-indicaciones').value = 'Medidas generales\nConsejería nutricional\nHidratación\nUso de mascarilla\nLavado de manos\nAnalgesia\nFicha única de violencia\nInterconsulta a psicología\nSignos de alarma';
+  setDefaults();
+  render();
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+}
+
+/* Zoom ===================================================== */
+let zoom = 0.75;
+function applyZoom() {
+  document.getElementById('doc-preview').style.transform = `scale(${zoom})`;
+  document.getElementById('zoom-level').textContent = Math.round(zoom*100) + '%';
+}
+
+/* ============ Wire up events ============ */
+document.querySelectorAll('.editor-pane input, .editor-pane select, .editor-pane textarea').forEach(el => {
+  el.addEventListener('input', render);
+  el.addEventListener('change', render);
+});
+
+document.getElementById('btn-load-demo').addEventListener('click', loadDemo);
+document.getElementById('btn-clear').addEventListener('click', clearAll);
+document.getElementById('btn-print').addEventListener('click', () => {
+  // Reset zoom to 100% before printing
+  const prevZoom = zoom;
+  zoom = 1;
+  applyZoom();
+  setTimeout(() => {
+    window.print();
+    zoom = prevZoom;
+    applyZoom();
+  }, 100);
+});
+
+document.getElementById('btn-zoom-in').addEventListener('click', () => {
+  zoom = Math.min(1.5, zoom + 0.1); applyZoom();
+});
+document.getElementById('btn-zoom-out').addEventListener('click', () => {
+  zoom = Math.max(0.4, zoom - 0.1); applyZoom();
+});
+
+/* ============ Initialize ============ */
+loadState();
+setDefaults();
+applyZoom();
+render();
+</script>
+
+</body>
+</html>
