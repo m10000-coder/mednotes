@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora FPP y Edad Gestacional · MED NOTES®</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #db2777;
+    --primary-dark: #be185d;
+    --primary-soft: #fce7f3;
+    --text: #1e293b;
+    --text-light: #475569;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --bg: #fdf2f8;
+    --success: #16a34a;
+    --warning: #f97316;
+    --danger: #dc2626;
+    --info: #2563eb;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ============ Top Header ============ */
+  .top-header {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 22px;
+    display: flex; align-items: center; gap: 14px;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .brand-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #000; color: #fff;
+    padding: 6px 12px;
+    font: 700 12px 'JetBrains Mono', monospace;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    border-radius: 4px;
+  }
+  .brand-badge .reg { font-size: 8px; vertical-align: top; opacity: 0.85; }
+  .top-header h1 {
+    font-size: 17px; font-weight: 800;
+    color: var(--text); flex: 1;
+  }
+
+  /* ============ Layout ============ */
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 26px 22px 80px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 28px 30px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid var(--border);
+    margin-bottom: 18px;
+  }
+
+  .card-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 4px;
+    text-align: center;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  .card-sub {
+    color: var(--muted);
+    margin-bottom: 22px;
+    font-size: 13.5px;
+    text-align: center;
+  }
+
+  /* ============ Form fields ============ */
+  .field { margin-bottom: 14px; }
+  .field-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .input, select.input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font: 500 15px 'Inter', sans-serif;
+    color: var(--text); background: #fff;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .input:focus, select.input:focus {
+    outline: none; border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(219,39,119,0.10);
+  }
+
+  .input-modes {
+    display: flex; gap: 6px;
+    background: var(--surface-alt);
+    padding: 4px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+  }
+  .mode-btn {
+    flex: 1;
+    padding: 8px 14px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font: 600 13px 'Inter', sans-serif;
+    color: var(--text-light);
+    border-radius: 6px;
+    transition: all .15s;
+  }
+  .mode-btn:hover { color: var(--primary); }
+  .mode-btn.active {
+    background: #fff;
+    color: var(--primary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .date-row {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 500px) {
+    .date-row { grid-template-columns: 1fr; }
+  }
+
+  /* ============ Buttons ============ */
+  .actions {
+    display: flex; gap: 10px;
+    margin-top: 16px;
+  }
+  .btn {
+    flex: 1;
+    padding: 12px 22px;
+    background: var(--primary); color: #fff;
+    border: none; cursor: pointer;
+    font: 700 14px 'Inter', sans-serif;
+    border-radius: 8px;
+    transition: background .15s, transform .12s;
+  }
+  .btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .btn.danger { background: var(--danger); }
+  .btn.danger:hover { background: #991b1b; }
+
+  /* ============ Results ============ */
+  .result-block { display: none; margin-top: 22px; }
+  .result-block.visible { display: block; }
+
+  .results-title {
+    text-align: center;
+    font: 800 17px 'Inter', sans-serif;
+    color: var(--primary);
+    margin-bottom: 12px;
+  }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  @media (max-width: 600px) { .result-grid { grid-template-columns: 1fr; } }
+
+  .result-tile {
+    background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+    padding: 14px 18px;
+    border-radius: 10px;
+    border-left: 4px solid var(--primary);
+  }
+  .result-tile .label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--primary-dark);
+    margin-bottom: 4px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .result-tile .val {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .result-tile .sub {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .big-result {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    padding: 18px 22px;
+    border-radius: 12px;
+    color: #fff;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .big-result .label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.9;
+    margin-bottom: 4px;
+  }
+  .big-result .date-val {
+    font-size: 28px;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 4px;
+  }
+  .big-result .extra {
+    font-size: 13px;
+    opacity: 0.95;
+  }
+
+  /* Trimester banner */
+  .trim-banner {
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-top: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+  }
+  .trim-1 { background: #16a34a; }
+  .trim-2 { background: #f59e0b; }
+  .trim-3 { background: #db2777; }
+  .trim-warn { background: var(--warning); }
+  .trim-error { background: var(--danger); }
+
+  /* ============ Info boxes ============ */
+  .info-box {
+    background: var(--primary-soft);
+    border-radius: 10px;
+    padding: 16px 20px;
+    color: var(--text);
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .info-box h3 {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: var(--primary-dark);
+    display: flex; align-items: center; gap: 6px;
+    justify-content: center;
+  }
+  .info-box ul { padding-left: 20px; margin-top: 6px; }
+  .info-box li { margin-bottom: 4px; }
+  .info-box .formula {
+    font-family: 'JetBrains Mono', monospace;
+    background: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--primary-dark);
+  }
+</style>
+</head>
+<body>
+
+<div class="top-header">
+  <div class="brand-badge">MED NOTES<span class="reg">®</span></div>
+  <h1>🤰 Calculadora FPP y Edad Gestacional</h1>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <div class="card-title">🍼 Calculadora de Fecha Probable de Parto</div>
+    <div class="card-sub">Regla de Naegele a partir de la Fecha de Última Menstruación (FUM)</div>
+
+    <div class="field">
+      <label class="field-label">📅 Fecha de Última Menstruación (FUM)</label>
+      <div class="input-modes">
+        <button class="mode-btn active" data-mode="picker">📆 Selector de fecha</button>
+        <button class="mode-btn" data-mode="manual">🔢 Día / Mes / Año</button>
+      </div>
+
+      <!-- Mode 1: Date picker -->
+      <div id="picker-mode">
+        <input class="input" id="fum-date" type="date">
+      </div>
+
+      <!-- Mode 2: Manual -->
+      <div id="manual-mode" style="display:none;">
+        <div class="date-row">
+          <div>
+            <label class="field-label" style="font-size:12px;">Día</label>
+            <select class="input" id="fum-dia"></select>
+          </div>
+          <div>
+            <label class="field-label" style="font-size:12px;">Mes</label>
+            <select class="input" id="fum-mes">
+              <option value="1">01 - Enero</option>
+              <option value="2">02 - Febrero</option>
+              <option value="3">03 - Marzo</option>
+              <option value="4">04 - Abril</option>
+              <option value="5">05 - Mayo</option>
+              <option value="6">06 - Junio</option>
+              <option value="7">07 - Julio</option>
+              <option value="8">08 - Agosto</option>
+              <option value="9">09 - Septiembre</option>
+              <option value="10">10 - Octubre</option>
+              <option value="11">11 - Noviembre</option>
+              <option value="12">12 - Diciembre</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label" style="font-size:12px;">Año</label>
+            <select class="input" id="fum-anio"></select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="btn-calc">📊 Calcular</button>
+      <button class="btn danger" id="btn-reset">♻️ Reset</button>
+    </div>
+
+    <div class="result-block" id="result">
+      <div class="results-title">📈 Resultados</div>
+
+      <div class="big-result">
+        <div class="label">🍼 Fecha Probable de Parto (FPP)</div>
+        <div class="date-val" id="fpp-date">—</div>
+        <div class="extra" id="fpp-extra">—</div>
+      </div>
+
+      <div class="result-grid">
+        <div class="result-tile">
+          <div class="label">⏳ Edad Gestacional</div>
+          <div class="val" id="eg-weeks">—</div>
+          <div class="sub" id="eg-weeks-sub">—</div>
+        </div>
+        <div class="result-tile">
+          <div class="label">📆 En meses</div>
+          <div class="val" id="eg-months">—</div>
+          <div class="sub" id="eg-months-sub">—</div>
+        </div>
+        <div class="result-tile">
+          <div class="label">⏰ Días desde FUM</div>
+          <div class="val" id="eg-days">—</div>
+          <div class="sub">Total transcurrido</div>
+        </div>
+        <div class="result-tile">
+          <div class="label">🎯 Días para FPP</div>
+          <div class="val" id="eg-remain">—</div>
+          <div class="sub" id="eg-remain-sub">—</div>
+        </div>
+      </div>
+
+      <div class="trim-banner" id="trim-banner">—</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="info-box">
+      <h3>ℹ️ Cómo utilizar</h3>
+      <ul>
+        <li>Ingrese la <b>FUM</b> (primer día del último período menstrual).</li>
+        <li>Presione <b>Calcular</b> para obtener:</li>
+        <li>📌 <b>Fecha probable de parto (FPP)</b> según regla de Naegele.</li>
+        <li>📌 <b>Edad gestacional</b> en semanas + días.</li>
+        <li>📌 <b>Trimestre</b> actual y días que faltan al parto.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="info-box" style="background: #ecfdf5;">
+      <h3 style="color: #14532d;">📐 Fórmulas utilizadas</h3>
+      <ul>
+        <li><b>FPP (Naegele):</b> <span class="formula">FUM + 1 año − 3 meses + 7 días</span></li>
+        <li><b>Edad gestacional:</b> <span class="formula">⌊(Hoy − FUM) / 7⌋ semanas + días restantes</span></li>
+        <li><b>Meses de gestación:</b> <span class="formula">⌊semanas ÷ 4.33⌋</span></li>
+        <li><b>Trimestres:</b> 1.º (0 – 13 sem) · 2.º (14 – 27 sem) · 3.º (≥ 28 sem)</li>
+        <li><b>A término:</b> 37 – 41 sem · <b>Postérmino:</b> ≥ 42 sem</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+
+  /* ============ Initialize manual mode selectors ============ */
+  const diaSel = $('fum-dia');
+  for (let d = 1; d <= 31; d++) {
+    const o = document.createElement('option');
+    o.value = d; o.textContent = String(d).padStart(2, '0');
+    diaSel.appendChild(o);
+  }
+  const anioSel = $('fum-anio');
+  const thisYear = new Date().getFullYear();
+  for (let y = thisYear; y >= thisYear - 2; y--) {
+    const o = document.createElement('option');
+    o.value = y; o.textContent = y;
+    anioSel.appendChild(o);
+  }
+
+  /* ============ Mode toggle ============ */
+  document.querySelectorAll('.mode-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.mode-btn').forEach(x => x.classList.toggle('active', x === b));
+      const m = b.dataset.mode;
+      $('picker-mode').style.display = (m === 'picker') ? 'block' : 'none';
+      $('manual-mode').style.display = (m === 'manual') ? 'block' : 'none';
+    });
+  });
+
+  /* ============ Helpers ============ */
+  function formatDate(d) {
+    return String(d.getDate()).padStart(2, '0') + '/' +
+           String(d.getMonth() + 1).padStart(2, '0') + '/' +
+           d.getFullYear();
+  }
+
+  function formatLongDate(d) {
+    const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    const dias  = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+    return `${dias[d.getDay()]}, ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+  }
+
+  function getFUM() {
+    const mode = document.querySelector('.mode-btn.active').dataset.mode;
+    if (mode === 'picker') {
+      const v = $('fum-date').value;
+      if (!v) return null;
+      const [y, m, d] = v.split('-').map(Number);
+      return new Date(y, m - 1, d);
+    } else {
+      const d = parseInt($('fum-dia').value, 10);
+      const m = parseInt($('fum-mes').value, 10);
+      const y = parseInt($('fum-anio').value, 10);
+      if (!d || !m || !y) return null;
+      return new Date(y, m - 1, d);
+    }
+  }
+
+  function naegele(fum) {
+    // FUM + 1 año - 3 meses + 7 días = FUM + 280 días aproximadamente
+    const d = new Date(fum.getFullYear() + 1, fum.getMonth() - 3, fum.getDate() + 7);
+    return d;
+  }
+
+  function classifyTrimester(weeks) {
+    if (weeks < 0) return { cls: 'trim-error', label: '⚠️ Fecha inválida (FUM en el futuro)' };
+    if (weeks <= 13) return { cls: 'trim-1', label: `🌱 Primer trimestre (semana ${weeks})` };
+    if (weeks <= 27) return { cls: 'trim-2', label: `🌸 Segundo trimestre (semana ${weeks})` };
+    if (weeks <= 36) return { cls: 'trim-3', label: `🤰 Tercer trimestre (semana ${weeks})` };
+    if (weeks <= 41) return { cls: 'trim-3', label: `👶 Embarazo a término (semana ${weeks})` };
+    return { cls: 'trim-warn', label: `⚠️ Embarazo postérmino (semana ${weeks}) — evaluar` };
+  }
+
+  /* ============ Calculate ============ */
+  function calc() {
+    const fum = getFUM();
+    if (!fum || isNaN(fum.getTime())) {
+      alert('Selecciona una fecha de última menstruación válida.');
+      return;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    fum.setHours(0, 0, 0, 0);
+
+    if (fum > today) {
+      alert('La FUM no puede ser una fecha futura.');
+      return;
+    }
+
+    const fpp = naegele(fum);
+    const msPerDay = 1000 * 60 * 60 * 24;
+    const daysSince = Math.floor((today - fum) / msPerDay);
+    const daysToFPP = Math.round((fpp - today) / msPerDay);
+
+    const weeks = Math.floor(daysSince / 7);
+    const remDays = daysSince % 7;
+    const months = Math.floor(weeks / 4.33);
+
+    // Show
+    $('fpp-date').textContent = formatDate(fpp);
+    $('fpp-extra').textContent = formatLongDate(fpp);
+
+    $('eg-weeks').textContent = `${weeks} sem + ${remDays} días`;
+    $('eg-weeks-sub').textContent = `Total: ${weeks} semanas`;
+
+    $('eg-months').textContent = `${months} meses`;
+    const monthFraction = ((weeks / 4.33) - months).toFixed(1);
+    $('eg-months-sub').textContent = `~${(weeks / 4.33).toFixed(1)} meses exactos`;
+
+    $('eg-days').textContent = `${daysSince} días`;
+
+    if (daysToFPP > 0) {
+      $('eg-remain').textContent = `${daysToFPP} días`;
+      const remWeeks = Math.floor(daysToFPP / 7);
+      $('eg-remain-sub').textContent = `≈ ${remWeeks} semanas`;
+    } else if (daysToFPP === 0) {
+      $('eg-remain').textContent = `¡Hoy!`;
+      $('eg-remain-sub').textContent = 'Día de FPP';
+    } else {
+      $('eg-remain').textContent = `+${Math.abs(daysToFPP)} días`;
+      $('eg-remain-sub').textContent = 'Postérmino';
+    }
+
+    const trim = classifyTrimester(weeks);
+    const banner = $('trim-banner');
+    banner.className = 'trim-banner ' + trim.cls;
+    banner.textContent = trim.label;
+
+    // Validation banner if absurd value
+    if (weeks > 45) {
+      banner.className = 'trim-banner trim-error';
+      banner.textContent = `⚠️ Edad gestacional inusual (${weeks} sem). Verifica la FUM.`;
+    }
+
+    $('result').classList.add('visible');
+  }
+
+  function reset() {
+    $('fum-date').value = '';
+    $('fum-dia').value = '1';
+    $('fum-mes').value = '1';
+    $('fum-anio').value = String(thisYear);
+    $('result').classList.remove('visible');
+  }
+
+  $('btn-calc').addEventListener('click', calc);
+  $('btn-reset').addEventListener('click', reset);
+
+  // Set picker default to today minus ~3 months as a hint
+  const hint = new Date();
+  hint.setDate(hint.getDate() - 90);
+  $('fum-date').value = hint.toISOString().split('T')[0];
+</script>
+
+</body>
+</html>
