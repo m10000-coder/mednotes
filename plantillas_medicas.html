@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plantillas Médicas · MED NOTES®</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #be185d;
+    --primary-dark: #9d174d;
+    --primary-soft: #fce7f3;
+    --primary-border: #fbcfe8;
+    --text: #1e293b;
+    --text-light: #475569;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --bg: #ffffff;
+    --edit-color: #dc2626;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px 18px 60px;
+  }
+
+  /* ============ Brand Header ============ */
+  .header {
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; margin-bottom: 22px;
+  }
+  .brand-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #000; color: #fff;
+    padding: 7px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700; font-size: 13px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    border-radius: 4px; margin-bottom: 14px;
+  }
+  .brand-badge .reg { font-size: 9px; vertical-align: top; opacity: 0.85; }
+  .header h1 {
+    font-size: 28px; font-weight: 800;
+    color: var(--text); letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+  .header .sub {
+    color: var(--muted); font-size: 13.5px;
+    font-weight: 500;
+  }
+
+  /* ============ Board (kanban) ============ */
+  .board-wrapper { margin-top: 8px; }
+  .board {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    align-items: start;
+  }
+  @media (max-width: 1100px) { .board { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 800px)  { .board { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 540px)  { .board { grid-template-columns: 1fr; } }
+
+  .col {
+    background: var(--surface-alt);
+    border-radius: 12px;
+    padding: 12px;
+  }
+  .col.obs   { background: #fce7f3; }
+  .col.gin   { background: #f3e8ff; }
+  .col.ped   { background: #ffedd5; }
+  .col.med   { background: #dbeafe; }
+  .col.ext   { background: #ede9fe; }
+
+  .col-header {
+    display: flex; align-items: center; gap: 6px;
+    font: 800 11px 'JetBrains Mono', monospace;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 12px; padding: 0 4px;
+  }
+  .col-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .col.obs .col-header { color: #9d174d; } .col.obs .col-dot { background: #be185d; }
+  .col.gin .col-header { color: #6b21a8; } .col.gin .col-dot { background: #9333ea; }
+  .col.ped .col-header { color: #9a3412; } .col.ped .col-dot { background: #ea580c; }
+  .col.med .col-header { color: #1e40af; } .col.med .col-dot { background: #2563eb; }
+  .col.ext .col-header { color: #5b21b6; } .col.ext .col-dot { background: #7c3aed; }
+
+  .col-name { flex: 1; }
+  .col-count {
+    background: rgba(0,0,0,0.08);
+    padding: 1px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .col-cards { display: flex; flex-direction: column; gap: 10px; }
+
+  .tpl-card {
+    position: relative;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    border-radius: 9px;
+    padding: 14px 10px 12px;
+    color: #fff;
+    text-align: center;
+    font: 700 12.5px 'Inter', sans-serif;
+    line-height: 1.3;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: all .18s;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    min-height: 110px;
+    justify-content: center;
+  }
+  .tpl-card:hover { transform: translateY(-2px); box-shadow: 0 5px 12px rgba(0,0,0,0.14); }
+  .tpl-card .icon {
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .tpl-card .icon svg { width: 100%; height: 100%; fill: #fff; }
+  .tpl-card .icon::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; right: -3px;
+    width: 17px; height: 17px;
+    background: #1e3a5f;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    background-image: linear-gradient(180deg, #2c5282 0%, #1e3a5f 100%);
+  }
+  .tpl-card .icon::before {
+    content: '📋';
+    position: absolute;
+    bottom: -7px; right: -8px;
+    font-size: 10px;
+    z-index: 2;
+    line-height: 1;
+  }
+  .tpl-card .title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .tpl-card .meta {
+    font-size: 9.5px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.85);
+    margin-top: 2px;
+    letter-spacing: 0.04em;
+  }
+
+  /* card colors */
+  .tpl-card.obs-1 { background: #be185d; }
+  .tpl-card.obs-2 { background: #be185d; }
+  .tpl-card.obs-3 { background: #be185d; }
+  .tpl-card.obs-4 { background: #c026d3; }
+  .tpl-card.gin   { background: #a855f7; }
+  .tpl-card.ped   { background: #dc2626; }
+  .tpl-card.ped-2 { background: #f97316; }
+  .tpl-card.med-1 { background: #14b8a6; }
+  .tpl-card.med-2 { background: #3b82f6; }
+  .tpl-card.med-3 { background: #1e40af; }
+  .tpl-card.ext   { background: #c4b5fd; color: #fff; }
+
+  .tpl-card.disabled {
+    opacity: 0.62;
+    cursor: not-allowed;
+  }
+  .tpl-card.disabled::after {
+    content: 'Próximamente';
+    position: absolute;
+    top: 6px; right: 6px;
+    background: rgba(0,0,0,0.3);
+    color: #fff;
+    font-size: 8.5px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* ============ Template view ============ */
+  .tpl-view { display: none; }
+  .tpl-view.active { display: block; }
+  .board-wrapper.hidden { display: none; }
+
+  .tpl-toolbar {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 18px; flex-wrap: wrap;
+  }
+  .btn {
+    padding: 9px 18px;
+    background: var(--primary); color: #fff;
+    border: none; cursor: pointer;
+    font: 700 12.5px 'Inter', sans-serif;
+    border-radius: 8px;
+    transition: background .15s;
+    letter-spacing: 0.02em;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn:hover { background: var(--primary-dark); }
+  .btn.ghost {
+    background: var(--surface-alt);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+  }
+  .btn.ghost:hover { background: #e2e8f0; }
+  .btn.success { background: #16a34a; }
+  .btn.success:hover { background: #15803d; }
+
+  .gender-toggle {
+    display: inline-flex;
+    background: var(--surface-alt);
+    border: 1.5px solid var(--border);
+    border-radius: 999px;
+    padding: 3px;
+    overflow: hidden;
+  }
+  .gender-toggle button {
+    padding: 7px 18px;
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    cursor: pointer;
+    font: 700 12.5px 'Inter', sans-serif;
+    border-radius: 999px;
+    transition: all .15s;
+  }
+  .gender-toggle button.active {
+    background: var(--primary);
+    color: #fff;
+  }
+  .gender-toggle button:not(.active):hover {
+    color: var(--primary);
+  }
+
+  .tpl-banner {
+    background: var(--primary-soft);
+    border-left: 5px solid var(--primary);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+  }
+  .tpl-banner h2 {
+    font-size: 18px; font-weight: 800;
+    color: var(--primary-dark);
+  }
+  .tpl-banner .sub {
+    font-size: 12.5px; color: var(--text-light);
+    margin-top: 2px;
+  }
+
+  .edit-notice {
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    border-left: 4px solid #dc2626;
+    border-radius: 8px;
+    padding: 11px 14px;
+    margin-bottom: 16px;
+    font-size: 12.5px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .edit-notice strong { color: #b91c1c; }
+
+  .tpl-content {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 26px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    line-height: 1.7;
+  }
+
+  .tpl-content h3 {
+    font-size: 14.5px;
+    font-weight: 800;
+    color: var(--text);
+    margin: 22px 0 10px;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    letter-spacing: -0.01em;
+  }
+  .tpl-content h3:first-child { margin-top: 0; }
+
+  .tpl-content p {
+    font-size: 13.5px;
+    color: var(--text);
+    margin-bottom: 14px;
+    text-align: justify;
+  }
+
+  .tpl-content strong { font-weight: 700; }
+
+  /* Editable red text */
+  .tpl-content .edit {
+    color: var(--edit-color);
+    font-weight: 700;
+  }
+
+  .tpl-content .field-label {
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .not-applicable {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .not-applicable .icon-big {
+    font-size: 48px;
+    opacity: 0.5;
+    margin-bottom: 12px;
+  }
+
+  /* Copy feedback toast */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #1e293b;
+    color: #fff;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font: 600 13px 'Inter', sans-serif;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    opacity: 0;
+    transition: all .25s ease;
+    z-index: 1000;
+  }
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  /* ============ Footer ============ */
+  .disclaimer {
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+    border-left: 4px solid #facc15;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 12.5px;
+    color: var(--text);
+    line-height: 1.5;
+    margin-top: 24px;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 22px; padding-top: 18px;
+    border-top: 1px solid var(--border);
+    color: var(--muted); font-size: 12.5px;
+  }
+  .brand-logo {
+    display: inline-block; padding: 4px 12px;
+    background: #000; color: #fff;
+    font: 700 11px 'JetBrains Mono', monospace;
+    letter-spacing: 0.06em; border-radius: 3px;
+    margin-bottom: 8px;
+  }
+  .brand-logo .reg { font-size: 8px; vertical-align: top; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ============ Brand Header ============ -->
+  <div class="header">
+    <div class="brand-badge">
+      <span>MED NOTES</span><span class="reg">®</span>
+    </div>
+    <h1>Plantillas Médicas</h1>
+    <p class="sub">Plantillas listas para historia clínica · MSP Ecuador. Selecciona una plantilla para usarla.</p>
+  </div>
+
+  <!-- ============ Board view ============ -->
+  <div class="board-wrapper" id="board-wrapper">
+    <div class="board">
+
+      <!-- Obstetricia -->
+      <div class="col obs">
+        <div class="col-header">
+          <span class="col-dot"></span>
+          <span class="col-name">Obstetricia</span>
+          <span class="col-count">4</span>
+        </div>
+        <div class="col-cards">
+          <button class="tpl-card obs-1" data-tpl="sospecha-embarazo">
+            <div class="icon">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="10" r="5"/>
+                <path d="M28 17c-3 0-6 3-6 6v15c0 2 1 3 3 4l1 1v15c0 2 2 4 4 4h4c2 0 4-2 4-4V47c4-1 6-4 6-8v-9c0-4-3-7-7-7h-9zm10 14c0 3-2 5-5 6-3-1-5-3-5-6v-2c0-2 1-3 3-3h4c2 0 3 1 3 3v2z"/>
+              </svg>
+            </div>
+            <div class="title">Sospecha de embarazo</div>
+            <div class="meta">Plantillas médicas</div>
+          </button>
+          <button class="tpl-card obs-2 disabled" data-tpl="captacion-embarazada">
+            <div class="icon">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="10" r="5"/>
+                <path d="M28 17c-3 0-6 3-6 6v15c0 2 1 3 3 4l1 1v15c0 2 2 4 4 4h4c2 0 4-2 4-4V47c4-1 6-4 6-8v-9c0-4-3-7-7-7h-9zm10 14c0 3-2 5-5 6-3-1-5-3-5-6v-2c0-2 1-3 3-3h4c2 0 3 1 3 3v2z"/>
+              </svg>
+            </div>
+            <div class="title">Captación de embarazada</div>
+            <div class="meta">Plantillas médicas</div>
+          </button>
+          <button class="tpl-card obs-3 disabled" data-tpl="control-prenatal">
+            <div class="icon">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="10" r="5"/>
+                <path d="M28 17c-3 0-6 3-6 6v15c0 2 1 3 3 4l1 1v15c0 2 2 4 4 4h4c2 0 4-2 4-4V47c4-1 6-4 6-8v-9c0-4-3-7-7-7h-9zm10 14c0 3-2 5-5 6-3-1-5-3-5-6v-2c0-2 1-3 3-3h4c2 0 3 1 3 3v2z"/>
+              </svg>
+            </div>
+            <div class="title">Control prenatal</div>
+            <div class="meta">Plantillas médicas</div>
+          </button>
+          <button class="tpl-card obs-4 disabled" data-tpl="control-puerperio">
+            <div class="icon">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="10" r="5"/>
+                <path d="M28 17c-3 0-6 3-6 6v15c0 2 1 3 3 4l1 1v15c0 2 2 4 4 4h4c2 0 4-2 4-4V47c4-1 6-4 6-8v-9c0-4-3-7-7-7h-9zm10 14c0 3-2 5-5 6-3-1-5-3-5-6v-2c0-2 1-3 3-3h4c2 0 3 1 3 3v2z"/>
+              </svg>
+            </div>
+            <div class="title">Control puerperio</div>
+            <div class="meta">Plantillas médicas</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ginecología -->
+      <div class="col gin">
+        <div class="col-header">
+          <span class="col-dot"></span>
+          <span class="col-name">Ginecología</span>
+          <span class="col-count">5</span>
+        </div>
+        <div class="col-cards">
+          <button class="tpl-card gin disabled" data-tpl="papanicolau">
+            <div class="icon">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 8c-4 0-7 2.5-7 6v6c-3 .5-5 2.8-5 6v3c0 4 2 6 5 7v8c-3 1-5 4-5 7v3c0 5 4 8 8 8h8c4 0 8-3 8-8v-3c0-3-2-6-5-7v-8c3-1 5-3 5-7v-3c0-3.2-2-5.5-5-6v-6c0-3.5-3-6-7-6zm-2 4h4c1.5 0 3 1 3 3v6h-10v-6c0-2 1.5-3 3-3z"/>
+              </svg>
+            </div>
+            <div class="title">Papanicolau</div>
+            <div class="meta">Plantillas médicas</div>
+          </button>
+          <button class="tpl-card gin disabled" data-tpl="planificacion-familiar">
+            <div class="icon">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 8c-4 0-7 2.5-7 6v6c-3 .5-5 2.8-5 6v3c0 4 2 6 5 7v8c-3 1-5 4-5 7v3c0 5 4 8 8 8h8c4 0 8-3 8-8v-3c0-3-2-6-5-7v-8c3-1 5-3 5-7v-3c0-3.2-2-5.5-5-6v-6c0-3.5-3-6-7-6zm-2 4h4c1.5 0 3 1 3 3v6h-10v-6c0-2 1.5-3 3-3z"/>
+              </svg>
+            </div>
+            <div class="title">Planificación familiar (anticonceptivos)</div>
+            <div class="meta">Plantillas médicas</div>
+          </button>
+          <button class="tpl-card gin disabled" data-tpl="colocacion-implante">
+            <div class="icon">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 8c-4 0-7 2.5-7 6v6c-3 .5-5 2.8-5 6v3c0 4 2 6 5 7v8c-3 1-5 4-5 7v3c0 5 4 8 8 8h8c4 0 8-3 8-8v-3c0-3-2-6-5-7v-8c3-1 5-3 5-7v-3c0-3.2-2-5.5-5-6v-6c0-3.5-3-6-7-6zm-2 4h4c1.5 0 3 1 3 3v6h-10v-6c0-2 1.5-3 3-3z"/>
+              </svg>
+            </div>
+            <div class="title">Colocación de implante</div>
+            <div class="meta">Plantillas médicas</div>
+          </button>
+          <button class="tpl-card gin disabled" data-tpl="control-implante">
+            <div class="icon">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 8c-4 0-7 2.5-7 6v6c-3 .5-5 2.8-5 6v3c0 4 2 6 5 7v8c-3 1-5 4-5 7v3c0 5 4 8 8 8h8c4 0 8-3 8-8v-3c0-3-2-6-5-7v-8c3-1 5-3 5-7v-3c0-3.2-2-5.5-5-6v-6c0-3.5-3-6-7-6zm-2 4h4c1.5 0 3 1 3 3v6h-10v-6c0-2 1.5-3 3-3z"/>
+              </svg>
+            </div>
+            <div class="title">Control de implante</div>
+            <div class="meta">Plantillas médicas</div>
+          </button>
+          <button class="tpl-card gin disabled" data-tpl="retiro-implante">
+            <div class="icon">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 8c-4 0-7 2.5-7 6v6c-3 .5-5 2.8-5 6v3c0 4 2 6 5 7v8c-3 1-5 4-5 7v3c0 5 4 8 8 8h8c4 0 8-3 8-8v-3c0-3-2-6-5-7v-8c3-1 5-3 5-7v-3c0-3.2-2-5.5-5-6v-6c0-3.5-3-6-7-6zm-2 4h4c1.5 0 3 1 3 3v6h-10v-6c0-2 1.5-3 3-3z"/>
+              </svg>
+            </div>
+            <div class="title">Retiro de implante</div>
+            <div class="meta">Plantillas médicas</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Pediatría -->
+      <div class="col ped">
+        <div class="col-header">
+          <span class="col-dot"></span>
+          <span class="col-name">Pediatría</span>
+          <span class="col-count">5</span>
+        </div>
+        <div class="col-cards">
+          <button class="tpl-card ped disabled" data-tpl="control-nino-sano">
+            <div class="icon">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="14" r="6"/>
+                <path d="M22 24c-3 0-5 2-5 5v10c0 1 .5 2 1.5 2.5l3 1.5v10c0 2 1.5 3.5 3.5 3.5h14c2 0 3.5-1.5 3.5-3.5V43l3-1.5C46.5 41 47 40 47 39V29c0-3-2-5-5-5H22z"/>
+              </svg>
+            </div>
+            <div class="title">Control niño sano</div>
+            <div class="meta">Plantillas médicas</div>
+          </button>
+          <button class="tpl-card ped disabled" data-tpl="control-rn">
+            <div class="icon">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="14" r="6"/>
+                <path d="M22 24c-3 0-5 2-5 5v10c0 1 .5 2 1.5 2.5l3 1.5v10c0 2 1.5 3.5 3.5 3.5h14c2 0 3.5-1.5 3.5-3.5V43l3-1.5C46.5 41 47 40 47 39V29c0-3-2-5-5-5H22z"/>
+              </svg>
+            </div>
+            <div class="title">Control recién nacido</div>
+            <div class="meta">Plantillas médicas</div>
+          </button>
+          <button class="tpl-card ped disabled" data-tpl="control-lactante">
+            <div class="icon">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="14" r="6"/>
+                <path d="M22 24c-3 0-5 2-5 5v10c0 1 .5 2 1.5 2.5l3 1.5v10c0 2 1.5 3.5 3.5 3.5h14c2 0 3.5-1.5 3.5-3.5V43l3-1.5C46.5 41 47 40 47 39V29c0-3-2-5-5-5H22z"/>
+              </svg>
+            </div>
+            <div class="title">Control lactante</div>
+            <div class="meta">Plantillas médicas</div>
+          </button>
+          <button class="tpl-card ped-2 disabled" data-tpl="control-escolar">
+            <div class="icon">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="14" r="6"/>
+                <path d="M22 24c-3 0-5 2-5 5v10c0 1 .5 2 1.5 2.5l3 1.5v10c0 2 1.5 3.5 3.5 3.5h14c2 0 3.5-1.5 3.5-3.5V43l3-1.5C46.5 41 47 40 47 39V29c0-3-2-5-5-5H22z"/>
+              </svg>
+            </div>
+            <div class="title">Control escolar</div>
+            <div class="meta">Plantillas médicas</div>
+          </button>
+          <button class="tpl-card ped-2 disabled" data-tpl="control-adolescente">
+            <div class="icon">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="14" r="6"/>
+                <path d="M22 24c-3 0-5 2-5 5v10c0 1 .5 2 1.5 2.5l3 1.5v10c0 2 1.5 3.5 3.5 3.5h14c2 0 3.5-1.5 3.5-3.5V43l3-1.5C46.5 41 47 40 47 39V29c0-3-2-5-5-5H22z"/>
+              </svg>
+            </div>
+            <div class="title">Control adolescente</div>
+            <div class="meta">Plantillas médicas</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Medicina General -->
+      <div class="col med">
+        <div class="col-header">
+          <span class="col-dot"></span>
+          <span class="col-name">Medicina General</span>
+          <span class="col-count">3</span>
+        </div>
+        <div class="col-cards">
+          <button class="tpl-card med-1 disabled" data-tpl="emg-adulto">
+            <div class="icon">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="14" r="6"/>
+                <path d="M22 25c-3 0-5 2-5 5v15c0 2 1 3 3 4l2 1v6c0 2 2 3 3.5 3h13c1.5 0 3.5-1 3.5-3v-6l2-1c2-1 3-2 3-4V30c0-3-2-5-5-5H22z"/>
+                <path d="M28 4l1 4 4-1 1 4 4-1" stroke="#fff" stroke-width="1.5" fill="none"/>
+              </svg>
+            </div>
+            <div class="title">Examen médico general adulto</div>
+            <div class="meta">Plantillas médicas</div>
+          </button>
+          <button class="tpl-card med-2 disabled" data-tpl="emg-adulto-mayor">
+            <div class="icon">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="22" cy="14" r="5"/>
+                <circle cx="42" cy="14" r="5"/>
+                <path d="M16 23c-3 0-5 2-5 5v18c0 2 1 3 3 3l2 1v6h10v-6l2-1c2 0 3-1 3-3V28c0-3-2-5-5-5H16zm22 0c-3 0-5 2-5 5v18c0 2 1 3 3 3l2 1v6h10v-6l2-1c2 0 3-1 3-3V28c0-3-2-5-5-5H38z"/>
+              </svg>
+            </div>
+            <div class="title">Examen médico general adulto mayor</div>
+            <div class="meta">Plantillas médicas</div>
+          </button>
+          <button class="tpl-card med-3 disabled" data-tpl="certificado-salud">
+            <div class="icon">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 8h22l8 8v40c0 2-2 4-4 4H18c-2 0-4-2-4-4V12c0-2 2-4 4-4z"/>
+                <path d="M40 8v8h8" fill="#1e3a5f"/>
+                <path d="M30 26v6h-6v6h6v6h6v-6h6v-6h-6v-6z" fill="#1e3a5f"/>
+              </svg>
+            </div>
+            <div class="title">Certificado único de salud</div>
+            <div class="meta">Plantillas médicas</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Extramural -->
+      <div class="col ext">
+        <div class="col-header">
+          <span class="col-dot"></span>
+          <span class="col-name">Extramural</span>
+          <span class="col-count">2</span>
+        </div>
+        <div class="col-cards">
+          <button class="tpl-card ext disabled" data-tpl="visita-domiciliaria">
+            <div class="icon">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 10L10 28v26h44V28L32 10zm0 8l14 11v21H18V29l14-11z"/>
+              </svg>
+            </div>
+            <div class="title">Visita domiciliaria</div>
+            <div class="meta">Plantillas médicas</div>
+          </button>
+          <button class="tpl-card ext disabled" data-tpl="ficha-familiar">
+            <div class="icon">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 10L10 28v26h44V28L32 10zm0 8l14 11v21H18V29l14-11z"/>
+              </svg>
+            </div>
+            <div class="title">Ficha familiar</div>
+            <div class="meta">Plantillas médicas</div>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ Template view (single template) ============ -->
+  <div class="tpl-view" id="tpl-view">
+    <div class="tpl-toolbar">
+      <button class="btn ghost" id="btn-back">← Volver al tablero</button>
+      <div class="gender-toggle" id="gender-toggle">
+        <button class="active" data-gender="mujer">👩 Mujer</button>
+        <button data-gender="hombre">👨 Hombre</button>
+      </div>
+      <button class="btn success" id="btn-copy">📋 Copiar plantilla</button>
+    </div>
+
+    <div class="tpl-banner" id="tpl-banner">
+      <h2 id="tpl-title">Plantilla</h2>
+      <div class="sub" id="tpl-sub"></div>
+    </div>
+
+    <div class="edit-notice">
+      <strong>📝 Cómo editar la plantilla:</strong> el texto en <strong style="color:#dc2626;">rojo</strong> indica los datos que debes adaptar al paciente (edad, fechas, síntomas específicos, antecedentes, valores de signos vitales, etc.). Copia el texto, pégalo en tu sistema (eHistoria, MS Word, EMR) y reemplaza los marcadores.
+    </div>
+
+    <div class="tpl-content" id="tpl-content"></div>
+  </div>
+
+  <!-- ============ Disclaimer ============ -->
+  <div class="disclaimer">
+    <strong>⚠ Aviso:</strong> Estas plantillas son una guía de redacción para optimizar el registro clínico. <strong>Adapta cada texto al caso particular del paciente.</strong> No reemplazan la evaluación clínica, criterio profesional ni registros legales requeridos. Siempre verifica los hallazgos antes de firmar la historia.
+  </div>
+
+  <!-- ============ Footer ============ -->
+  <div class="footer">
+    <span class="brand-logo">MED NOTES<span class="reg">®</span></span>
+    <p>Hecho por <strong>MED NOTES®</strong> — Apuntes médicos basados en evidencia</p>
+    <p style="font-size:11px; opacity:0.7;">Fuente: MSP Ecuador · Manual del expediente clínico</p>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">Plantilla copiada al portapapeles ✓</div>
+
+<script>
+/* ============================================================
+   TEMPLATES DATA
+   ============================================================
+   Each template has:
+   - title, sub (banner)
+   - content: { mujer: HTML, hombre: HTML | null }
+   - if onlyGender is set, the other gender shows "no aplica"
+   ============================================================ */
+
+const TEMPLATES = {
+
+  /* ---- 1. SOSPECHA DE EMBARAZO ---- */
+  'sospecha-embarazo': {
+    title: 'Sospecha de embarazo',
+    sub: 'Plantilla obstétrica · Primera consulta por amenorrea',
+    onlyGender: 'mujer',
+    content: {
+      mujer: `
+        <h3>Motivo de consulta:</h3>
+        <p>AMENORREA</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE FEMENINA DE <span class="edit">XX</span> AÑOS, ACUDE A CONSULTA POR AMENORREA DE <span class="edit">XX</span> DÍAS/SEMANAS/MESES, ASOCIADO A <span class="edit">NÁUSEAS, VÓMITOS MATUTINOS, MASTALGIA, AUMENTO DE VOLUMEN MAMARIO, SOMNOLENCIA, FATIGA, POLAQUIURIA, ETC.</span> DESDE HACE APROXIMADAMENTE <span class="edit">XX</span> DÍAS/SEMANAS/MESES. REFIERE ÚLTIMA MENSTRUACIÓN; FUM <span class="edit">XX/XX/XXXX</span>, CICLOS MENSTRUALES PREVIAMENTE <span class="edit">REGULARES/IRREGULARES</span>. REFIERE/NIEGA USO DE (MÉTODO ANTICONCEPTIVO). NO PRESENTA SANGRADO GENITAL, FLUJO ANORMAL NI DOLOR PÉLVICO IMPORTANTE. PACIENTE INDICA QUE ES SEXUALMENTE ACTIVA, REFIERE RELACIONES SEXUALES SIN PROTECCIÓN EN LOS ÚLTIMOS DÍAS/SEMANAS. AL MOMENTO PACIENTE EN BUEN ESTADO GENERAL, SIN SIGNOS DE ALARMA. <span class="edit">APF: MADRE HTA. APQX NO REFIERE, ALERGIAS NO REFIERE.</span> ANTECEDENTES GINECO-OBSTÉTRICOS REVISADOS <span class="edit">(G X P X A X C X)</span>, CICLOS PREVIOS REGULARES/IRREGULARES. SE EXPLICA LA IMPORTANCIA DEL CONTROL PRENATAL TEMPRANO Y SE BRINDA CONSEJERÍA SOBRE SIGNOS DE ALARMA Y CUIDADOS INICIALES EN EL EMBARAZO.</p>
+
+        <h3>Examen físico</h3>
+        <p><span class="field-label">SIGNOS VITALES:</span> PRESIÓN ARTERIAL <span class="edit">XXX/XX</span> MMHG, FRECUENCIA CARDÍACA <span class="edit">XX</span> LPM, FRECUENCIA RESPIRATORIA <span class="edit">XX</span> RPM, TEMPERATURA <span class="edit">XX.X</span> °C, SATURACIÓN O₂ <span class="edit">XX</span>%, <span class="edit">PESO XX KG, TALLA X.XX M, IMC XX.X KG/M².</span></p>
+
+        <p><span class="field-label">ESTADO GENERAL:</span> PACIENTE ALERTA, ORIENTADA, COOPERADORA, EN BUEN ESTADO GENERAL.</p>
+
+        <p><span class="field-label">PIEL Y FANERAS:</span> COLORACIÓN NORMAL, HIDRATADA, SIN LESIONES, EQUIMOSIS NI EDEMAS.</p>
+
+        <p><span class="field-label">CABEZA:</span> NORMOCÉFALA, SIN LESIONES.</p>
+
+        <p><span class="field-label">OJOS:</span> CONJUNTIVAS ROSADAS, ESCLERAS BLANCAS, PUPILAS ISOCÓRICAS Y REACTIVAS A LA LUZ.</p>
+
+        <p><span class="field-label">OÍDOS:</span> PABELLONES NORMALES, CONDUCTOS AUDITIVOS PERMEABLES.</p>
+
+        <p><span class="field-label">NARIZ:</span> MUCOSA ROSADA, SIN OBSTRUCCIÓN NI SECRECIONES.</p>
+
+        <p><span class="field-label">BOCA Y FARINGE:</span> MUCOSA ORAL ROSADA, BUENA HIGIENE BUCAL, AMÍGDALAS SIN HIPERTROFIA.</p>
+
+        <p><span class="field-label">CUELLO:</span> SIN MASAS NI ADENOMEGALIAS, TIROIDES NO PALPABLE.</p>
+
+        <p><span class="field-label">TÓRAX:</span> SIMÉTRICO, MURMULLO VESICULAR PRESENTE, SIN RUIDOS PATOLÓGICOS. RUIDOS CARDÍACOS RÍTMICOS, SIN SOPLOS.</p>
+
+        <p><span class="field-label">ABDOMEN:</span> PLANO, BLANDO, NO DOLOROSO A LA PALPACIÓN, SIN VISCEROMEGALIAS. <span class="edit">NO SE PALPA ALTURA UTERINA (GESTACIÓN TEMPRANA) / ALTURA UTERINA ACORDE A EDAD.</span></p>
+
+        <p><span class="field-label">GENITOURINARIO:</span> NO SE REALIZA EXAMEN PÉLVICO EN ESTA VISITA / EXAMEN PÉLVICO REALIZADO CON CONSENTIMIENTO: MUCOSA VAGINAL ROSADA, CUELLO UTERINO CERRADO, SIN SANGRADO NI SECRECIONES PATOLÓGICAS.</p>
+
+        <p><span class="field-label">EXTREMIDADES:</span> SIMÉTRICAS, SIN EDEMAS, FUERZA Y MOVILIDAD CONSERVADAS.</p>
+
+        <p><span class="field-label">NEUROLÓGICO:</span> ALERTA Y ORIENTADA, FUERZA MUSCULAR 5/5, SENSIBILIDAD CONSERVADA.</p>
+
+        <h3>CIE-10</h3>
+        <p>N912 – AMENORREA, SIN OTRA ESPECIFICACIÓN</p>
+        <p>Z320 – EMBARAZO (AÚN) NO CONFIRMADO <em>(Siempre colocar como presuntivo, no se puede colocar como diagnóstico definitivo)</em></p>
+
+        <h3>Evolución</h3>
+        <p>PACIENTE FEMENINA DE <span class="edit">XX</span> AÑOS, REFIERE QUE PRESENTA AMENORREA DE <span class="edit">XX</span> DÍAS/SEMANAS/MESES, ASOCIADO A <span class="edit">NÁUSEAS, VÓMITOS MATUTINOS, MASTALGIA, AUMENTO DE VOLUMEN MAMARIO, SOMNOLENCIA, FATIGA, POLAQUIURIA, ETC.</span> DESDE HACE APROXIMADAMENTE <span class="edit">XX</span> DÍAS/SEMANAS/MESES. REFIERE ÚLTIMA MENSTRUACIÓN; FUM <span class="edit">XX/XX/XXXX</span>, CICLOS MENSTRUALES PREVIAMENTE <span class="edit">REGULARES/IRREGULARES</span>. REFIERE/NIEGA USO DE (MÉTODO ANTICONCEPTIVO). NO PRESENTA SANGRADO GENITAL, FLUJO ANORMAL NI DOLOR PÉLVICO IMPORTANTE. PACIENTE INDICA QUE ES SEXUALMENTE ACTIVA, REFIERE RELACIONES SEXUALES SIN PROTECCIÓN EN LOS ÚLTIMOS DÍAS/SEMANAS. AL EXAMEN FÍSICO PACIENTE PRESENTA (DETALLAR HALLAZGOS), SIGNOS VITALES Y EXAMEN FÍSICO DENTRO DE PARÁMETROS NORMALES.</p>
+
+        <p><span class="field-label">PLAN:</span> SE ENVÍA PEDIDO DE LABORATORIO PARA REALIZACIÓN DE PRUEBA βHCG SÉRICA EN SANGRE / ORINA PARA CONFIRMAR EMBARAZO. SE AGENDA PRÓXIMA CITA PARA REVALORAR CON RESULTADOS. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES Y CON CITA PROGRAMADA PARA CONTROL PRENATAL. SE BRINDA CONSEJERÍA SOBRE ALIMENTACIÓN SALUDABLE, EVITAR CONSUMO DE ALCOHOL, TABACO Y SUSTANCIAS TÓXICAS, ASÍ COMO SIGNOS DE ALARMA (SANGRADO VAGINAL, DOLOR ABDOMINAL INTENSO, FIEBRE, PÉRDIDA DE LÍQUIDO). TAMIZAJE DE VIOLENCIA NEGATIVO.</p>
+      `,
+      hombre: null
+    }
+  }
+
+  /* Future templates will be added here:
+     'captacion-embarazada', 'control-prenatal', 'control-puerperio',
+     'papanicolau', 'planificacion-familiar', etc.
+  */
+};
+
+/* ============================================================
+   UI – Board navigation + template rendering
+   ============================================================ */
+const boardWrapper = document.getElementById('board-wrapper');
+const tplView = document.getElementById('tpl-view');
+const tplBanner = document.getElementById('tpl-banner');
+const tplTitle = document.getElementById('tpl-title');
+const tplSub = document.getElementById('tpl-sub');
+const tplContent = document.getElementById('tpl-content');
+const genderToggle = document.getElementById('gender-toggle');
+
+let currentTpl = null;
+let currentGender = 'mujer';
+
+function openTemplate(key) {
+  const tpl = TEMPLATES[key];
+  if (!tpl) return;
+  currentTpl = tpl;
+
+  tplTitle.textContent = tpl.title;
+  tplSub.textContent = tpl.sub || '';
+
+  // If template is onlyGender, set gender accordingly
+  if (tpl.onlyGender) {
+    currentGender = tpl.onlyGender;
+  } else {
+    currentGender = 'mujer';
+  }
+
+  // Update toggle UI
+  genderToggle.querySelectorAll('button').forEach(b => {
+    b.classList.toggle('active', b.dataset.gender === currentGender);
+  });
+
+  renderContent();
+
+  boardWrapper.classList.add('hidden');
+  tplView.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderContent() {
+  if (!currentTpl) return;
+  const html = currentTpl.content[currentGender];
+  if (html) {
+    tplContent.innerHTML = html;
+  } else {
+    // Not applicable for this gender
+    tplContent.innerHTML = `
+      <div class="not-applicable">
+        <div class="icon-big">🚫</div>
+        <p style="font-size:16px; font-weight:700; color:var(--text); margin-bottom:6px;">Plantilla no aplicable</p>
+        <p>Esta plantilla aplica únicamente a pacientes de sexo <strong>${currentTpl.onlyGender === 'mujer' ? 'femenino' : 'masculino'}</strong>.<br>Cambia la selección de género o vuelve al tablero para escoger otra plantilla.</p>
+      </div>`;
+  }
+}
+
+function closeTemplate() {
+  boardWrapper.classList.remove('hidden');
+  tplView.classList.remove('active');
+  currentTpl = null;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* Card clicks */
+document.querySelectorAll('.tpl-card').forEach(card => {
+  card.addEventListener('click', () => {
+    if (card.classList.contains('disabled')) {
+      showToast('Plantilla próximamente disponible');
+      return;
+    }
+    openTemplate(card.dataset.tpl);
+  });
+});
+
+/* Back button */
+document.getElementById('btn-back').addEventListener('click', closeTemplate);
+
+/* Gender toggle */
+genderToggle.querySelectorAll('button').forEach(b => {
+  b.addEventListener('click', () => {
+    if (currentTpl && currentTpl.onlyGender && currentTpl.onlyGender !== b.dataset.gender) {
+      // still allow toggle but content will show "no aplica"
+    }
+    genderToggle.querySelectorAll('button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    currentGender = b.dataset.gender;
+    renderContent();
+  });
+});
+
+/* Copy button */
+document.getElementById('btn-copy').addEventListener('click', () => {
+  if (!currentTpl) return;
+  const html = currentTpl.content[currentGender];
+  if (!html) {
+    showToast('Esta plantilla no aplica al género seleccionado');
+    return;
+  }
+  // Convert HTML to plain text preserving structure
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = html;
+  // Replace h3 with line breaks + uppercase, p with paragraphs
+  let text = '';
+  tempDiv.querySelectorAll('h3, p').forEach(el => {
+    if (el.tagName === 'H3') {
+      text += '\n\n' + el.textContent.trim().toUpperCase() + '\n';
+    } else {
+      text += el.textContent.trim() + '\n\n';
+    }
+  });
+  text = text.trim();
+
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Plantilla copiada al portapapeles ✓');
+  }).catch(() => {
+    showToast('No se pudo copiar. Selecciona y copia manualmente.');
+  });
+});
+
+/* Toast helper */
+const toastEl = document.getElementById('toast');
+let toastTimer;
+function showToast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+}
+</script>
+
+</body>
+</html>
