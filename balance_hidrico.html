@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balance Hídrico — Herramientas Médicas · MED NOTES®</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --primary-soft: #dbeafe;
+    --text: #1e293b;
+    --text-light: #475569;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --bg: #eff6ff;
+    --success: #16a34a;
+    --warning: #f97316;
+    --danger: #dc2626;
+    --teal: #0d9488;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ============ Top Header ============ */
+  .top-header {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 22px;
+    display: flex; align-items: center; gap: 14px;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .brand-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #000; color: #fff;
+    padding: 6px 12px;
+    font: 700 12px 'JetBrains Mono', monospace;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    border-radius: 4px;
+  }
+  .brand-badge .reg { font-size: 8px; vertical-align: top; opacity: 0.85; }
+  .top-header h1 {
+    font-size: 17px; font-weight: 800;
+    color: var(--text); flex: 1;
+  }
+
+  /* ============ Tabs ============ */
+  .tabs {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 0 22px;
+    display: flex;
+    overflow-x: auto;
+    gap: 0;
+    position: sticky; top: 60px; z-index: 49;
+  }
+  .tab {
+    background: none;
+    border: none;
+    padding: 14px 18px;
+    font: 600 13.5px 'Inter', sans-serif;
+    color: var(--text-light);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all .15s;
+  }
+  .tab:hover { color: var(--primary); background: var(--surface-alt); }
+  .tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+    background: var(--primary-soft);
+    font-weight: 700;
+  }
+
+  /* ============ Layout ============ */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 26px 22px 80px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 26px 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid var(--border);
+    margin-bottom: 18px;
+  }
+
+  .pane { display: none; }
+  .pane.active { display: block; }
+
+  .card-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 4px;
+    text-align: center;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .card-sub {
+    color: var(--muted);
+    margin-bottom: 22px;
+    font-size: 13.5px;
+    text-align: center;
+  }
+
+  /* ============ Form fields ============ */
+  .field { margin-bottom: 14px; }
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 600px) { .field-row { grid-template-columns: 1fr; } }
+
+  .field-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .input, select.input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font: 500 14.5px 'Inter', sans-serif;
+    color: var(--text); background: #fff;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .input:focus, select.input:focus {
+    outline: none; border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
+  }
+
+  /* ============ Buttons ============ */
+  .actions {
+    display: flex; gap: 10px;
+    margin-top: 16px;
+  }
+  .btn {
+    flex: 1;
+    padding: 11px 22px;
+    background: var(--primary); color: #fff;
+    border: none; cursor: pointer;
+    font: 700 14px 'Inter', sans-serif;
+    border-radius: 8px;
+    transition: background .15s, transform .12s;
+  }
+  .btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .btn.danger { background: var(--danger); }
+  .btn.danger:hover { background: #991b1b; }
+  .btn.success { background: var(--success); }
+  .btn.success:hover { background: #15803d; }
+
+  /* ============ Results ============ */
+  .result-card {
+    margin-top: 18px;
+    background: linear-gradient(180deg, #ecfdf5 0%, #f0fdf4 100%);
+    border-radius: 10px;
+    padding: 16px 20px;
+    border-left: 4px solid var(--success);
+    color: #14532d;
+    display: none;
+  }
+  .result-card.visible { display: block; }
+  .result-card.warning {
+    background: linear-gradient(180deg, #fff7ed 0%, #fef3c7 100%);
+    border-left-color: var(--warning);
+    color: #7c2d12;
+  }
+  .result-card.danger {
+    background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 100%);
+    border-left-color: var(--danger);
+    color: #7f1d1d;
+  }
+  .result-card.info {
+    background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
+    border-left-color: var(--primary);
+    color: var(--primary-dark);
+  }
+  .result-card h3 {
+    font-size: 15.5px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .result-card .row {
+    display: flex; justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px dashed rgba(0,0,0,0.10);
+    font-size: 14px;
+  }
+  .result-card .row:last-child { border-bottom: none; }
+  .result-card .row b { font-weight: 700; }
+  .result-card .row .val { font-weight: 700; font-size: 15px; }
+
+  .result-mini {
+    background: var(--surface-alt);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    border-left: 3px solid var(--primary);
+  }
+  .result-mini h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--primary-dark);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .result-mini .row {
+    display: flex; justify-content: space-between;
+    padding: 3px 0;
+    font-size: 13.5px;
+    color: var(--text);
+  }
+  .result-mini .row b { font-weight: 700; }
+
+  .formula-box {
+    background: var(--surface-alt);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 14px;
+    font: 500 13px 'JetBrains Mono', monospace;
+    color: var(--text-light);
+  }
+  .formula-box b { color: var(--text); font-weight: 700; }
+
+  /* ============ Reference table ============ */
+  .ref-table {
+    margin-top: 18px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .ref-table h3 {
+    background: var(--teal);
+    color: #fff;
+    padding: 10px 14px;
+    font-size: 13.5px;
+    font-weight: 700;
+  }
+  .ref-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .ref-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+    color: var(--text-light);
+  }
+  .ref-table td:first-child {
+    font-weight: 700;
+    color: var(--text);
+    width: 28%;
+  }
+  .ref-table td:nth-child(2) {
+    width: 25%;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+  }
+  .ref-table tr:last-child td { border-bottom: none; }
+
+  /* ============ Hourly tracking table ============ */
+  .shift-card {
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+  }
+  .shift-header {
+    padding: 12px 18px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 800;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .shift-am { background: linear-gradient(90deg, #38bdf8 0%, #0ea5e9 100%); }
+  .shift-pm { background: linear-gradient(90deg, #818cf8 0%, #6366f1 100%); }
+  .shift-night { background: linear-gradient(90deg, #1e3a8a 0%, #312e81 100%); }
+
+  table.io-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+  }
+  table.io-table th {
+    background: var(--surface-alt);
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--primary);
+    padding: 10px 8px;
+    text-align: left;
+  }
+  table.io-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  table.io-table tr:last-child td { border-bottom: none; }
+  table.io-table .hour {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 13px;
+    padding-left: 14px;
+    width: 70px;
+  }
+  table.io-table select.tipo {
+    padding: 5px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12.5px;
+    background: var(--surface-alt);
+    width: 100%;
+    max-width: 130px;
+  }
+  table.io-table input.cell-num {
+    width: 100%;
+    padding: 6px 9px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  table.io-table input.cell-num:read-only,
+  table.io-table input.cell-num.readonly {
+    background: var(--surface-alt);
+    font-weight: 700;
+    color: var(--primary-dark);
+  }
+
+  .shift-total {
+    background: var(--primary-soft);
+    padding: 10px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    color: var(--primary-dark);
+    border-top: 1px solid var(--border);
+  }
+  .shift-total .total-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+  }
+
+  /* Summary */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 14px;
+  }
+  @media (max-width: 700px) {
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .summary-tile {
+    background: var(--surface-alt);
+    padding: 14px 16px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+  .summary-tile .label {
+    font-size: 11.5px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .summary-tile .val {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--primary);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ============ Print header (hidden on screen) ============ */
+  .print-header {
+    display: none;
+  }
+
+  /* ============ PRINT MEDIA ============ */
+  @media print {
+    body { background: #fff; }
+    .top-header, .tabs, .actions, .formula-box { display: none !important; }
+    .container { max-width: 100%; padding: 0; }
+    .card { border: none; box-shadow: none; padding: 0; margin: 0; }
+    .pane { display: none !important; }
+
+    /* Show only the printing pane */
+    body.printing-io #pane-io,
+    body.printing-bal #pane-balance {
+      display: block !important;
+    }
+
+    .print-header {
+      display: block !important;
+      padding: 8px 0 16px;
+      border-bottom: 2px solid #000;
+      margin-bottom: 16px;
+    }
+    .print-header .ph-title {
+      font-size: 18px;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .print-header .ph-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: #555;
+      margin-top: 6px;
+    }
+    .print-header .ph-brand {
+      display: inline-block;
+      background: #000;
+      color: #fff;
+      padding: 3px 9px;
+      font: 700 10px 'JetBrains Mono', monospace;
+      letter-spacing: 0.06em;
+      border-radius: 3px;
+    }
+
+    /* Patient info banner for print */
+    .print-patient {
+      display: none;
+    }
+    body.printing-io .print-patient,
+    body.printing-bal .print-patient {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    .print-patient .pp-cell b { display: block; font-size: 10px; color: #555; text-transform: uppercase; }
+
+    /* Compact tables for print */
+    .shift-card { page-break-inside: avoid; margin-bottom: 12px; }
+    .shift-header { padding: 6px 12px !important; font-size: 13px !important; }
+    table.io-table th { padding: 6px 8px !important; font-size: 10.5px !important; }
+    table.io-table td { padding: 4px 8px !important; }
+    table.io-table input.cell-num,
+    table.io-table select.tipo {
+      border: none;
+      background: transparent;
+      padding: 2px 0;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    table.io-table select.tipo {
+      background-image: none;
+      padding-right: 0;
+    }
+    .shift-total { padding: 6px 12px !important; }
+
+    .summary-grid { grid-template-columns: repeat(4, 1fr) !important; }
+    .summary-tile { padding: 8px 10px; }
+
+    .result-card {
+      page-break-inside: avoid;
+      box-shadow: none;
+    }
+
+    .field-label, .input, .field-row, .field {
+      page-break-inside: avoid;
+    }
+
+    @page { size: A4 portrait; margin: 12mm 14mm; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-header">
+  <div class="brand-badge">MED NOTES<span class="reg">®</span></div>
+  <h1>💧 Balance Hídrico — Herramientas</h1>
+</div>
+
+<div class="tabs">
+  <button class="tab active" data-pane="endo">💧 Agua Endógena</button>
+  <button class="tab" data-pane="insens">🌬 Pérdidas Insensibles</button>
+  <button class="tab" data-pane="fiebre">🌡 Pérdidas con Fiebre</button>
+  <button class="tab" data-pane="gasto">🧪 Gasto Urinario</button>
+  <button class="tab" data-pane="io">📋 Ingesta / Excreta</button>
+  <button class="tab" data-pane="balance">⚖️ Balance Hídrico</button>
+</div>
+
+<div class="container">
+
+  <!-- ============ AGUA ENDÓGENA ============ -->
+  <div class="pane active" id="pane-endo">
+    <div class="card">
+      <div class="card-title">💧 Agua Endógena por Jornada</div>
+      <div class="card-sub">Producción metabólica de agua, distribuida por turnos (Mañana 6h · Tarde 6h · Noche 12h)</div>
+
+      <div class="field">
+        <label class="field-label">⚖️ Peso del paciente (kg)</label>
+        <input class="input" id="endo-peso" type="number" min="0" step="0.1" placeholder="Ej. 70">
+      </div>
+
+      <div class="actions">
+        <button class="btn success" id="btn-endo-calc">🔍 Calcular</button>
+        <button class="btn danger" id="btn-endo-reset">♻️ Resetear</button>
+      </div>
+
+      <div id="endo-results" style="margin-top:18px; display:none;">
+        <div class="result-mini">
+          <h4>☀️ Mañana (6 horas)</h4>
+          <div class="row"><span>💧 Agua endógena:</span><b id="endo-am">— ml</b></div>
+        </div>
+        <div class="result-mini">
+          <h4>⛅️ Tarde (6 horas)</h4>
+          <div class="row"><span>💧 Agua endógena:</span><b id="endo-pm">— ml</b></div>
+        </div>
+        <div class="result-mini">
+          <h4>🌙 Noche (12 horas)</h4>
+          <div class="row"><span>💧 Agua endógena:</span><b id="endo-no">— ml</b></div>
+        </div>
+        <div class="result-card info">
+          <h3>🥧 Resumen 24 horas</h3>
+          <div class="row"><b>⚖️ Peso:</b><span class="val" id="endo-peso-val">—</span></div>
+          <div class="row"><b>📐 Por hora:</b><span class="val" id="endo-hora">— ml/h</span></div>
+          <div class="row"><b>☀️ Mañana (6 h):</b><span class="val" id="endo-am-r">— ml</span></div>
+          <div class="row"><b>⛅️ Tarde (6 h):</b><span class="val" id="endo-pm-r">— ml</span></div>
+          <div class="row"><b>🌙 Noche (12 h):</b><span class="val" id="endo-no-r">— ml</span></div>
+          <div class="row" style="border-top:2px solid var(--primary-dark); padding-top:8px; margin-top:6px;">
+            <b style="font-size:15px;">💧 Total 24 h:</b>
+            <span class="val" id="endo-total" style="font-size:22px; color:var(--primary-dark);">— ml</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="formula-box">
+        <b>Fórmula:</b> Agua endógena = (5 × Peso × Horas) ÷ 24<br>
+        <i>Aporta entre <b>200–400 ml/día</b> de agua de origen metabólico.</i>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ PÉRDIDAS INSENSIBLES ============ -->
+  <div class="pane" id="pane-insens">
+    <div class="card">
+      <div class="card-title">🌬 Pérdidas Insensibles (24 h)</div>
+      <div class="card-sub">Pérdidas por piel y vía respiratoria — con ajustes por taquipnea, fiebre y soporte respiratorio</div>
+
+      <div class="field">
+        <label class="field-label">⚖️ Peso (kg)</label>
+        <input class="input" id="ins-peso" type="number" min="0" step="0.1" placeholder="Ej. 70">
+      </div>
+
+      <div class="field">
+        <label class="field-label">🫁 Condición respiratoria</label>
+        <select class="input" id="ins-resp">
+          <option value="amb">🌿 Ambiente (sin soporte)</option>
+          <option value="masc">😷 Mascarilla / Cánula</option>
+          <option value="vm">🤖 Ventilación Mecánica</option>
+        </select>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label">📈 Frecuencia respiratoria (rpm)</label>
+          <input class="input" id="ins-fr" type="number" min="0" step="1" placeholder="Ej. 18">
+        </div>
+        <div>
+          <label class="field-label">🌡 Temperatura (°C)</label>
+          <input class="input" id="ins-temp" type="number" min="30" max="45" step="0.1" placeholder="Ej. 37">
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn success" id="btn-ins-calc">🔍 Calcular</button>
+        <button class="btn danger" id="btn-ins-reset">♻️ Resetear</button>
+      </div>
+
+      <div class="result-card warning" id="ins-result">
+        <h3>🌬 Pérdidas Insensibles (24 h)</h3>
+        <div class="row"><b>Base por condición resp.:</b><span class="val" id="ins-base">— ml</span></div>
+        <div class="row"><b>Ajuste por taquipnea:</b><span class="val" id="ins-tax">— ml</span></div>
+        <div class="row"><b>Ajuste por fiebre:</b><span class="val" id="ins-fie">— ml</span></div>
+        <div class="row"><b>TOTAL 24 h:</b><span class="val" id="ins-total" style="font-size:18px;">— ml</span></div>
+      </div>
+
+      <div class="formula-box">
+        <b>Base ml/h por condición respiratoria:</b><br>
+        🌿 Ambiente = 0.5 × peso<br>
+        😷 Mascarilla / Cánula = 0.5 × peso + 12.5<br>
+        🤖 Ventilación Mecánica = 0.5 × peso + 28.8<br><br>
+        <b>Ajustes (ml/h, se suman a la base):</b><br>
+        Taquipnea = (rpm − 20) × 0.1 &nbsp;(máx. 0.5 ml/h, NO × peso)<br>
+        Fiebre = 0.1 × peso × décimas &nbsp;[décimas = (T − 37.5) × 10]<br><br>
+        <b>Total 24h</b> = (base + taquipnea + fiebre) × 24
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ PÉRDIDAS CON FIEBRE (por jornadas) ============ -->
+  <div class="pane" id="pane-fiebre">
+    <div class="card">
+      <div class="card-title">🌡 Pérdidas Insensibles con Fiebre</div>
+      <div class="card-sub">Cálculo por jornadas (Mañana 6h · Tarde 6h · Noche 12h)</div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label">⚖️ Peso (kg)</label>
+          <input class="input" id="fie-peso" type="number" min="0" step="0.1" placeholder="Ej. 70">
+        </div>
+        <div>
+          <label class="field-label">🌡 Temperatura (°C)</label>
+          <input class="input" id="fie-temp" type="number" min="30" max="45" step="0.1" placeholder="Ej. 39">
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn success" id="btn-fie-calc">🔍 Calcular</button>
+        <button class="btn danger" id="btn-fie-reset">♻️ Resetear</button>
+      </div>
+
+      <div id="fie-results" style="margin-top:18px; display:none;">
+        <div class="result-mini">
+          <h4>☀️ Mañana (6 horas)</h4>
+          <div class="row"><span>🌬 Pérdidas base:</span><b id="fie-am-base">— ml</b></div>
+          <div class="row"><span>🌡 Extra por fiebre:</span><b id="fie-am-fie">— ml</b></div>
+          <div class="row"><span>🧮 Total:</span><b id="fie-am-tot">— ml</b></div>
+        </div>
+        <div class="result-mini">
+          <h4>⛅️ Tarde (6 horas)</h4>
+          <div class="row"><span>🌬 Pérdidas base:</span><b id="fie-pm-base">— ml</b></div>
+          <div class="row"><span>🌡 Extra por fiebre:</span><b id="fie-pm-fie">— ml</b></div>
+          <div class="row"><span>🧮 Total:</span><b id="fie-pm-tot">— ml</b></div>
+        </div>
+        <div class="result-mini">
+          <h4>🌙 Noche (12 horas)</h4>
+          <div class="row"><span>🌬 Pérdidas base:</span><b id="fie-no-base">— ml</b></div>
+          <div class="row"><span>🌡 Extra por fiebre:</span><b id="fie-no-fie">— ml</b></div>
+          <div class="row"><span>🧮 Total:</span><b id="fie-no-tot">— ml</b></div>
+        </div>
+        <div class="result-card">
+          <h3>🥧 Resumen 24 horas</h3>
+          <div class="row"><b>⚖️ Peso:</b><span class="val" id="fie-r-peso">—</span></div>
+          <div class="row"><b>🌡 Temperatura:</b><span class="val" id="fie-r-temp">—</span></div>
+          <div class="row"><b>🌬 Base 24 h:</b><span class="val" id="fie-r-base">—</span></div>
+          <div class="row"><b>🌡 Extra por fiebre 24 h:</b><span class="val" id="fie-r-fie">—</span></div>
+          <div class="row" style="border-top:2px solid #14532d; padding-top:8px; margin-top:4px;">
+            <b style="font-size:15px;">💧 Pérdidas totales:</b>
+            <span class="val" id="fie-r-total" style="font-size:22px; color:#14532d;">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="formula-box">
+        <b>Fórmula:</b> (0.5 × peso × horas) + (0.1 × peso × décimas × horas)<br>
+        <b>Décimas</b> = décimas de grado sobre 37.5°C → (T − 37.5) × 10<br>
+        <i>Ej. T=39°C → décimas = 15. Para 70 kg en 6 h = 210 + 630 = 840 ml</i>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ GASTO URINARIO ============ -->
+  <div class="pane" id="pane-gasto">
+    <div class="card">
+      <div class="card-title">🧪 Gasto Urinario (24 h)</div>
+      <div class="card-sub">Cálculo de diuresis (ml/kg/h) e interpretación clínica</div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label">⚖️ Peso (kg)</label>
+          <input class="input" id="gu-peso" type="number" min="0" step="0.1" placeholder="Ej. 80">
+        </div>
+        <div>
+          <label class="field-label">🧪 Volumen urinario 24h (ml)</label>
+          <input class="input" id="gu-vol" type="number" min="0" step="1" placeholder="Ej. 1200">
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn success" id="btn-gu-calc">🔍 Calcular</button>
+        <button class="btn danger" id="btn-gu-reset">♻️ Resetear</button>
+      </div>
+
+      <div class="result-card warning" id="gu-result">
+        <h3>🧪 Gasto Urinario</h3>
+        <div class="row"><b>⚖️ Peso:</b><span class="val" id="gu-peso-val">—</span></div>
+        <div class="row"><b>🧪 Volumen:</b><span class="val" id="gu-vol-val">—</span></div>
+        <div class="row"><b>📊 Gasto:</b><span class="val" id="gu-gasto" style="font-size:18px;">— ml/kg/h</span></div>
+        <div class="row"><b>🔍 Estado:</b><span class="val" id="gu-estado">—</span></div>
+      </div>
+
+      <div class="ref-table">
+        <h3>📋 Valores de referencia</h3>
+        <table>
+          <tr id="ref-norm"><td>✅ Normal</td><td>1.5 – 3.5 ml/kg/h</td><td>Diuresis dentro de límites fisiológicos</td></tr>
+          <tr id="ref-olig"><td>⚠️ Oliguria</td><td>&lt; 0.8 ml/kg/h</td><td>Disminución de la producción urinaria</td></tr>
+          <tr id="ref-anur"><td>🚨 Anuria</td><td>&lt; 0.5 ml/kg/h</td><td>Prácticamente ausencia de orina</td></tr>
+          <tr id="ref-poli"><td>🌊 Poliuria</td><td>&gt; 3.5 ml/kg/h</td><td>Exceso de producción urinaria</td></tr>
+        </table>
+      </div>
+
+      <div class="formula-box">
+        <b>Fórmula:</b> Gasto urinario = Volumen (ml) ÷ (Peso × 24)
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ INGESTA Y EXCRETA ============ -->
+  <div class="pane" id="pane-io">
+    <div class="card">
+      <!-- Print-only header -->
+      <div class="print-header">
+        <div class="ph-title">📋 Control de Ingesta y Excreta</div>
+        <div class="ph-meta">
+          <span class="ph-brand">MED NOTES®</span>
+          <span>Fecha: <span id="print-io-date"></span></span>
+        </div>
+      </div>
+      <div class="print-patient">
+        <div class="pp-cell"><b>Paciente:</b><span id="print-io-pac">_________________________</span></div>
+        <div class="pp-cell"><b>Cama / Habitación:</b><span>_________________________</span></div>
+        <div class="pp-cell"><b>Médico tratante:</b><span>_________________________</span></div>
+      </div>
+
+      <div class="card-title">📋 Control de Ingesta y Excreta</div>
+      <div class="card-sub">Registro horario por turnos: Mañana (7-12) · Tarde (12-18) · Velada (18-2)</div>
+
+      <!-- AM -->
+      <div class="shift-card">
+        <div class="shift-header shift-am">☀️ Turno Mañana (AM) — 7-12</div>
+        <table class="io-table" data-shift="am">
+          <thead>
+            <tr><th>🕐 Hora</th><th>🏷 Tipo</th><th>🧪 Inicial (ml)</th><th>💧 Administrada (ml)</th><th>⚖️ Saldo (ml)</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="shift-total">
+          💧 Total Administrado AM: <span class="total-val" id="total-am">0 ml</span>
+        </div>
+      </div>
+
+      <!-- PM -->
+      <div class="shift-card">
+        <div class="shift-header shift-pm">⛅ Turno Tarde (PM) — 12-18</div>
+        <table class="io-table" data-shift="pm">
+          <thead>
+            <tr><th>🕐 Hora</th><th>🏷 Tipo</th><th>🧪 Inicial (ml)</th><th>💧 Administrada (ml)</th><th>⚖️ Saldo (ml)</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="shift-total">
+          💧 Total Administrado PM: <span class="total-val" id="total-pm">0 ml</span>
+        </div>
+      </div>
+
+      <!-- NIGHT -->
+      <div class="shift-card">
+        <div class="shift-header shift-night">🌙 Turno Velada — 18-2</div>
+        <table class="io-table" data-shift="night">
+          <thead>
+            <tr><th>🕐 Hora</th><th>🏷 Tipo</th><th>🧪 Inicial (ml)</th><th>💧 Administrada (ml)</th><th>⚖️ Saldo (ml)</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="shift-total">
+          💧 Total Administrado Velada: <span class="total-val" id="total-night">0 ml</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="btn-io-print">🖨 Imprimir / PDF</button>
+        <button class="btn danger" id="btn-io-reset">♻️ Resetear todo</button>
+      </div>
+
+      <div class="result-card info">
+        <h3>🥧 Resumen del Día</h3>
+        <div class="summary-grid">
+          <div class="summary-tile">
+            <div class="label">☀️ Mañana</div>
+            <div class="val" id="sum-am">0 ml</div>
+          </div>
+          <div class="summary-tile">
+            <div class="label">⛅ Tarde</div>
+            <div class="val" id="sum-pm">0 ml</div>
+          </div>
+          <div class="summary-tile">
+            <div class="label">🌙 Velada</div>
+            <div class="val" id="sum-night">0 ml</div>
+          </div>
+          <div class="summary-tile" style="background: var(--primary-soft);">
+            <div class="label">🧮 Total Diario</div>
+            <div class="val" id="sum-total">0 ml</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ BALANCE HÍDRICO ============ -->
+  <div class="pane" id="pane-balance">
+    <div class="card">
+      <!-- Print-only header -->
+      <div class="print-header">
+        <div class="ph-title">⚖️ Balance Hídrico</div>
+        <div class="ph-meta">
+          <span class="ph-brand">MED NOTES®</span>
+          <span>Fecha: <span id="print-bal-date"></span></span>
+        </div>
+      </div>
+      <div class="print-patient">
+        <div class="pp-cell"><b>Paciente:</b><span>_________________________</span></div>
+        <div class="pp-cell"><b>Cama / Habitación:</b><span>_________________________</span></div>
+        <div class="pp-cell"><b>Médico tratante:</b><span>_________________________</span></div>
+      </div>
+
+      <div class="card-title">⚖️ Balance Hídrico</div>
+      <div class="card-sub">Diferencia entre ingresos y egresos · Balance = Ingresos − Egresos</div>
+
+      <h3 style="font-size:14px; font-weight:700; color:var(--primary); margin: 6px 0 10px;">💧 Ingresos</h3>
+      <div class="field-row">
+        <div>
+          <label class="field-label">Vía oral / hidratación</label>
+          <input class="input ing" id="ing-oral" type="number" min="0" step="1" placeholder="ml" value="0">
+        </div>
+        <div>
+          <label class="field-label">Solución parenteral / IV</label>
+          <input class="input ing" id="ing-iv" type="number" min="0" step="1" placeholder="ml" value="0">
+        </div>
+      </div>
+      <div class="field-row">
+        <div>
+          <label class="field-label">Medicación / sueros</label>
+          <input class="input ing" id="ing-med" type="number" min="0" step="1" placeholder="ml" value="0">
+        </div>
+        <div>
+          <label class="field-label">Agua endógena (metabólica)</label>
+          <input class="input ing" id="ing-endo" type="number" min="0" step="1" placeholder="ml" value="0">
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Otros ingresos</label>
+        <input class="input ing" id="ing-otros" type="number" min="0" step="1" placeholder="ml" value="0">
+      </div>
+
+      <h3 style="font-size:14px; font-weight:700; color:var(--danger); margin: 16px 0 10px;">🚽 Egresos</h3>
+      <div class="field-row">
+        <div>
+          <label class="field-label">Diuresis / orina</label>
+          <input class="input egr" id="egr-orina" type="number" min="0" step="1" placeholder="ml" value="0">
+        </div>
+        <div>
+          <label class="field-label">Pérdidas insensibles</label>
+          <input class="input egr" id="egr-ins" type="number" min="0" step="1" placeholder="ml" value="0">
+        </div>
+      </div>
+      <div class="field-row">
+        <div>
+          <label class="field-label">Heces / deposiciones</label>
+          <input class="input egr" id="egr-dep" type="number" min="0" step="1" placeholder="ml" value="0">
+        </div>
+        <div>
+          <label class="field-label">Vómito / drenajes / SNG</label>
+          <input class="input egr" id="egr-otros" type="number" min="0" step="1" placeholder="ml" value="0">
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn success" id="btn-bal-calc">🔍 Calcular Balance</button>
+        <button class="btn" id="btn-bal-print">🖨 Imprimir / PDF</button>
+        <button class="btn danger" id="btn-bal-reset">♻️ Resetear</button>
+      </div>
+
+      <div class="result-card" id="bal-result">
+        <h3>⚖️ Balance Hídrico</h3>
+        <div class="row"><b>💧 Total ingresos:</b><span class="val" id="bal-ing">0 ml</span></div>
+        <div class="row"><b>🚽 Total egresos:</b><span class="val" id="bal-egr">0 ml</span></div>
+        <div class="row"><b>📊 Balance:</b><span class="val" id="bal-val" style="font-size:20px;">0 ml</span></div>
+        <div class="row"><b>🔎 Estado:</b><span class="val" id="bal-estado" style="font-size:16px;">—</span></div>
+      </div>
+
+      <div class="ref-table">
+        <h3>📌 Interpretación del Balance Hídrico</h3>
+        <table>
+          <tr><td>🔵 Balance positivo</td><td>+ ml</td><td>Exceso de líquidos retenidos</td></tr>
+          <tr><td>🔴 Balance negativo</td><td>− ml</td><td>Pérdida de líquidos</td></tr>
+          <tr><td>⚖️ Balance neutro</td><td>≈ 0 ml</td><td>Equilibrio entre ingresos y egresos</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+
+  /* ============ Tabs ============ */
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x === t));
+      const id = t.dataset.pane;
+      document.querySelectorAll('.pane').forEach(p => p.classList.toggle('active', p.id === 'pane-' + id));
+    });
+  });
+
+  /* ============ AGUA ENDÓGENA ============ */
+  $('btn-endo-calc').addEventListener('click', () => {
+    const peso = parseFloat($('endo-peso').value);
+    if (isNaN(peso) || peso <= 0) {
+      alert('Ingresa un peso válido.');
+      return;
+    }
+    const porHora = (5 * peso) / 24;
+    const am = porHora * 6;
+    const pm = porHora * 6;
+    const no = porHora * 12;
+    const total = am + pm + no;
+    $('endo-am').textContent = am.toFixed(2) + ' ml';
+    $('endo-pm').textContent = pm.toFixed(2) + ' ml';
+    $('endo-no').textContent = no.toFixed(2) + ' ml';
+    $('endo-am-r').textContent = am.toFixed(2) + ' ml';
+    $('endo-pm-r').textContent = pm.toFixed(2) + ' ml';
+    $('endo-no-r').textContent = no.toFixed(2) + ' ml';
+    $('endo-peso-val').textContent = peso + ' kg';
+    $('endo-hora').textContent = porHora.toFixed(2) + ' ml/h';
+    $('endo-total').textContent = total.toFixed(2) + ' ml';
+    $('endo-results').style.display = 'block';
+  });
+  $('btn-endo-reset').addEventListener('click', () => {
+    $('endo-peso').value = '';
+    $('endo-results').style.display = 'none';
+  });
+
+  /* ============ PÉRDIDAS INSENSIBLES (24h) ============ */
+  // Cálculo basado en ml/h, multiplicado por las horas.
+  // Décimas = (T - 37.5) × 10  →  fiebre = 0.1 × peso × décimas × horas = peso × (T-37.5) × horas
+  $('btn-ins-calc').addEventListener('click', () => {
+    const peso = parseFloat($('ins-peso').value);
+    const fr = parseFloat($('ins-fr').value) || 0;
+    const temp = parseFloat($('ins-temp').value) || 37;
+    const cond = $('ins-resp').value;
+    if (isNaN(peso) || peso <= 0) { alert('Ingresa el peso.'); return; }
+
+    const horas = 24;
+
+    // Base por hora según condición respiratoria
+    let basePerHour;
+    if (cond === 'amb')  basePerHour = 0.5 * peso;
+    if (cond === 'masc') basePerHour = 0.5 * peso + 12.5;
+    if (cond === 'vm')   basePerHour = 0.5 * peso + 28.8;
+    const base = basePerHour * horas;
+
+    // Taquipnea: (rpm - 20) × 0.1 ml/h (máx. 0.5 ml/h, sin multiplicar por peso)
+    let tax = 0;
+    if (fr > 20) {
+      const taxPerHour = Math.min((fr - 20) * 0.1, 0.5);
+      tax = taxPerHour * horas;
+    }
+
+    // Fiebre: 0.1 × peso × décimas × horas, donde décimas = (T - 37.5) × 10
+    let fie = 0;
+    if (temp > 37.5) {
+      const decimas = (temp - 37.5) * 10;
+      fie = 0.1 * peso * decimas * horas;
+    }
+
+    const total = base + tax + fie;
+
+    $('ins-base').textContent = base.toFixed(2) + ' ml';
+    $('ins-tax').textContent  = tax.toFixed(2) + ' ml';
+    $('ins-fie').textContent  = fie.toFixed(2) + ' ml';
+    $('ins-total').textContent = total.toFixed(2) + ' ml';
+    $('ins-result').classList.add('visible');
+  });
+  $('btn-ins-reset').addEventListener('click', () => {
+    $('ins-peso').value = '';
+    $('ins-fr').value = '';
+    $('ins-temp').value = '';
+    $('ins-resp').value = 'amb';
+    $('ins-result').classList.remove('visible');
+  });
+
+  /* ============ PÉRDIDAS CON FIEBRE (jornadas) ============ */
+  // Décimas = tenths of a degree above 37.5°C
+  // Ej. T=39 → décimas = (39 - 37.5) × 10 = 15
+  // Fórmula: (0.5 × peso × horas) + (0.1 × peso × décimas × horas)
+  function calcFiebreSlot(peso, temp, horas) {
+    const base = 0.5 * peso * horas;
+    const decimas = Math.max(0, (temp - 37.5) * 10);
+    const fie = 0.1 * peso * decimas * horas;
+    return { base, fie, total: base + fie };
+  }
+  $('btn-fie-calc').addEventListener('click', () => {
+    const peso = parseFloat($('fie-peso').value);
+    const temp = parseFloat($('fie-temp').value);
+    if (isNaN(peso) || peso <= 0 || isNaN(temp) || temp <= 0) {
+      alert('Ingresa peso y temperatura válidos.');
+      return;
+    }
+    const am = calcFiebreSlot(peso, temp, 6);
+    const pm = calcFiebreSlot(peso, temp, 6);
+    const no = calcFiebreSlot(peso, temp, 12);
+    $('fie-am-base').textContent = am.base.toFixed(2) + ' ml';
+    $('fie-am-fie').textContent  = am.fie.toFixed(2) + ' ml';
+    $('fie-am-tot').textContent  = am.total.toFixed(2) + ' ml';
+    $('fie-pm-base').textContent = pm.base.toFixed(2) + ' ml';
+    $('fie-pm-fie').textContent  = pm.fie.toFixed(2) + ' ml';
+    $('fie-pm-tot').textContent  = pm.total.toFixed(2) + ' ml';
+    $('fie-no-base').textContent = no.base.toFixed(2) + ' ml';
+    $('fie-no-fie').textContent  = no.fie.toFixed(2) + ' ml';
+    $('fie-no-tot').textContent  = no.total.toFixed(2) + ' ml';
+    $('fie-r-peso').textContent  = peso + ' kg';
+    $('fie-r-temp').textContent  = temp + ' °C';
+    $('fie-r-base').textContent  = (am.base + pm.base + no.base).toFixed(2) + ' ml';
+    $('fie-r-fie').textContent   = (am.fie + pm.fie + no.fie).toFixed(2) + ' ml';
+    $('fie-r-total').textContent = (am.total + pm.total + no.total).toFixed(2) + ' ml';
+    $('fie-results').style.display = 'block';
+  });
+  $('btn-fie-reset').addEventListener('click', () => {
+    $('fie-peso').value = '';
+    $('fie-temp').value = '';
+    $('fie-results').style.display = 'none';
+  });
+
+  /* ============ GASTO URINARIO ============ */
+  function classifyGU(gu) {
+    if (gu < 0.5)  return { label: '🚨 Anuria',   ref: 'ref-anur', cls: 'danger' };
+    if (gu < 0.8)  return { label: '⚠️ Oliguria', ref: 'ref-olig', cls: 'warning' };
+    if (gu <= 3.5) return { label: '✅ Normal',   ref: 'ref-norm', cls: '' };
+    return            { label: '🌊 Poliuria',     ref: 'ref-poli', cls: 'info' };
+  }
+  $('btn-gu-calc').addEventListener('click', () => {
+    const peso = parseFloat($('gu-peso').value);
+    const vol  = parseFloat($('gu-vol').value);
+    if (isNaN(peso) || peso <= 0 || isNaN(vol) || vol < 0) {
+      alert('Ingresa peso y volumen válidos.');
+      return;
+    }
+    const gu = vol / (peso * 24);
+    const c = classifyGU(gu);
+    $('gu-peso-val').textContent = peso + ' kg';
+    $('gu-vol-val').textContent = vol + ' ml';
+    $('gu-gasto').textContent = gu.toFixed(2) + ' ml/kg/h';
+    $('gu-estado').textContent = c.label;
+    const card = $('gu-result');
+    card.className = 'result-card ' + c.cls + ' visible';
+    document.querySelectorAll('.ref-table tr').forEach(tr => tr.style.background = '');
+    document.getElementById(c.ref).style.background = 'rgba(37,99,235,0.10)';
+  });
+  $('btn-gu-reset').addEventListener('click', () => {
+    $('gu-peso').value = '';
+    $('gu-vol').value = '';
+    $('gu-result').classList.remove('visible');
+    document.querySelectorAll('.ref-table tr').forEach(tr => tr.style.background = '');
+  });
+
+  /* ============ INGESTA Y EXCRETA ============ */
+  const SHIFTS = {
+    am: { hours: ['7-8','8-9','9-10','10-11','11-12'] },
+    pm: { hours: ['12-13','13-14','14-15','15-16','16-17','17-18'] },
+    night: { hours: ['18-19','19-20','20-21','21-22','22-23','23-24','0-1','1-2'] }
+  };
+  const TIPOS = ['💧 Hidratación','💉 IV','💊 Medicación','🍵 VO','🫗 Otro'];
+
+  function buildShift(shift) {
+    const tbody = document.querySelector(`table.io-table[data-shift="${shift}"] tbody`);
+    SHIFTS[shift].hours.forEach((h, idx) => {
+      const tr = document.createElement('tr');
+      const tipoOpts = TIPOS.map(t => `<option value="${t}">${t}</option>`).join('');
+      tr.innerHTML = `
+        <td class="hour">${h}</td>
+        <td><select class="tipo">${tipoOpts}</select></td>
+        <td><input class="cell-num inicial" type="number" min="0" step="1" placeholder="0"></td>
+        <td><input class="cell-num admin"   type="number" min="0" step="1" placeholder="0"></td>
+        <td><input class="cell-num saldo readonly" type="number" readonly placeholder="0"></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+  buildShift('am'); buildShift('pm'); buildShift('night');
+
+  function fmtMl(n) { return (Math.round(n * 100) / 100) + ' ml'; }
+
+  function recalcShift(shift) {
+    const tbody = document.querySelector(`table.io-table[data-shift="${shift}"] tbody`);
+    const rows = tbody.querySelectorAll('tr');
+    let total = 0;
+    rows.forEach((tr, i) => {
+      const ini = parseFloat(tr.querySelector('.inicial').value) || 0;
+      const adm = parseFloat(tr.querySelector('.admin').value) || 0;
+      const saldo = ini - adm;
+      tr.querySelector('.saldo').value = saldo > 0 ? saldo : 0;
+      total += adm;
+      // Auto-fill next row's inicial with current saldo
+      if (i + 1 < rows.length) {
+        const next = rows[i + 1];
+        const nextIni = next.querySelector('.inicial');
+        if (!nextIni.dataset.touched && saldo > 0) {
+          nextIni.value = saldo;
+        }
+      }
+    });
+    $('total-' + shift).textContent = fmtMl(total);
+    $('sum-' + shift).textContent = fmtMl(total);
+    const tot = (parseFloat($('total-am').textContent) || 0)
+              + (parseFloat($('total-pm').textContent) || 0)
+              + (parseFloat($('total-night').textContent) || 0);
+    $('sum-total').textContent = fmtMl(tot);
+  }
+
+  document.querySelectorAll('table.io-table').forEach(t => {
+    const shift = t.dataset.shift;
+    t.addEventListener('input', e => {
+      if (e.target.classList.contains('inicial')) e.target.dataset.touched = '1';
+      recalcShift(shift);
+    });
+  });
+
+  /* ============ PRINT HANDLERS ============ */
+  function todayStr() {
+    const d = new Date();
+    return d.toLocaleDateString('es-EC', { day:'2-digit', month:'2-digit', year:'numeric' });
+  }
+
+  function printSection(cls, dateId) {
+    if (dateId) $(dateId).textContent = todayStr();
+    document.body.classList.add(cls);
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => document.body.classList.remove(cls), 400);
+    }, 100);
+  }
+
+  $('btn-io-print').addEventListener('click', () => printSection('printing-io', 'print-io-date'));
+  $('btn-bal-print').addEventListener('click', () => printSection('printing-bal', 'print-bal-date'));
+
+  window.addEventListener('afterprint', () => {
+    document.body.classList.remove('printing-io', 'printing-bal');
+  });
+
+  $('btn-io-reset').addEventListener('click', () => {
+    if (!confirm('¿Limpiar todos los registros de los 3 turnos?')) return;
+    document.querySelectorAll('table.io-table input').forEach(i => { i.value = ''; delete i.dataset.touched; });
+    document.querySelectorAll('table.io-table select').forEach(s => s.selectedIndex = 0);
+    ['am','pm','night'].forEach(s => {
+      $('total-' + s).textContent = '0 ml';
+      $('sum-' + s).textContent = '0 ml';
+    });
+    $('sum-total').textContent = '0 ml';
+  });
+
+  /* ============ BALANCE HÍDRICO ============ */
+  function classifyBalance(b) {
+    if (Math.abs(b) < 50) return { label: '⚖️ Balance Neutro · Equilibrio',          cls: '' };
+    if (b > 0)            return { label: '🔵 Balance Positivo · Exceso de líquidos', cls: 'info' };
+    return                  { label: '🔴 Balance Negativo · Pérdida de líquidos',     cls: 'danger' };
+  }
+  $('btn-bal-calc').addEventListener('click', () => {
+    const ing = ['ing-oral','ing-iv','ing-med','ing-endo','ing-otros']
+      .reduce((s, id) => s + (parseFloat($(id).value) || 0), 0);
+    const egr = ['egr-orina','egr-ins','egr-dep','egr-otros']
+      .reduce((s, id) => s + (parseFloat($(id).value) || 0), 0);
+    const bal = ing - egr;
+    const c = classifyBalance(bal);
+    $('bal-ing').textContent = ing.toFixed(0) + ' ml';
+    $('bal-egr').textContent = egr.toFixed(0) + ' ml';
+    $('bal-val').textContent = (bal >= 0 ? '+' : '') + bal.toFixed(0) + ' ml';
+    $('bal-estado').textContent = c.label;
+    const card = $('bal-result');
+    card.className = 'result-card ' + c.cls + ' visible';
+  });
+  $('btn-bal-reset').addEventListener('click', () => {
+    document.querySelectorAll('.ing, .egr').forEach(i => i.value = 0);
+    $('bal-result').classList.remove('visible');
+  });
+
+  // Auto-fill agua endógena into balance if available
+  document.getElementById('btn-endo-calc').addEventListener('click', () => {
+    const txt = $('endo-total').textContent || '';
+    const v = parseFloat(txt) || 0;
+    if (v > 0) $('ing-endo').value = v.toFixed(0);
+  });
+  // Auto-fill insensibles into balance
+  $('btn-ins-calc').addEventListener('click', () => {
+    const v = parseFloat($('ins-total').textContent) || 0;
+    if (v > 0) $('egr-ins').value = v.toFixed(0);
+  });
+  // Auto-fill gasto urinario volume into balance
+  $('btn-gu-calc').addEventListener('click', () => {
+    const v = parseFloat($('gu-vol').value) || 0;
+    if (v > 0) $('egr-orina').value = v.toFixed(0);
+  });
+</script>
+
+</body>
+</html>
