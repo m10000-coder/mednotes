@@ -322,6 +322,89 @@
     color: var(--text);
   }
 
+  /* Yellow tip card inline within template */
+  .tpl-tip {
+    background: #fef9c3;
+    border: 1px solid #fde68a;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  .tpl-tip::before {
+    content: '💡 ';
+    margin-right: 4px;
+  }
+  .tpl-tip ul {
+    list-style: none;
+    margin: 8px 0 0 0;
+    padding: 0;
+  }
+  .tpl-tip ul li {
+    padding: 3px 0 3px 22px;
+    position: relative;
+    font-size: 13px;
+  }
+  .tpl-tip ul li::before {
+    content: '🟰';
+    position: absolute;
+    left: 0;
+    top: 2px;
+    font-size: 11px;
+  }
+
+  /* Red/pink alert card (more prominent than tip) */
+  .tpl-alert {
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  .tpl-alert::before {
+    content: '🚨 ';
+    margin-right: 4px;
+  }
+  .tpl-alert ol {
+    margin: 10px 0 0 24px;
+    padding: 0;
+  }
+  .tpl-alert ol li {
+    padding: 6px 0;
+    line-height: 1.6;
+  }
+
+  /* Inline reference link card */
+  .tpl-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 12px 0;
+    font: 700 13px 'Inter', sans-serif;
+    color: var(--primary-dark);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .tpl-link:hover {
+    background: var(--primary-soft);
+    border-color: var(--primary-border);
+  }
+  .tpl-link::before {
+    content: '➡';
+    font-size: 12px;
+    opacity: 0.7;
+  }
+
   .not-applicable {
     text-align: center;
     padding: 40px 20px;
@@ -419,7 +502,7 @@
             <div class="title">Sospecha de embarazo</div>
             <div class="meta">Plantillas médicas</div>
           </button>
-          <button class="tpl-card obs-2 disabled" data-tpl="captacion-embarazada">
+          <button class="tpl-card obs-2" data-tpl="captacion-embarazada">
             <div class="icon">
               <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="32" cy="10" r="5"/>
@@ -429,7 +512,7 @@
             <div class="title">Captación de embarazada</div>
             <div class="meta">Plantillas médicas</div>
           </button>
-          <button class="tpl-card obs-3 disabled" data-tpl="control-prenatal">
+          <button class="tpl-card obs-3" data-tpl="control-prenatal">
             <div class="icon">
               <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="32" cy="10" r="5"/>
@@ -439,7 +522,7 @@
             <div class="title">Control prenatal</div>
             <div class="meta">Plantillas médicas</div>
           </button>
-          <button class="tpl-card obs-4 disabled" data-tpl="control-puerperio">
+          <button class="tpl-card obs-4" data-tpl="control-puerperio">
             <div class="icon">
               <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="32" cy="10" r="5"/>
@@ -460,46 +543,91 @@
           <span class="col-count">5</span>
         </div>
         <div class="col-cards">
-          <button class="tpl-card gin disabled" data-tpl="papanicolau">
+          <button class="tpl-card gin" data-tpl="papanicolau">
             <div class="icon">
               <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                <path d="M32 8c-4 0-7 2.5-7 6v6c-3 .5-5 2.8-5 6v3c0 4 2 6 5 7v8c-3 1-5 4-5 7v3c0 5 4 8 8 8h8c4 0 8-3 8-8v-3c0-3-2-6-5-7v-8c3-1 5-3 5-7v-3c0-3.2-2-5.5-5-6v-6c0-3.5-3-6-7-6zm-2 4h4c1.5 0 3 1 3 3v6h-10v-6c0-2 1.5-3 3-3z"/>
+                <!-- Útero con trompas y ovarios -->
+                <path d="M32 18c-2.5 0-4.5 1.5-5 4l-3.5 16.5c-.5 2.5 1 5 3.5 5.5h.5v8c0 1.5 1 2.5 2.5 2.5h4c1.5 0 2.5-1 2.5-2.5v-8h.5c2.5-.5 4-3 3.5-5.5L37 22c-.5-2.5-2.5-4-5-4z"/>
+                <!-- Trompa izquierda con ovario -->
+                <path d="M22.5 24c-3 0-6 1.5-9 4.5-2 2-3 5-2.5 7.5.3 1.4 1.7 2.2 3 1.7 1-.4 1.5-1.4 1.5-2.4 0-1.5.5-3 1.7-4.2 1.6-1.6 3.5-2.6 5.3-2.6 1 0 1.8-.5 2.2-1.4l.6-1.5c.4-1-.4-2.1-1.5-2.1h-1.3z"/>
+                <ellipse cx="11.5" cy="32" rx="3" ry="2.2"/>
+                <!-- Trompa derecha con ovario -->
+                <path d="M41.5 24c3 0 6 1.5 9 4.5 2 2 3 5 2.5 7.5-.3 1.4-1.7 2.2-3 1.7-1-.4-1.5-1.4-1.5-2.4 0-1.5-.5-3-1.7-4.2-1.6-1.6-3.5-2.6-5.3-2.6-1 0-1.8-.5-2.2-1.4l-.6-1.5c-.4-1 .4-2.1 1.5-2.1h1.3z"/>
+                <ellipse cx="52.5" cy="32" rx="3" ry="2.2"/>
+                <!-- Cuello uterino y vagina -->
+                <rect x="29" y="50" width="6" height="6" rx="1"/>
               </svg>
             </div>
             <div class="title">Papanicolau</div>
             <div class="meta">Plantillas médicas</div>
           </button>
-          <button class="tpl-card gin disabled" data-tpl="planificacion-familiar">
+          <button class="tpl-card gin" data-tpl="planificacion-familiar">
             <div class="icon">
               <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                <path d="M32 8c-4 0-7 2.5-7 6v6c-3 .5-5 2.8-5 6v3c0 4 2 6 5 7v8c-3 1-5 4-5 7v3c0 5 4 8 8 8h8c4 0 8-3 8-8v-3c0-3-2-6-5-7v-8c3-1 5-3 5-7v-3c0-3.2-2-5.5-5-6v-6c0-3.5-3-6-7-6zm-2 4h4c1.5 0 3 1 3 3v6h-10v-6c0-2 1.5-3 3-3z"/>
+                <!-- Útero con trompas y ovarios -->
+                <path d="M32 18c-2.5 0-4.5 1.5-5 4l-3.5 16.5c-.5 2.5 1 5 3.5 5.5h.5v8c0 1.5 1 2.5 2.5 2.5h4c1.5 0 2.5-1 2.5-2.5v-8h.5c2.5-.5 4-3 3.5-5.5L37 22c-.5-2.5-2.5-4-5-4z"/>
+                <!-- Trompa izquierda con ovario -->
+                <path d="M22.5 24c-3 0-6 1.5-9 4.5-2 2-3 5-2.5 7.5.3 1.4 1.7 2.2 3 1.7 1-.4 1.5-1.4 1.5-2.4 0-1.5.5-3 1.7-4.2 1.6-1.6 3.5-2.6 5.3-2.6 1 0 1.8-.5 2.2-1.4l.6-1.5c.4-1-.4-2.1-1.5-2.1h-1.3z"/>
+                <ellipse cx="11.5" cy="32" rx="3" ry="2.2"/>
+                <!-- Trompa derecha con ovario -->
+                <path d="M41.5 24c3 0 6 1.5 9 4.5 2 2 3 5 2.5 7.5-.3 1.4-1.7 2.2-3 1.7-1-.4-1.5-1.4-1.5-2.4 0-1.5-.5-3-1.7-4.2-1.6-1.6-3.5-2.6-5.3-2.6-1 0-1.8-.5-2.2-1.4l-.6-1.5c-.4-1 .4-2.1 1.5-2.1h1.3z"/>
+                <ellipse cx="52.5" cy="32" rx="3" ry="2.2"/>
+                <!-- Cuello uterino y vagina -->
+                <rect x="29" y="50" width="6" height="6" rx="1"/>
               </svg>
             </div>
             <div class="title">Planificación familiar (anticonceptivos)</div>
             <div class="meta">Plantillas médicas</div>
           </button>
-          <button class="tpl-card gin disabled" data-tpl="colocacion-implante">
+          <button class="tpl-card gin" data-tpl="colocacion-implante">
             <div class="icon">
               <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                <path d="M32 8c-4 0-7 2.5-7 6v6c-3 .5-5 2.8-5 6v3c0 4 2 6 5 7v8c-3 1-5 4-5 7v3c0 5 4 8 8 8h8c4 0 8-3 8-8v-3c0-3-2-6-5-7v-8c3-1 5-3 5-7v-3c0-3.2-2-5.5-5-6v-6c0-3.5-3-6-7-6zm-2 4h4c1.5 0 3 1 3 3v6h-10v-6c0-2 1.5-3 3-3z"/>
+                <!-- Útero con trompas y ovarios -->
+                <path d="M32 18c-2.5 0-4.5 1.5-5 4l-3.5 16.5c-.5 2.5 1 5 3.5 5.5h.5v8c0 1.5 1 2.5 2.5 2.5h4c1.5 0 2.5-1 2.5-2.5v-8h.5c2.5-.5 4-3 3.5-5.5L37 22c-.5-2.5-2.5-4-5-4z"/>
+                <!-- Trompa izquierda con ovario -->
+                <path d="M22.5 24c-3 0-6 1.5-9 4.5-2 2-3 5-2.5 7.5.3 1.4 1.7 2.2 3 1.7 1-.4 1.5-1.4 1.5-2.4 0-1.5.5-3 1.7-4.2 1.6-1.6 3.5-2.6 5.3-2.6 1 0 1.8-.5 2.2-1.4l.6-1.5c.4-1-.4-2.1-1.5-2.1h-1.3z"/>
+                <ellipse cx="11.5" cy="32" rx="3" ry="2.2"/>
+                <!-- Trompa derecha con ovario -->
+                <path d="M41.5 24c3 0 6 1.5 9 4.5 2 2 3 5 2.5 7.5-.3 1.4-1.7 2.2-3 1.7-1-.4-1.5-1.4-1.5-2.4 0-1.5-.5-3-1.7-4.2-1.6-1.6-3.5-2.6-5.3-2.6-1 0-1.8-.5-2.2-1.4l-.6-1.5c-.4-1 .4-2.1 1.5-2.1h1.3z"/>
+                <ellipse cx="52.5" cy="32" rx="3" ry="2.2"/>
+                <!-- Cuello uterino y vagina -->
+                <rect x="29" y="50" width="6" height="6" rx="1"/>
               </svg>
             </div>
             <div class="title">Colocación de implante</div>
             <div class="meta">Plantillas médicas</div>
           </button>
-          <button class="tpl-card gin disabled" data-tpl="control-implante">
+          <button class="tpl-card gin" data-tpl="control-implante">
             <div class="icon">
               <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                <path d="M32 8c-4 0-7 2.5-7 6v6c-3 .5-5 2.8-5 6v3c0 4 2 6 5 7v8c-3 1-5 4-5 7v3c0 5 4 8 8 8h8c4 0 8-3 8-8v-3c0-3-2-6-5-7v-8c3-1 5-3 5-7v-3c0-3.2-2-5.5-5-6v-6c0-3.5-3-6-7-6zm-2 4h4c1.5 0 3 1 3 3v6h-10v-6c0-2 1.5-3 3-3z"/>
+                <!-- Útero con trompas y ovarios -->
+                <path d="M32 18c-2.5 0-4.5 1.5-5 4l-3.5 16.5c-.5 2.5 1 5 3.5 5.5h.5v8c0 1.5 1 2.5 2.5 2.5h4c1.5 0 2.5-1 2.5-2.5v-8h.5c2.5-.5 4-3 3.5-5.5L37 22c-.5-2.5-2.5-4-5-4z"/>
+                <!-- Trompa izquierda con ovario -->
+                <path d="M22.5 24c-3 0-6 1.5-9 4.5-2 2-3 5-2.5 7.5.3 1.4 1.7 2.2 3 1.7 1-.4 1.5-1.4 1.5-2.4 0-1.5.5-3 1.7-4.2 1.6-1.6 3.5-2.6 5.3-2.6 1 0 1.8-.5 2.2-1.4l.6-1.5c.4-1-.4-2.1-1.5-2.1h-1.3z"/>
+                <ellipse cx="11.5" cy="32" rx="3" ry="2.2"/>
+                <!-- Trompa derecha con ovario -->
+                <path d="M41.5 24c3 0 6 1.5 9 4.5 2 2 3 5 2.5 7.5-.3 1.4-1.7 2.2-3 1.7-1-.4-1.5-1.4-1.5-2.4 0-1.5-.5-3-1.7-4.2-1.6-1.6-3.5-2.6-5.3-2.6-1 0-1.8-.5-2.2-1.4l-.6-1.5c-.4-1 .4-2.1 1.5-2.1h1.3z"/>
+                <ellipse cx="52.5" cy="32" rx="3" ry="2.2"/>
+                <!-- Cuello uterino y vagina -->
+                <rect x="29" y="50" width="6" height="6" rx="1"/>
               </svg>
             </div>
             <div class="title">Control de implante</div>
             <div class="meta">Plantillas médicas</div>
           </button>
-          <button class="tpl-card gin disabled" data-tpl="retiro-implante">
+          <button class="tpl-card gin" data-tpl="retiro-implante">
             <div class="icon">
               <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                <path d="M32 8c-4 0-7 2.5-7 6v6c-3 .5-5 2.8-5 6v3c0 4 2 6 5 7v8c-3 1-5 4-5 7v3c0 5 4 8 8 8h8c4 0 8-3 8-8v-3c0-3-2-6-5-7v-8c3-1 5-3 5-7v-3c0-3.2-2-5.5-5-6v-6c0-3.5-3-6-7-6zm-2 4h4c1.5 0 3 1 3 3v6h-10v-6c0-2 1.5-3 3-3z"/>
+                <!-- Útero con trompas y ovarios -->
+                <path d="M32 18c-2.5 0-4.5 1.5-5 4l-3.5 16.5c-.5 2.5 1 5 3.5 5.5h.5v8c0 1.5 1 2.5 2.5 2.5h4c1.5 0 2.5-1 2.5-2.5v-8h.5c2.5-.5 4-3 3.5-5.5L37 22c-.5-2.5-2.5-4-5-4z"/>
+                <!-- Trompa izquierda con ovario -->
+                <path d="M22.5 24c-3 0-6 1.5-9 4.5-2 2-3 5-2.5 7.5.3 1.4 1.7 2.2 3 1.7 1-.4 1.5-1.4 1.5-2.4 0-1.5.5-3 1.7-4.2 1.6-1.6 3.5-2.6 5.3-2.6 1 0 1.8-.5 2.2-1.4l.6-1.5c.4-1-.4-2.1-1.5-2.1h-1.3z"/>
+                <ellipse cx="11.5" cy="32" rx="3" ry="2.2"/>
+                <!-- Trompa derecha con ovario -->
+                <path d="M41.5 24c3 0 6 1.5 9 4.5 2 2 3 5 2.5 7.5-.3 1.4-1.7 2.2-3 1.7-1-.4-1.5-1.4-1.5-2.4 0-1.5-.5-3-1.7-4.2-1.6-1.6-3.5-2.6-5.3-2.6-1 0-1.8-.5-2.2-1.4l-.6-1.5c-.4-1 .4-2.1 1.5-2.1h1.3z"/>
+                <ellipse cx="52.5" cy="32" rx="3" ry="2.2"/>
+                <!-- Cuello uterino y vagina -->
+                <rect x="29" y="50" width="6" height="6" rx="1"/>
               </svg>
             </div>
             <div class="title">Retiro de implante</div>
@@ -516,7 +644,7 @@
           <span class="col-count">5</span>
         </div>
         <div class="col-cards">
-          <button class="tpl-card ped disabled" data-tpl="control-nino-sano">
+          <button class="tpl-card ped" data-tpl="control-nino-sano">
             <div class="icon">
               <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="32" cy="14" r="6"/>
@@ -526,7 +654,7 @@
             <div class="title">Control niño sano</div>
             <div class="meta">Plantillas médicas</div>
           </button>
-          <button class="tpl-card ped disabled" data-tpl="control-rn">
+          <button class="tpl-card ped" data-tpl="control-rn">
             <div class="icon">
               <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="32" cy="14" r="6"/>
@@ -536,7 +664,7 @@
             <div class="title">Control recién nacido</div>
             <div class="meta">Plantillas médicas</div>
           </button>
-          <button class="tpl-card ped disabled" data-tpl="control-lactante">
+          <button class="tpl-card ped" data-tpl="control-lactante">
             <div class="icon">
               <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="32" cy="14" r="6"/>
@@ -546,7 +674,7 @@
             <div class="title">Control lactante</div>
             <div class="meta">Plantillas médicas</div>
           </button>
-          <button class="tpl-card ped-2 disabled" data-tpl="control-escolar">
+          <button class="tpl-card ped-2" data-tpl="control-escolar">
             <div class="icon">
               <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="32" cy="14" r="6"/>
@@ -556,7 +684,7 @@
             <div class="title">Control escolar</div>
             <div class="meta">Plantillas médicas</div>
           </button>
-          <button class="tpl-card ped-2 disabled" data-tpl="control-adolescente">
+          <button class="tpl-card ped-2" data-tpl="control-adolescente">
             <div class="icon">
               <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="32" cy="14" r="6"/>
@@ -577,7 +705,7 @@
           <span class="col-count">3</span>
         </div>
         <div class="col-cards">
-          <button class="tpl-card med-1 disabled" data-tpl="emg-adulto">
+          <button class="tpl-card med-1" data-tpl="emg-adulto">
             <div class="icon">
               <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="32" cy="14" r="6"/>
@@ -588,7 +716,7 @@
             <div class="title">Examen médico general adulto</div>
             <div class="meta">Plantillas médicas</div>
           </button>
-          <button class="tpl-card med-2 disabled" data-tpl="emg-adulto-mayor">
+          <button class="tpl-card med-2" data-tpl="emg-adulto-mayor">
             <div class="icon">
               <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="22" cy="14" r="5"/>
@@ -599,7 +727,7 @@
             <div class="title">Examen médico general adulto mayor</div>
             <div class="meta">Plantillas médicas</div>
           </button>
-          <button class="tpl-card med-3 disabled" data-tpl="certificado-salud">
+          <button class="tpl-card med-3" data-tpl="certificado-salud">
             <div class="icon">
               <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                 <path d="M18 8h22l8 8v40c0 2-2 4-4 4H18c-2 0-4-2-4-4V12c0-2 2-4 4-4z"/>
@@ -621,7 +749,7 @@
           <span class="col-count">2</span>
         </div>
         <div class="col-cards">
-          <button class="tpl-card ext disabled" data-tpl="visita-domiciliaria">
+          <button class="tpl-card ext" data-tpl="visita-domiciliaria">
             <div class="icon">
               <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                 <path d="M32 10L10 28v26h44V28L32 10zm0 8l14 11v21H18V29l14-11z"/>
@@ -630,7 +758,7 @@
             <div class="title">Visita domiciliaria</div>
             <div class="meta">Plantillas médicas</div>
           </button>
-          <button class="tpl-card ext disabled" data-tpl="ficha-familiar">
+          <button class="tpl-card ext" data-tpl="ficha-familiar">
             <div class="icon">
               <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                 <path d="M32 10L10 28v26h44V28L32 10zm0 8l14 11v21H18V29l14-11z"/>
@@ -749,12 +877,1098 @@ const TEMPLATES = {
       `,
       hombre: null
     }
+  },
+
+  /* ---- 2. CAPTACIÓN DE EMBARAZADA ---- */
+  'captacion-embarazada': {
+    title: 'Captación de embarazada',
+    sub: 'Plantilla obstétrica · Captación y primer control prenatal',
+    onlyGender: 'mujer',
+    content: {
+      mujer: `
+        <div class="tpl-tip"><strong>OJO!!!:</strong> se realiza la captación de embarazo solo si la paciente tiene una <strong>prueba βHCG+ en sangre</strong> o un <strong>eco obstétrico</strong> que lo confirme. Nunca solo si la paciente te lo dice.</div>
+
+        <h3>Motivo de consulta:</h3>
+        <p>CAPTACIÓN DE EMBARAZO Y PRIMER CONTROL</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE FEMENINA DE <span class="edit">XX</span> AÑOS, ACUDE A CONSULTA PARA CAPTACIÓN DE EMBARAZO Y PRIMER CONTROL PRENATAL. REFIERE AMENORREA DE <span class="edit">XX</span> DÍAS/SEMANAS, <span class="edit">APF: MADRE HTA. APQX NO REFIERE, ALERGIAS NO REFIERE, AGO PRIMIGESTA, EMBARAZO NO PLANIFICADO SIN USO DE MÉTODO ANTICONCEPTIVO, MENARQUIA 12 AÑOS, 1RA RELACIÓN SEXUAL 15 AÑOS, PAREJAS SEXUALES 2, RELACIÓN DE PAREJA 11 MESES.</span> PACIENTE ACUDE CON PRUEBA βHCG POSITIVA (FECHA) / ECO OBSTÉTRICO (DETALLAR HALLAZGOS). <span class="edit">FUM 21/09/2022 CURSANDO EMBARAZO DE 8.2 SG CON FPP: 28/06/2025</span>, PACIENTE REFIERE QUE PRESENTA NÁUSEAS MATUTINAS, SENSIBILIDAD MAMARIA Y FATIGA LEVE. NIEGA DOLOR ABDOMINAL INTENSO, SANGRADO VAGINAL, FIEBRE O OTROS SIGNOS DE ALARMA. ANTECEDENTES GINECO-OBSTÉTRICOS REVISADOS <span class="edit">(G X P X A X C X)</span>, CICLOS PREVIOS REGULARES/IRREGULARES. SE EXPLICA LA IMPORTANCIA DEL CONTROL PRENATAL TEMPRANO Y SE BRINDA CONSEJERÍA SOBRE SIGNOS DE ALARMA Y CUIDADOS INICIALES EN EL EMBARAZO.</p>
+
+        <h3>Examen físico</h3>
+        <p><span class="field-label">SIGNOS VITALES:</span> PRESIÓN ARTERIAL <span class="edit">XXX/XX</span> MMHG, FRECUENCIA CARDÍACA <span class="edit">XX</span> LPM, FRECUENCIA RESPIRATORIA <span class="edit">XX</span> RPM, TEMPERATURA <span class="edit">XX.X</span> °C, SATURACIÓN O₂ <span class="edit">XX</span>%, <span class="edit">PESO XX KG DE INICIO, TALLA X.XX M, IMC XX.X KG/M².</span></p>
+
+        <p><span class="field-label">ESTADO GENERAL:</span> PACIENTE ALERTA, ORIENTADA, COOPERADORA, EN BUEN ESTADO GENERAL.</p>
+
+        <p><span class="field-label">PIEL Y FANERAS:</span> COLORACIÓN NORMAL, HIDRATADA, SIN LESIONES, EQUIMOSIS NI EDEMAS.</p>
+
+        <p><span class="field-label">CABEZA:</span> NORMOCÉFALA, SIN LESIONES.</p>
+
+        <p><span class="field-label">OJOS:</span> CONJUNTIVAS ROSADAS, ESCLERAS BLANCAS, PUPILAS ISOCÓRICAS Y REACTIVAS A LA LUZ.</p>
+
+        <p><span class="field-label">OÍDOS:</span> PABELLONES NORMALES, CONDUCTOS AUDITIVOS PERMEABLES.</p>
+
+        <p><span class="field-label">NARIZ:</span> MUCOSA ROSADA, SIN OBSTRUCCIÓN NI SECRECIONES.</p>
+
+        <p><span class="field-label">BOCA Y FARINGE:</span> MUCOSA ORAL ROSADA, BUENA HIGIENE BUCAL, AMÍGDALAS SIN HIPERTROFIA.</p>
+
+        <p><span class="field-label">CUELLO:</span> SIN MASAS NI ADENOMEGALIAS, TIROIDES NO PALPABLE.</p>
+
+        <p><span class="field-label">TÓRAX:</span> SIMÉTRICO, MURMULLO VESICULAR PRESENTE, SIN RUIDOS PATOLÓGICOS. RUIDOS CARDÍACOS RÍTMICOS, SIN SOPLOS.</p>
+
+        <p><span class="field-label">ABDOMEN:</span> PLANO, BLANDO, NO DOLOROSO A LA PALPACIÓN, SIN VISCEROMEGALIAS. <span class="edit">NO SE PALPA ALTURA UTERINA (GESTACIÓN TEMPRANA) / ACORDE A EDAD. FETO ÚNICO, VIVO, TRANSVERSO, DORSO LATERAL DERECHO, FRECUENCIA CARDÍACA FETAL, MOVIMIENTOS FETALES PRESENTES, ACTIVIDAD UTERINA: NEGATIVA.</span></p>
+
+        <p><span class="field-label">GENITOURINARIO:</span> NO SE REALIZA EXAMEN PÉLVICO EN ESTA VISITA / EXAMEN PÉLVICO REALIZADO CON CONSENTIMIENTO: MUCOSA VAGINAL ROSADA, CUELLO UTERINO CERRADO, SIN SANGRADO NI SECRECIONES PATOLÓGICAS.</p>
+
+        <p><span class="field-label">EXTREMIDADES:</span> SIMÉTRICAS, SIN EDEMAS, FUERZA Y MOVILIDAD CONSERVADAS.</p>
+
+        <p><span class="field-label">NEUROLÓGICO:</span> ALERTA Y ORIENTADA, FUERZA MUSCULAR 5/5, SENSIBILIDAD CONSERVADA.</p>
+
+        <h3>CIE-10</h3>
+        <p>Z321 – Embarazo confirmado</p>
+        <p>Z340 – Supervisión de primer embarazo normal</p>
+        <p>Z350–351 – Embarazo de alto riesgo</p>
+
+        <h3>Evolución</h3>
+        <p>SE REALIZA EVALUACIÓN MÉDICA PARA <span class="edit">CAPTACIÓN DE EMBARAZO</span>. SIGNOS VITALES Y EXAMEN FÍSICO DENTRO DE PARÁMETROS NORMALES. PRUEBA DE EMBARAZO EN ORINA / PRUEBA SÉRICA DE β-HCG CON RESULTADO POSITIVO. SE REALIZA ENTREGA DE CARNET PRENATAL. SE ORIENTA A LA PACIENTE SOBRE LA IMPORTANCIA DEL INICIO TEMPRANO DEL CONTROL PRENATAL. SE INICIA SUPLEMENTACIÓN CON ÁCIDO FÓLICO 400 MCG QD Y HIERRO ELEMENTAL 60 MG QD. SE INDICA SOLICITAR PRIMERA ECOGRAFÍA OBSTÉTRICA (SEM 11–13) Y EXÁMENES DE LABORATORIO INICIALES (BIOMETRÍA HEMÁTICA, GLUCOSA EN AYUNAS, GRUPO SANGUÍNEO Y FACTOR Rh, VDRL, VIH, UROANÁLISIS Y UROCULTIVO, PANEL TORCH, PROTEINURIA, CHAGAS), SE INDICA AGENDAR CONTROL ODONTOLÓGICO. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES Y CON CITA PROGRAMADA PARA CONTROL PRENATAL. SE BRINDA CONSEJERÍA SOBRE ALIMENTACIÓN SALUDABLE, EVITAR CONSUMO DE ALCOHOL, TABACO Y SUSTANCIAS TÓXICAS, ASÍ COMO SIGNOS DE ALARMA (SANGRADO VAGINAL, DOLOR ABDOMINAL INTENSO, FIEBRE, PÉRDIDA DE LÍQUIDO). TAMIZAJE DE VIOLENCIA NEGATIVO.</p>
+      `,
+      hombre: null
+    }
+  },
+
+  /* ---- 3. CONTROL PRENATAL ---- */
+  'control-prenatal': {
+    title: 'Control embarazada',
+    sub: 'Plantilla obstétrica · Control prenatal subsecuente',
+    onlyGender: 'mujer',
+    content: {
+      mujer: `
+        <div class="tpl-tip"><strong>OJO!!!:</strong> llenar siempre el <strong>carnet prenatal</strong>, indicar <strong>signos de alarma</strong> y solicitar lo necesario según edad gestacional.</div>
+
+        <h3>Motivo de consulta:</h3>
+        <p>CONTROL DE EMBARAZO</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE FEMENINA DE <span class="edit">XX</span> AÑOS, ACUDE A CONSULTA PARA CONTROL PRENATAL DE EMBARAZO. REFIERE AMENORREA DE <span class="edit">XX</span> DÍAS/SEMANAS, <span class="edit">APF: MADRE HTA. APQX NO REFIERE, ALERGIAS NO REFIERE, AGO PRIMIGESTA, EMBARAZO NO PLANIFICADO SIN USO DE MÉTODO ANTICONCEPTIVO, MENARQUIA 12 AÑOS, 1RA RELACIÓN SEXUAL 15 AÑOS, PAREJAS SEXUALES 2, RELACIÓN DE PAREJA 11 MESES.</span> <span class="edit">FUM 21/09/2022 CURSANDO EMBARAZO DE 8.2 SG CON FPP: 28/06/2025</span>, PACIENTE REFIERE QUE PRESENTA NÁUSEAS MATUTINAS, SENSIBILIDAD MAMARIA Y FATIGA LEVE. NIEGA DOLOR ABDOMINAL INTENSO, SANGRADO VAGINAL, FIEBRE O OTROS SIGNOS DE ALARMA. SE REVISAN RESULTADOS DE EXÁMENES DE LABORATORIO PREVIOS Y SE REGISTRA EVOLUCIÓN DEL EMBARAZO. SE VERIFICA CUMPLIMIENTO DE SUPLEMENTACIÓN CON ÁCIDO FÓLICO, HIERRO, MICRONUTRIENTES Y CALCIO SEGÚN EDAD GESTACIONAL. ESQUEMA DE VACUNACIÓN REVISADO Y ACTUALIZADO (Td, Tdap, INFLUENZA SEGÚN SEMANA GESTACIONAL). SE REALIZA CONSEJERÍA SOBRE SIGNOS DE ALARMA, CONTROL DE PESO, PRESIÓN ARTERIAL Y CUIDADOS ESPECÍFICOS PARA LA EDAD GESTACIONAL.</p>
+
+        <h3>Examen físico</h3>
+        <p><span class="field-label">SIGNOS VITALES:</span> PRESIÓN ARTERIAL <span class="edit">XXX/XX</span> MMHG, FRECUENCIA CARDÍACA <span class="edit">XX</span> LPM, FRECUENCIA RESPIRATORIA <span class="edit">XX</span> RPM, TEMPERATURA <span class="edit">XX.X</span> °C, SATURACIÓN O₂ <span class="edit">XX</span>%, <span class="edit">PESO XX KG, TALLA X.XX M, IMC XX.X KG/M².</span></p>
+
+        <div class="tpl-tip">
+          <strong>GANANCIA DE PESO ADECUADA, SEGÚN IMC PREVIO AL EMBARAZO</strong>
+          <ul>
+            <li><strong>IMC &lt; 20 kg/m²:</strong> ganancia de peso debe ser entre <strong>12 a 18 kg</strong></li>
+            <li><strong>IMC 20 – 24.9 kg/m²:</strong> ganancia de peso debe ser entre <strong>10 a 13 kg</strong></li>
+            <li><strong>IMC 25 – 29 kg/m²:</strong> ganancia de peso debe ser entre <strong>7 a 10 kg</strong></li>
+            <li><strong>IMC &gt; 30 kg/m²:</strong> ganancia de peso debe ser entre <strong>6 a 7 kg</strong></li>
+          </ul>
+        </div>
+
+        <p><span class="field-label">ESTADO GENERAL:</span> PACIENTE ALERTA, ORIENTADA, COOPERADORA, EN BUEN ESTADO GENERAL.</p>
+
+        <p><span class="field-label">PIEL Y FANERAS:</span> COLORACIÓN NORMAL, HIDRATADA, SIN LESIONES, EQUIMOSIS NI EDEMAS.</p>
+
+        <p><span class="field-label">CABEZA:</span> NORMOCÉFALA, SIN LESIONES.</p>
+
+        <p><span class="field-label">OJOS:</span> CONJUNTIVAS ROSADAS, ESCLERAS BLANCAS, PUPILAS ISOCÓRICAS Y REACTIVAS A LA LUZ.</p>
+
+        <p><span class="field-label">OÍDOS:</span> PABELLONES NORMALES, CONDUCTOS AUDITIVOS PERMEABLES.</p>
+
+        <p><span class="field-label">NARIZ:</span> MUCOSA ROSADA, SIN OBSTRUCCIÓN NI SECRECIONES.</p>
+
+        <p><span class="field-label">BOCA Y FARINGE:</span> MUCOSA ORAL ROSADA, BUENA HIGIENE BUCAL, AMÍGDALAS SIN HIPERTROFIA.</p>
+
+        <p><span class="field-label">CUELLO:</span> SIN MASAS NI ADENOMEGALIAS, TIROIDES NO PALPABLE.</p>
+
+        <p><span class="field-label">TÓRAX:</span> SIMÉTRICO, MURMULLO VESICULAR PRESENTE, SIN RUIDOS PATOLÓGICOS. RUIDOS CARDÍACOS RÍTMICOS, SIN SOPLOS.</p>
+
+        <p><span class="field-label">ABDOMEN:</span> PLANO, BLANDO, NO DOLOROSO A LA PALPACIÓN, SIN VISCEROMEGALIAS. <span class="edit">NO SE PALPA ALTURA UTERINA (GESTACIÓN TEMPRANA) / ACORDE A EDAD. FETO ÚNICO, VIVO, TRANSVERSO, DORSO LATERAL DERECHO, FRECUENCIA CARDÍACA FETAL, MOVIMIENTOS FETALES PRESENTES, ACTIVIDAD UTERINA: NEGATIVA.</span></p>
+
+        <p><span class="field-label">GENITOURINARIO:</span> NO SE REALIZA EXAMEN PÉLVICO EN ESTA VISITA / EXAMEN PÉLVICO REALIZADO CON CONSENTIMIENTO: MUCOSA VAGINAL ROSADA, CUELLO UTERINO CERRADO, SIN SANGRADO NI SECRECIONES PATOLÓGICAS.</p>
+
+        <p><span class="field-label">EXTREMIDADES:</span> SIMÉTRICAS, SIN EDEMAS, FUERZA Y MOVILIDAD CONSERVADAS.</p>
+
+        <p><span class="field-label">NEUROLÓGICO:</span> ALERTA Y ORIENTADA, FUERZA MUSCULAR 5/5, SENSIBILIDAD CONSERVADA.</p>
+
+        <div class="tpl-tip">Maniobras de <strong>Leopold</strong> sirven a partir de las semanas <strong>28–30</strong>.</div>
+
+        <h3>CIE-10</h3>
+        <p>Z321 – Embarazo confirmado</p>
+        <p>Z340 – Supervisión de primer embarazo normal</p>
+        <p>Z350–351 – Embarazo de alto riesgo</p>
+
+        <h3>Evolución</h3>
+        <p>SE REALIZA <span class="edit">CONTROL PRENATAL DE EMBARAZO DE GESTANTE DE XX SEMANAS</span>. SIGNOS VITALES Y EXAMEN FÍSICO DENTRO DE PARÁMETROS NORMALES. <span class="edit">ALTURA UTERINA ACORDE A EDAD GESTACIONAL, MOVIMIENTOS FETALES PRESENTES (O AUSENTES SEGÚN EG), FRECUENCIA CARDÍACA FETAL DENTRO DE RANGO NORMAL.</span> NO SE EVIDENCIAN SIGNOS DE ALARMA. SE REALIZA REGISTRO DE GANANCIA DE PESO EN CARNET PRENATAL Y SE VERIFICA CUMPLIMIENTO DE SUPLEMENTACIÓN CON <span class="edit">ÁCIDO FÓLICO, HIERRO, MICRONUTRIENTES Y CALCIO,</span> ENTREGÁNDOSE DOSIS CORRESPONDIENTE SEGÚN EDAD GESTACIONAL. <span class="edit">ESQUEMA DE VACUNACIÓN REVISADO Y COMPLETADO SEGÚN SEMANA DE EMBARAZO. SE REVISA RESULTADOS DE EXÁMENES COMPLEMENTARIOS (DETALLAR HALLAZGOS), Y SE SOLICITA ECOGRAFÍA (DE 2DO O 3ER TRIMESTRE) Y EXÁMENES DE LABORATORIO (CORRESPONDIENTE A EDAD).</span> SE BRINDA CONSEJERÍA SOBRE SIGNOS DE ALARMA, IMPORTANCIA DEL CONTROL PRENATAL REGULAR, ALIMENTACIÓN BALANCEADA Y MEDIDAS DE PREVENCIÓN DE COMPLICACIONES. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES. TAMIZAJE DE VIOLENCIA NEGATIVO. PRÓXIMO CONTROL.</p>
+      `,
+      hombre: null
+    }
+  },
+
+  /* ---- 4. CONTROL PUERPERIO ---- */
+  'control-puerperio': {
+    title: 'Puerperio',
+    sub: 'Plantilla obstétrica · Control posparto',
+    onlyGender: 'mujer',
+    content: {
+      mujer: `
+        <div class="tpl-alert"><strong>La bibliografía difiere</strong>, pero la <strong>ACOG</strong> (Colegio estadounidense de obstetricia y ginecología) recomienda:
+          <ol>
+            <li><strong>Control al cabo de ~1 semana (día 6–8 posparto)</strong> — para revisar estado general, involución uterina, loquios, herida o periné, signos de complicaciones.</li>
+            <li><strong>Control final o revaluación a las 12 semanas posparto</strong> — para cierre del puerperio, evaluación de salud reproductiva, planificación familiar, tamizajes pendientes, etc.</li>
+          </ol>
+        </div>
+
+        <a class="tpl-link" href="control_prenatal.html#view-etapa">🌸 Ir a guía clínica · Posparto</a>
+
+        <h3>Motivo de consulta:</h3>
+        <p>CONTROL DE PUERPERIO</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE FEMENINA DE <span class="edit">XX</span> AÑOS, CURSANDO <span class="edit">XX</span> DÍA POSPARTO, POSTERIOR A PARTO <span class="edit">(EUTÓCICO VAGINAL / CESÁREA TRANSVERSAL)</span> A LAS <span class="edit">XX</span> SEMANAS, EMBARAZO NORMOEVOLUTIVO Y CONTROLADO. ACUDE A CONSULTA / SE REALIZA VISITA DOMICILIARIA PARA CONTROL PUERPERAL. REFIERE ENCONTRARSE EN <span class="edit">BUEN ESTADO GENERAL, NIEGA FIEBRE, DOLOR ABDOMINAL INTENSO, SANGRADO EXCESIVO, SECRECIÓN FÉTIDA O ALTERACIONES URINARIAS. COMENTA LEVE (SENSACIÓN DE CANSANCIO) / DOLOR LEVE EN HERIDA QUIRÚRGICA / SENSIBILIDAD PERINEAL, EN PROCESO DE MEJORÍA.</span> TOLERA DIETA, REALIZA LACTANCIA MATERNA EXCLUSIVA, CON ADECUADA EYECCIÓN DE LECHE. EL SANGRADO GENITAL ES ESCASO, COLOR (LOQUIOS SEROSOS), SIN MAL OLOR. NIEGA DIFICULTAD PARA LA MICCIÓN O DEFECACIÓN, REFIERE BUEN APOYO FAMILIAR Y ESTADO DE ÁNIMO ESTABLE.</p>
+
+        <h3>Examen físico</h3>
+        <p><span class="field-label">SIGNOS VITALES:</span> PRESIÓN ARTERIAL <span class="edit">XXX/XX</span> MMHG, FRECUENCIA CARDÍACA <span class="edit">XX</span> LPM, FRECUENCIA RESPIRATORIA <span class="edit">XX</span> RPM, TEMPERATURA <span class="edit">XX.X</span> °C, SATURACIÓN O₂ <span class="edit">XX</span>%, <span class="edit">PESO XX KG, TALLA X.XX M, IMC XX.X KG/M².</span></p>
+
+        <p><span class="field-label">ESTADO GENERAL:</span> PACIENTE ALERTA, ORIENTADA, COOPERADORA, EN BUEN ESTADO GENERAL.</p>
+
+        <p><span class="field-label">PIEL Y FANERAS:</span> COLORACIÓN NORMAL, HIDRATADA, SIN LESIONES, EQUIMOSIS NI EDEMAS.</p>
+
+        <p><span class="field-label">CABEZA:</span> NORMOCÉFALA, SIN LESIONES.</p>
+
+        <p><span class="field-label">OJOS:</span> CONJUNTIVAS ROSADAS, ESCLERAS BLANCAS, PUPILAS ISOCÓRICAS Y REACTIVAS A LA LUZ.</p>
+
+        <p><span class="field-label">OÍDOS:</span> PABELLONES NORMALES, CONDUCTOS AUDITIVOS PERMEABLES.</p>
+
+        <p><span class="field-label">NARIZ:</span> MUCOSA ROSADA, SIN OBSTRUCCIÓN NI SECRECIONES.</p>
+
+        <p><span class="field-label">BOCA Y FARINGE:</span> MUCOSA ORAL ROSADA, BUENA HIGIENE BUCAL, AMÍGDALAS SIN HIPERTROFIA.</p>
+
+        <p><span class="field-label">CUELLO:</span> SIN MASAS NI ADENOMEGALIAS, TIROIDES NO PALPABLE.</p>
+
+        <p><span class="field-label">MAMAS:</span> CONGESTIÓN MAMARIA LEVE, PEZONES ÍNTEGROS, SIN GRIETAS NI SIGNOS DE MASTITIS. SE OBSERVA SALIDA DE CALOSTRO / LECHE A ESTÍMULO.</p>
+
+        <p><span class="field-label">TÓRAX:</span> SIMÉTRICO, MURMULLO VESICULAR PRESENTE, SIN RUIDOS PATOLÓGICOS. RUIDOS CARDÍACOS RÍTMICOS, SIN SOPLOS.</p>
+
+        <p><span class="field-label">ABDOMEN:</span> PLANO, BLANDO, NO DOLOROSO A LA PALPACIÓN, SIN VISCEROMEGALIAS. ÚTERO INVOLUCIONADO, PALPÁNDOSE A NIVEL DE <span class="edit">(SÍNFISIS PÚBICA)</span> ACORDE A DÍA DE PUERPERIO.</p>
+
+        <p><span class="field-label">GENITOURINARIO:</span> EXAMEN PÉLVICO REALIZADO CON CONSENTIMIENTO: LOQUIOS ESCASOS, SEROSOS, SIN MAL OLOR. <span class="edit">PERINÉ ÍNTEGRO / CON EPISIOTOMÍA</span> CICATRIZANDO ADECUADAMENTE, SIN SIGNOS DE INFECCIÓN.</p>
+
+        <p><span class="field-label">EXTREMIDADES:</span> SIMÉTRICAS, SIN EDEMAS, FUERZA Y MOVILIDAD CONSERVADAS.</p>
+
+        <p><span class="field-label">NEUROLÓGICO:</span> ALERTA Y ORIENTADA, FUERZA MUSCULAR 5/5, SENSIBILIDAD CONSERVADA.</p>
+
+        <h3>CIE-10</h3>
+        <p>Z390 – ATENCIÓN Y EXAMEN INMEDIATAMENTE DESPUÉS DEL PARTO</p>
+        <p>Z391 – ATENCIÓN Y EXAMEN DE LA MADRE EN PERIODO DE LACTANCIA</p>
+
+        <h3>Evolución</h3>
+        <p>SE REALIZA CONTROL DE PUERPERIO A PACIENTE DE <span class="edit">XX</span> AÑOS, EN EL <span class="edit">XX</span> DÍA POSPARTO. SE ENCUENTRA EN BUEN ESTADO GENERAL, AFEBRIL, HEMODINÁMICAMENTE ESTABLE. <span class="edit">HERIDA QUIRÚRGICA / PERINÉ</span> EN ADECUADA EVOLUCIÓN, SIN SIGNOS DE INFECCIÓN, ÚTERO INVOLUCIONADO ACORDE A LA FECHA, LOQUIOS ESCASOS Y SEROSOS. LACTANCIA MATERNA EXCLUSIVA CON ADECUADA TÉCNICA, PEZONES ÍNTEGROS. SIN SIGNOS DE COMPLICACIONES PUERPERALES. ESTADO DE ÁNIMO ESTABLE. SE BRINDA CONSEJERÍA SOBRE SIGNOS DE ALARMA, IMPORTANCIA DEL CONTROL POSPARTO REGULAR, ALIMENTACIÓN BALANCEADA Y MEDIDAS DE PREVENCIÓN DE COMPLICACIONES. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES. TAMIZAJE DE VIOLENCIA NEGATIVO. PRÓXIMO CONTROL.</p>
+      `,
+      hombre: null
+    }
+  },
+
+  /* ---- 5. PAPANICOLAU ---- */
+  'papanicolau': {
+    title: 'Papanicolau',
+    sub: 'Plantilla ginecológica · Toma de PAP test',
+    onlyGender: 'mujer',
+    content: {
+      mujer: `
+        <h3>Motivo de Consulta:</h3>
+        <p>REALIZACIÓN DE PAP TEST</p>
+
+        <h3>Enfermedad Actual:</h3>
+        <p>PACIENTE FEMENINA DE <span class="edit">XX AÑOS</span> DE EDAD, MESTIZA, SIN ANTECEDENTES PATOLÓGICOS DE INTERÉS. NO REFIERE ANTECEDENTES QUIRÚRGICOS. <span class="edit">AGO: G1 P1 C1 HV1 FUP: 07/2/16. MÉTODO DE PLANIFICACIÓN FAMILIAR: IMPLANTE SUBDÉRMICO DE 5 AÑOS COLOCADO EL 14/9/2024, FUM 12/6/2024, ÚLTIMA CITOLOGÍA: ???. MENARQUIA 14 AÑOS. IVS: 16 AÑOS.</span> ACUDE A CONSULTA PARA SOLICITAR QUE SE LE REALICE PAP TEST DE CONTROL, DEBIDO A NUNCA HABERSE REALIZADO ESTUDIO DE CITOLOGÍA. PACIENTE CUMPLE CON LOS REQUISITOS PARA CITOLOGÍA SEGÚN INTERROGATORIO, SE LE BRINDA ASESORÍA SOBRE EL PROCEDIMIENTO.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z124 – EXAMEN DE PESQUISA ESPECIAL PARA TUMOR DEL CUELLO UTERINO</p>
+
+        <h3>Evolución:</h3>
+        <p>PACIENTE FEMENINA DE <span class="edit">XX AÑOS</span>, ACUDE PARA REALIZACIÓN DE PRUEBA DE PAPANICOLAOU COMO PARTE DE CONTROL GINECOLÓGICO <span class="edit">DE RUTINA (O POR: SEGUIMIENTO DE ALTERACIONES PREVIAS, TAMIZAJE INICIAL, CONTROL ANUAL).</span> REFIERE ESTAR ASINTOMÁTICA, SIN FLUJO VAGINAL ANORMAL, SANGRADO INTERMENSTRUAL, DOLOR PÉLVICO O PRURITO. ÚLTIMA MENSTRUACIÓN HACE <span class="edit">X</span> DÍAS, CICLOS REGULARES. ANTECEDENTES GINECOLÓGICOS Y OBSTÉTRICOS REVISADOS, SIN HALLAZGOS RELEVANTES PARA POSPONER LA TOMA. PACIENTE COMPRENDE EL PROCEDIMIENTO, SUS BENEFICIOS Y POSIBLES MOLESTIAS, ACEPTA. SE PROCEDE A LA REALIZACIÓN DE PAP COMO MÉTODO DE DETECCIÓN PRECOZ DE TUMOR DE CUELLO UTERINO. SE REALIZA SIN NINGUNA COMPLICACIÓN, CONTROL SUBSECUENTE CON RESULTADOS EN 3 MESES.</p>
+      `,
+      hombre: null
+    }
+  },
+
+  /* ---- 6. PLANIFICACIÓN FAMILIAR ---- */
+  'planificacion-familiar': {
+    title: 'Planificación familiar (Métodos anticonceptivos no implante)',
+    sub: 'Plantilla ginecológica · Inicio de método anticonceptivo',
+    onlyGender: 'mujer',
+    content: {
+      mujer: `
+        <h3>Motivo de Consulta:</h3>
+        <p>PLANIFICACIÓN FAMILIAR</p>
+
+        <h3>Enfermedad Actual:</h3>
+        <p>PACIENTE DE <span class="edit">21 AÑOS SIN APP, AGO G1 C1 A0 HV1 FP: 27 OCTUBRE. FUM: 28/01/2023</span>, ACUDE A CONSULTA MÉDICA PARA INICIO DE MÉTODO DE PLANIFICACIÓN FAMILIAR. ASISTE CON PRUEBA βHCG CON RESULTADO NEGATIVO. NO REFIERE SÍNTOMAS ACTUALES. NO INDICA ANTECEDENTES DE TROMBOSIS, MIGRAÑA CON AURA, ENFERMEDAD HEPÁTICA NI SANGRADOS VAGINALES ANORMALES. NO UTILIZA MÉTODO ANTICONCEPTIVO EN LOS <span class="edit">ÚLTIMOS X MESES (O REFIERE USO PREVIO DE X SIN EFECTOS ADVERSOS).</span></p>
+
+        <h3>Antecedentes de relevancia:</h3>
+        <p>HISTORIA DE USO MÉTODO ANTICONCEPTIVO: <span class="edit">PRESERVATIVO MASCULINO. MENARQUIA 16 AÑOS. 1RA RELACIÓN SEXUAL: 19 AÑOS. PAREJAS SEXUALES: 1. RELACIÓN DE PAREJA: 1 AÑOS.</span> PACIENTE ESTABLE Y COLABORADORA ACEPTA COLOCACIÓN DE MÉTODO DE PLANIFICACIÓN.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z300 – CONSEJO Y ASESORAMIENTO GENERAL SOBRE LA ANTICONCEPCIÓN</p>
+        <p>Z309 – ASISTENCIA PARA LA ANTICONCEPCIÓN, NO ESPECIFICADA</p>
+
+        <h3>Evolución:</h3>
+        <p>PACIENTE DE <span class="edit">21 AÑOS SIN APP, AGO G1 C1 A0 HV1 FP: 27 OCTUBRE. FUM: 28/01/2023</span>, ACUDE A CONSULTA MÉDICA PARA INICIO DE MÉTODO DE PLANIFICACIÓN FAMILIAR. ASISTE CON PRUEBA βHCG CON RESULTADO NEGATIVO. SE DA ASESORÍA MÉDICA Y SE INDICA LOS DIFERENTES MÉTODOS ANTICONCEPTIVOS QUE EXISTEN EN LA INSTITUCIÓN, SE EXPLICAN EFECTOS SECUNDARIOS DE LOS DIFERENTES MÉTODOS ANTICONCEPTIVOS. SE ANALIZAN CRITERIOS DE ELEGIBILIDAD 1 Y SE ESCOGE MÉTODO <span class="edit">X</span>. LA PACIENTE INDICA QUE COMPRENDE LA INFORMACIÓN. NO SE IDENTIFICARON CONTRAINDICACIONES MÉDICAS. SE EXPLICA TÉCNICA DE USO. PACIENTE SE DIRIGE A FARMACIA PARA RETIRO DE MEDICACIÓN EN BUENAS CONDICIONES GENERALES AL EGRESO DE LA CONSULTA.</p>
+      `,
+      hombre: null
+    }
+  },
+
+  /* ---- 7. COLOCACIÓN DE IMPLANTE ---- */
+  'colocacion-implante': {
+    title: 'Colocación de implante (Planificación familiar)',
+    sub: 'Plantilla ginecológica · Inserción de implante subdérmico',
+    onlyGender: 'mujer',
+    content: {
+      mujer: `
+        <h3>Motivo de Consulta:</h3>
+        <p>PLANIFICACIÓN FAMILIAR – COLOCACIÓN DE IMPLANTE SUBDÉRMICO</p>
+
+        <h3>Enfermedad Actual:</h3>
+        <p>PACIENTE DE <span class="edit">21 AÑOS SIN APP, AGO G1 C1 A0 HV1 FP: 27 OCTUBRE. FUM: 28/01/2023</span>, ACUDE A CONSULTA MÉDICA PARA INICIO DE MÉTODO DE PLANIFICACIÓN FAMILIAR. ASISTE CON PRUEBA βHCG CON RESULTADO NEGATIVO. NO REFIERE SÍNTOMAS ACTUALES. NO INDICA ANTECEDENTES DE TROMBOSIS, MIGRAÑA CON AURA, ENFERMEDAD HEPÁTICA NI SANGRADOS VAGINALES ANORMALES. NO UTILIZA MÉTODO ANTICONCEPTIVO EN LOS <span class="edit">ÚLTIMOS X MESES (O REFIERE USO PREVIO DE X SIN EFECTOS ADVERSOS).</span> SE DA ASESORÍA MÉDICA Y SE INDICA LOS DIFERENTES MÉTODOS ANTICONCEPTIVOS QUE EXISTEN EN LA INSTITUCIÓN, SE EXPLICAN EFECTOS SECUNDARIOS DE LOS DIFERENTES MÉTODOS ANTICONCEPTIVOS. SE ANALIZAN CRITERIOS DE ELEGIBILIDAD: 1 Y SE ESCOGE MÉTODO DE IMPLANTE SUBDÉRMICO.</p>
+
+        <h3>Antecedentes de relevancia:</h3>
+        <p>HISTORIA DE USO MÉTODO ANTICONCEPTIVO: <span class="edit">PRESERVATIVO MASCULINO. MENARQUIA 16 AÑOS. 1RA RELACIÓN SEXUAL: 19 AÑOS. PAREJAS SEXUALES: 1. RELACIÓN DE PAREJA: 1 AÑOS.</span> PACIENTE ESTABLE Y COLABORADORA ACEPTA COLOCACIÓN DE MÉTODO DE PLANIFICACIÓN.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z300 – CONSEJO Y ASESORAMIENTO GENERAL SOBRE LA ANTICONCEPCIÓN</p>
+        <p>Z309 – ASISTENCIA PARA LA ANTICONCEPCIÓN, NO ESPECIFICADA</p>
+
+        <h3>Evolución:</h3>
+        <p>PACIENTE DE <span class="edit">21 AÑOS SIN APP, AGO G1 C1 A0 HV1 FP: 27 OCTUBRE. FUM: 28/01/2023</span>, ACUDE A CONSULTA MÉDICA PARA INICIO DE MÉTODO DE PLANIFICACIÓN FAMILIAR. ASISTE CON PRUEBA βHCG CON RESULTADO NEGATIVO. SE ANALIZAN CRITERIOS DE ELEGIBILIDAD 1 Y SE ESCOGE MÉTODO IMPLANTE SUBDÉRMICO. LA PACIENTE INDICA QUE COMPRENDE LA INFORMACIÓN Y FIRMA CONSENTIMIENTO INFORMADO. NO SE IDENTIFICARON CONTRAINDICACIONES MÉDICAS. MEDIANTE TÉCNICA DE ASEPSIA Y ANTISEPSIA, SE COLOCA ANESTESIA LOCAL CON LIDOCAÍNA AL 1% SIN EPINEFRINA. SE PROCEDE A COLOCACIÓN DE IMPLANTE ANTICONCEPTIVO <span class="edit">(MARCA)</span> EN CARA INTERNA DE BRAZO NO DOMINANTE SIGUIENDO EL PROTOCOLO. DISPOSITIVO QUEDA PALPABLE Y EN POSICIÓN ADECUADA. SE COLOCA APÓSITO COMPRESIVO Y SE INDICAN CUIDADOS LOCALES (MANTENER VENDAJE 24 H, EVITAR GOLPES, MANTENER ZONA LIMPIA Y SECA). PACIENTE TOLERA EL PROCEDIMIENTO SIN COMPLICACIONES INMEDIATAS. SE REFUERZA CONSEJERÍA SOBRE EFECTOS, EFICACIA Y SE EXPLICAN SIGNOS DE ALARMA. SE AGENDA CONTROL EN 7 DÍAS.</p>
+      `,
+      hombre: null
+    }
   }
 
-  /* Future templates will be added here:
-     'captacion-embarazada', 'control-prenatal', 'control-puerperio',
-     'papanicolau', 'planificacion-familiar', etc.
-  */
+  /* ---- 8. CONTROL DE IMPLANTE ---- */
+  'control-implante': {
+    title: 'Control de implante',
+    sub: 'Plantilla ginecológica · Supervisión de implante subdérmico',
+    onlyGender: 'mujer',
+    content: {
+      mujer: `
+        <h3>Motivo de Consulta:</h3>
+        <p>PLANIFICACIÓN FAMILIAR – SUPERVISIÓN DE IMPLANTE SUBDÉRMICO</p>
+
+        <h3>Enfermedad Actual:</h3>
+        <p>PACIENTE DE <span class="edit">21 AÑOS SIN APP, AGO G1 C1 A0 HV1 FP: 27 OCTUBRE. FUM: 28/01/2023</span>, ACUDE A CONSULTA MÉDICA PARA SUPERVISIÓN DE IMPLANTE. PACIENTE REFIERE QUE DESDE LA COLOCACIÓN DEL MISMO SE ENCUENTRA ASINTOMÁTICA, NO PRESENTA FIEBRE, NI DOLOR EN SITIO DE COLOCACIÓN.</p>
+
+        <h3>Antecedentes de relevancia:</h3>
+        <p>HISTORIA DE USO MÉTODO ANTICONCEPTIVO: <span class="edit">IMPLANTE SUBDÉRMICO. MENARQUIA 16 AÑOS. 1RA RELACIÓN SEXUAL: 19 AÑOS. PAREJAS SEXUALES: 1. RELACIÓN DE PAREJA: 1 AÑOS.</span></p>
+
+        <h3>CIE-10:</h3>
+        <p>Z300 – CONSEJO Y ASESORAMIENTO GENERAL SOBRE LA ANTICONCEPCIÓN</p>
+        <p>Z309 – ASISTENCIA PARA LA ANTICONCEPCIÓN, NO ESPECIFICADA</p>
+
+        <h3>Evolución:</h3>
+        <p>PACIENTE DE <span class="edit">21 AÑOS SIN APP, AGO G1 C1 A0 HV1 FP: 27 OCTUBRE. FUM: 28/01/2023</span>, ACUDE A CONSULTA PARA SUPERVISIÓN DE IMPLANTE. PACIENTE REFIERE QUE DESDE LA COLOCACIÓN DEL MISMO SE ENCUENTRA ASINTOMÁTICA, NO PRESENTA FIEBRE NI DOLOR EN SITIO DE COLOCACIÓN. REFIERE BUENA EVOLUCIÓN, SIN DOLOR INTENSO, SANGRADO, ENROJECIMIENTO O SIGNOS DE INFECCIÓN EN EL SITIO DE INSERCIÓN. A LA INSPECCIÓN, SE OBSERVA PIEL ÍNTEGRA, SIN SIGNOS DE INFLAMACIÓN, Y SE PALPA IMPLANTE EN POSICIÓN ADECUADA. SE REFUERZA CONSEJERÍA SOBRE EFECTOS ADVERSOS POSIBLES, EFICACIA DEL MÉTODO Y SIGNOS DE ALARMA. SE INDICA CONTINUAR CUIDADOS LOCALES HABITUALES Y ACUDIR INMEDIATAMENTE SI PRESENTA DOLOR INTENSO, FIEBRE, SANGRADO ABUNDANTE O SUPURACIÓN. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES.</p>
+      `,
+      hombre: null
+    }
+  },
+
+  /* ---- 9. RETIRO DE IMPLANTE ---- */
+  'retiro-implante': {
+    title: 'Retiro de implante (Planificación familiar)',
+    sub: 'Plantilla ginecológica · Extracción de implante subdérmico',
+    onlyGender: 'mujer',
+    content: {
+      mujer: `
+        <h3>Motivo de Consulta:</h3>
+        <p>RETIRO DE IMPLANTE SUBDÉRMICO</p>
+
+        <h3>Enfermedad Actual:</h3>
+        <p>PACIENTE DE <span class="edit">21 AÑOS SIN APP, AGO G1 C1 A0 HV1 FP: 27 OCTUBRE. FUM: 28/01/2023</span>, ACUDE A CONSULTA MÉDICA PARA RETIRO DE MÉTODO DE PLANIFICACIÓN FAMILIAR (IMPLANTE SUBDÉRMICO) COLOCADO HACE <span class="edit">X</span> AÑOS, DEBIDO A: <span class="edit">FINALIZACIÓN DE VIDA ÚTIL DE DISPOSITIVO (O DESEO DE CAMBIO, RETIRO POR EFECTOS SECUNDARIOS, PLANIFICACIÓN DE EMBARAZO),</span> REFIERE BUEN ESTADO GENERAL, SIN DOLOR, INFLAMACIÓN, NI SIGNOS DE INFECCIÓN EN SITIO DE INSERCIÓN. NIEGA EMBARAZO ACTUAL. SE REALIZA CONSEJERÍA SOBRE EL PROCEDIMIENTO DE RETIRO, POSIBLES MOLESTIAS Y ALTERNATIVAS DE PLANIFICACIÓN FAMILIAR. PACIENTE COMPRENDE Y ACEPTA.</p>
+
+        <h3>Antecedentes de relevancia:</h3>
+        <p>HISTORIA DE USO MÉTODO ANTICONCEPTIVO: DISPOSITIVO SUBDÉRMICO HACE <span class="edit">5</span> AÑOS. MENARQUIA 16 AÑOS. 1RA RELACIÓN SEXUAL: 19 AÑOS. PAREJAS SEXUALES: 1. RELACIÓN DE PAREJA: 1 AÑOS. PACIENTE ESTABLE Y COLABORADORA ACEPTA RETIRO DE MÉTODO DE PLANIFICACIÓN.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z300 – CONSEJO Y ASESORAMIENTO GENERAL SOBRE LA ANTICONCEPCIÓN</p>
+        <p>Z309 – ASISTENCIA PARA LA ANTICONCEPCIÓN, NO ESPECIFICADA</p>
+
+        <h3>Evolución:</h3>
+        <p>PACIENTE DE <span class="edit">21 AÑOS SIN APP, AGO G1 C1 A0 HV1 FP: 27 OCTUBRE. FUM: 28/01/2023</span>, ACUDE A CONSULTA MÉDICA PARA RETIRO DE MÉTODO DE PLANIFICACIÓN FAMILIAR (IMPLANTE SUBDÉRMICO) COLOCADO HACE <span class="edit">X</span> AÑOS, DEBIDO A: <span class="edit">FINALIZACIÓN DE VIDA ÚTIL DE DISPOSITIVO (O DESEO DE CAMBIO, RETIRO POR EFECTOS SECUNDARIOS, PLANIFICACIÓN DE EMBARAZO),</span> SE IDENTIFICA EL IMPLANTE EN CARA INTERNA DEL BRAZO NO DOMINANTE. SE REALIZA ASEPSIA Y ANTISEPSIA DE LA ZONA, SE INFILTRA ANESTESIA LOCAL CON LIDOCAÍNA AL 1% SIN EPINEFRINA. SE EFECTÚA PEQUEÑA INCISIÓN SOBRE EL EXTREMO DISTAL DEL IMPLANTE, DISECANDO CUIDADOSAMENTE EL TEJIDO CIRCUNDANTE HASTA SU LIBERACIÓN COMPLETA. SE EXTRAE EL IMPLANTE ÍNTEGRO, COMPROBANDO SU LONGITUD. SE REALIZA HEMOSTASIA Y SE COLOCA APÓSITO COMPRESIVO ESTÉRIL. PACIENTE TOLERA EL PROCEDIMIENTO SIN COMPLICACIONES INMEDIATAS. SE INDICAN CUIDADOS LOCALES (MANTENER VENDAJE 24 H, EVITAR MANIPULACIÓN DE LA ZONA, VIGILAR SIGNOS DE INFECCIÓN) Y SE BRINDA CONSEJERÍA SOBRE MÉTODOS ANTICONCEPTIVOS ALTERNATIVOS. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES.</p>
+      `,
+      hombre: null
+    }
+  },
+
+  /* ---- 10. CONTROL DE NIÑO SANO ---- */
+  'control-nino-sano': {
+    title: 'Control de niño sano',
+    sub: 'Plantilla pediátrica · Control periódico de crecimiento y desarrollo',
+    content: {
+      mujer: `
+        <a class="tpl-link" href="control_nino_sano.html">👶 Ir a guía clínica · Control de niño sano (calculadoras + tablas OMS)</a>
+
+        <h3>Motivo de consulta:</h3>
+        <p>CONTROL DE NIÑA SANA</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE DE <span class="edit">XX</span> MESES/AÑOS, ACUDE A CONSULTA PARA CONTROL DE NIÑA SANA. ACOMPAÑANTE REFIERE QUE LA NIÑA SE ENCUENTRA EN BUEN ESTADO GENERAL, CON APETITO ADECUADO, SUEÑO NORMAL Y ELIMINACIONES REGULARES. NIEGA FIEBRE, DIARREA, VÓMITO, TOS PERSISTENTE O SIGNOS DE ALARMA. <span class="edit">ESQUEMA DE VACUNACIÓN REVISADO Y ACTUALIZADO SEGÚN EDAD,</span> APLICÁNDOSE <span class="edit">[ESPECIFICAR VACUNA(S)]</span> EN ESTA CONSULTA. <span class="edit">SE ADMINISTRA SUPLEMENTACIÓN DE MICRONUTRIENTES SEGÚN EDAD (SULFATO FERROSO Y POLVOS MULTIMICRONUTRIENTES) Y VITAMINA A [DOSIS CORRESPONDIENTE SEGÚN EDAD].</span> SE REALIZA TAMIZAJE DE HEMOGLOBINA PARA DETECCIÓN DE ANEMIA SEGÚN INDICACIÓN POR EDAD (&gt; 6 MESES). SE EVALÚA CRECIMIENTO Y DESARROLLO DE ACUERDO A LAS TABLAS OMS, EXPLICANDO LOS RESULTADOS AL CUIDADOR.</p>
+
+        <h3>Examen físico:</h3>
+        <p><span class="field-label">SIGNOS VITALES:</span> TEMPERATURA <span class="edit">XX.X</span> °C, FRECUENCIA CARDÍACA <span class="edit">XX</span> LPM, FRECUENCIA RESPIRATORIA <span class="edit">XX</span> RPM, SATURACIÓN O₂ <span class="edit">XX</span>%, <span class="edit">PESO XX KG (PERCENTIL OMS XX), TALLA XX CM (PERCENTIL OMS XX), PERÍMETRO CEFÁLICO XX CM (PERCENTIL OMS XX), IMC XX.X KG/M² (PERCENTIL OMS XX).</span></p>
+
+        <p><span class="field-label">ESTADO GENERAL:</span> PACIENTE ALERTA, ACTIVA, REACTIVA, EN BUEN ESTADO NUTRICIONAL SEGÚN PATRONES OMS, CON POSTURA Y MARCHA ACORDE A LA EDAD.</p>
+
+        <p><span class="field-label">PIEL Y FANERAS:</span> COLORACIÓN NORMAL, HIDRATADA, SIN LESIONES NI SIGNOS DE DESNUTRICIÓN O ANEMIA CLÍNICA. UÑAS Y CABELLO EN BUEN ESTADO.</p>
+
+        <p><span class="field-label">CABEZA:</span> NORMOCÉFALA, FONTANELAS SEGÚN EDAD, SUTURAS NORMALES.</p>
+
+        <p><span class="field-label">OJOS:</span> CONJUNTIVAS ROSADAS, ESCLERAS BLANCAS, PUPILAS ISOCÓRICAS Y REACTIVAS, MOVIMIENTOS OCULARES CONSERVADOS, REFLEJO ROJO PRESENTE.</p>
+
+        <p><span class="field-label">OÍDOS:</span> PABELLONES NORMALES, CONDUCTOS AUDITIVOS PERMEABLES, MEMBRANAS TIMPÁNICAS ÍNTEGRAS.</p>
+
+        <p><span class="field-label">NARIZ:</span> MUCOSA ROSADA, TABIQUE CENTRADO, SIN SECRECIONES.</p>
+
+        <p><span class="field-label">BOCA Y FARINGE:</span> MUCOSA ORAL ROSADA, BUENA HIGIENE BUCAL, DENTADURA ACORDE A LA EDAD, AMÍGDALAS SIN HIPERTROFIA NI EXUDADO.</p>
+
+        <p><span class="field-label">CUELLO:</span> SIMÉTRICO, SIN MASAS NI ADENOMEGALIAS, TIROIDES NO PALPABLE.</p>
+
+        <p><span class="field-label">TÓRAX:</span> SIMÉTRICO, MURMULLO VESICULAR PRESENTE Y SIMÉTRICO, SIN RUIDOS PATOLÓGICOS. RUIDOS CARDÍACOS RÍTMICOS, SIN SOPLOS.</p>
+
+        <p><span class="field-label">ABDOMEN:</span> PLANO, BLANDO, NO DOLOROSO, SIN MASAS NI VISCEROMEGALIAS, RUIDOS HIDROAÉREOS PRESENTES.</p>
+
+        <p><span class="field-label">GENITOURINARIO:</span> GENITALES EXTERNOS NORMALES PARA EDAD Y SEXO, ANO PERMEABLE.</p>
+
+        <p><span class="field-label">EXTREMIDADES:</span> SIMÉTRICAS, SIN EDEMAS, FUERZA Y MOVILIDAD CONSERVADAS, PULSOS PERIFÉRICOS PRESENTES Y SIMÉTRICOS.</p>
+
+        <p><span class="field-label">NEUROLÓGICO:</span> ALERTA, ORIENTADA SEGÚN EDAD, REFLEJOS PRESENTES, FUERZA MUSCULAR 5/5, DESARROLLO MOTOR, LENGUAJE Y SOCIAL ACORDES A LA EDAD SEGÚN EVALUACIÓN DEL MSP.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z001 – Examen médico general del niño</p>
+
+        <h3>Evolución:</h3>
+        <p>SE REALIZA CONTROL DE NIÑA SANA SEGÚN NORMATIVA DEL MSP. SIGNOS VITALES Y MEDIDAS ANTROPOMÉTRICAS DENTRO DE PARÁMETROS NORMALES, PERCENTILES DE CRECIMIENTO Y DESARROLLO ACORDES A LA EDAD SEGÚN TABLAS OMS. EXAMEN FÍSICO SIN HALLAZGOS PATOLÓGICOS RELEVANTES. <span class="edit">SE ADMINISTRA SUPLEMENTACIÓN DE MICRONUTRIENTES SEGÚN EDAD (SULFATO FERROSO / POLVOS MULTIMICRONUTRIENTES) Y VITAMINA A [DOSIS SEGÚN EDAD].</span> SE REALIZA TAMIZAJE DE HEMOGLOBINA PARA DETECCIÓN DE ANEMIA SEGÚN PROTOCOLO. ESQUEMA DE VACUNACIÓN REVISADO Y COMPLETADO CON <span class="edit">[ESPECIFICAR VACUNAS APLICADAS]</span>. SE BRINDA CONSEJERÍA A LOS CUIDADORES SOBRE ALIMENTACIÓN ADECUADA, HIGIENE, PREVENCIÓN DE ACCIDENTES, ESTIMULACIÓN TEMPRANA Y SIGNOS DE ALARMA. SE INDICA CONTROL PERIÓDICO SEGÚN EDAD Y ACUDIR ANTE CUALQUIER CAMBIO EN EL ESTADO GENERAL DE LA NIÑA. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES. TAMIZAJE DE VIOLENCIA NEGATIVO.</p>
+      `,
+      hombre: `
+        <a class="tpl-link" href="control_nino_sano.html">👶 Ir a guía clínica · Control de niño sano (calculadoras + tablas OMS)</a>
+
+        <h3>Motivo de consulta:</h3>
+        <p>CONTROL DE NIÑO SANO</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE DE <span class="edit">XX</span> MESES/AÑOS, ACUDE A CONSULTA PARA CONTROL DE NIÑO SANO. ACOMPAÑANTE REFIERE QUE EL NIÑO SE ENCUENTRA EN BUEN ESTADO GENERAL, CON APETITO ADECUADO, SUEÑO NORMAL Y ELIMINACIONES REGULARES. NIEGA FIEBRE, DIARREA, VÓMITO, TOS PERSISTENTE O SIGNOS DE ALARMA. <span class="edit">ESQUEMA DE VACUNACIÓN REVISADO Y ACTUALIZADO SEGÚN EDAD,</span> APLICÁNDOSE <span class="edit">[ESPECIFICAR VACUNA(S)]</span> EN ESTA CONSULTA. <span class="edit">SE ADMINISTRA SUPLEMENTACIÓN DE MICRONUTRIENTES SEGÚN EDAD (SULFATO FERROSO Y POLVOS MULTIMICRONUTRIENTES) Y VITAMINA A [DOSIS CORRESPONDIENTE SEGÚN EDAD].</span> SE REALIZA TAMIZAJE DE HEMOGLOBINA PARA DETECCIÓN DE ANEMIA SEGÚN INDICACIÓN POR EDAD (&gt; 6 MESES). SE EVALÚA CRECIMIENTO Y DESARROLLO DE ACUERDO A LAS TABLAS OMS, EXPLICANDO LOS RESULTADOS AL CUIDADOR.</p>
+
+        <h3>Examen físico:</h3>
+        <p><span class="field-label">SIGNOS VITALES:</span> TEMPERATURA <span class="edit">XX.X</span> °C, FRECUENCIA CARDÍACA <span class="edit">XX</span> LPM, FRECUENCIA RESPIRATORIA <span class="edit">XX</span> RPM, SATURACIÓN O₂ <span class="edit">XX</span>%, <span class="edit">PESO XX KG (PERCENTIL OMS XX), TALLA XX CM (PERCENTIL OMS XX), PERÍMETRO CEFÁLICO XX CM (PERCENTIL OMS XX), IMC XX.X KG/M² (PERCENTIL OMS XX).</span></p>
+
+        <p><span class="field-label">ESTADO GENERAL:</span> PACIENTE ALERTA, ACTIVO, REACTIVO, EN BUEN ESTADO NUTRICIONAL SEGÚN PATRONES OMS, CON POSTURA Y MARCHA ACORDE A LA EDAD.</p>
+
+        <p><span class="field-label">PIEL Y FANERAS:</span> COLORACIÓN NORMAL, HIDRATADA, SIN LESIONES NI SIGNOS DE DESNUTRICIÓN O ANEMIA CLÍNICA. UÑAS Y CABELLO EN BUEN ESTADO.</p>
+
+        <p><span class="field-label">CABEZA:</span> NORMOCÉFALA, FONTANELAS SEGÚN EDAD, SUTURAS NORMALES.</p>
+
+        <p><span class="field-label">OJOS:</span> CONJUNTIVAS ROSADAS, ESCLERAS BLANCAS, PUPILAS ISOCÓRICAS Y REACTIVAS, MOVIMIENTOS OCULARES CONSERVADOS, REFLEJO ROJO PRESENTE.</p>
+
+        <p><span class="field-label">OÍDOS:</span> PABELLONES NORMALES, CONDUCTOS AUDITIVOS PERMEABLES, MEMBRANAS TIMPÁNICAS ÍNTEGRAS.</p>
+
+        <p><span class="field-label">NARIZ:</span> MUCOSA ROSADA, TABIQUE CENTRADO, SIN SECRECIONES.</p>
+
+        <p><span class="field-label">BOCA Y FARINGE:</span> MUCOSA ORAL ROSADA, BUENA HIGIENE BUCAL, DENTADURA ACORDE A LA EDAD, AMÍGDALAS SIN HIPERTROFIA NI EXUDADO.</p>
+
+        <p><span class="field-label">CUELLO:</span> SIMÉTRICO, SIN MASAS NI ADENOMEGALIAS, TIROIDES NO PALPABLE.</p>
+
+        <p><span class="field-label">TÓRAX:</span> SIMÉTRICO, MURMULLO VESICULAR PRESENTE Y SIMÉTRICO, SIN RUIDOS PATOLÓGICOS. RUIDOS CARDÍACOS RÍTMICOS, SIN SOPLOS.</p>
+
+        <p><span class="field-label">ABDOMEN:</span> PLANO, BLANDO, NO DOLOROSO, SIN MASAS NI VISCEROMEGALIAS, RUIDOS HIDROAÉREOS PRESENTES.</p>
+
+        <p><span class="field-label">GENITOURINARIO:</span> GENITALES EXTERNOS NORMALES PARA EDAD Y SEXO, ANO PERMEABLE.</p>
+
+        <p><span class="field-label">EXTREMIDADES:</span> SIMÉTRICAS, SIN EDEMAS, FUERZA Y MOVILIDAD CONSERVADAS, PULSOS PERIFÉRICOS PRESENTES Y SIMÉTRICOS.</p>
+
+        <p><span class="field-label">NEUROLÓGICO:</span> ALERTA, ORIENTADO SEGÚN EDAD, REFLEJOS PRESENTES, FUERZA MUSCULAR 5/5, DESARROLLO MOTOR, LENGUAJE Y SOCIAL ACORDES A LA EDAD SEGÚN EVALUACIÓN DEL MSP.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z001 – Examen médico general del niño</p>
+
+        <h3>Evolución:</h3>
+        <p>SE REALIZA CONTROL DE NIÑO SANO SEGÚN NORMATIVA DEL MSP. SIGNOS VITALES Y MEDIDAS ANTROPOMÉTRICAS DENTRO DE PARÁMETROS NORMALES, PERCENTILES DE CRECIMIENTO Y DESARROLLO ACORDES A LA EDAD SEGÚN TABLAS OMS. EXAMEN FÍSICO SIN HALLAZGOS PATOLÓGICOS RELEVANTES. <span class="edit">SE ADMINISTRA SUPLEMENTACIÓN DE MICRONUTRIENTES SEGÚN EDAD (SULFATO FERROSO / POLVOS MULTIMICRONUTRIENTES) Y VITAMINA A [DOSIS SEGÚN EDAD].</span> SE REALIZA TAMIZAJE DE HEMOGLOBINA PARA DETECCIÓN DE ANEMIA SEGÚN PROTOCOLO. ESQUEMA DE VACUNACIÓN REVISADO Y COMPLETADO CON <span class="edit">[ESPECIFICAR VACUNAS APLICADAS]</span>. SE BRINDA CONSEJERÍA A LOS CUIDADORES SOBRE ALIMENTACIÓN ADECUADA, HIGIENE, PREVENCIÓN DE ACCIDENTES, ESTIMULACIÓN TEMPRANA Y SIGNOS DE ALARMA. SE INDICA CONTROL PERIÓDICO SEGÚN EDAD Y ACUDIR ANTE CUALQUIER CAMBIO EN EL ESTADO GENERAL DEL NIÑO. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES. TAMIZAJE DE VIOLENCIA NEGATIVO.</p>
+      `
+    }
+  }
+
+  /* ---- 11. RECIÉN NACIDO ---- */
+  'control-rn': {
+    title: 'Recién nacido',
+    sub: 'Plantilla pediátrica · Control del recién nacido',
+    content: {
+      mujer: `
+        <div class="tpl-tip"><strong>EL PRIMER CONTROL ES DEL 3-5 DÍA DE VIDA.</strong> Describir presencia de ictericia, eritema, hemangiomas, nevos.</div>
+
+        <a class="tpl-link" href="control_nino_sano.html">👶 Ir a guía clínica · Control de niño sano (calculadoras + tablas OMS)</a>
+
+        <h3>Motivo de consulta:</h3>
+        <p>EXAMEN MÉDICO GENERAL</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE RECIÉN NACIDA DE <span class="edit">XX</span> DÍAS DE VIDA, PRODUCTO DE GESTACIÓN <span class="edit">A TÉRMINO / PRETÉRMINO / POSTÉRMINO</span>, PARTO <span class="edit">EUTÓCICO / CESÁREA</span>, CON APGAR <span class="edit">X/X</span>, PESO AL NACER <span class="edit">XXXX G</span>, TALLA <span class="edit">XX CM</span>, PERÍMETRO CEFÁLICO <span class="edit">XX CM</span>. ACOMPAÑANTE REFIERE QUE LA PACIENTE SE ENCUENTRA EN BUEN ESTADO GENERAL, CON LACTANCIA <span class="edit">MATERNA EXCLUSIVA / MIXTA</span>, SUEÑO Y ELIMINACIONES ADECUADAS. NIEGA FIEBRE, DIFICULTAD RESPIRATORIA, RECHAZO ALIMENTARIO, VÓMITOS, DIARREA O CAMBIOS EN EL COLOR DE LA PIEL. ESQUEMA DE VACUNACIÓN REVISADO, CON <span class="edit">BCG Y HEPATITIS B</span> APLICADAS SEGÚN NORMATIVA. ESTADO NUTRICIONAL CORRECTO PARA LA EDAD, DESARROLLO PSICOMOTOR NORMAL PARA LA EDAD. REFLEJOS ARCAICOS CONSERVADOS. TAMIZAJE AUDITIVO Y METABÓLICO COMPLETADOS. PACIENTE ALERTA, ACTIVA E IRRITABLE.</p>
+
+        <h3>Examen físico:</h3>
+        <p><span class="field-label">SIGNOS VITALES:</span> TEMPERATURA <span class="edit">XX.X</span> °C, FRECUENCIA CARDÍACA <span class="edit">XX</span> LPM, FRECUENCIA RESPIRATORIA <span class="edit">XX</span> RPM, SATURACIÓN O₂ <span class="edit">XX</span>%, <span class="edit">PESO XX KG (PERCENTIL OMS XX), TALLA XX CM (PERCENTIL OMS XX), PERÍMETRO CEFÁLICO XX CM (PERCENTIL OMS XX).</span></p>
+
+        <p><span class="field-label">ESTADO GENERAL:</span> RECIÉN NACIDA ACTIVA, REACTIVA, LLANTO FUERTE, COLORACIÓN ROSADA.</p>
+
+        <p><span class="field-label">PIEL Y FANERAS:</span> COLORACIÓN HOMOGÉNEA, SIN LESIONES, EQUIMOSIS, PETEQUIAS NI EXANTEMAS. PRESENCIA / AUSENCIA DE ICTERICIA FISIOLÓGICA SEGÚN EDAD.</p>
+
+        <p><span class="field-label">CABEZA:</span> NORMOCÉFALA, FONTANELA ANTERIOR ABIERTA Y PLANA, FONTANELA POSTERIOR CERRADA, SUTURAS NORMALES, SIN CRANEOTABES.</p>
+
+        <p><span class="field-label">OJOS:</span> CONJUNTIVAS ROSADAS, ESCLERAS BLANCAS, PUPILAS ISOCÓRICAS Y REACTIVAS A LA LUZ, REFLEJO ROJO PRESENTE.</p>
+
+        <p><span class="field-label">OÍDOS:</span> PABELLONES NORMALES, IMPLANTACIÓN ADECUADA, CONDUCTOS AUDITIVOS PERMEABLES.</p>
+
+        <p><span class="field-label">NARIZ:</span> MUCOSA ROSADA, PERMEABLE, SIN SECRECIONES.</p>
+
+        <p><span class="field-label">BOCA Y FARINGE:</span> MUCOSA ORAL ROSADA, PALADAR ÍNTEGRO, REFLEJO DE SUCCIÓN PRESENTE.</p>
+
+        <p><span class="field-label">CUELLO:</span> CILÍNDRICO, SIN MASAS NI ADENOMEGALIAS, MOVILIDAD CONSERVADA.</p>
+
+        <p><span class="field-label">TÓRAX:</span> SIMÉTRICO, MURMULLO VESICULAR PRESENTE Y SIMÉTRICO, SIN RUIDOS PATOLÓGICOS. RUIDOS CARDÍACOS RÍTMICOS, SIN SOPLOS.</p>
+
+        <p><span class="field-label">ABDOMEN:</span> PLANO, BLANDO, NO DOLOROSO, SIN MASAS, RUIDOS HIDROAÉREOS PRESENTES. CORDÓN UMBILICAL <span class="edit">SECO / CICATRIZADO</span> SEGÚN EDAD, SIN SIGNOS DE INFECCIÓN.</p>
+
+        <p><span class="field-label">GENITOURINARIO:</span> GENITALES EXTERNOS NORMALES PARA EL SEXO Y LA EDAD, ANO PERMEABLE. LABIOS MAYORES Y MENORES BIEN FORMADOS.</p>
+
+        <p><span class="field-label">EXTREMIDADES:</span> SIMÉTRICAS, SIN EDEMAS NI MALFORMACIONES, MOVILIDAD CONSERVADA, REFLEJOS PRIMITIVOS PRESENTES.</p>
+
+        <p><span class="field-label">NEUROLÓGICO:</span> ALERTA, REACTIVA, TONO MUSCULAR ADECUADO, REFLEJOS DE SUCCIÓN, BÚSQUEDA, MORO Y PRENSIÓN PRESENTES.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z000 – Examen médico general</p>
+        <p>Z001 – Examen médico general del niño</p>
+
+        <h3>Evolución:</h3>
+        <p>SE REALIZA CONTROL MÉDICO GENERAL A RECIÉN NACIDA. SIGNOS VITALES DENTRO DE PARÁMETROS NORMALES. EXAMEN FÍSICO SIN HALLAZGOS PATOLÓGICOS RELEVANTES. CRECIMIENTO Y DESARROLLO ACORDES A LA EDAD SEGÚN PATRONES OMS. REFLEJOS NEONATALES PRESENTES Y NORMALES. CORDÓN UMBILICAL <strong>SECO / CICATRIZADO</strong> SIN SIGNOS DE INFECCIÓN. ESQUEMA DE VACUNACIÓN REVISADO, CON BCG Y HEPATITIS B APLICADAS SEGÚN NORMATIVA. SE BRINDA CONSEJERÍA A LOS CUIDADORES SOBRE LACTANCIA MATERNA EXCLUSIVA, HIGIENE, PREVENCIÓN DE ACCIDENTES, SIGNOS DE ALARMA Y CONTROLES PERIÓDICOS. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES.</p>
+      `,
+      hombre: `
+        <div class="tpl-tip"><strong>EL PRIMER CONTROL ES DEL 3-5 DÍA DE VIDA.</strong> Describir presencia de ictericia, eritema, hemangiomas, nevos.</div>
+
+        <a class="tpl-link" href="control_nino_sano.html">👶 Ir a guía clínica · Control de niño sano (calculadoras + tablas OMS)</a>
+
+        <h3>Motivo de consulta:</h3>
+        <p>EXAMEN MÉDICO GENERAL</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE RECIÉN NACIDO DE <span class="edit">XX</span> DÍAS DE VIDA, PRODUCTO DE GESTACIÓN <span class="edit">A TÉRMINO / PRETÉRMINO / POSTÉRMINO</span>, PARTO <span class="edit">EUTÓCICO / CESÁREA</span>, CON APGAR <span class="edit">X/X</span>, PESO AL NACER <span class="edit">XXXX G</span>, TALLA <span class="edit">XX CM</span>, PERÍMETRO CEFÁLICO <span class="edit">XX CM</span>. ACOMPAÑANTE REFIERE QUE EL PACIENTE SE ENCUENTRA EN BUEN ESTADO GENERAL, CON LACTANCIA <span class="edit">MATERNA EXCLUSIVA / MIXTA</span>, SUEÑO Y ELIMINACIONES ADECUADAS. NIEGA FIEBRE, DIFICULTAD RESPIRATORIA, RECHAZO ALIMENTARIO, VÓMITOS, DIARREA O CAMBIOS EN EL COLOR DE LA PIEL. ESQUEMA DE VACUNACIÓN REVISADO, CON <span class="edit">BCG Y HEPATITIS B</span> APLICADAS SEGÚN NORMATIVA. ESTADO NUTRICIONAL CORRECTO PARA LA EDAD, DESARROLLO PSICOMOTOR NORMAL PARA LA EDAD. REFLEJOS ARCAICOS CONSERVADOS. TAMIZAJE AUDITIVO Y METABÓLICO COMPLETADOS. PACIENTE ALERTA, ACTIVO E IRRITABLE.</p>
+
+        <h3>Examen físico:</h3>
+        <p><span class="field-label">SIGNOS VITALES:</span> TEMPERATURA <span class="edit">XX.X</span> °C, FRECUENCIA CARDÍACA <span class="edit">XX</span> LPM, FRECUENCIA RESPIRATORIA <span class="edit">XX</span> RPM, SATURACIÓN O₂ <span class="edit">XX</span>%, <span class="edit">PESO XX KG (PERCENTIL OMS XX), TALLA XX CM (PERCENTIL OMS XX), PERÍMETRO CEFÁLICO XX CM (PERCENTIL OMS XX).</span></p>
+
+        <p><span class="field-label">ESTADO GENERAL:</span> RECIÉN NACIDO ACTIVO, REACTIVO, LLANTO FUERTE, COLORACIÓN ROSADA.</p>
+
+        <p><span class="field-label">PIEL Y FANERAS:</span> COLORACIÓN HOMOGÉNEA, SIN LESIONES, EQUIMOSIS, PETEQUIAS NI EXANTEMAS. PRESENCIA / AUSENCIA DE ICTERICIA FISIOLÓGICA SEGÚN EDAD.</p>
+
+        <p><span class="field-label">CABEZA:</span> NORMOCÉFALA, FONTANELA ANTERIOR ABIERTA Y PLANA, FONTANELA POSTERIOR CERRADA, SUTURAS NORMALES, SIN CRANEOTABES.</p>
+
+        <p><span class="field-label">OJOS:</span> CONJUNTIVAS ROSADAS, ESCLERAS BLANCAS, PUPILAS ISOCÓRICAS Y REACTIVAS A LA LUZ, REFLEJO ROJO PRESENTE.</p>
+
+        <p><span class="field-label">OÍDOS:</span> PABELLONES NORMALES, IMPLANTACIÓN ADECUADA, CONDUCTOS AUDITIVOS PERMEABLES.</p>
+
+        <p><span class="field-label">NARIZ:</span> MUCOSA ROSADA, PERMEABLE, SIN SECRECIONES.</p>
+
+        <p><span class="field-label">BOCA Y FARINGE:</span> MUCOSA ORAL ROSADA, PALADAR ÍNTEGRO, REFLEJO DE SUCCIÓN PRESENTE.</p>
+
+        <p><span class="field-label">CUELLO:</span> CILÍNDRICO, SIN MASAS NI ADENOMEGALIAS, MOVILIDAD CONSERVADA.</p>
+
+        <p><span class="field-label">TÓRAX:</span> SIMÉTRICO, MURMULLO VESICULAR PRESENTE Y SIMÉTRICO, SIN RUIDOS PATOLÓGICOS. RUIDOS CARDÍACOS RÍTMICOS, SIN SOPLOS.</p>
+
+        <p><span class="field-label">ABDOMEN:</span> PLANO, BLANDO, NO DOLOROSO, SIN MASAS, RUIDOS HIDROAÉREOS PRESENTES. CORDÓN UMBILICAL <span class="edit">SECO / CICATRIZADO</span> SEGÚN EDAD, SIN SIGNOS DE INFECCIÓN.</p>
+
+        <p><span class="field-label">GENITOURINARIO:</span> GENITALES EXTERNOS NORMALES PARA EL SEXO Y LA EDAD, ANO PERMEABLE. TESTÍCULOS EN ESCROTO.</p>
+
+        <p><span class="field-label">EXTREMIDADES:</span> SIMÉTRICAS, SIN EDEMAS NI MALFORMACIONES, MOVILIDAD CONSERVADA, REFLEJOS PRIMITIVOS PRESENTES.</p>
+
+        <p><span class="field-label">NEUROLÓGICO:</span> ALERTA, REACTIVO, TONO MUSCULAR ADECUADO, REFLEJOS DE SUCCIÓN, BÚSQUEDA, MORO Y PRENSIÓN PRESENTES.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z000 – Examen médico general</p>
+        <p>Z001 – Examen médico general del niño</p>
+
+        <h3>Evolución:</h3>
+        <p>SE REALIZA CONTROL MÉDICO GENERAL A RECIÉN NACIDO. SIGNOS VITALES DENTRO DE PARÁMETROS NORMALES. EXAMEN FÍSICO SIN HALLAZGOS PATOLÓGICOS RELEVANTES. CRECIMIENTO Y DESARROLLO ACORDES A LA EDAD SEGÚN PATRONES OMS. REFLEJOS NEONATALES PRESENTES Y NORMALES. CORDÓN UMBILICAL <strong>SECO / CICATRIZADO</strong> SIN SIGNOS DE INFECCIÓN. ESQUEMA DE VACUNACIÓN REVISADO, CON BCG Y HEPATITIS B APLICADAS SEGÚN NORMATIVA. SE BRINDA CONSEJERÍA A LOS CUIDADORES SOBRE LACTANCIA MATERNA EXCLUSIVA, HIGIENE, PREVENCIÓN DE ACCIDENTES, SIGNOS DE ALARMA Y CONTROLES PERIÓDICOS. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES.</p>
+      `
+    }
+  },
+
+  /* ---- 12. LACTANTE ---- */
+  'control-lactante': {
+    title: 'Lactante',
+    sub: 'Plantilla pediátrica · Control del lactante (1-23 meses)',
+    content: {
+      mujer: `
+        <a class="tpl-link" href="control_nino_sano.html">👶 Ir a guía clínica · Control de niño sano (calculadoras + tablas OMS)</a>
+
+        <h3>Motivo de consulta:</h3>
+        <p>EXAMEN MÉDICO GENERAL</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE LACTANTE DE <span class="edit">XX</span> MESES, ACUDE A CONSULTA PARA EVALUACIÓN MÉDICA GENERAL <span class="edit">(O ESPECIFICAR MOTIVO: CONTROL DE CRECIMIENTO Y DESARROLLO, ENFERMEDAD AGUDA, CONTROL POSTENFERMEDAD, CERTIFICADO MÉDICO, ETC.)</span>. ACOMPAÑANTE REFIERE <span class="edit">[DESCRIBIR SÍNTOMAS O REFERIR COMO ASINTOMÁTICA SI APLICA]</span>, SIN FIEBRE, DIFICULTAD RESPIRATORIA, VÓMITOS, DIARREA NI OTROS SIGNOS DE ALARMA. ANTECEDENTES PERINATALES Y PATOLÓGICOS REVISADOS, ESQUEMA DE VACUNACIÓN VERIFICADO SEGÚN MSP. SE REFIERE LACTANCIA <span class="edit">EXCLUSIVA / MIXTA / ARTIFICIAL</span> Y BUENA TOLERANCIA ALIMENTARIA. SE EVALÚA ADECUACIÓN DEL CRECIMIENTO SEGÚN PATRONES OMS. DESARROLLO PSICOMOTOR ADECUADO PARA LA EDAD. ESQUEMA DE INMUNIZACIONES ADECUADO.</p>
+
+        <h3>Examen físico:</h3>
+        <p><span class="field-label">SIGNOS VITALES:</span> TEMPERATURA <span class="edit">XX.X</span> °C, FRECUENCIA CARDÍACA <span class="edit">XX</span> LPM, FRECUENCIA RESPIRATORIA <span class="edit">XX</span> RPM, SATURACIÓN O₂ <span class="edit">XX</span>%, <span class="edit">PESO XX KG (PERCENTIL OMS XX), TALLA XX CM (PERCENTIL OMS XX), PERÍMETRO CEFÁLICO XX CM (PERCENTIL OMS XX).</span></p>
+
+        <p><span class="field-label">ESTADO GENERAL:</span> LACTANTE ALERTA / REACTIVA, ACTIVA, CON LLANTO FUERTE Y BUEN COLOR.</p>
+
+        <p><span class="field-label">PIEL Y FANERAS:</span> COLORACIÓN NORMAL, HIDRATADA, SIN LESIONES, EQUIMOSIS NI EXANTEMAS.</p>
+
+        <p><span class="field-label">CABEZA:</span> NORMOCÉFALA, FONTANELA ANTERIOR <span class="edit">ABIERTA Y PLANA / SEGÚN EDAD</span>, FONTANELA POSTERIOR CERRADA, SIN DEFORMIDADES.</p>
+
+        <p><span class="field-label">OJOS:</span> CONJUNTIVAS ROSADAS, ESCLERAS BLANCAS, PUPILAS ISOCÓRICAS Y REACTIVAS A LA LUZ, REFLEJO ROJO PRESENTE.</p>
+
+        <p><span class="field-label">OÍDOS:</span> PABELLONES BIEN FORMADOS, CONDUCTOS AUDITIVOS PERMEABLES.</p>
+
+        <p><span class="field-label">NARIZ:</span> MUCOSA ROSADA, PERMEABLE, SIN SECRECIONES.</p>
+
+        <p><span class="field-label">BOCA Y FARINGE:</span> MUCOSA ORAL ROSADA, PALADAR ÍNTEGRO, REFLEJO DE SUCCIÓN PRESENTE, AMÍGDALAS NORMALES.</p>
+
+        <p><span class="field-label">CUELLO:</span> CILÍNDRICO, SIN MASAS NI ADENOMEGALIAS, MOVILIDAD CONSERVADA.</p>
+
+        <p><span class="field-label">TÓRAX:</span> SIMÉTRICO, MURMULLO VESICULAR PRESENTE Y SIMÉTRICO, SIN RUIDOS PATOLÓGICOS. RUIDOS CARDÍACOS RÍTMICOS, SIN SOPLOS.</p>
+
+        <p><span class="field-label">ABDOMEN:</span> PLANO, BLANDO, NO DOLOROSO, SIN MASAS, RUIDOS HIDROAÉREOS PRESENTES, CORDÓN UMBILICAL <span class="edit">SECO / CICATRIZADO</span> SEGÚN EDAD.</p>
+
+        <p><span class="field-label">GENITOURINARIO:</span> GENITALES EXTERNOS NORMALES PARA LA EDAD Y SEXO, ANO PERMEABLE.</p>
+
+        <p><span class="field-label">EXTREMIDADES:</span> SIMÉTRICAS, SIN EDEMAS NI MALFORMACIONES, FUERZA Y MOVILIDAD CONSERVADAS, REFLEJOS PRIMITIVOS PRESENTES.</p>
+
+        <p><span class="field-label">NEUROLÓGICO:</span> ALERTA Y REACTIVA, TONO MUSCULAR ADECUADO, REFLEJOS DE SUCCIÓN, BÚSQUEDA, MORO Y PRENSIÓN PRESENTES.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z000 – Examen médico general</p>
+        <p>Z001 – Control de salud de rutina del niño</p>
+
+        <h3>Evolución:</h3>
+        <p>SE REALIZA CONTROL MÉDICO GENERAL DE CRECIMIENTO Y DESARROLLO EN PACIENTE LACTANTE. SIGNOS VITALES DENTRO DE PARÁMETROS NORMALES. EXAMEN FÍSICO SIN HALLAZGOS PATOLÓGICOS RELEVANTES. PERCENTILES DE PESO, TALLA Y PERÍMETRO CEFÁLICO ACORDES A LA EDAD SEGÚN TABLAS OMS. ESQUEMA DE VACUNACIÓN REVISADO Y AL DÍA <span class="edit">(O ESPECIFICAR PENDIENTES)</span>. SE BRINDA CONSEJERÍA SOBRE LACTANCIA MATERNA EXCLUSIVA HASTA LOS 6 MESES, INTRODUCCIÓN ADECUADA DE ALIMENTOS COMPLEMENTARIOS SEGÚN EDAD, HIGIENE, PREVENCIÓN DE ACCIDENTES Y SIGNOS DE ALARMA. SE RECOMIENDA CONTROL PERIÓDICO Y ACUDIR INMEDIATAMENTE ANTE FIEBRE, DIFICULTAD RESPIRATORIA, RECHAZO ALIMENTARIO O CAMBIOS EN EL ESTADO GENERAL. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES. TAMIZAJE DE VIOLENCIA NEGATIVO.</p>
+      `,
+      hombre: `
+        <a class="tpl-link" href="control_nino_sano.html">👶 Ir a guía clínica · Control de niño sano (calculadoras + tablas OMS)</a>
+
+        <h3>Motivo de consulta:</h3>
+        <p>EXAMEN MÉDICO GENERAL</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE LACTANTE DE <span class="edit">XX</span> MESES, ACUDE A CONSULTA PARA EVALUACIÓN MÉDICA GENERAL <span class="edit">(O ESPECIFICAR MOTIVO: CONTROL DE CRECIMIENTO Y DESARROLLO, ENFERMEDAD AGUDA, CONTROL POSTENFERMEDAD, CERTIFICADO MÉDICO, ETC.)</span>. ACOMPAÑANTE REFIERE <span class="edit">[DESCRIBIR SÍNTOMAS O REFERIR COMO ASINTOMÁTICO SI APLICA]</span>, SIN FIEBRE, DIFICULTAD RESPIRATORIA, VÓMITOS, DIARREA NI OTROS SIGNOS DE ALARMA. ANTECEDENTES PERINATALES Y PATOLÓGICOS REVISADOS, ESQUEMA DE VACUNACIÓN VERIFICADO SEGÚN MSP. SE REFIERE LACTANCIA <span class="edit">EXCLUSIVA / MIXTA / ARTIFICIAL</span> Y BUENA TOLERANCIA ALIMENTARIA. SE EVALÚA ADECUACIÓN DEL CRECIMIENTO SEGÚN PATRONES OMS. DESARROLLO PSICOMOTOR ADECUADO PARA LA EDAD. ESQUEMA DE INMUNIZACIONES ADECUADO.</p>
+
+        <h3>Examen físico:</h3>
+        <p><span class="field-label">SIGNOS VITALES:</span> TEMPERATURA <span class="edit">XX.X</span> °C, FRECUENCIA CARDÍACA <span class="edit">XX</span> LPM, FRECUENCIA RESPIRATORIA <span class="edit">XX</span> RPM, SATURACIÓN O₂ <span class="edit">XX</span>%, <span class="edit">PESO XX KG (PERCENTIL OMS XX), TALLA XX CM (PERCENTIL OMS XX), PERÍMETRO CEFÁLICO XX CM (PERCENTIL OMS XX).</span></p>
+
+        <p><span class="field-label">ESTADO GENERAL:</span> LACTANTE ALERTA / REACTIVO, ACTIVO, CON LLANTO FUERTE Y BUEN COLOR.</p>
+
+        <p><span class="field-label">PIEL Y FANERAS:</span> COLORACIÓN NORMAL, HIDRATADA, SIN LESIONES, EQUIMOSIS NI EXANTEMAS.</p>
+
+        <p><span class="field-label">CABEZA:</span> NORMOCÉFALA, FONTANELA ANTERIOR <span class="edit">ABIERTA Y PLANA / SEGÚN EDAD</span>, FONTANELA POSTERIOR CERRADA, SIN DEFORMIDADES.</p>
+
+        <p><span class="field-label">OJOS:</span> CONJUNTIVAS ROSADAS, ESCLERAS BLANCAS, PUPILAS ISOCÓRICAS Y REACTIVAS A LA LUZ, REFLEJO ROJO PRESENTE.</p>
+
+        <p><span class="field-label">OÍDOS:</span> PABELLONES BIEN FORMADOS, CONDUCTOS AUDITIVOS PERMEABLES.</p>
+
+        <p><span class="field-label">NARIZ:</span> MUCOSA ROSADA, PERMEABLE, SIN SECRECIONES.</p>
+
+        <p><span class="field-label">BOCA Y FARINGE:</span> MUCOSA ORAL ROSADA, PALADAR ÍNTEGRO, REFLEJO DE SUCCIÓN PRESENTE, AMÍGDALAS NORMALES.</p>
+
+        <p><span class="field-label">CUELLO:</span> CILÍNDRICO, SIN MASAS NI ADENOMEGALIAS, MOVILIDAD CONSERVADA.</p>
+
+        <p><span class="field-label">TÓRAX:</span> SIMÉTRICO, MURMULLO VESICULAR PRESENTE Y SIMÉTRICO, SIN RUIDOS PATOLÓGICOS. RUIDOS CARDÍACOS RÍTMICOS, SIN SOPLOS.</p>
+
+        <p><span class="field-label">ABDOMEN:</span> PLANO, BLANDO, NO DOLOROSO, SIN MASAS, RUIDOS HIDROAÉREOS PRESENTES, CORDÓN UMBILICAL <span class="edit">SECO / CICATRIZADO</span> SEGÚN EDAD.</p>
+
+        <p><span class="field-label">GENITOURINARIO:</span> GENITALES EXTERNOS NORMALES PARA LA EDAD Y SEXO, ANO PERMEABLE.</p>
+
+        <p><span class="field-label">EXTREMIDADES:</span> SIMÉTRICAS, SIN EDEMAS NI MALFORMACIONES, FUERZA Y MOVILIDAD CONSERVADAS, REFLEJOS PRIMITIVOS PRESENTES.</p>
+
+        <p><span class="field-label">NEUROLÓGICO:</span> ALERTA Y REACTIVO, TONO MUSCULAR ADECUADO, REFLEJOS DE SUCCIÓN, BÚSQUEDA, MORO Y PRENSIÓN PRESENTES.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z000 – Examen médico general</p>
+        <p>Z001 – Control de salud de rutina del niño</p>
+
+        <h3>Evolución:</h3>
+        <p>SE REALIZA CONTROL MÉDICO GENERAL DE CRECIMIENTO Y DESARROLLO EN PACIENTE LACTANTE. SIGNOS VITALES DENTRO DE PARÁMETROS NORMALES. EXAMEN FÍSICO SIN HALLAZGOS PATOLÓGICOS RELEVANTES. PERCENTILES DE PESO, TALLA Y PERÍMETRO CEFÁLICO ACORDES A LA EDAD SEGÚN TABLAS OMS. ESQUEMA DE VACUNACIÓN REVISADO Y AL DÍA <span class="edit">(O ESPECIFICAR PENDIENTES)</span>. SE BRINDA CONSEJERÍA SOBRE LACTANCIA MATERNA EXCLUSIVA HASTA LOS 6 MESES, INTRODUCCIÓN ADECUADA DE ALIMENTOS COMPLEMENTARIOS SEGÚN EDAD, HIGIENE, PREVENCIÓN DE ACCIDENTES Y SIGNOS DE ALARMA. SE RECOMIENDA CONTROL PERIÓDICO Y ACUDIR INMEDIATAMENTE ANTE FIEBRE, DIFICULTAD RESPIRATORIA, RECHAZO ALIMENTARIO O CAMBIOS EN EL ESTADO GENERAL. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES. TAMIZAJE DE VIOLENCIA NEGATIVO.</p>
+      `
+    }
+  },
+
+  /* ---- 13. ESCOLAR ---- */
+  'control-escolar': {
+    title: 'Escolar',
+    sub: 'Plantilla pediátrica · Control del paciente escolar',
+    content: {
+      mujer: `
+        <a class="tpl-link" href="control_nino_sano.html">👶 Ir a guía clínica · Control de niño sano (calculadoras + tablas OMS)</a>
+
+        <h3>Motivo de consulta:</h3>
+        <p>EXAMEN MÉDICO GENERAL</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE ESCOLAR DE <span class="edit">XX</span> AÑOS, ACUDE A CONSULTA PARA EVALUACIÓN MÉDICA GENERAL <span class="edit">(O ESPECIFICAR MOTIVO: CONTROL DE CRECIMIENTO Y DESARROLLO, CERTIFICADO MÉDICO ESCOLAR, SÍNTOMAS ESPECÍFICOS, CONTROL POSTENFERMEDAD, ETC.)</span> EN COMPAÑÍA DE SU <span class="edit">MADRE</span>. REFIERE <span class="edit">[DESCRIBIR SÍNTOMAS O REFERIRSE COMO ASINTOMÁTICA SI APLICA]</span>, SIN FIEBRE, DIFICULTAD RESPIRATORIA, DOLOR ABDOMINAL, ALTERACIONES NEUROLÓGICAS NI OTROS SIGNOS DE ALARMA. ANTECEDENTES PERSONALES Y FAMILIARES REVISADOS, SIN CAMBIOS IMPORTANTES <span class="edit">(O ESPECIFICAR SI EXISTEN)</span>. REPORTA CUMPLIMIENTO DE ESQUEMA DE VACUNACIÓN SEGÚN EDAD. SE MUESTRA ACTIVA, CON DESEMPEÑO ESCOLAR ADECUADO SEGÚN REFIEREN PADRES / TUTORES.</p>
+
+        <h3>Examen físico:</h3>
+        <p><span class="field-label">ESTADO GENERAL:</span> PACIENTE ALERTA, ORIENTADA, ACTIVA, EN BUEN ESTADO NUTRICIONAL, MARCHA Y POSTURA NORMALES.</p>
+
+        <p><span class="field-label">PIEL Y FANERAS:</span> COLORACIÓN NORMAL, HIDRATADA, SIN LESIONES, ERUPCIONES NI SIGNOS DE INFECCIÓN.</p>
+
+        <p><span class="field-label">CABEZA:</span> NORMOCÉFALA, SIN LESIONES.</p>
+
+        <p><span class="field-label">OJOS:</span> CONJUNTIVAS ROSADAS, ESCLERAS BLANCAS, PUPILAS ISOCÓRICAS Y REACTIVAS A LA LUZ Y ACOMODACIÓN, MOVIMIENTOS OCULARES CONSERVADOS.</p>
+
+        <p><span class="field-label">OÍDOS:</span> PABELLONES NORMALES, CONDUCTOS AUDITIVOS PERMEABLES, MEMBRANAS TIMPÁNICAS ÍNTEGRAS.</p>
+
+        <p><span class="field-label">NARIZ:</span> MUCOSA ROSADA, TABIQUE CENTRADO, SIN SECRECIONES.</p>
+
+        <p><span class="field-label">BOCA Y FARINGE:</span> MUCOSA ORAL ROSADA, BUENA HIGIENE BUCAL, DENTADURA ACORDE A LA EDAD, AMÍGDALAS SIN HIPERTROFIA NI EXUDADO.</p>
+
+        <p><span class="field-label">CUELLO:</span> SIMÉTRICO, SIN MASAS NI ADENOMEGALIAS, TIROIDES NO PALPABLE, MOVILIDAD CONSERVADA.</p>
+
+        <p><span class="field-label">TÓRAX:</span> SIMÉTRICO, MOVILIDAD ADECUADA. MURMULLO VESICULAR PRESENTE Y SIMÉTRICO, SIN RUIDOS PATOLÓGICOS. RUIDOS CARDÍACOS RÍTMICOS, SIN SOPLOS.</p>
+
+        <p><span class="field-label">ABDOMEN:</span> PLANO, BLANDO, NO DOLOROSO A LA PALPACIÓN, SIN MASAS NI VISCEROMEGALIAS, RUIDOS HIDROAÉREOS PRESENTES Y NORMALES.</p>
+
+        <p><span class="field-label">GENITOURINARIO:</span> EXAMEN REALIZADO SOLO SI EXISTE INDICACIÓN Y CONSENTIMIENTO. DESARROLLO SEXUAL SEGÚN TANNER <span class="edit">[ESPECIFICAR GRADO]</span>.</p>
+
+        <p><span class="field-label">EXTREMIDADES:</span> SIMÉTRICAS, FUERZA Y MOVILIDAD CONSERVADAS, SIN EDEMAS NI DEFORMIDADES, LLENADO CAPILAR &lt; 2 SEG.</p>
+
+        <p><span class="field-label">NEUROLÓGICO:</span> ALERTA, ORIENTADA, PARES CRANEALES ÍNTEGROS, FUERZA MUSCULAR 5/5, SENSIBILIDAD CONSERVADA, REFLEJOS PRESENTES Y SIMÉTRICOS, MARCHA Y COORDINACIÓN NORMALES.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z000 – Examen médico general</p>
+
+        <h3>Evolución:</h3>
+        <p>SE REALIZA EVALUACIÓN MÉDICA GENERAL A PACIENTE ESCOLAR. SIGNOS VITALES DENTRO DE PARÁMETROS NORMALES. EXAMEN FÍSICO SIN HALLAZGOS PATOLÓGICOS RELEVANTES <span class="edit">(O ESPECIFICAR LOS HALLAZGOS ANORMALES)</span>. DESARROLLO FÍSICO Y CRECIMIENTO ACORDE A LA EDAD SEGÚN PERCENTILES OMS. ESQUEMA DE VACUNACIÓN REVISADO Y AL DÍA <span class="edit">(O ESPECIFICAR PENDIENTES)</span>. SE BRINDA CONSEJERÍA SOBRE NUTRICIÓN ADECUADA, HIGIENE PERSONAL, ACTIVIDAD FÍSICA REGULAR, PREVENCIÓN DE ACCIDENTES Y SIGNOS DE ALARMA. SE RECOMIENDA CONTROL MÉDICO PERIÓDICO Y SE ENTREGA CERTIFICADO MÉDICO SEGÚN REQUERIMIENTO. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES. TAMIZAJE DE VIOLENCIA NEGATIVO.</p>
+      `,
+      hombre: `
+        <a class="tpl-link" href="control_nino_sano.html">👶 Ir a guía clínica · Control de niño sano (calculadoras + tablas OMS)</a>
+
+        <h3>Motivo de consulta:</h3>
+        <p>EXAMEN MÉDICO GENERAL</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE ESCOLAR DE <span class="edit">XX</span> AÑOS, ACUDE A CONSULTA PARA EVALUACIÓN MÉDICA GENERAL <span class="edit">(O ESPECIFICAR MOTIVO: CONTROL DE CRECIMIENTO Y DESARROLLO, CERTIFICADO MÉDICO ESCOLAR, SÍNTOMAS ESPECÍFICOS, CONTROL POSTENFERMEDAD, ETC.)</span> EN COMPAÑÍA DE SU <span class="edit">MADRE</span>. REFIERE <span class="edit">[DESCRIBIR SÍNTOMAS O REFERIRSE COMO ASINTOMÁTICO SI APLICA]</span>, SIN FIEBRE, DIFICULTAD RESPIRATORIA, DOLOR ABDOMINAL, ALTERACIONES NEUROLÓGICAS NI OTROS SIGNOS DE ALARMA. ANTECEDENTES PERSONALES Y FAMILIARES REVISADOS, SIN CAMBIOS IMPORTANTES <span class="edit">(O ESPECIFICAR SI EXISTEN)</span>. REPORTA CUMPLIMIENTO DE ESQUEMA DE VACUNACIÓN SEGÚN EDAD. SE MUESTRA ACTIVO, CON DESEMPEÑO ESCOLAR ADECUADO SEGÚN REFIEREN PADRES / TUTORES.</p>
+
+        <h3>Examen físico:</h3>
+        <p><span class="field-label">ESTADO GENERAL:</span> PACIENTE ALERTA, ORIENTADO, ACTIVO, EN BUEN ESTADO NUTRICIONAL, MARCHA Y POSTURA NORMALES.</p>
+
+        <p><span class="field-label">PIEL Y FANERAS:</span> COLORACIÓN NORMAL, HIDRATADA, SIN LESIONES, ERUPCIONES NI SIGNOS DE INFECCIÓN.</p>
+
+        <p><span class="field-label">CABEZA:</span> NORMOCÉFALA, SIN LESIONES.</p>
+
+        <p><span class="field-label">OJOS:</span> CONJUNTIVAS ROSADAS, ESCLERAS BLANCAS, PUPILAS ISOCÓRICAS Y REACTIVAS A LA LUZ Y ACOMODACIÓN, MOVIMIENTOS OCULARES CONSERVADOS.</p>
+
+        <p><span class="field-label">OÍDOS:</span> PABELLONES NORMALES, CONDUCTOS AUDITIVOS PERMEABLES, MEMBRANAS TIMPÁNICAS ÍNTEGRAS.</p>
+
+        <p><span class="field-label">NARIZ:</span> MUCOSA ROSADA, TABIQUE CENTRADO, SIN SECRECIONES.</p>
+
+        <p><span class="field-label">BOCA Y FARINGE:</span> MUCOSA ORAL ROSADA, BUENA HIGIENE BUCAL, DENTADURA ACORDE A LA EDAD, AMÍGDALAS SIN HIPERTROFIA NI EXUDADO.</p>
+
+        <p><span class="field-label">CUELLO:</span> SIMÉTRICO, SIN MASAS NI ADENOMEGALIAS, TIROIDES NO PALPABLE, MOVILIDAD CONSERVADA.</p>
+
+        <p><span class="field-label">TÓRAX:</span> SIMÉTRICO, MOVILIDAD ADECUADA. MURMULLO VESICULAR PRESENTE Y SIMÉTRICO, SIN RUIDOS PATOLÓGICOS. RUIDOS CARDÍACOS RÍTMICOS, SIN SOPLOS.</p>
+
+        <p><span class="field-label">ABDOMEN:</span> PLANO, BLANDO, NO DOLOROSO A LA PALPACIÓN, SIN MASAS NI VISCEROMEGALIAS, RUIDOS HIDROAÉREOS PRESENTES Y NORMALES.</p>
+
+        <p><span class="field-label">GENITOURINARIO:</span> EXAMEN REALIZADO SOLO SI EXISTE INDICACIÓN Y CONSENTIMIENTO. DESARROLLO SEXUAL SEGÚN TANNER <span class="edit">[ESPECIFICAR GRADO]</span>.</p>
+
+        <p><span class="field-label">EXTREMIDADES:</span> SIMÉTRICAS, FUERZA Y MOVILIDAD CONSERVADAS, SIN EDEMAS NI DEFORMIDADES, LLENADO CAPILAR &lt; 2 SEG.</p>
+
+        <p><span class="field-label">NEUROLÓGICO:</span> ALERTA, ORIENTADO, PARES CRANEALES ÍNTEGROS, FUERZA MUSCULAR 5/5, SENSIBILIDAD CONSERVADA, REFLEJOS PRESENTES Y SIMÉTRICOS, MARCHA Y COORDINACIÓN NORMALES.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z000 – Examen médico general</p>
+
+        <h3>Evolución:</h3>
+        <p>SE REALIZA EVALUACIÓN MÉDICA GENERAL A PACIENTE ESCOLAR. SIGNOS VITALES DENTRO DE PARÁMETROS NORMALES. EXAMEN FÍSICO SIN HALLAZGOS PATOLÓGICOS RELEVANTES <span class="edit">(O ESPECIFICAR LOS HALLAZGOS ANORMALES)</span>. DESARROLLO FÍSICO Y CRECIMIENTO ACORDE A LA EDAD SEGÚN PERCENTILES OMS. ESQUEMA DE VACUNACIÓN REVISADO Y AL DÍA <span class="edit">(O ESPECIFICAR PENDIENTES)</span>. SE BRINDA CONSEJERÍA SOBRE NUTRICIÓN ADECUADA, HIGIENE PERSONAL, ACTIVIDAD FÍSICA REGULAR, PREVENCIÓN DE ACCIDENTES Y SIGNOS DE ALARMA. SE RECOMIENDA CONTROL MÉDICO PERIÓDICO Y SE ENTREGA CERTIFICADO MÉDICO SEGÚN REQUERIMIENTO. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES. TAMIZAJE DE VIOLENCIA NEGATIVO.</p>
+      `
+    }
+  }
+
+  /* ---- 14. ADOLESCENTE ---- */
+  'control-adolescente': {
+    title: 'Adolescente',
+    sub: 'Plantilla pediátrica · Control del paciente adolescente',
+    content: {
+      mujer: `
+        <a class="tpl-link" href="control_nino_sano.html">👶 Ir a guía clínica · Control de niño sano (calculadoras + tablas OMS)</a>
+
+        <h3>Motivo de consulta:</h3>
+        <p>EXAMEN MÉDICO GENERAL</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE ADOLESCENTE DE <span class="edit">XX</span> AÑOS, ACUDE A CONSULTA PARA EVALUACIÓN MÉDICA GENERAL <span class="edit">(O ESPECIFICAR MOTIVO: CONTROL DE CRECIMIENTO Y DESARROLLO, SÍNTOMAS ESPECÍFICOS, CONTROL ESCOLAR, CERTIFICADO MÉDICO, ETC.)</span>. REFIERE <span class="edit">[DESCRIBIR SÍNTOMAS O REFERIRSE COMO ASINTOMÁTICA SI APLICA]</span>, SIN FIEBRE, DOLOR TORÁCICO, DIFICULTAD RESPIRATORIA, DOLOR ABDOMINAL NI SIGNOS DE ALARMA. ANTECEDENTES PERSONALES Y FAMILIARES REVISADOS, SIN CAMBIOS IMPORTANTES <span class="edit">(O ESPECIFICAR SI EXISTEN)</span>. NIEGA HOSPITALIZACIONES RECIENTES Y REPORTA CUMPLIMIENTO DE VACUNAS SEGÚN ESQUEMA. MANIFIESTA INTERÉS EN RECIBIR ORIENTACIÓN SOBRE HÁBITOS SALUDABLES, NUTRICIÓN Y PREVENCIÓN DE ENFERMEDADES PROPIAS DE LA ADOLESCENCIA.</p>
+
+        <h3>Examen físico:</h3>
+        <p><span class="field-label">ESTADO GENERAL:</span> PACIENTE ALERTA, ORIENTADA EN TIEMPO, ESPACIO Y PERSONA, COOPERADORA, EN BUEN ESTADO NUTRICIONAL. POSTURA Y MARCHA NORMALES.</p>
+
+        <p><span class="field-label">PIEL Y FANERAS:</span> COLORACIÓN NORMAL, HIDRATADA, SIN LESIONES, CICATRICES NI ERUPCIONES. UÑAS ÍNTEGRAS.</p>
+
+        <p><span class="field-label">CABEZA:</span> NORMOCÉFALA, SIN LESIONES NI EDEMAS.</p>
+
+        <p><span class="field-label">OJOS:</span> CONJUNTIVAS ROSADAS, ESCLERAS BLANCAS, PUPILAS ISOCÓRICAS Y REACTIVAS A LA LUZ Y ACOMODACIÓN. MOVIMIENTOS OCULARES CONSERVADOS.</p>
+
+        <p><span class="field-label">OÍDOS:</span> PABELLONES NORMALES, CONDUCTOS AUDITIVOS Y MEMBRANAS TIMPÁNICAS ÍNTEGROS.</p>
+
+        <p><span class="field-label">NARIZ:</span> MUCOSA ROSADA, TABIQUE CENTRADO, SIN SECRECIONES.</p>
+
+        <p><span class="field-label">BOCA Y FARINGE:</span> MUCOSA ORAL ROSADA, DENTADURA CONSERVADA, AMÍGDALAS SIN HIPERTROFIA NI EXUDADO.</p>
+
+        <p><span class="field-label">CUELLO:</span> SIMÉTRICO, SIN MASAS NI ADENOMEGALIAS, TIROIDES NO PALPABLE.</p>
+
+        <p><span class="field-label">TÓRAX:</span> SIMÉTRICO, MOVILIDAD ADECUADA. MURMULLO VESICULAR PRESENTE Y SIMÉTRICO, SIN RUIDOS PATOLÓGICOS. RUIDOS CARDÍACOS RÍTMICOS, SIN SOPLOS.</p>
+
+        <p><span class="field-label">ABDOMEN:</span> PLANO, BLANDO, NO DOLOROSO A LA PALPACIÓN, SIN VISCEROMEGALIAS NI MASAS, RUIDOS HIDROAÉREOS PRESENTES.</p>
+
+        <p><span class="field-label">GENITOURINARIO:</span> EXAMEN REALIZADO CON CONSENTIMIENTO INFORMADO. SE EVALÚA DESARROLLO SEXUAL SEGÚN ESCALA DE TANNER: <span class="edit">PACIENTE FEMENINA: TANNER MAMARIO (I-V), TANNER VELLO PÚBICO (I-V).</span></p>
+
+        <p><span class="field-label">EXTREMIDADES:</span> SIMÉTRICAS, SIN EDEMAS, FUERZA Y MOVILIDAD CONSERVADAS, LLENADO CAPILAR &lt; 2 SEG, PULSOS PERIFÉRICOS PRESENTES Y SIMÉTRICOS.</p>
+
+        <p><span class="field-label">NEUROLÓGICO:</span> PACIENTE ALERTA Y ORIENTADA, PARES CRANEALES ÍNTEGROS, FUERZA MUSCULAR 5/5, SENSIBILIDAD CONSERVADA, REFLEJOS PRESENTES Y SIMÉTRICOS, MARCHA Y COORDINACIÓN NORMALES.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z000 – Examen médico general</p>
+        <p>Z003 – Examen del estado de desarrollo del adolescente</p>
+
+        <h3>Evolución:</h3>
+        <p>SE REALIZA EXAMEN MÉDICO GENERAL A PACIENTE ADOLESCENTE, ENCONTRÁNDOSE EN BUEN ESTADO GENERAL. SIGNOS VITALES DENTRO DE PARÁMETROS NORMALES. EXAMEN FÍSICO SIN HALLAZGOS PATOLÓGICOS RELEVANTES. DESARROLLO SEXUAL ACORDE A LA EDAD SEGÚN ESCALA DE TANNER <span class="edit">(ESPECIFICAR GRADO)</span>. SE REVISAN ANTECEDENTES PERSONALES Y FAMILIARES, SIN CAMBIOS IMPORTANTES. SE BRINDA CONSEJERÍA SOBRE NUTRICIÓN SALUDABLE, ACTIVIDAD FÍSICA REGULAR, HIGIENE PERSONAL, PREVENCIÓN DE ENFERMEDADES DE TRANSMISIÓN SEXUAL, SALUD MENTAL Y SIGNOS DE ALARMA. SE RECOMIENDA MANTENER VACUNAS AL DÍA Y REALIZAR CONTROLES PERIÓDICOS. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES. SE BRINDA ASESORÍA NUTRICIONAL Y SOBRE SALUD SEXUAL Y REPRODUCTIVA. TAMIZAJE DE VIOLENCIA NEGATIVO.</p>
+      `,
+      hombre: `
+        <a class="tpl-link" href="control_nino_sano.html">👶 Ir a guía clínica · Control de niño sano (calculadoras + tablas OMS)</a>
+
+        <h3>Motivo de consulta:</h3>
+        <p>EXAMEN MÉDICO GENERAL</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE ADOLESCENTE DE <span class="edit">XX</span> AÑOS, ACUDE A CONSULTA PARA EVALUACIÓN MÉDICA GENERAL <span class="edit">(O ESPECIFICAR MOTIVO: CONTROL DE CRECIMIENTO Y DESARROLLO, SÍNTOMAS ESPECÍFICOS, CONTROL ESCOLAR, CERTIFICADO MÉDICO, ETC.)</span>. REFIERE <span class="edit">[DESCRIBIR SÍNTOMAS O REFERIRSE COMO ASINTOMÁTICO SI APLICA]</span>, SIN FIEBRE, DOLOR TORÁCICO, DIFICULTAD RESPIRATORIA, DOLOR ABDOMINAL NI SIGNOS DE ALARMA. ANTECEDENTES PERSONALES Y FAMILIARES REVISADOS, SIN CAMBIOS IMPORTANTES <span class="edit">(O ESPECIFICAR SI EXISTEN)</span>. NIEGA HOSPITALIZACIONES RECIENTES Y REPORTA CUMPLIMIENTO DE VACUNAS SEGÚN ESQUEMA. MANIFIESTA INTERÉS EN RECIBIR ORIENTACIÓN SOBRE HÁBITOS SALUDABLES, NUTRICIÓN Y PREVENCIÓN DE ENFERMEDADES PROPIAS DE LA ADOLESCENCIA.</p>
+
+        <h3>Examen físico:</h3>
+        <p><span class="field-label">ESTADO GENERAL:</span> PACIENTE ALERTA, ORIENTADO EN TIEMPO, ESPACIO Y PERSONA, COOPERADOR, EN BUEN ESTADO NUTRICIONAL. POSTURA Y MARCHA NORMALES.</p>
+
+        <p><span class="field-label">PIEL Y FANERAS:</span> COLORACIÓN NORMAL, HIDRATADA, SIN LESIONES, CICATRICES NI ERUPCIONES. UÑAS ÍNTEGRAS.</p>
+
+        <p><span class="field-label">CABEZA:</span> NORMOCÉFALA, SIN LESIONES NI EDEMAS.</p>
+
+        <p><span class="field-label">OJOS:</span> CONJUNTIVAS ROSADAS, ESCLERAS BLANCAS, PUPILAS ISOCÓRICAS Y REACTIVAS A LA LUZ Y ACOMODACIÓN. MOVIMIENTOS OCULARES CONSERVADOS.</p>
+
+        <p><span class="field-label">OÍDOS:</span> PABELLONES NORMALES, CONDUCTOS AUDITIVOS Y MEMBRANAS TIMPÁNICAS ÍNTEGROS.</p>
+
+        <p><span class="field-label">NARIZ:</span> MUCOSA ROSADA, TABIQUE CENTRADO, SIN SECRECIONES.</p>
+
+        <p><span class="field-label">BOCA Y FARINGE:</span> MUCOSA ORAL ROSADA, DENTADURA CONSERVADA, AMÍGDALAS SIN HIPERTROFIA NI EXUDADO.</p>
+
+        <p><span class="field-label">CUELLO:</span> SIMÉTRICO, SIN MASAS NI ADENOMEGALIAS, TIROIDES NO PALPABLE.</p>
+
+        <p><span class="field-label">TÓRAX:</span> SIMÉTRICO, MOVILIDAD ADECUADA. MURMULLO VESICULAR PRESENTE Y SIMÉTRICO, SIN RUIDOS PATOLÓGICOS. RUIDOS CARDÍACOS RÍTMICOS, SIN SOPLOS.</p>
+
+        <p><span class="field-label">ABDOMEN:</span> PLANO, BLANDO, NO DOLOROSO A LA PALPACIÓN, SIN VISCEROMEGALIAS NI MASAS, RUIDOS HIDROAÉREOS PRESENTES.</p>
+
+        <p><span class="field-label">GENITOURINARIO:</span> EXAMEN REALIZADO CON CONSENTIMIENTO INFORMADO. SE EVALÚA DESARROLLO SEXUAL SEGÚN ESCALA DE TANNER: <span class="edit">PACIENTE MASCULINO: TANNER GENITAL (I-V), TANNER VELLO PÚBICO (I-V).</span></p>
+
+        <p><span class="field-label">EXTREMIDADES:</span> SIMÉTRICAS, SIN EDEMAS, FUERZA Y MOVILIDAD CONSERVADAS, LLENADO CAPILAR &lt; 2 SEG, PULSOS PERIFÉRICOS PRESENTES Y SIMÉTRICOS.</p>
+
+        <p><span class="field-label">NEUROLÓGICO:</span> PACIENTE ALERTA Y ORIENTADO, PARES CRANEALES ÍNTEGROS, FUERZA MUSCULAR 5/5, SENSIBILIDAD CONSERVADA, REFLEJOS PRESENTES Y SIMÉTRICOS, MARCHA Y COORDINACIÓN NORMALES.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z000 – Examen médico general</p>
+        <p>Z003 – Examen del estado de desarrollo del adolescente</p>
+
+        <h3>Evolución:</h3>
+        <p>SE REALIZA EXAMEN MÉDICO GENERAL A PACIENTE ADOLESCENTE, ENCONTRÁNDOSE EN BUEN ESTADO GENERAL. SIGNOS VITALES DENTRO DE PARÁMETROS NORMALES. EXAMEN FÍSICO SIN HALLAZGOS PATOLÓGICOS RELEVANTES. DESARROLLO SEXUAL ACORDE A LA EDAD SEGÚN ESCALA DE TANNER <span class="edit">(ESPECIFICAR GRADO)</span>. SE REVISAN ANTECEDENTES PERSONALES Y FAMILIARES, SIN CAMBIOS IMPORTANTES. SE BRINDA CONSEJERÍA SOBRE NUTRICIÓN SALUDABLE, ACTIVIDAD FÍSICA REGULAR, HIGIENE PERSONAL, PREVENCIÓN DE ENFERMEDADES DE TRANSMISIÓN SEXUAL, SALUD MENTAL Y SIGNOS DE ALARMA. SE RECOMIENDA MANTENER VACUNAS AL DÍA Y REALIZAR CONTROLES PERIÓDICOS. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES. SE BRINDA ASESORÍA NUTRICIONAL Y SOBRE SALUD SEXUAL Y REPRODUCTIVA. TAMIZAJE DE VIOLENCIA NEGATIVO.</p>
+      `
+    }
+  },
+
+  /* ---- 15. EMG ADULTO ---- */
+  'emg-adulto': {
+    title: 'Examen médico general adulto',
+    sub: 'Plantilla medicina general · Examen médico de rutina en adulto',
+    content: {
+      mujer: `
+        <h3>Motivo de consulta:</h3>
+        <p>EXAMEN MÉDICO GENERAL</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE FEMENINA DE <span class="edit">XX</span> AÑOS, ACUDE A CONSULTA PARA EXAMEN MÉDICO GENERAL DE RUTINA. REFIERE BUEN ESTADO GENERAL, SIN SÍNTOMAS RESPIRATORIOS, CARDIACOS, DIGESTIVOS, NEUROLÓGICOS NI URINARIOS AL MOMENTO DE LA EVALUACIÓN. ANTECEDENTES PERSONALES Y FAMILIARES REVISADOS, SIN MODIFICACIONES RECIENTES <span class="edit">(O ESPECIFICAR EN CASO DE PATOLOGÍAS CRÓNICAS)</span>. NIEGA ALERGIAS, HOSPITALIZACIONES RECIENTES O CAMBIOS EN SU TRATAMIENTO HABITUAL. MANIFIESTA INTERÉS EN CONOCER SU ESTADO DE SALUD Y RECIBIR ORIENTACIÓN SOBRE HÁBITOS SALUDABLES Y PREVENCIÓN DE ENFERMEDADES.</p>
+
+        <h3>Examen físico:</h3>
+        <p><span class="field-label">ESTADO GENERAL:</span> PACIENTE ALERTA, ORIENTADA EN TIEMPO, ESPACIO Y PERSONA, COOPERADORA, EN BUEN ESTADO NUTRICIONAL. MARCHA Y POSTURA NORMALES.</p>
+
+        <p><span class="field-label">PIEL Y FANERAS:</span> COLORACIÓN NORMAL, HIDRATADA, SIN LESIONES, CICATRICES NI ERUPCIONES. UÑAS ÍNTEGRAS, SIN ALTERACIONES.</p>
+
+        <p><span class="field-label">CABEZA:</span> NORMOCÉFALA, SIN LESIONES NI EDEMAS.</p>
+
+        <p><span class="field-label">OJOS:</span> CONJUNTIVAS ROSADAS, ESCLERAS BLANCAS, PUPILAS ISOCÓRICAS Y REACTIVAS A LA LUZ Y ACOMODACIÓN. MOVIMIENTOS OCULARES CONSERVADOS.</p>
+
+        <p><span class="field-label">OÍDOS:</span> PABELLONES NORMALES, SIN LESIONES. CONDUCTOS AUDITIVOS Y MEMBRANAS TIMPÁNICAS ÍNTEGRAS.</p>
+
+        <p><span class="field-label">NARIZ:</span> MUCOSA ROSADA, TABIQUE CENTRADO, SIN SECRECIONES.</p>
+
+        <p><span class="field-label">BOCA Y FARINGE:</span> MUCOSA ORAL ROSADA, DENTADURA CONSERVADA <span class="edit">(O ESPECIFICAR ESTADO)</span>, AMÍGDALAS SIN AUMENTO DE TAMAÑO NI EXUDADO.</p>
+
+        <p><span class="field-label">CUELLO:</span> SIMÉTRICO, SIN MASAS NI ADENOMEGALIAS, TIROIDES NO PALPABLE, MOVILIDAD CONSERVADA.</p>
+
+        <p><span class="field-label">TÓRAX:</span> SIMÉTRICO, MOVILIDAD ADECUADA, MURMULLO VESICULAR PRESENTE Y SIMÉTRICO, SIN RUIDOS PATOLÓGICOS. RUIDOS CARDÍACOS RÍTMICOS, SIN SOPLOS.</p>
+
+        <p><span class="field-label">ABDOMEN:</span> PLANO, BLANDO, NO DOLOROSO A LA PALPACIÓN, SIN VISCEROMEGALIAS NI MASAS, RUIDOS HIDROAÉREOS PRESENTES.</p>
+
+        <p><span class="field-label">GENITOURINARIO:</span> EXAMEN NO REALIZADO / REALIZADO SEGÚN INDICACIÓN Y CONSENTIMIENTO.</p>
+
+        <p><span class="field-label">EXTREMIDADES:</span> SIMÉTRICAS, SIN EDEMAS, FUERZA Y MOVILIDAD CONSERVADAS, LLENADO CAPILAR &lt; 2 SEG. PULSOS PERIFÉRICOS PRESENTES Y SIMÉTRICOS.</p>
+
+        <p><span class="field-label">NEUROLÓGICO:</span> PACIENTE ALERTA Y ORIENTADA, PARES CRANEALES ÍNTEGROS, FUERZA MUSCULAR 5/5, SENSIBILIDAD CONSERVADA, REFLEJOS PRESENTES Y SIMÉTRICOS, MARCHA NORMAL.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z000 – Examen médico general</p>
+
+        <h3>Evolución:</h3>
+        <p>SE REALIZA EXAMEN MÉDICO GENERAL EN PACIENTE ADULTA, ENCONTRÁNDOSE EN BUEN ESTADO GENERAL, SIN HALLAZGOS PATOLÓGICOS RELEVANTES EN LA EXPLORACIÓN FÍSICA. SIGNOS VITALES DENTRO DE PARÁMETROS NORMALES. SE REVISAN ANTECEDENTES PERSONALES Y FAMILIARES, SIN CAMBIOS IMPORTANTES DESDE ÚLTIMA CONSULTA <span class="edit">(O ESPECIFICAR SI LOS HUBO)</span>. SE BRINDA CONSEJERÍA SOBRE HÁBITOS SALUDABLES, ALIMENTACIÓN BALANCEADA, ACTIVIDAD FÍSICA REGULAR, CONTROL DE FACTORES DE RIESGO Y NECESIDAD DE EXÁMENES DE LABORATORIO O TAMIZAJE SEGÚN EDAD Y CONDICIONES. SE INDICAN SIGNOS DE ALARMA Y SE RECOMIENDA CONTROL PERIÓDICO ANUAL O ANTES SI PRESENTA SÍNTOMAS. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES.</p>
+      `,
+      hombre: `
+        <h3>Motivo de consulta:</h3>
+        <p>EXAMEN MÉDICO GENERAL</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE MASCULINO DE <span class="edit">XX</span> AÑOS, ACUDE A CONSULTA PARA EXAMEN MÉDICO GENERAL DE RUTINA. REFIERE BUEN ESTADO GENERAL, SIN SÍNTOMAS RESPIRATORIOS, CARDIACOS, DIGESTIVOS, NEUROLÓGICOS NI URINARIOS AL MOMENTO DE LA EVALUACIÓN. ANTECEDENTES PERSONALES Y FAMILIARES REVISADOS, SIN MODIFICACIONES RECIENTES <span class="edit">(O ESPECIFICAR EN CASO DE PATOLOGÍAS CRÓNICAS)</span>. NIEGA ALERGIAS, HOSPITALIZACIONES RECIENTES O CAMBIOS EN SU TRATAMIENTO HABITUAL. MANIFIESTA INTERÉS EN CONOCER SU ESTADO DE SALUD Y RECIBIR ORIENTACIÓN SOBRE HÁBITOS SALUDABLES Y PREVENCIÓN DE ENFERMEDADES.</p>
+
+        <h3>Examen físico:</h3>
+        <p><span class="field-label">ESTADO GENERAL:</span> PACIENTE ALERTA, ORIENTADO EN TIEMPO, ESPACIO Y PERSONA, COOPERADOR, EN BUEN ESTADO NUTRICIONAL. MARCHA Y POSTURA NORMALES.</p>
+
+        <p><span class="field-label">PIEL Y FANERAS:</span> COLORACIÓN NORMAL, HIDRATADA, SIN LESIONES, CICATRICES NI ERUPCIONES. UÑAS ÍNTEGRAS, SIN ALTERACIONES.</p>
+
+        <p><span class="field-label">CABEZA:</span> NORMOCÉFALA, SIN LESIONES NI EDEMAS.</p>
+
+        <p><span class="field-label">OJOS:</span> CONJUNTIVAS ROSADAS, ESCLERAS BLANCAS, PUPILAS ISOCÓRICAS Y REACTIVAS A LA LUZ Y ACOMODACIÓN. MOVIMIENTOS OCULARES CONSERVADOS.</p>
+
+        <p><span class="field-label">OÍDOS:</span> PABELLONES NORMALES, SIN LESIONES. CONDUCTOS AUDITIVOS Y MEMBRANAS TIMPÁNICAS ÍNTEGRAS.</p>
+
+        <p><span class="field-label">NARIZ:</span> MUCOSA ROSADA, TABIQUE CENTRADO, SIN SECRECIONES.</p>
+
+        <p><span class="field-label">BOCA Y FARINGE:</span> MUCOSA ORAL ROSADA, DENTADURA CONSERVADA <span class="edit">(O ESPECIFICAR ESTADO)</span>, AMÍGDALAS SIN AUMENTO DE TAMAÑO NI EXUDADO.</p>
+
+        <p><span class="field-label">CUELLO:</span> SIMÉTRICO, SIN MASAS NI ADENOMEGALIAS, TIROIDES NO PALPABLE, MOVILIDAD CONSERVADA.</p>
+
+        <p><span class="field-label">TÓRAX:</span> SIMÉTRICO, MOVILIDAD ADECUADA, MURMULLO VESICULAR PRESENTE Y SIMÉTRICO, SIN RUIDOS PATOLÓGICOS. RUIDOS CARDÍACOS RÍTMICOS, SIN SOPLOS.</p>
+
+        <p><span class="field-label">ABDOMEN:</span> PLANO, BLANDO, NO DOLOROSO A LA PALPACIÓN, SIN VISCEROMEGALIAS NI MASAS, RUIDOS HIDROAÉREOS PRESENTES.</p>
+
+        <p><span class="field-label">GENITOURINARIO:</span> EXAMEN NO REALIZADO / REALIZADO SEGÚN INDICACIÓN Y CONSENTIMIENTO.</p>
+
+        <p><span class="field-label">EXTREMIDADES:</span> SIMÉTRICAS, SIN EDEMAS, FUERZA Y MOVILIDAD CONSERVADAS, LLENADO CAPILAR &lt; 2 SEG. PULSOS PERIFÉRICOS PRESENTES Y SIMÉTRICOS.</p>
+
+        <p><span class="field-label">NEUROLÓGICO:</span> PACIENTE ALERTA Y ORIENTADO, PARES CRANEALES ÍNTEGROS, FUERZA MUSCULAR 5/5, SENSIBILIDAD CONSERVADA, REFLEJOS PRESENTES Y SIMÉTRICOS, MARCHA NORMAL.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z000 – Examen médico general</p>
+
+        <h3>Evolución:</h3>
+        <p>SE REALIZA EXAMEN MÉDICO GENERAL EN PACIENTE ADULTO, ENCONTRÁNDOSE EN BUEN ESTADO GENERAL, SIN HALLAZGOS PATOLÓGICOS RELEVANTES EN LA EXPLORACIÓN FÍSICA. SIGNOS VITALES DENTRO DE PARÁMETROS NORMALES. SE REVISAN ANTECEDENTES PERSONALES Y FAMILIARES, SIN CAMBIOS IMPORTANTES DESDE ÚLTIMA CONSULTA <span class="edit">(O ESPECIFICAR SI LOS HUBO)</span>. SE BRINDA CONSEJERÍA SOBRE HÁBITOS SALUDABLES, ALIMENTACIÓN BALANCEADA, ACTIVIDAD FÍSICA REGULAR, CONTROL DE FACTORES DE RIESGO Y NECESIDAD DE EXÁMENES DE LABORATORIO O TAMIZAJE SEGÚN EDAD Y CONDICIONES. SE INDICAN SIGNOS DE ALARMA Y SE RECOMIENDA CONTROL PERIÓDICO ANUAL O ANTES SI PRESENTA SÍNTOMAS. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES.</p>
+      `
+    }
+  },
+
+  /* ---- 16. EMG ADULTO MAYOR ---- */
+  'emg-adulto-mayor': {
+    title: 'Examen médico general adulto mayor',
+    sub: 'Plantilla medicina general · Evaluación geriátrica integral',
+    content: {
+      mujer: `
+        <h3>Motivo de consulta:</h3>
+        <p>EXAMEN MÉDICO GENERAL</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE ADULTA MAYOR DE <span class="edit">XX</span> AÑOS, ACUDE A CONSULTA PARA EVALUACIÓN MÉDICA GENERAL <span class="edit">(O ESPECIFICAR MOTIVO: CONTROL DE ENFERMEDAD CRÓNICA, CHEQUEO DE RUTINA, SÍNTOMAS ESPECÍFICOS)</span>. REFIERE <span class="edit">[DESCRIBIR SÍNTOMAS O REFERIRSE COMO ASINTOMÁTICA SI APLICA]</span>, SIN FIEBRE, DISNEA, DOLOR TORÁCICO NI OTROS SIGNOS DE ALARMA. ANTECEDENTES PERSONALES RELEVANTES: <span class="edit">[HTA, DM2, DISLIPIDEMIA, ETC.]</span> EN TRATAMIENTO ACTUAL, CON ADHERENCIA PARCIAL / COMPLETA SEGÚN REFIERA. NO REPORTA HOSPITALIZACIONES RECIENTES. MANIFIESTA INTERÉS EN CONTROLAR SU ESTADO DE SALUD, MANTENER FUNCIONALIDAD Y RECIBIR ORIENTACIÓN SOBRE PREVENCIÓN DE COMPLICACIONES ASOCIADAS A SU EDAD Y CONDICIONES CRÓNICAS.</p>
+
+        <h3>Examen físico:</h3>
+        <p><span class="field-label">ESTADO GENERAL:</span> PACIENTE ALERTA, ORIENTADA EN TIEMPO, ESPACIO Y PERSONA, COOPERADORA, EN ESTADO NUTRICIONAL <span class="edit">ADECUADO / BAJO / ALTO</span> SEGÚN IMC. MARCHA <span class="edit">NORMAL / CON AYUDA DE BASTÓN / ANDADOR</span>, POSTURA CONSERVADA.</p>
+
+        <p><span class="field-label">PIEL Y FANERAS:</span> COLORACIÓN NORMAL / PÁLIDA, HIDRATADA, CON <span class="edit">[O SIN]</span> LESIONES CUTÁNEAS, CICATRICES O ÚLCERAS. UÑAS ÍNTEGRAS.</p>
+
+        <p><span class="field-label">CABEZA:</span> NORMOCÉFALA, SIN LESIONES NI EDEMAS.</p>
+
+        <p><span class="field-label">OJOS:</span> CONJUNTIVAS <span class="edit">ROSADAS / PÁLIDAS</span>, ESCLERAS BLANCAS, PUPILAS ISOCÓRICAS Y REACTIVAS A LA LUZ Y ACOMODACIÓN. MOVIMIENTOS OCULARES CONSERVADOS. <span class="edit">[ESPECIFICAR SI USA LENTES]</span>.</p>
+
+        <p><span class="field-label">OÍDOS:</span> PABELLONES NORMALES, CONDUCTOS AUDITIVOS SIN CERUMEN IMPACTADO, MEMBRANAS TIMPÁNICAS ÍNTEGRAS.</p>
+
+        <p><span class="field-label">NARIZ:</span> MUCOSA ROSADA, TABIQUE CENTRADO, SIN OBSTRUCCIÓN NI SECRECIONES.</p>
+
+        <p><span class="field-label">BOCA Y FARINGE:</span> MUCOSA ORAL ROSADA, <span class="edit">DENTADURA PARCIAL / COMPLETA / EN MAL ESTADO</span>, AMÍGDALAS SIN AUMENTO NI EXUDADO.</p>
+
+        <p><span class="field-label">CUELLO:</span> SIMÉTRICO, SIN MASAS NI ADENOMEGALIAS, TIROIDES NO PALPABLE, MOVILIDAD CONSERVADA.</p>
+
+        <p><span class="field-label">TÓRAX:</span> SIMÉTRICO, MOVILIDAD ADECUADA, MURMULLO VESICULAR PRESENTE Y SIMÉTRICO, SIN RUIDOS PATOLÓGICOS. RUIDOS CARDÍACOS RÍTMICOS, SIN SOPLOS NI ARRITMIAS AUDIBLES.</p>
+
+        <p><span class="field-label">ABDOMEN:</span> PLANO / LEVEMENTE GLOBOSO, BLANDO, NO DOLOROSO, SIN VISCEROMEGALIAS, RUIDOS HIDROAÉREOS PRESENTES Y NORMALES.</p>
+
+        <p><span class="field-label">GENITOURINARIO:</span> NO EVALUADO / REALIZADO SEGÚN INDICACIÓN Y CONSENTIMIENTO.</p>
+
+        <p><span class="field-label">EXTREMIDADES:</span> SIMÉTRICAS, SIN EDEMAS, FUERZA Y MOVILIDAD CONSERVADAS O LEVEMENTE DISMINUIDAS, LLENADO CAPILAR &lt; 2 SEG, PULSOS PERIFÉRICOS PRESENTES Y SIMÉTRICOS.</p>
+
+        <p><span class="field-label">NEUROLÓGICO:</span> PACIENTE ALERTA Y ORIENTADA, PARES CRANEALES ÍNTEGROS, FUERZA MUSCULAR <span class="edit">X/X</span>, SENSIBILIDAD CONSERVADA, REFLEJOS PRESENTES Y SIMÉTRICOS, MARCHA <span class="edit">NORMAL / ALTERADA</span>, PRUEBAS DE COORDINACIÓN NORMALES.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z000 – Examen médico general</p>
+
+        <h3>Evolución:</h3>
+        <p>SE REALIZA EVALUACIÓN MÉDICA GENERAL A PACIENTE ADULTA MAYOR. SIGNOS VITALES DENTRO DE PARÁMETROS NORMALES <span class="edit">(O ESPECIFICAR ALTERACIONES)</span>. EXAMEN FÍSICO SIN HALLAZGOS PATOLÓGICOS RELEVANTES <span class="edit">(O DESCRIBIR HALLAZGOS SI LOS HUBIERA)</span>. SE REVISAN ANTECEDENTES PERSONALES Y FAMILIARES, CONFIRMANDO ADHERENCIA AL TRATAMIENTO DE SUS CONDICIONES CRÓNICAS <span class="edit">(HTA, DM, DISLIPIDEMIA, ETC.)</span>. SE BRINDA CONSEJERÍA SOBRE HÁBITOS SALUDABLES, ALIMENTACIÓN BALANCEADA, ACTIVIDAD FÍSICA SEGÚN CAPACIDAD FUNCIONAL, PREVENCIÓN DE CAÍDAS Y SIGNOS DE ALARMA QUE AMERITEN ATENCIÓN INMEDIATA. SE INDICAN EXÁMENES DE LABORATORIO Y / O ESTUDIOS DE TAMIZAJE SEGÚN EDAD Y PATOLOGÍAS DE BASE. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES, CON RECOMENDACIÓN DE CONTROL PERIÓDICO O ANTES SI PRESENTA SÍNTOMAS NUEVOS.</p>
+      `,
+      hombre: `
+        <h3>Motivo de consulta:</h3>
+        <p>EXAMEN MÉDICO GENERAL</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE ADULTO MAYOR DE <span class="edit">XX</span> AÑOS, ACUDE A CONSULTA PARA EVALUACIÓN MÉDICA GENERAL <span class="edit">(O ESPECIFICAR MOTIVO: CONTROL DE ENFERMEDAD CRÓNICA, CHEQUEO DE RUTINA, SÍNTOMAS ESPECÍFICOS)</span>. REFIERE <span class="edit">[DESCRIBIR SÍNTOMAS O REFERIRSE COMO ASINTOMÁTICO SI APLICA]</span>, SIN FIEBRE, DISNEA, DOLOR TORÁCICO NI OTROS SIGNOS DE ALARMA. ANTECEDENTES PERSONALES RELEVANTES: <span class="edit">[HTA, DM2, DISLIPIDEMIA, ETC.]</span> EN TRATAMIENTO ACTUAL, CON ADHERENCIA PARCIAL / COMPLETA SEGÚN REFIERA. NO REPORTA HOSPITALIZACIONES RECIENTES. MANIFIESTA INTERÉS EN CONTROLAR SU ESTADO DE SALUD, MANTENER FUNCIONALIDAD Y RECIBIR ORIENTACIÓN SOBRE PREVENCIÓN DE COMPLICACIONES ASOCIADAS A SU EDAD Y CONDICIONES CRÓNICAS.</p>
+
+        <h3>Examen físico:</h3>
+        <p><span class="field-label">ESTADO GENERAL:</span> PACIENTE ALERTA, ORIENTADO EN TIEMPO, ESPACIO Y PERSONA, COOPERADOR, EN ESTADO NUTRICIONAL <span class="edit">ADECUADO / BAJO / ALTO</span> SEGÚN IMC. MARCHA <span class="edit">NORMAL / CON AYUDA DE BASTÓN / ANDADOR</span>, POSTURA CONSERVADA.</p>
+
+        <p><span class="field-label">PIEL Y FANERAS:</span> COLORACIÓN NORMAL / PÁLIDA, HIDRATADA, CON <span class="edit">[O SIN]</span> LESIONES CUTÁNEAS, CICATRICES O ÚLCERAS. UÑAS ÍNTEGRAS.</p>
+
+        <p><span class="field-label">CABEZA:</span> NORMOCÉFALA, SIN LESIONES NI EDEMAS.</p>
+
+        <p><span class="field-label">OJOS:</span> CONJUNTIVAS <span class="edit">ROSADAS / PÁLIDAS</span>, ESCLERAS BLANCAS, PUPILAS ISOCÓRICAS Y REACTIVAS A LA LUZ Y ACOMODACIÓN. MOVIMIENTOS OCULARES CONSERVADOS. <span class="edit">[ESPECIFICAR SI USA LENTES]</span>.</p>
+
+        <p><span class="field-label">OÍDOS:</span> PABELLONES NORMALES, CONDUCTOS AUDITIVOS SIN CERUMEN IMPACTADO, MEMBRANAS TIMPÁNICAS ÍNTEGRAS.</p>
+
+        <p><span class="field-label">NARIZ:</span> MUCOSA ROSADA, TABIQUE CENTRADO, SIN OBSTRUCCIÓN NI SECRECIONES.</p>
+
+        <p><span class="field-label">BOCA Y FARINGE:</span> MUCOSA ORAL ROSADA, <span class="edit">DENTADURA PARCIAL / COMPLETA / EN MAL ESTADO</span>, AMÍGDALAS SIN AUMENTO NI EXUDADO.</p>
+
+        <p><span class="field-label">CUELLO:</span> SIMÉTRICO, SIN MASAS NI ADENOMEGALIAS, TIROIDES NO PALPABLE, MOVILIDAD CONSERVADA.</p>
+
+        <p><span class="field-label">TÓRAX:</span> SIMÉTRICO, MOVILIDAD ADECUADA, MURMULLO VESICULAR PRESENTE Y SIMÉTRICO, SIN RUIDOS PATOLÓGICOS. RUIDOS CARDÍACOS RÍTMICOS, SIN SOPLOS NI ARRITMIAS AUDIBLES.</p>
+
+        <p><span class="field-label">ABDOMEN:</span> PLANO / LEVEMENTE GLOBOSO, BLANDO, NO DOLOROSO, SIN VISCEROMEGALIAS, RUIDOS HIDROAÉREOS PRESENTES Y NORMALES.</p>
+
+        <p><span class="field-label">GENITOURINARIO:</span> NO EVALUADO / REALIZADO SEGÚN INDICACIÓN Y CONSENTIMIENTO.</p>
+
+        <p><span class="field-label">EXTREMIDADES:</span> SIMÉTRICAS, SIN EDEMAS, FUERZA Y MOVILIDAD CONSERVADAS O LEVEMENTE DISMINUIDAS, LLENADO CAPILAR &lt; 2 SEG, PULSOS PERIFÉRICOS PRESENTES Y SIMÉTRICOS.</p>
+
+        <p><span class="field-label">NEUROLÓGICO:</span> PACIENTE ALERTA Y ORIENTADO, PARES CRANEALES ÍNTEGROS, FUERZA MUSCULAR <span class="edit">X/X</span>, SENSIBILIDAD CONSERVADA, REFLEJOS PRESENTES Y SIMÉTRICOS, MARCHA <span class="edit">NORMAL / ALTERADA</span>, PRUEBAS DE COORDINACIÓN NORMALES.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z000 – Examen médico general</p>
+
+        <h3>Evolución:</h3>
+        <p>SE REALIZA EVALUACIÓN MÉDICA GENERAL A PACIENTE ADULTO MAYOR. SIGNOS VITALES DENTRO DE PARÁMETROS NORMALES <span class="edit">(O ESPECIFICAR ALTERACIONES)</span>. EXAMEN FÍSICO SIN HALLAZGOS PATOLÓGICOS RELEVANTES <span class="edit">(O DESCRIBIR HALLAZGOS SI LOS HUBIERA)</span>. SE REVISAN ANTECEDENTES PERSONALES Y FAMILIARES, CONFIRMANDO ADHERENCIA AL TRATAMIENTO DE SUS CONDICIONES CRÓNICAS <span class="edit">(HTA, DM, DISLIPIDEMIA, ETC.)</span>. SE BRINDA CONSEJERÍA SOBRE HÁBITOS SALUDABLES, ALIMENTACIÓN BALANCEADA, ACTIVIDAD FÍSICA SEGÚN CAPACIDAD FUNCIONAL, PREVENCIÓN DE CAÍDAS Y SIGNOS DE ALARMA QUE AMERITEN ATENCIÓN INMEDIATA. SE INDICAN EXÁMENES DE LABORATORIO Y / O ESTUDIOS DE TAMIZAJE SEGÚN EDAD Y PATOLOGÍAS DE BASE. PACIENTE SE RETIRA EN BUENAS CONDICIONES GENERALES, CON RECOMENDACIÓN DE CONTROL PERIÓDICO O ANTES SI PRESENTA SÍNTOMAS NUEVOS.</p>
+      `
+    }
+  },
+
+  /* ---- 17. CERTIFICADO ÚNICO DE SALUD ---- */
+  'certificado-salud': {
+    title: 'Certificado único de salud',
+    sub: 'Plantilla medicina general · Emisión de Certificado Único de Salud (CUS)',
+    content: {
+      mujer: `
+        <div class="tpl-alert">
+          EL <strong>CERTIFICADO ÚNICO DE SALUD (CUS):</strong> verifica que la persona <strong>se encuentra en buen estado de salud global</strong>, libre de enfermedades transmisibles, y puede ser usado para <strong>trámites laborales, educativos o administrativos</strong>.
+          <p style="margin-top:10px;"><span class="edit">OJO:</span> no es lo mismo que el certificado ocupacional, ese se emite solo por médicos ocupacionales (siempre te van a solicitar el CUS, no este último).</p>
+        </div>
+
+        <h3>Motivo de consulta:</h3>
+        <p>VALORACIÓN PARA CERTIFICADO ÚNICO DE SALUD</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE FEMENINA DE <span class="edit">XX</span> AÑOS, QUE ACUDE A CONSULTA PARA VALORACIÓN MÉDICA CON FINES ADMINISTRATIVOS, PREVIA EMISIÓN DEL CERTIFICADO ÚNICO DE SALUD. REFIERE ENCONTRARSE EN <span class="edit">BUEN ESTADO GENERAL, SIN SÍNTOMAS RESPIRATORIOS, DIGESTIVOS, URINARIOS, NEUROLÓGICOS NI MUSCULOESQUELÉTICOS. NIEGA FIEBRE, TOS, DISNEA, CEFALEA, DOLOR ABDOMINAL, VÓMITO, DIARREA, DISURIA O PÉRDIDA DE PESO. NO PRESENTA ANTECEDENTES PERSONALES PATOLÓGICOS DE RELEVANCIA RECIENTE. NIEGA USO DE MEDICACIÓN ACTUAL Y ALERGIAS CONOCIDAS.</span> REFIERE ALIMENTACIÓN ADECUADA, SUEÑO REPARADOR Y REALIZACIÓN DE ACTIVIDADES HABITUALES SIN LIMITACIÓN FUNCIONAL. AL MOMENTO, NO PRESENTA SIGNOS NI SÍNTOMAS SUGESTIVOS DE ENFERMEDAD AGUDA O CONTAGIOSA.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z000 – Examen médico general</p>
+        <p>Z021 – Examen preempleo</p>
+
+        <h3>Evolución (Primera cita):</h3>
+        <p>PACIENTE FEMENINA DE <span class="edit">XX</span> AÑOS, QUE ACUDE A CONSULTA PARA VALORACIÓN MÉDICA CON FINES ADMINISTRATIVOS, PREVIA EMISIÓN DEL CERTIFICADO ÚNICO DE SALUD. SE ENCUENTRA <span class="edit">ASINTOMÁTICA, EN BUEN ESTADO GENERAL, SIN SIGNOS NI SÍNTOMAS DE ENFERMEDAD AGUDA O CONTAGIOSA.</span> AL EXAMEN FÍSICO SE EVIDENCIA <span class="edit">PACIENTE LÚCIDA, ORIENTADA, CON SIGNOS VITALES DENTRO DE PARÁMETROS NORMALES Y SIN ALTERACIONES CLÍNICAS RELEVANTES.</span> SE SOLICITA EXÁMENES DE LABORATORIO DE RUTINA (HEMOGRAMA COMPLETO, GLUCOSA, CREATININA, ORINA, COPROPARASITARIO, VDRL, VIH, HEPATITIS B) PARA COMPLETAR LA VALORACIÓN EN PRÓXIMA CITA Y POSTERIOR EMISIÓN DEL CERTIFICADO ÚNICO DE SALUD. SE EXPLICA EL PROCEDIMIENTO Y PACIENTE ENTIENDE.</p>
+
+        <h3>Evolución (Segunda cita con resultados):</h3>
+        <p>PACIENTE FEMENINA DE <span class="edit">XX</span> AÑOS, QUE ACUDE A CONSULTA PARA VALORACIÓN MÉDICA CON FINES ADMINISTRATIVOS, PREVIA EMISIÓN DEL CERTIFICADO ÚNICO DE SALUD. SE ENCUENTRA <span class="edit">ASINTOMÁTICA, EN BUEN ESTADO GENERAL, SIN SIGNOS NI SÍNTOMAS DE ENFERMEDAD AGUDA O CONTAGIOSA.</span> AL EXAMEN FÍSICO SE EVIDENCIA <span class="edit">PACIENTE LÚCIDA, ORIENTADA, CON SIGNOS VITALES DENTRO DE PARÁMETROS NORMALES Y SIN ALTERACIONES CLÍNICAS RELEVANTES.</span> PACIENTE ACUDE CON RESULTADOS DE EXÁMENES <span class="edit">(DETALLAR HALLAZGOS)</span>, LOS CUALES SE ENCUENTRAN DENTRO DE PARÁMETROS NORMALES SEGÚN RANGO DE REFERENCIA. PACIENTE NO PRESENTA CONTRAINDICACIÓN MÉDICA PARA LA EMISIÓN DEL CERTIFICADO ÚNICO DE SALUD, POR LO QUE SE DECLARA <span class="edit">APTA CLÍNICAMENTE</span>. SE BRINDA ORIENTACIÓN SOBRE HÁBITOS SALUDABLES, CONTROL MÉDICO PERIÓDICO Y SE REGISTRA LA ENTREGA DEL CERTIFICADO. PACIENTE EN CONDICIONES ESTABLES Y CON ALTA ADMINISTRATIVA.</p>
+      `,
+      hombre: `
+        <div class="tpl-alert">
+          EL <strong>CERTIFICADO ÚNICO DE SALUD (CUS):</strong> verifica que la persona <strong>se encuentra en buen estado de salud global</strong>, libre de enfermedades transmisibles, y puede ser usado para <strong>trámites laborales, educativos o administrativos</strong>.
+          <p style="margin-top:10px;"><span class="edit">OJO:</span> no es lo mismo que el certificado ocupacional, ese se emite solo por médicos ocupacionales (siempre te van a solicitar el CUS, no este último).</p>
+        </div>
+
+        <h3>Motivo de consulta:</h3>
+        <p>VALORACIÓN PARA CERTIFICADO ÚNICO DE SALUD</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>PACIENTE MASCULINO DE <span class="edit">XX</span> AÑOS, QUE ACUDE A CONSULTA PARA VALORACIÓN MÉDICA CON FINES ADMINISTRATIVOS, PREVIA EMISIÓN DEL CERTIFICADO ÚNICO DE SALUD. REFIERE ENCONTRARSE EN <span class="edit">BUEN ESTADO GENERAL, SIN SÍNTOMAS RESPIRATORIOS, DIGESTIVOS, URINARIOS, NEUROLÓGICOS NI MUSCULOESQUELÉTICOS. NIEGA FIEBRE, TOS, DISNEA, CEFALEA, DOLOR ABDOMINAL, VÓMITO, DIARREA, DISURIA O PÉRDIDA DE PESO. NO PRESENTA ANTECEDENTES PERSONALES PATOLÓGICOS DE RELEVANCIA RECIENTE. NIEGA USO DE MEDICACIÓN ACTUAL Y ALERGIAS CONOCIDAS.</span> REFIERE ALIMENTACIÓN ADECUADA, SUEÑO REPARADOR Y REALIZACIÓN DE ACTIVIDADES HABITUALES SIN LIMITACIÓN FUNCIONAL. AL MOMENTO, NO PRESENTA SIGNOS NI SÍNTOMAS SUGESTIVOS DE ENFERMEDAD AGUDA O CONTAGIOSA.</p>
+
+        <h3>CIE-10:</h3>
+        <p>Z000 – Examen médico general</p>
+        <p>Z021 – Examen preempleo</p>
+
+        <h3>Evolución (Primera cita):</h3>
+        <p>PACIENTE MASCULINO DE <span class="edit">XX</span> AÑOS, QUE ACUDE A CONSULTA PARA VALORACIÓN MÉDICA CON FINES ADMINISTRATIVOS, PREVIA EMISIÓN DEL CERTIFICADO ÚNICO DE SALUD. SE ENCUENTRA <span class="edit">ASINTOMÁTICO, EN BUEN ESTADO GENERAL, SIN SIGNOS NI SÍNTOMAS DE ENFERMEDAD AGUDA O CONTAGIOSA.</span> AL EXAMEN FÍSICO SE EVIDENCIA <span class="edit">PACIENTE LÚCIDO, ORIENTADO, CON SIGNOS VITALES DENTRO DE PARÁMETROS NORMALES Y SIN ALTERACIONES CLÍNICAS RELEVANTES.</span> SE SOLICITA EXÁMENES DE LABORATORIO DE RUTINA (HEMOGRAMA COMPLETO, GLUCOSA, CREATININA, ORINA, COPROPARASITARIO, VDRL, VIH, HEPATITIS B) PARA COMPLETAR LA VALORACIÓN EN PRÓXIMA CITA Y POSTERIOR EMISIÓN DEL CERTIFICADO ÚNICO DE SALUD. SE EXPLICA EL PROCEDIMIENTO Y PACIENTE ENTIENDE.</p>
+
+        <h3>Evolución (Segunda cita con resultados):</h3>
+        <p>PACIENTE MASCULINO DE <span class="edit">XX</span> AÑOS, QUE ACUDE A CONSULTA PARA VALORACIÓN MÉDICA CON FINES ADMINISTRATIVOS, PREVIA EMISIÓN DEL CERTIFICADO ÚNICO DE SALUD. SE ENCUENTRA <span class="edit">ASINTOMÁTICO, EN BUEN ESTADO GENERAL, SIN SIGNOS NI SÍNTOMAS DE ENFERMEDAD AGUDA O CONTAGIOSA.</span> AL EXAMEN FÍSICO SE EVIDENCIA <span class="edit">PACIENTE LÚCIDO, ORIENTADO, CON SIGNOS VITALES DENTRO DE PARÁMETROS NORMALES Y SIN ALTERACIONES CLÍNICAS RELEVANTES.</span> PACIENTE ACUDE CON RESULTADOS DE EXÁMENES <span class="edit">(DETALLAR HALLAZGOS)</span>, LOS CUALES SE ENCUENTRAN DENTRO DE PARÁMETROS NORMALES SEGÚN RANGO DE REFERENCIA. PACIENTE NO PRESENTA CONTRAINDICACIÓN MÉDICA PARA LA EMISIÓN DEL CERTIFICADO ÚNICO DE SALUD, POR LO QUE SE DECLARA <span class="edit">APTO CLÍNICAMENTE</span>. SE BRINDA ORIENTACIÓN SOBRE HÁBITOS SALUDABLES, CONTROL MÉDICO PERIÓDICO Y SE REGISTRA LA ENTREGA DEL CERTIFICADO. PACIENTE EN CONDICIONES ESTABLES Y CON ALTA ADMINISTRATIVA.</p>
+      `
+    }
+  },
+
+  /* ---- 18. VISITA DOMICILIARIA ---- */
+  'visita-domiciliaria': {
+    title: 'Visita domiciliaria',
+    sub: 'Plantilla extramural · Atención médica domiciliaria',
+    content: {
+      mujer: `
+        <h3>Motivo de consulta:</h3>
+        <p>VISITA DOMICILIARIA</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>SE REALIZA VISITA MÉDICA DOMICILIARIA A PACIENTE FEMENINA DE <span class="edit">XX</span> AÑOS POR <span class="edit">[ESPECIFICAR MOTIVO: CONTROL DE ENFERMEDAD CRÓNICA, INCAPACIDAD DE DESPLAZAMIENTO, EVALUACIÓN POSTERIOR A ALTA HOSPITALARIA, ETC.]</span>. SE EVALÚA ESTADO GENERAL, SIGNOS VITALES Y CONDICIONES DEL ENTORNO DOMICILIARIO. SE INDAGA ANTECEDENTES RELEVANTES, ADHERENCIA A TRATAMIENTO Y PRESENCIA DE SÍNTOMAS DE ALARMA. PACIENTE O FAMILIAR A CARGO RECIBE CONSEJERÍA SOBRE MEDIDAS DE CUIDADO Y SIGNOS DE ALERTA PARA ACUDIR A SERVICIO DE SALUD.</p>
+
+        <h3>Evolución:</h3>
+        <p>SE REALIZA VISITA MÉDICA DOMICILIARIA. SE EVALÚA PACIENTE EN SU ENTORNO, ENCONTRÁNDOSE <span class="edit">[ESPECIFICAR: ALERTA, ORIENTADA, SIN SIGNOS DE DIFICULTAD RESPIRATORIA, ETC.]</span>. SIGNOS VITALES DENTRO DE PARÁMETROS NORMALES <span class="edit">(O ESPECIFICAR ALTERACIONES)</span>. EXAMEN FÍSICO SIN HALLAZGOS PATOLÓGICOS RELEVANTES <span class="edit">(O DESCRIBIR LOS HALLAZGOS ANORMALES)</span>. SE REVISAN MEDICAMENTOS EN USO Y SE CONFIRMA ADHERENCIA AL TRATAMIENTO. SE BRINDA CONSEJERÍA SOBRE MEDIDAS DE CUIDADO, SIGNOS DE ALARMA Y NECESIDAD DE SEGUIMIENTO. SE REGISTRAN INDICACIONES Y PLAN DE MANEJO SEGÚN DIAGNÓSTICO. PACIENTE QUEDA EN BUENAS CONDICIONES GENERALES AL FINALIZAR LA VISITA.</p>
+      `,
+      hombre: `
+        <h3>Motivo de consulta:</h3>
+        <p>VISITA DOMICILIARIA</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>SE REALIZA VISITA MÉDICA DOMICILIARIA A PACIENTE MASCULINO DE <span class="edit">XX</span> AÑOS POR <span class="edit">[ESPECIFICAR MOTIVO: CONTROL DE ENFERMEDAD CRÓNICA, INCAPACIDAD DE DESPLAZAMIENTO, EVALUACIÓN POSTERIOR A ALTA HOSPITALARIA, ETC.]</span>. SE EVALÚA ESTADO GENERAL, SIGNOS VITALES Y CONDICIONES DEL ENTORNO DOMICILIARIO. SE INDAGA ANTECEDENTES RELEVANTES, ADHERENCIA A TRATAMIENTO Y PRESENCIA DE SÍNTOMAS DE ALARMA. PACIENTE O FAMILIAR A CARGO RECIBE CONSEJERÍA SOBRE MEDIDAS DE CUIDADO Y SIGNOS DE ALERTA PARA ACUDIR A SERVICIO DE SALUD.</p>
+
+        <h3>Evolución:</h3>
+        <p>SE REALIZA VISITA MÉDICA DOMICILIARIA. SE EVALÚA PACIENTE EN SU ENTORNO, ENCONTRÁNDOSE <span class="edit">[ESPECIFICAR: ALERTA, ORIENTADO, SIN SIGNOS DE DIFICULTAD RESPIRATORIA, ETC.]</span>. SIGNOS VITALES DENTRO DE PARÁMETROS NORMALES <span class="edit">(O ESPECIFICAR ALTERACIONES)</span>. EXAMEN FÍSICO SIN HALLAZGOS PATOLÓGICOS RELEVANTES <span class="edit">(O DESCRIBIR LOS HALLAZGOS ANORMALES)</span>. SE REVISAN MEDICAMENTOS EN USO Y SE CONFIRMA ADHERENCIA AL TRATAMIENTO. SE BRINDA CONSEJERÍA SOBRE MEDIDAS DE CUIDADO, SIGNOS DE ALARMA Y NECESIDAD DE SEGUIMIENTO. SE REGISTRAN INDICACIONES Y PLAN DE MANEJO SEGÚN DIAGNÓSTICO. PACIENTE QUEDA EN BUENAS CONDICIONES GENERALES AL FINALIZAR LA VISITA.</p>
+      `
+    }
+  },
+
+  /* ---- 19. FICHA FAMILIAR ---- */
+  'ficha-familiar': {
+    title: 'Ficha familiar',
+    sub: 'Plantilla extramural · Actualización de ficha familiar',
+    content: {
+      mujer: `
+        <h3>Motivo de consulta:</h3>
+        <p>ACTUALIZACIÓN DE FICHA FAMILIAR</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>SE REALIZA VISITA MÉDICA DOMICILIARIA A PACIENTE FEMENINA DE <span class="edit">XX</span> AÑOS PARA ACTUALIZACIÓN DE FICHA FAMILIAR. PACIENTE REFIERE <span class="edit">[RESUMIR SÍNTOMAS ACTUALES O MOTIVO, APP]</span>. SE EVALÚA ESTADO GENERAL, SIGNOS VITALES Y CONDICIONES DEL ENTORNO DOMICILIARIO. SE INDAGA ANTECEDENTES RELEVANTES, ADHERENCIA A TRATAMIENTO Y PRESENCIA DE SÍNTOMAS DE ALARMA. PACIENTE O FAMILIAR A CARGO RECIBE CONSEJERÍA SOBRE MEDIDAS DE CUIDADO Y SIGNOS DE ALERTA PARA ACUDIR A SERVICIO DE SALUD.</p>
+
+        <h3>Evolución:</h3>
+        <p>SE REALIZÓ VISITA DOMICILIARIA A PACIENTE DE <span class="edit">XX</span> AÑOS, <span class="edit">(DETALLAR HALLAZGOS EN EXAMEN FÍSICO Y CONDICIONES ESPECIALES DE DOMICILIO)</span>. HEMODINÁMICAMENTE ESTABLE, SIGNOS VITALES NORMALES. GRUPO DE DISPENSARIZACIÓN: <span class="edit">XX</span></p>
+
+        <div class="tpl-tip"><strong>EL RESTO DE LA HISTORIA ES IGUAL QUE UN EXAMEN NORMAL,</strong> se debe subir una historia de cada miembro de la familia examinado en la visita.</div>
+      `,
+      hombre: `
+        <h3>Motivo de consulta:</h3>
+        <p>ACTUALIZACIÓN DE FICHA FAMILIAR</p>
+
+        <h3>Enfermedad actual:</h3>
+        <p>SE REALIZA VISITA MÉDICA DOMICILIARIA A PACIENTE MASCULINO DE <span class="edit">XX</span> AÑOS PARA ACTUALIZACIÓN DE FICHA FAMILIAR. PACIENTE REFIERE <span class="edit">[RESUMIR SÍNTOMAS ACTUALES O MOTIVO, APP]</span>. SE EVALÚA ESTADO GENERAL, SIGNOS VITALES Y CONDICIONES DEL ENTORNO DOMICILIARIO. SE INDAGA ANTECEDENTES RELEVANTES, ADHERENCIA A TRATAMIENTO Y PRESENCIA DE SÍNTOMAS DE ALARMA. PACIENTE O FAMILIAR A CARGO RECIBE CONSEJERÍA SOBRE MEDIDAS DE CUIDADO Y SIGNOS DE ALERTA PARA ACUDIR A SERVICIO DE SALUD.</p>
+
+        <h3>Evolución:</h3>
+        <p>SE REALIZÓ VISITA DOMICILIARIA A PACIENTE DE <span class="edit">XX</span> AÑOS, <span class="edit">(DETALLAR HALLAZGOS EN EXAMEN FÍSICO Y CONDICIONES ESPECIALES DE DOMICILIO)</span>. HEMODINÁMICAMENTE ESTABLE, SIGNOS VITALES NORMALES. GRUPO DE DISPENSARIZACIÓN: <span class="edit">XX</span></p>
+
+        <div class="tpl-tip"><strong>EL RESTO DE LA HISTORIA ES IGUAL QUE UN EXAMEN NORMAL,</strong> se debe subir una historia de cada miembro de la familia examinado en la visita.</div>
+      `
+    }
+  }
+
+  /* ✅ Todas las plantillas completadas (20 total) */
 };
 
 /* ============================================================
@@ -859,13 +2073,17 @@ document.getElementById('btn-copy').addEventListener('click', () => {
   // Convert HTML to plain text preserving structure
   const tempDiv = document.createElement('div');
   tempDiv.innerHTML = html;
-  // Replace h3 with line breaks + uppercase, p with paragraphs
   let text = '';
-  tempDiv.querySelectorAll('h3, p').forEach(el => {
-    if (el.tagName === 'H3') {
-      text += '\n\n' + el.textContent.trim().toUpperCase() + '\n';
-    } else {
-      text += el.textContent.trim() + '\n\n';
+  tempDiv.childNodes.forEach(node => {
+    if (node.nodeType !== 1) return;
+    const tag = node.tagName;
+    if (tag === 'H3') {
+      text += '\n\n' + node.textContent.trim().toUpperCase() + '\n';
+    } else if (tag === 'P') {
+      text += node.textContent.trim() + '\n\n';
+    } else if (node.classList && node.classList.contains('tpl-tip')) {
+      // Format tip card with bullet markers
+      text += '\n💡 ' + node.textContent.trim().replace(/\s+/g, ' ') + '\n\n';
     }
   });
   text = text.trim();
