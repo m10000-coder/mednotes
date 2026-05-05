@@ -1,11 +1,741 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Mednotes</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MED NOTES® · Plataforma de Herramientas Médicas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --primary-soft: #dbeafe;
+    --text: #0f172a;
+    --text-light: #475569;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --bg: #f1f5f9;
+
+    /* Category palettes */
+    --c-clinica:     #2563eb;  --c-clinica-soft:     #dbeafe;  --c-clinica-bg:     #eff6ff;
+    --c-fichas:      #0d9488;  --c-fichas-soft:      #ccfbf1;  --c-fichas-bg:      #f0fdfa;
+    --c-obstetricia: #be185d;  --c-obstetricia-soft: #fce7f3;  --c-obstetricia-bg: #fdf2f8;
+    --c-pediatria:   #ea580c;  --c-pediatria-soft:   #ffedd5;  --c-pediatria-bg:   #fff7ed;
+    --c-vacunas:     #15803d;  --c-vacunas-soft:     #dcfce7;  --c-vacunas-bg:     #f0fdf4;
+    --c-calc:        #7c3aed;  --c-calc-soft:        #ede9fe;  --c-calc-bg:        #f5f3ff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    font-size: 14px;
+  }
+
+  /* ============ Layout — flexbox for robustness ============ */
+  .app {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ============ Sidebar ============ */
+  .sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    background: #ffffff;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    transition: width .25s ease;
+  }
+  .app.collapsed .sidebar { width: 60px; }
+
+  .sidebar-header {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #fff 0%, var(--primary-soft) 280%);
+  }
+  .brand-icon {
+    width: 38px; height: 38px;
+    background: #000; color: #fff;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font: 800 18px 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+  }
+  .brand-text { flex: 1; min-width: 0; overflow: hidden; }
+  .brand-text .name {
+    font: 800 16px 'Inter', sans-serif;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+  .brand-text .name .reg { font-size: 8px; vertical-align: top; opacity: 0.6; }
+  .brand-text .sub {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.2;
+    margin-top: 2px;
+    white-space: nowrap;
+  }
+  .toggle-sidebar {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 13px;
+    transition: all .15s;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .toggle-sidebar:hover { background: var(--primary-soft); color: var(--primary); }
+
+  .app.collapsed .brand-text { display: none; }
+  .app.collapsed .toggle-sidebar { transform: rotate(180deg); }
+  .app.collapsed .nav-label { display: none; }
+  .app.collapsed .nav-section-title { display: none; }
+  .app.collapsed .nav-section { padding: 6px 4px; }
+  .app.collapsed .nav-item {
+    padding: 11px;
+    justify-content: center;
+  }
+  .app.collapsed .nav-item .icon { margin-right: 0; }
+
+  .sidebar-search {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .sidebar-search input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font: 500 13px 'Inter', sans-serif;
+    background: var(--surface-alt);
+    color: var(--text);
+    transition: border-color .15s;
+  }
+  .sidebar-search input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: #fff;
+  }
+  .app.collapsed .sidebar-search { display: none; }
+
+  .nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0 16px;
+    min-height: 0;
+  }
+  .nav::-webkit-scrollbar { width: 6px; }
+  .nav::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
+  .nav-section { padding: 6px 14px; position: relative; }
+  .nav-section-title {
+    font-size: 10.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    padding: 10px 10px 4px;
+    border-top: 1px dashed var(--border);
+    margin-top: 4px;
+  }
+  .nav-section:first-of-type .nav-section-title {
+    border-top: none;
+    margin-top: 0;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 9px 12px;
+    border-radius: 8px;
+    color: var(--text);
+    cursor: pointer;
+    transition: all .12s;
+    font: 600 13px 'Inter', sans-serif;
+    margin-bottom: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    border-left: 3px solid transparent;
+  }
+  .nav-item .icon {
+    font-size: 16px;
+    margin-right: 10px;
+    flex-shrink: 0;
+    width: 20px;
+    text-align: center;
+  }
+  .nav-item .nav-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12.5px;
+  }
+  .nav-item:hover { background: var(--surface-alt); }
+
+  /* Per-category coloring */
+  .nav-item.cat-clinica:hover     { background: var(--c-clinica-bg);     color: var(--c-clinica); }
+  .nav-item.cat-fichas:hover      { background: var(--c-fichas-bg);      color: var(--c-fichas); }
+  .nav-item.cat-obstetricia:hover { background: var(--c-obstetricia-bg); color: var(--c-obstetricia); }
+  .nav-item.cat-pediatria:hover   { background: var(--c-pediatria-bg);   color: var(--c-pediatria); }
+  .nav-item.cat-vacunas:hover     { background: var(--c-vacunas-bg);     color: var(--c-vacunas); }
+  .nav-item.cat-calc:hover        { background: var(--c-calc-bg);        color: var(--c-calc); }
+
+  .nav-item.cat-clinica.active     { background: var(--c-clinica-soft);     color: var(--c-clinica);     border-left-color: var(--c-clinica); font-weight: 700; }
+  .nav-item.cat-fichas.active      { background: var(--c-fichas-soft);      color: var(--c-fichas);      border-left-color: var(--c-fichas); font-weight: 700; }
+  .nav-item.cat-obstetricia.active { background: var(--c-obstetricia-soft); color: var(--c-obstetricia); border-left-color: var(--c-obstetricia); font-weight: 700; }
+  .nav-item.cat-pediatria.active   { background: var(--c-pediatria-soft);   color: var(--c-pediatria);   border-left-color: var(--c-pediatria); font-weight: 700; }
+  .nav-item.cat-vacunas.active     { background: var(--c-vacunas-soft);     color: var(--c-vacunas);     border-left-color: var(--c-vacunas); font-weight: 700; }
+  .nav-item.cat-calc.active        { background: var(--c-calc-soft);        color: var(--c-calc);        border-left-color: var(--c-calc); font-weight: 700; }
+
+  .nav-item.home:hover { background: var(--primary-soft); color: var(--primary); }
+  .nav-item.home.active {
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+    font-weight: 700;
+    border-left-color: var(--primary);
+  }
+
+  /* Section title color tags */
+  .nav-section-title.cat-clinica     { color: var(--c-clinica); }
+  .nav-section-title.cat-fichas      { color: var(--c-fichas); }
+  .nav-section-title.cat-obstetricia { color: var(--c-obstetricia); }
+  .nav-section-title.cat-pediatria   { color: var(--c-pediatria); }
+  .nav-section-title.cat-vacunas     { color: var(--c-vacunas); }
+  .nav-section-title.cat-calc        { color: var(--c-calc); }
+
+  .nav-item.hidden { display: none !important; }
+
+  /* ============ Main ============ */
+  .main {
+    flex: 1;
+    min-width: 0;
+    background: var(--bg);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .main-header {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 22px;
+    display: flex; align-items: center; gap: 14px;
+    flex-shrink: 0;
+  }
+  .main-header h1 {
+    font-size: 17px; font-weight: 800;
+    color: var(--text); flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .main-header .sub {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-left: 8px;
+    white-space: nowrap;
+  }
+  .external-btn {
+    padding: 7px 14px;
+    background: var(--surface-alt);
+    color: var(--text);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    font: 600 12px 'Inter', sans-serif;
+    transition: all .15s;
+    display: inline-flex; align-items: center; gap: 4px;
+    white-space: nowrap;
+  }
+  .external-btn:hover {
+    background: var(--primary-soft);
+    border-color: var(--primary);
+    color: var(--primary-dark);
+  }
+
+  .frame-wrap {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    background: var(--bg);
+    position: relative;
+  }
+  iframe.tool-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #fff;
+    display: block;
+  }
+
+  /* ============ Welcome screen ============ */
+  .welcome {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 32px 28px 60px;
+  }
+  .welcome-header {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    color: #fff;
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+  }
+  .welcome-header h2 {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+  .welcome-header p { font-size: 15px; opacity: 0.92; max-width: 640px; line-height: 1.5; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 900px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+  .stat-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px 20px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .stat-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .stat-icon.blue   { background: var(--c-clinica-soft); }
+  .stat-icon.green  { background: var(--c-vacunas-soft); }
+  .stat-icon.orange { background: var(--c-pediatria-soft); }
+  .stat-icon.purple { background: var(--c-calc-soft); }
+  .stat-card .info .num {
+    font: 800 22px 'Inter', sans-serif;
+    color: var(--text);
+    line-height: 1;
+  }
+  .stat-card .info .lbl {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .section-h {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    margin-top: 8px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    display: inline-block;
+  }
+  .section-h.cat-clinica     { background: var(--c-clinica-soft);     color: var(--c-clinica); }
+  .section-h.cat-fichas      { background: var(--c-fichas-soft);      color: var(--c-fichas); }
+  .section-h.cat-obstetricia { background: var(--c-obstetricia-soft); color: var(--c-obstetricia); }
+  .section-h.cat-pediatria   { background: var(--c-pediatria-soft);   color: var(--c-pediatria); }
+  .section-h.cat-vacunas     { background: var(--c-vacunas-soft);     color: var(--c-vacunas); }
+  .section-h.cat-calc        { background: var(--c-calc-soft);        color: var(--c-calc); }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px;
+    margin-bottom: 26px;
+  }
+  .tool-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px 20px;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--border);
+    cursor: pointer;
+    transition: all .18s;
+    position: relative;
+    overflow: hidden;
+  }
+  .tool-card.cat-clinica     { border-left-color: var(--c-clinica); }
+  .tool-card.cat-fichas      { border-left-color: var(--c-fichas); }
+  .tool-card.cat-obstetricia { border-left-color: var(--c-obstetricia); }
+  .tool-card.cat-pediatria   { border-left-color: var(--c-pediatria); }
+  .tool-card.cat-vacunas     { border-left-color: var(--c-vacunas); }
+  .tool-card.cat-calc        { border-left-color: var(--c-calc); }
+
+  .tool-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  }
+  .tool-card.cat-clinica:hover     { box-shadow: 0 6px 20px rgba(37,99,235,0.16); }
+  .tool-card.cat-fichas:hover      { box-shadow: 0 6px 20px rgba(13,148,136,0.16); }
+  .tool-card.cat-obstetricia:hover { box-shadow: 0 6px 20px rgba(190,24,93,0.16); }
+  .tool-card.cat-pediatria:hover   { box-shadow: 0 6px 20px rgba(234,88,12,0.16); }
+  .tool-card.cat-vacunas:hover     { box-shadow: 0 6px 20px rgba(21,128,61,0.16); }
+  .tool-card.cat-calc:hover        { box-shadow: 0 6px 20px rgba(124,58,237,0.16); }
+
+  .tool-card .ti {
+    font-size: 26px;
+    margin-bottom: 8px;
+  }
+  .tool-card h3 {
+    font-size: 14.5px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .tool-card p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* ============ Mobile ============ */
+  @media (max-width: 800px) {
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      transform: translateX(-100%);
+      transition: transform .25s ease;
+      z-index: 100;
+      box-shadow: 4px 0 24px rgba(0,0,0,0.10);
+    }
+    .app.mobile-open .sidebar { transform: translateX(0); }
+    .main { width: 100%; }
+    .mobile-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 99;
+    }
+    .app.mobile-open .mobile-overlay { display: block; }
+    .menu-mobile-btn { display: inline-flex !important; }
+  }
+  .menu-mobile-btn {
+    display: none;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+</style>
 </head>
 <body>
-    <h1>Hola, esto es Mednotes</h1>
-    <p>Sitio en construcción.</p>
+
+<div class="app" id="app">
+  <div class="mobile-overlay" id="mobile-overlay"></div>
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand-icon">M</div>
+      <div class="brand-text">
+        <div class="name">MED NOTES<span class="reg">®</span></div>
+        <div class="sub">Plataforma de Herramientas</div>
+      </div>
+      <button class="toggle-sidebar" id="btn-toggle" title="Colapsar/expandir">‹</button>
+    </div>
+
+    <div class="sidebar-search">
+      <input type="text" id="search" placeholder="🔍 Buscar herramienta...">
+    </div>
+
+    <nav class="nav" id="nav">
+      <!-- Built by JS -->
+    </nav>
+  </aside>
+
+  <!-- ========== MAIN ========== -->
+  <main class="main">
+    <div class="main-header">
+      <button class="menu-mobile-btn" id="btn-mobile-menu">☰</button>
+      <h1 id="page-title">Inicio</h1>
+      <span class="sub" id="page-sub">Plataforma integrada</span>
+      <a class="external-btn" id="btn-external" href="#" target="_blank" style="display:none;">↗ Abrir en pestaña nueva</a>
+    </div>
+
+    <div class="frame-wrap" id="frame-wrap">
+      <div class="welcome" id="welcome">
+        <div class="welcome-header">
+          <h2>👋 Bienvenido a MED NOTES®</h2>
+          <p>Plataforma integrada con calculadoras clínicas, plantillas, generadores y herramientas de apoyo
+          para la práctica médica diaria. Selecciona una herramienta del menú lateral o de las categorías abajo.</p>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon purple">🧮</div>
+            <div class="info"><div class="num" id="ct-calc">0</div><div class="lbl">Calculadoras</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon blue">📋</div>
+            <div class="info"><div class="num" id="ct-doc">0</div><div class="lbl">Atención y registros</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">💉</div>
+            <div class="info"><div class="num" id="ct-vac">0</div><div class="lbl">Vacunación</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange">🤰</div>
+            <div class="info"><div class="num" id="ct-ob">0</div><div class="lbl">Obstetricia / Pediatría</div></div>
+          </div>
+        </div>
+
+        <div id="welcome-tools"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const TOOLS = [
+  // ATENCIÓN CLÍNICA
+  { id: 'recetas', file: 'generador_recetas_medicas.html', cat: 'clinica',
+    icon: '💊', name: 'Generador de Recetas', desc: 'Recetas médicas A5 con caduceo y firma' },
+  { id: 'plantillas', file: 'plantillas_medicas_final.html', cat: 'clinica',
+    icon: '📝', name: 'Plantillas Médicas', desc: '24 plantillas listas para usar' },
+  { id: 'informe-psico', file: 'informe_medico_psicologico_008.html', cat: 'clinica',
+    icon: '🧠', name: 'Informe Médico Psicológico', desc: 'Formato 008 con demos clínicas' },
+  { id: 'certificados', file: 'certificados_medicos.html', cat: 'clinica',
+    icon: '📜', name: 'Certificados Médicos', desc: 'Certificados de salud' },
+
+  // FICHAS Y REGISTROS
+  { id: 'dispensa', file: 'clasificacion_riesgo_dispensarizacion.html', cat: 'fichas',
+    icon: '📊', name: 'Dispensarización + Riesgo', desc: 'Clasificación familiar y grupos' },
+
+  // OBSTETRICIA
+  { id: 'prenatal', file: 'control_prenatal.html', cat: 'obstetricia',
+    icon: '🤰', name: 'Control Prenatal', desc: 'Guía clínica MSP / OMS / ALARM' },
+  { id: 'fpp', file: 'calculadora_fpp_eg.html', cat: 'obstetricia',
+    icon: '🍼', name: 'FPP y Edad Gestacional', desc: 'Naegele y trimestres' },
+  { id: 'score-mama', file: 'score_mama.html', cat: 'obstetricia',
+    icon: '🚨', name: 'Score MAMA', desc: 'Alerta materna obstétrica' },
+  { id: 'riesgo-obs', file: 'calculadora_riesgo_obstetrico.html', cat: 'obstetricia',
+    icon: '⚠️', name: 'Riesgo Obstétrico', desc: 'Evaluación de riesgo en gestantes' },
+
+  // PEDIATRÍA
+  { id: 'nino-sano', file: 'control_nino_sano.html', cat: 'pediatria',
+    icon: '👶', name: 'Control del Niño Sano', desc: 'Esquema por edades 0-15a' },
+  { id: 'dosis-ped', file: 'calculadora_dosis_pediatricas.html', cat: 'pediatria',
+    icon: '💊', name: 'Dosis Pediátricas', desc: 'Cálculo de dosis por peso' },
+  { id: 'rehidra', file: 'calculadora_rehidratacion_aiepi.html', cat: 'pediatria',
+    icon: '💧', name: 'Rehidratación AIEPI', desc: 'Plan A, B y C' },
+
+  // VACUNACIÓN
+  { id: 'esquemas', file: 'esquemas_vacunacion.html', cat: 'vacunas',
+    icon: '📅', name: 'Esquemas de Vacunación', desc: 'Calendarios completos' },
+  { id: 'eni', file: 'vacunas_eni.html', cat: 'vacunas',
+    icon: '🩹', name: 'Vacunas ENI', desc: 'Estrategia Nacional de Inmunización' },
+  { id: 'esquema25', file: 'esquema_2025.html', cat: 'vacunas',
+    icon: '📌', name: 'Esquema 2025', desc: 'Esquema vigente actualizado' },
+  { id: 'tardio', file: 'calculadora_tardio.html', cat: 'vacunas',
+    icon: '⏰', name: 'Vacunación Tardía', desc: 'Esquema atrasado' },
+  { id: 'consultor', file: 'consultor_vacunas.html', cat: 'vacunas',
+    icon: '🔍', name: 'Consultor de Vacunas', desc: 'Consulta rápida' },
+  { id: 'semaforo', file: 'semaforo_vacunas.html', cat: 'vacunas',
+    icon: '🚦', name: 'Semáforo de Vacunas', desc: 'Estado al día' },
+  { id: 'proxima', file: 'calculadora_proxima_dosis.html', cat: 'vacunas',
+    icon: '📆', name: 'Próxima Dosis', desc: 'Calendario por aplicación' },
+  { id: 'esavi', file: 'esavi.html', cat: 'vacunas',
+    icon: '⚠️', name: 'ESAVI', desc: 'Eventos adversos post-vacunales' },
+  { id: 'cobertura', file: 'calculadora_coberturas.html', cat: 'vacunas',
+    icon: '📈', name: 'Coberturas', desc: 'Cálculo de coberturas' },
+  { id: 'abasto', file: 'calculadora_abastecimiento.html', cat: 'vacunas',
+    icon: '📦', name: 'Abastecimiento', desc: 'Cadena de frío y stock' },
+
+  // CALCULADORAS
+  { id: 'imc-find', file: 'calculadoras_imc_findrisc.html', cat: 'calc',
+    icon: '⚖️', name: 'IMC + FINDRISC', desc: 'Antropometría y diabetes T2' },
+  { id: 'dilucion', file: 'calculadora_dilucion.html', cat: 'calc',
+    icon: '🧪', name: 'Diluciones de Soluciones', desc: 'C1V1=C2V2 con presets' },
+  { id: 'uci', file: 'calculadora_infusion_uci.html', cat: 'calc',
+    icon: '💉', name: 'Infusión en UCI', desc: 'ml/h ↔ mcg/kg/min' },
+  { id: 'balance', file: 'balance_hidrico.html', cat: 'calc',
+    icon: '💧', name: 'Balance Hídrico', desc: 'Pérdidas, ingesta y egresos' }
+];
+
+const CATEGORIES = [
+  { id: 'clinica',     label: 'Atención Clínica' },
+  { id: 'fichas',      label: 'Fichas y Registros' },
+  { id: 'obstetricia', label: 'Obstetricia' },
+  { id: 'pediatria',   label: 'Pediatría' },
+  { id: 'vacunas',     label: 'Vacunación' },
+  { id: 'calc',        label: 'Calculadoras' }
+];
+
+const $ = id => document.getElementById(id);
+
+function buildNav() {
+  const nav = $('nav');
+  nav.innerHTML = '';
+
+  const home = document.createElement('div');
+  home.className = 'nav-section';
+  home.innerHTML = `
+    <div class="nav-item home active" data-tool="">
+      <span class="icon">🏥</span><span class="nav-label">Inicio</span>
+    </div>`;
+  nav.appendChild(home);
+
+  CATEGORIES.forEach(cat => {
+    const tools = TOOLS.filter(t => t.cat === cat.id);
+    if (!tools.length) return;
+    const sec = document.createElement('div');
+    sec.className = 'nav-section';
+    sec.innerHTML = `<div class="nav-section-title cat-${cat.id}">${cat.label}</div>`;
+    tools.forEach(t => {
+      const item = document.createElement('div');
+      item.className = `nav-item cat-${t.cat}`;
+      item.dataset.tool = t.id;
+      item.dataset.search = (t.name + ' ' + t.desc).toLowerCase();
+      item.innerHTML = `
+        <span class="icon">${t.icon}</span>
+        <span class="nav-label">${t.name}</span>`;
+      sec.appendChild(item);
+    });
+    nav.appendChild(sec);
+  });
+}
+
+function buildWelcome() {
+  const cont = $('welcome-tools');
+  cont.innerHTML = '';
+  CATEGORIES.forEach(cat => {
+    const tools = TOOLS.filter(t => t.cat === cat.id);
+    if (!tools.length) return;
+    const h = document.createElement('h3');
+    h.className = `section-h cat-${cat.id}`;
+    h.textContent = cat.label;
+    cont.appendChild(h);
+
+    const grid = document.createElement('div');
+    grid.className = 'tools-grid';
+    tools.forEach(t => {
+      const card = document.createElement('div');
+      card.className = `tool-card cat-${t.cat}`;
+      card.dataset.tool = t.id;
+      card.innerHTML = `
+        <div class="ti">${t.icon}</div>
+        <h3>${t.name}</h3>
+        <p>${t.desc}</p>`;
+      grid.appendChild(card);
+    });
+    cont.appendChild(grid);
+  });
+
+  $('ct-calc').textContent = TOOLS.filter(t => t.cat === 'calc').length;
+  $('ct-doc').textContent  = TOOLS.filter(t => t.cat === 'clinica' || t.cat === 'fichas').length;
+  $('ct-vac').textContent  = TOOLS.filter(t => t.cat === 'vacunas').length;
+  $('ct-ob').textContent   = TOOLS.filter(t => t.cat === 'obstetricia' || t.cat === 'pediatria').length;
+}
+
+function loadTool(id) {
+  const wrap = $('frame-wrap');
+  Array.from(wrap.querySelectorAll('iframe.tool-frame')).forEach(f => f.remove());
+  const welcome = $('welcome');
+
+  if (!id) {
+    welcome.style.display = 'block';
+    $('page-title').textContent = 'Inicio';
+    $('page-sub').textContent = 'Plataforma integrada';
+    $('btn-external').style.display = 'none';
+    setActive('');
+    if (history.replaceState) history.replaceState(null, '', '#');
+    return;
+  }
+
+  const tool = TOOLS.find(t => t.id === id);
+  if (!tool) return;
+  welcome.style.display = 'none';
+  const iframe = document.createElement('iframe');
+  iframe.className = 'tool-frame';
+  iframe.src = tool.file;
+  iframe.title = tool.name;
+  wrap.appendChild(iframe);
+  $('page-title').textContent = tool.icon + ' ' + tool.name;
+  $('page-sub').textContent = tool.desc;
+  const ext = $('btn-external');
+  ext.href = tool.file;
+  ext.style.display = 'inline-flex';
+  setActive(id);
+  if (history.replaceState) history.replaceState(null, '', '#' + id);
+}
+
+function setActive(id) {
+  document.querySelectorAll('.nav-item').forEach(i =>
+    i.classList.toggle('active', (i.dataset.tool || '') === id));
+}
+
+document.body.addEventListener('click', e => {
+  const navItem = e.target.closest('.nav-item');
+  if (navItem) {
+    loadTool(navItem.dataset.tool || '');
+    document.getElementById('app').classList.remove('mobile-open');
+    return;
+  }
+  const card = e.target.closest('.tool-card');
+  if (card) loadTool(card.dataset.tool);
+});
+
+$('search').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase().trim();
+  document.querySelectorAll('.nav-item').forEach(item => {
+    if (!item.dataset.search) return;
+    item.classList.toggle('hidden', !!q && !item.dataset.search.includes(q));
+  });
+});
+
+$('btn-toggle').addEventListener('click', () => $('app').classList.toggle('collapsed'));
+$('btn-mobile-menu').addEventListener('click', () => $('app').classList.toggle('mobile-open'));
+$('mobile-overlay').addEventListener('click', () => $('app').classList.remove('mobile-open'));
+
+buildNav();
+buildWelcome();
+
+const hash = window.location.hash.replace('#', '');
+if (hash && TOOLS.find(t => t.id === hash)) loadTool(hash);
+</script>
+
 </body>
 </html>
