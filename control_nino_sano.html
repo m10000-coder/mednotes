@@ -211,6 +211,28 @@
     border-radius: 3px;
     font-weight: 700;
   }
+  /* Vaccine list — uses syringe icon instead of check */
+  .vaccine-list {
+    list-style: none;
+  }
+  .vaccine-list li {
+    position: relative;
+    padding: 6px 0 6px 28px;
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .vaccine-list li::before {
+    content: '💉';
+    position: absolute; left: 0; top: 6px;
+    font-size: 14px;
+  }
+  .vaccine-list li strong {
+    background: var(--yellow-bg);
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-weight: 700;
+  }
 
   .sub-list {
     list-style: none;
@@ -283,7 +305,7 @@
     line-height: 1.5;
   }
   .vac-card li::before {
-    content: '✅';
+    content: '💉';
     position: absolute; left: 0; top: 4px;
     font-size: 12px;
   }
@@ -713,13 +735,15 @@
         <button class="age-chip g-1to6"        data-age="m5">    <span class="dot"></span> 5 meses</button>
         <button class="age-chip g-1to6"        data-age="m6">    <span class="dot"></span> 6 meses</button>
         <button class="age-chip g-7to12"       data-age="m7">    <span class="dot"></span> 7 meses</button>
-        <button class="age-chip g-7to12"       data-age="m9">    <span class="dot"></span> 9 meses</button>
+        <button class="age-chip g-7to12"       data-age="m9">    <span class="dot"></span> 8-11 meses</button>
         <button class="age-chip g-7to12"       data-age="m12">   <span class="dot"></span> 12 meses</button>
+        <button class="age-chip g-2to5"        data-age="m13_15"><span class="dot"></span> 13-15 meses</button>
+        <button class="age-chip g-2to5"        data-age="m16_17"><span class="dot"></span> 16-17 meses</button>
         <button class="age-chip g-2to5"        data-age="m18">   <span class="dot"></span> 18 meses</button>
-        <button class="age-chip g-2to5"        data-age="y2">    <span class="dot"></span> 2 años</button>
-        <button class="age-chip g-2to5"        data-age="y5">    <span class="dot"></span> 5 años</button>
-        <button class="age-chip g-ado"         data-age="y9">    <span class="dot"></span> 9 años</button>
-        <button class="age-chip g-ado"         data-age="ado">   <span class="dot"></span> Adolescente 12-15 a</button>
+        <button class="age-chip g-2to5"        data-age="m19_23"><span class="dot"></span> 19-23 meses</button>
+        <button class="age-chip g-2to5"        data-age="m24">   <span class="dot"></span> 24 meses</button>
+        <button class="age-chip g-2to5"        data-age="y2">    <span class="dot"></span> 2-5 años</button>
+        <button class="age-chip g-ado"         data-age="ado">   <span class="dot"></span> Adolescente 9-15 a</button>
       </div>
     </div>
 
@@ -748,18 +772,18 @@
         <div>
           <div style="font-size:11px; font-weight:700; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:5px; font-family:'JetBrains Mono', monospace;">Formato</div>
           <div class="sex-toggle" id="who-format">
-            <button class="active" data-format="de">📐 Desviación Estándar (DE)</button>
-            <button data-format="zscore">📊 Z-score</button>
+            <button class="active" data-format="zscore">🎯 Z-score</button>
+            <button data-format="percentil">📊 Percentiles</button>
           </div>
         </div>
       </div>
 
       <p class="calc-sub" style="margin-top:14px; font-size:12px;" id="who-legend-text">
-        <span class="z-zone z-3neg">-3 DE</span> Severo &nbsp;
-        <span class="z-zone z-2neg">-2 DE</span> Bajo &nbsp;
-        <span class="z-zone z-norm">Mediana</span> &nbsp;
-        <span class="z-zone z-2pos">+2 DE</span> Alto &nbsp;
-        <span class="z-zone z-3pos">+3 DE</span> Severo
+        <span class="z-zone z-3neg">Z = -3</span> Severo &nbsp;
+        <span class="z-zone z-2neg">Z = -2</span> Bajo &nbsp;
+        <span class="z-zone z-norm">Mediana (Z = 0)</span> &nbsp;
+        <span class="z-zone z-2pos">Z = +2</span> Alto &nbsp;
+        <span class="z-zone z-3pos">Z = +3</span> Severo
       </p>
     </div>
 
@@ -884,8 +908,20 @@
       </table>
 
       <div class="tip-card" style="margin-top:14px">
-        <strong>Corrección por altitud:</strong> Se resta del valor medido para obtener la Hb corregida, y luego se compara con la tabla. La OMS recomienda corregir desde los 1000 msnm (aprox. -0.2 g/dL por cada 500 m).<br>
-        Ej. en Quito (2850 m) la corrección es ≈ -1.6 g/dL.
+        <strong>Corrección por altitud:</strong> Se resta del valor medido para obtener la Hb corregida, y luego se compara con la tabla. La OMS recomienda corregir desde los 1000 msnm.<br>
+        Fórmula utilizada (Cohen &amp; Haas, 1999 / OMS 2011):
+        <code style="background:#fff8e1; padding:2px 6px; border-radius:4px; font-family:'JetBrains Mono', monospace; font-size:12px;">Ajuste (g/dL) = -0.032 × (alt × 0.0033) + 0.022 × (alt × 0.0033)²</code>
+        <br>Ejemplos: Quito (2850 m) ≈ <strong>-1.6 g/dL</strong> · La Paz (3640 m) ≈ -2.7 g/dL · Cuenca (2560 m) ≈ -1.3 g/dL.
+      </div>
+
+      <div style="margin-top:14px; padding:12px 14px; background:#f8fafc; border:1px solid #e2e8f0; border-left:3px solid #64748b; border-radius:6px; font-size:11.5px; color:#475569; line-height:1.6;">
+        <strong style="color:#1e293b; font-size:12px;">📚 Bibliografía – Corrección por altitud:</strong>
+        <ol style="margin:8px 0 0 18px; padding:0;">
+          <li><strong>Cohen JH, Haas JD.</strong> Hemoglobin correction factors for estimating the prevalence of iron deficiency anemia in pregnant women residing at high altitudes in Bolivia. <em>Pan American Journal of Public Health</em>. 1999;6(6):392–399.</li>
+          <li><strong>WHO.</strong> Haemoglobin concentrations for the diagnosis of anaemia and assessment of severity. Vitamin and Mineral Nutrition Information System (VMNIS). Geneva: World Health Organization; 2011 (WHO/NMH/NHD/MNM/11.1).</li>
+          <li><strong>CDC.</strong> CDC criteria for anemia in children and childbearing-aged women. <em>MMWR Morb Mortal Wkly Rep</em>. 1989;38(22):400–404.</li>
+          <li><strong>MSP Ecuador.</strong> Diagnóstico y tratamiento de la anemia en el embarazo. Guía de Práctica Clínica. Quito: MSP; 2014.</li>
+        </ol>
       </div>
     </div>
 
@@ -945,9 +981,15 @@
         <table class="denver-table">
           <thead>
             <tr>
-              <th>Área</th>
-              <th>Hito de Desarrollo</th>
+              <th rowspan="2">Área</th>
+              <th rowspan="2">Hito de Desarrollo</th>
               <th colspan="4" style="text-align:center">Edad en Meses (25% – 90%)</th>
+            </tr>
+            <tr>
+              <th class="pct">25%</th>
+              <th class="pct">50%</th>
+              <th class="pct p75">75%</th>
+              <th class="pct p100">90%</th>
             </tr>
           </thead>
           <tbody id="denver-body"></tbody>
@@ -1004,7 +1046,9 @@ const PANELS = {
         '<strong>Perímetro cefálico (PC)</strong>',
         'Interpretar en <strong>curvas OMS / MSP</strong> (percentiles o z-scores)',
         'Valorar <strong>ganancia de peso</strong> (recuperación esperada al día 10–14)'
-      ]},
+      ],
+        link: '➡ Ver Tablas de crecimiento OMS (Z-score) en pestaña 📊 Tablas OMS'
+      },
       { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo, de pies a cabeza:'],
         sublist: [
           '<strong>Fontanelas:</strong> tamaño y tensión',
@@ -1027,8 +1071,8 @@ const PANELS = {
       ]},
       { title: '💉 INMUNIZACIONES (ESQUEMA MSP)', items: ['Aplicadas antes del alta hospitalaria o en primer control:'],
         sublist: [
-          '✅ <strong>BCG</strong> (previene tuberculosis grave)',
-          '✅ <strong>Hepatitis B</strong> (1.ª dosis dentro de las primeras 24 h)'
+          '<strong>BCG</strong> (previene tuberculosis grave)',
+          '<strong>Hepatitis B</strong> (1.ª dosis dentro de las primeras 24 h)'
         ]
       },
       { title: '🦷 SALUD ORAL Y SENSORIAL', items: [
@@ -1112,7 +1156,9 @@ const PANELS = {
         '<strong>Perímetro cefálico:</strong> + 1.5 cm',
         'Registrar en <strong>curvas OMS / MSP</strong> (percentiles o z-score)',
         'Interpretar el crecimiento según el patrón y alertar si hay pérdida o estancamiento'
-      ]},
+      ],
+        link: '➡ Ver Tablas de crecimiento OMS (Z-score) en pestaña 📊 Tablas OMS'
+      },
       { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo'],
         sublist: [
           '<strong>Cabeza:</strong> fontanela anterior normotensa (1–2 cm), posterior cerrada',
@@ -1440,43 +1486,64 @@ const PANELS = {
 
   m9: {
     group: 'g-7to12',
-    title: 'Niño/a · 9 meses',
-    sub: 'Diversificación alimentaria',
+    title: 'Niño/a · 8-11 meses',
+    sub: 'CONTROL DEL NIÑO SANO – 8.º al 11.º MES',
+    tip: 'Si el peso es < p3 o > p97 → evaluar riesgo nutricional y revisar técnica de lactancia.',
     sections: [
       { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
-        '<strong>Peso:</strong> incremento esperado ≈ 400 g/mes',
-        '<strong>Talla:</strong> + 1.2 cm/mes',
-        '<strong>Perímetro cefálico:</strong> ≈ 44 cm',
-        'Curvas OMS — z-score'
-      ]},
-      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico'],
+        '<strong>Peso, talla y perímetro cefálico actual</strong>',
+        'Registrar en <strong>curvas OMS / MSP</strong> (percentiles o z-score)',
+        'Interpretar el crecimiento según el patrón y alertar si hay pérdida o estancamiento'
+      ],
+        link: '➡ Ver Tablas de crecimiento OMS (Z-score) en pestaña 📊 Tablas OMS'
+      },
+      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo'],
         sublist: [
-          'Aparición de incisivos centrales superiores',
-          'Caderas y columna en posición sedente',
-          'Reflejo paracaídas presente',
-          'Visión y coordinación'
+          '<strong>Fontanela anterior:</strong> normotensa',
+          '<strong>Cabeza:</strong> buen control, se mantiene erguida',
+          '<strong>Ojos:</strong> sigue objetos, refleja interés visual',
+          '<strong>Boca:</strong> dentición inicial',
+          '<strong>Oídos:</strong> reacciona a su nombre y sonidos familiares'
         ]
       },
-      { title: '💉 INMUNIZACIONES (VERIFICAR)', items: [
-        'Esquema de los 6 meses completo',
-        'Si pendiente alguna dosis → completar',
-        'Programar SRP, Fiebre Amarilla y Varicela a los 12 meses'
+      { title: '🍼 ALIMENTACIÓN Y NUTRICIÓN', items: [
+        'Continuar <strong>lactancia materna junto a alimentación complementaria (AC)</strong>'
+      ],
+        sublist: [
+          '<strong>Textura:</strong> purés o papillas espesas, trituradas con tenedor',
+          '<strong>Frecuencia:</strong> 2–3 comidas/día + lactancia a libre demanda',
+          'Introducir nuevos alimentos de forma gradual (uno nuevo cada 3 días)'
+        ]
+      },
+      { title: '💊 SUPLEMENTACIÓN', items: [
+        'Dar <strong>suplementación de 💊 Vitamina A</strong> (100.000 UI) en todos los niños si no han recibido',
+        'Continuar <strong>suplementación con micronutrientes en polvo (💊 Chispas)</strong>: 90 sobres (1 sobre pasando un día por 6 meses)'
       ]},
-      { title: '🍼 ALIMENTACIÓN', items: [
-        'Diversificación: cereales, frutas, verduras, carnes blandas',
-        'LME complementaria mantenida',
-        '<strong>Hierro</strong> oral si Hb &lt; 11 g/dL'
+      { title: '💉 INMUNIZACIONES (VERIFICAR)', items: [
+        'Verificar inmunizaciones pasadas completas'
+      ],
+        extraLink: { text: '➡ Vacunas y Esquema Nacional de Vacunación 💉', href: 'esquema_vacunas_2025.html' }
+      },
+      { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
+        'Realizar <strong>1.ª valoración de 🩸 hemoglobina</strong> si no se ha realizado',
+        'Revisar <strong>reflejo rojo ocular</strong> (visión)',
+        'Evaluar <strong>audición y respuesta al nombre</strong>'
       ]},
       { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
         denverTable: [
-          ['social',       'Juega "tortitas / palmas-palmas"', '7',  '8',  '11', '13'],
-          ['social',       'Come solo una galleta',            '5',  '6',  '7.5','8.5'],
-          ['motor-fino',   'Pinza inferior (pulgar-índice)',    '7',  '9',  '11', '13'],
-          ['motor-fino',   'Pasa objetos de una mano a otra',  '5',  '6',  '7',  '8'],
-          ['lenguaje',     'Dice "papá/mamá" inespecífico',    '7',  '8',  '10', '11'],
-          ['lenguaje',     'Balbucea sílabas (ba, da)',        '4',  '6',  '8',  '10'],
-          ['motor-grueso', 'Se sienta sin apoyo',              '6',  '7',  '8',  '9'],
-          ['motor-grueso', 'Se para sosteniéndose',            '7',  '8',  '10', '11']
+          ['social',       'Come solo una galleta',                  '5',   '6',   '7.5', '8.5'],
+          ['social',       'Dice adiós con la mano',                 '9',   '10',  '13',  '14'],
+          ['social',       'Bebe de una taza',                       '10',  '12',  '16',  '18'],
+          ['motor-fino',   'Pasa un objeto de una mano a otra',      '5',   '6',   '7',   '8'],
+          ['motor-fino',   'Hace pinza con pulgar e índice',         '8',   '9',   '10',  '12'],
+          ['motor-fino',   'Mete un cubo en una taza',               '10',  '11',  '13',  '14'],
+          ['lenguaje',     'Dice "papá/mamá" inespecífico',          '7',   '8',   '10',  '11'],
+          ['lenguaje',     'Dice "papá/mamá" específico',            '9',   '10',  '12',  '14'],
+          ['motor-grueso', 'Rueda sobre sí mismo',                   '4.5', '5.5', '7',   '8'],
+          ['motor-grueso', 'Se sienta sin apoyo',                    '6',   '7',   '8',   '9'],
+          ['motor-grueso', 'Se para sosteniéndose',                  '7',   '8',   '10',  '11'],
+          ['motor-grueso', 'Camina con ayuda',                       '9',   '10',  '12',  '13'],
+          ['motor-grueso', 'Camina solo',                            '11',  '12',  '14',  '15']
         ]
       }
     ]
@@ -1485,12 +1552,12 @@ const PANELS = {
   m12: {
     group: 'g-7to12',
     title: 'Niño/a · 12 meses',
-    sub: 'CONTROL DEL NIÑO SANO – 12.º MES · Cierre del primer año',
+    sub: 'CONTROL DEL NIÑO SANO – 12.º MES',
     tip: 'Si el peso es < p3 o > p97 → evaluar riesgo nutricional y revisar técnica de lactancia.',
     sections: [
       { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
         '<strong>Peso:</strong> aumento esperado ≈ 250–400 g respecto al mes anterior',
-        '<strong>Talla:</strong> + 1–1.5 cm',
+        '<strong>Talla:</strong> + 1–1,5 cm',
         '<strong>Perímetro cefálico:</strong> ≈ 46 cm',
         'Registrar en <strong>curvas OMS / MSP</strong> (percentiles o z-score)',
         'Interpretar el crecimiento según el patrón y alertar si hay pérdida o estancamiento'
@@ -1509,20 +1576,20 @@ const PANELS = {
       },
       { title: '🍼 ALIMENTACIÓN Y NUTRICIÓN', items: [
         '<strong>Lactancia materna continua</strong> (hasta los 2 años o más)',
-        '<strong>Comidas familiares:</strong> 3 comidas + 2 meriendas',
-        '<strong>Textura:</strong> sólidos blandos / picados finamente',
-        '<strong>Dieta variada y equilibrada:</strong>'
+        'Comidas familiares: <strong>3 comidas + 2 meriendas</strong>',
+        'Textura: <strong>sólidos blandos / picados finamente</strong>',
+        'Dieta variada y equilibrada:'
       ],
         sublist: [
           'Verduras, frutas, cereales, legumbres, carnes, grasas saludables 🥦🍎🥚',
-          'Incluir alimentos ricos en hierro (hígado, lentejas, espinaca)',
-          'Evitar: gaseosas, dulces, miel, embutidos y sal añadida',
-          'Agua potable hervida como bebida principal'
+          '<em>Incluir alimentos ricos en hierro (hígado, lentejas, espinaca).</em>',
+          '<em>Evitar: gaseosas, dulces, miel, embutidos y sal añadida.</em>',
+          '<em>Agua potable hervida como bebida principal.</em>'
         ]
       },
       { title: '💊 SUPLEMENTACIÓN', items: [
-        'Dar <strong>2da suplementación de 💊 Vitamina A</strong> (200.000 UI) en todos los niños',
-        'Continuar <strong>suplementación con micronutrientes en polvo (💊 Chispas)</strong>: 90 sobres (1 sobre pasando un día por 6 meses)'
+        'Dar <strong>2da suplementación de 💊 Vitamina A</strong> – dar (200.000 UI) en todos los niños',
+        'Continuar <strong>suplementación con micronutrientes en polvo (💊 Chispas)</strong> – 90 sobres (1 sobre pasando un día por 6 meses).'
       ]},
       { title: '💉 INMUNIZACIONES (VERIFICAR)', items: [
         '<strong>1ra dosis:</strong>'
@@ -1530,23 +1597,152 @@ const PANELS = {
         sublist: [
           '<strong>Vacuna SRP</strong> (Sarampión, Rubeola, Paperas)',
           '<strong>Vacuna Fiebre Amarilla</strong>'
-        ]
+        ],
+        extraLink: { text: '➡ Vacunas y Esquema Nacional de Vacunación 💉', href: 'esquema_vacunas_2025.html' }
       },
       { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
-        'Realizar <strong>2ª valoración de 🩸 hemoglobina</strong>',
+        'Realizar <strong>2.ª valoración de 🩸 hemoglobina</strong>',
         '<strong>Control visual:</strong> reflejo rojo y coordinación ocular',
         '<strong>Control auditivo:</strong> respuesta a sonidos y lenguaje inicial'
       ]},
       { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
         denverTable: [
-          ['social',       'Dice adiós con la mano',         '7',  '10', '13', '14'],
-          ['social',       'Bebe de una taza',               '10', '12', '16', '18'],
-          ['motor-fino',   'Pinza superior (pulgar-índice)', '9',  '11', '13', '15'],
-          ['motor-fino',   'Mete un cubo en una taza',       '10', '11', '13', '14'],
-          ['lenguaje',     'Dice "papá/mamá" específico',    '9',  '10', '12', '14'],
-          ['lenguaje',     'Primera palabra con significado','11', '12', '14', '16'],
-          ['motor-grueso', 'Camina con ayuda',               '9',  '10', '12', '13'],
-          ['motor-grueso', 'Inicia primeros pasos / camina solo', '11', '12', '14', '15']
+          ['social',       'Come solo una galleta',           '5',  '6',  '7.5', '8.5'],
+          ['social',       'Dice adiós con la mano',          '9',  '10', '13',  '14'],
+          ['social',       'Bebe de una taza',                '10', '12', '16',  '18'],
+          ['social',       'Ayuda en casa',                   '12', '14', '20',  '22'],
+          ['motor-fino',   'Hace pinza con pulgar e índice',  '8',  '9',  '10',  '12'],
+          ['motor-fino',   'Mete un cubo en una taza',        '10', '11', '13',  '14'],
+          ['lenguaje',     'Dice "papá/mamá" específico',     '9',  '10', '12',  '14'],
+          ['lenguaje',     'Dice 2-3 palabras',               '12', '14', '18',  '20'],
+          ['motor-grueso', 'Se para sosteniéndose',           '7',  '8',  '10',  '11'],
+          ['motor-grueso', 'Camina con ayuda',                '9',  '10', '12',  '13'],
+          ['motor-grueso', 'Camina solo',                     '11', '12', '14',  '15']
+        ]
+      }
+    ]
+  },
+
+  m13_15: {
+    group: 'g-2to5',
+    title: 'Niño/a · 13-15 meses',
+    sub: 'CONTROL DEL NIÑO SANO – 13-15.º MES',
+    tip: 'Si el peso es < p3 o > p97 → evaluar riesgo nutricional y revisar técnica de lactancia.',
+    sections: [
+      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
+        '<strong>Peso, talla y perímetro cefálico actual</strong>',
+        'Registrar en <strong>curvas OMS / MSP</strong> (percentiles o z-score)',
+        'Interpretar el crecimiento según el patrón y alertar si hay pérdida o estancamiento'
+      ],
+        link: '➡ Ver Tablas de crecimiento OMS (Z-score) en pestaña 📊 Tablas OMS'
+      },
+      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo'],
+        sublist: [
+          '<strong>Fontanela anterior:</strong> parcialmente abierta o en cierre',
+          '<strong>Ojos:</strong> sigue objetos, refleja interés visual',
+          '<strong>Boca:</strong> Dentición: 8-10 dientes erupcionados',
+          '<strong>Oídos:</strong> reacciona a su nombre y sonidos familiares',
+          '<strong>Marcha:</strong> con apoyo o pasos independientes'
+        ]
+      },
+      { title: '🍼 ALIMENTACIÓN Y NUTRICIÓN', items: [
+        '<strong>Lactancia materna continua</strong> (hasta los 2 años o más)',
+        'Comidas familiares: <strong>3 comidas + 2 meriendas</strong>',
+        'Textura: alimentos <strong>picados o trozos blandos</strong>',
+        'Promover autonomía alimentaria (autoalimentación con cuchara y dedos)'
+      ]},
+      { title: '💊 SUPLEMENTACIÓN', items: [
+        'Dar <strong>2da suplementación de 💊 Vitamina A</strong> – dar (200.000 UI) en todos los niños si no se ha dado',
+        'Continuar <strong>suplementación con micronutrientes en polvo (💊 Chispas)</strong> – 90 sobres (1 sobre pasando un día por 6 meses).'
+      ]},
+      { title: '💉 INMUNIZACIONES (VERIFICAR)', items: [
+        '<strong>1ra dosis:</strong>'
+      ],
+        sublist: [
+          '<strong>Vacuna Varicela</strong>'
+        ],
+        extraLink: { text: '➡ Vacunas y Esquema Nacional de Vacunación 💉', href: 'esquema_vacunas_2025.html' }
+      },
+      { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
+        'Realizar <strong>2.ª valoración de 🩸 hemoglobina</strong> si no se ha realizado',
+        '<strong>Control visual:</strong> reflejo rojo y coordinación ocular',
+        '<strong>Control auditivo:</strong> respuesta a sonidos y lenguaje inicial'
+      ]},
+      { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
+        denverTable: [
+          ['social',       'Dice adiós con la mano',          '9',  '10', '13', '14'],
+          ['social',       'Bebe de una taza',                '10', '12', '16', '18'],
+          ['social',       'Ayuda en casa',                   '12', '14', '20', '22'],
+          ['social',       'Se quita la ropa',                '15', '18', '22', '24'],
+          ['motor-fino',   'Mete un cubo en una taza',        '10', '11', '13', '14'],
+          ['motor-fino',   'Hace torre de 2 cubos',           '13', '15', '18', '20'],
+          ['motor-fino',   'Hace garabatos',                  '14', '16', '21', '24'],
+          ['lenguaje',     'Dice "papá/mamá" específico',     '9',  '10', '12', '14'],
+          ['lenguaje',     'Dice 2-3 palabras',               '12', '14', '18', '20'],
+          ['lenguaje',     'Señala 2 partes del cuerpo',      '16', '18', '22', '24'],
+          ['motor-grueso', 'Camina con ayuda',                '9',  '10', '12', '13'],
+          ['motor-grueso', 'Camina solo',                     '11', '12', '14', '15'],
+          ['motor-grueso', 'Corre',                           '14', '16', '20', '22'],
+          ['motor-grueso', 'Patea una pelota',                '18', '20', '24', '26']
+        ]
+      }
+    ]
+  },
+
+  m16_17: {
+    group: 'g-2to5',
+    title: 'Niño/a · 16-17 meses',
+    sub: 'CONTROL DEL NIÑO SANO – 16-17.º MES',
+    tip: 'Si el peso es < p3 o > p97 → evaluar riesgo nutricional y revisar técnica de lactancia.',
+    sections: [
+      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
+        '<strong>Peso, talla y perímetro cefálico actual</strong>',
+        'Registrar en <strong>curvas OMS / MSP</strong> (percentiles o z-score)',
+        'Interpretar el crecimiento según el patrón y alertar si hay pérdida o estancamiento'
+      ],
+        link: '➡ Ver Tablas de crecimiento OMS (Z-score) en pestaña 📊 Tablas OMS'
+      },
+      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo'],
+        sublist: [
+          '<strong>Fontanela anterior:</strong> puede estar cerrada',
+          '<strong>Boca:</strong> Dentición: 10-12 dientes erupcionados',
+          '<strong>Marcha:</strong> estable y coordinada'
+        ]
+      },
+      { title: '🍼 ALIMENTACIÓN Y NUTRICIÓN', items: [
+        '<strong>Lactancia materna continua</strong> (hasta los 2 años o más)',
+        'Comidas familiares: <strong>3 comidas + 2 meriendas</strong>',
+        'Textura: alimentos <strong>picados o trozos blandos</strong>',
+        'Promover autonomía alimentaria (autoalimentación con cuchara y dedos)'
+      ]},
+      { title: '💊 SUPLEMENTACIÓN', items: [
+        'Dar <strong>2da suplementación de 💊 Vitamina A</strong> – dar (200.000 UI) en todos los niños si no se ha dado',
+        'Continuar <strong>suplementación con micronutrientes en polvo (💊 Chispas)</strong> – 90 sobres (1 sobre pasando un día por 6 meses)'
+      ]},
+      { title: '💉 INMUNIZACIONES (VERIFICAR)', items: [
+        '📅 No se aplican nuevas dosis en estos meses, pero:'
+      ],
+        sublist: [
+          'Verificar dosis previas y aplicar vacunas pendientes del esquema si hubo retraso.'
+        ],
+        extraLink: { text: '➡ Vacunas y Esquema Nacional de Vacunación 💉', href: 'esquema_vacunas_2025.html' }
+      },
+      { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
+        'Realizar <strong>2.ª valoración de 🩸 hemoglobina</strong> si no se ha realizado',
+        '<strong>Control visual:</strong> reflejo rojo y coordinación ocular',
+        '<strong>Control auditivo:</strong> respuesta a sonidos y lenguaje inicial'
+      ]},
+      { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
+        denverTable: [
+          ['social',       'Bebe de una taza',              '10', '12', '16', '18'],
+          ['social',       'Ayuda en casa',                 '12', '14', '20', '22'],
+          ['social',       'Se quita la ropa',              '15', '18', '22', '24'],
+          ['motor-fino',   'Hace torre de 2 cubos',         '13', '15', '18', '20'],
+          ['motor-fino',   'Hace garabatos',                '14', '16', '21', '24'],
+          ['lenguaje',     'Dice 2-3 palabras',             '12', '14', '18', '20'],
+          ['lenguaje',     'Señala 2 partes del cuerpo',    '16', '18', '22', '24'],
+          ['motor-grueso', 'Corre',                         '14', '16', '20', '22'],
+          ['motor-grueso', 'Patea una pelota',              '18', '20', '24', '26']
         ]
       }
     ]
@@ -1555,43 +1751,172 @@ const PANELS = {
   m18: {
     group: 'g-2to5',
     title: 'Niño/a · 18 meses',
-    sub: 'Refuerzos pentavalente/hexavalente y bOPV',
+    sub: 'CONTROL DEL NIÑO SANO – 18.º MES',
+    tip: 'Si el peso es < p3 o > p97 → evaluar riesgo nutricional y revisar técnica de lactancia.',
     sections: [
       { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
-        '<strong>Peso:</strong> ≈ 11 kg promedio',
-        '<strong>Talla:</strong> ≈ 80–82 cm',
-        '<strong>PC:</strong> ≈ 47 cm',
-        'Curvas OMS'
-      ]},
-      { title: '❤️ EVALUACIÓN CLÍNICA', items: ['Examen físico'],
+        '<strong>Peso, talla y perímetro cefálico actual</strong>',
+        'Registrar en <strong>curvas OMS / MSP</strong> (percentiles o z-score)',
+        'Interpretar el crecimiento según el patrón y alertar si hay pérdida o estancamiento'
+      ],
+        link: '➡ Ver Tablas de crecimiento OMS (Z-score) en pestaña 📊 Tablas OMS'
+      },
+      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo'],
         sublist: [
-          'Marcha autónoma, equilibrio',
-          'Lenguaje y comprensión',
-          'Caderas, columna, postura',
-          'Cavidad oral: 12–16 piezas'
+          '<strong>Fontanela anterior:</strong> normalmente cerrada',
+          '<strong>Boca:</strong> Dentición: 12-14 dientes erupcionados',
+          '<strong>Marcha:</strong> independiente, estable y coordinada'
         ]
       },
-      { title: '💉 INMUNIZACIONES — REFUERZOS', items: [
-        '<strong>DPT / Hexavalente refuerzo</strong> (1.er refuerzo)',
-        '<strong>bOPV</strong> refuerzo',
-        '<strong>SRP</strong> 2.ª dosis (si esquema vigente)',
-        '<strong>Fiebre Amarilla</strong> (si pendiente)'
+      { title: '🍼 ALIMENTACIÓN Y NUTRICIÓN', items: [
+        '<strong>Lactancia materna continua</strong> (hasta los 2 años o más)',
+        'Comidas familiares: <strong>3 comidas + 2 meriendas</strong>',
+        'Promover autonomía alimentaria (autoalimentación con cuchara y dedos)'
       ]},
-      { title: '🩸 TAMIZAJES Y CONTROL', items: [
-        'Hb / Hto si anemia previa',
-        'Visión y audición',
-        'Salud bucodental (revisión odontológica recomendada al año)'
+      { title: '💊 SUPLEMENTACIÓN', items: [
+        'Dar <strong>3da suplementación de 💊 Vitamina A</strong> – dar (200.000 UI) en todos los niños',
+        'Continuar <strong>suplementación con micronutrientes en polvo (💊 Chispas)</strong> – 90 sobres (1 sobre pasando un día por 6 meses).'
+      ]},
+      { title: '💉 INMUNIZACIONES (VERIFICAR)', items: [
+        '<strong>2da dosis:</strong>'
+      ],
+        sublist: [
+          '<strong>Vacuna OPV</strong> – polio',
+          '<strong>Vacuna SRP</strong> (sarampión, rubéola, paperas)'
+        ],
+        twoColumns: {
+          new: [
+            '<strong>4ta dosis (Esquema nuevo):</strong> <strong>Vacuna Hexavalente</strong>'
+          ],
+          old: [
+            '<strong>1er refuerzo (Esquema antiguo):</strong> <strong>Vacuna DPT</strong>'
+          ]
+        },
+        extraLink: { text: '➡ Vacunas y Esquema Nacional de Vacunación 💉', href: 'esquema_vacunas_2025.html' }
+      },
+      { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
+        'Realizar <strong>3.ª valoración de 🩸 hemoglobina</strong>',
+        '<strong>Control visual:</strong> reflejo rojo y coordinación ocular',
+        '<strong>Control auditivo:</strong> respuesta a sonidos y lenguaje inicial'
       ]},
       { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
         denverTable: [
-          ['social',       'Se viste con ayuda',              '18', '24', '30', '36'],
-          ['social',       'Ayuda en casa',                   '12', '14', '20', '22'],
-          ['motor-fino',   'Hace torre de 2 cubos',           '13', '15', '18', '20'],
-          ['motor-fino',   'Hace garabatos',                  '14', '16', '21', '24'],
-          ['lenguaje',     'Dice 2-3 palabras',               '12', '14', '18', '20'],
-          ['lenguaje',     'Señala 2 partes del cuerpo',      '16', '18', '22', '24'],
-          ['motor-grueso', 'Camina solo',                     '11', '12', '14', '15'],
-          ['motor-grueso', 'Corre',                           '14', '16', '20', '22']
+          ['social',       'Bebe de una taza',              '10', '12', '16', '18'],
+          ['social',       'Ayuda en casa',                 '12', '14', '20', '22'],
+          ['social',       'Se quita la ropa',              '15', '18', '22', '24'],
+          ['motor-fino',   'Hace torre de 2 cubos',         '13', '15', '18', '20'],
+          ['motor-fino',   'Hace garabatos',                '14', '16', '21', '24'],
+          ['lenguaje',     'Dice 2-3 palabras',             '12', '14', '18', '20'],
+          ['lenguaje',     'Señala 2 partes del cuerpo',    '16', '18', '22', '24'],
+          ['motor-grueso', 'Corre',                         '14', '16', '20', '22'],
+          ['motor-grueso', 'Patea una pelota',              '18', '20', '24', '26']
+        ]
+      }
+    ]
+  },
+
+  m19_23: {
+    group: 'g-2to5',
+    title: 'Niño/a · 19-23 meses',
+    sub: 'CONTROL DEL NIÑO SANO – 19-23.º MES',
+    tip: 'Si el peso es < p3 o > p97 → evaluar riesgo nutricional y revisar técnica de lactancia.',
+    sections: [
+      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
+        '<strong>Peso, talla y perímetro cefálico actual</strong>',
+        'Registrar en <strong>curvas OMS / MSP</strong> (percentiles o z-score)',
+        'Interpretar el crecimiento según el patrón y alertar si hay pérdida o estancamiento'
+      ],
+        link: '➡ Ver Tablas de crecimiento OMS (Z-score) en pestaña 📊 Tablas OMS'
+      },
+      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo'],
+        sublist: [
+          '<strong>Fontanela anterior:</strong> cerrada',
+          '<strong>Boca:</strong> Dentición: 14-16 dientes erupcionados',
+          '<strong>Marcha:</strong> estable, corre y se agacha sin caer',
+          '<strong>Postura corporal simétrica</strong>'
+        ]
+      },
+      { title: '🍼 ALIMENTACIÓN Y NUTRICIÓN', items: [
+        '<strong>Lactancia materna continua</strong> (hasta los 2 años o más)',
+        'Comidas familiares: <strong>3 comidas + 2 meriendas</strong>',
+        'Promover autonomía alimentaria (autoalimentación con cubiertos, vaso)'
+      ]},
+      { title: '💊 SUPLEMENTACIÓN', items: [
+        'Dar <strong>3da suplementación de 💊 Vitamina A</strong> – dar (200.000 UI) en todos los niños si no se ha administrado',
+        'Continuar <strong>suplementación con micronutrientes en polvo (💊 Chispas)</strong> – 90 sobres (1 sobre pasando un día por 6 meses) hasta cumplir 2 años'
+      ]},
+      { title: '💉 INMUNIZACIONES (VERIFICAR)', items: [
+        'Verificar aplicación dosis previas y aplicar vacunas atrasadas si es necesario.'
+      ],
+        extraLink: { text: '➡ Vacunas y Esquema Nacional de Vacunación 💉', href: 'esquema_vacunas_2025.html' }
+      },
+      { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
+        'Realizar <strong>3.ª valoración de 🩸 hemoglobina</strong> si no se ha realizado',
+        '<strong>Control visual:</strong> reflejo rojo y coordinación ocular',
+        '<strong>Control auditivo:</strong> respuesta a sonidos y lenguaje inicial'
+      ]},
+      { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
+        denverTable: [
+          ['social',       'Ayuda en casa',                 '12', '14', '20', '22'],
+          ['social',       'Se quita la ropa',              '15', '18', '22', '24'],
+          ['motor-fino',   'Hace torre de 2 cubos',         '13', '15', '18', '20'],
+          ['motor-fino',   'Hace garabatos',                '14', '16', '21', '24'],
+          ['lenguaje',     'Dice 2-3 palabras',             '12', '14', '18', '20'],
+          ['lenguaje',     'Señala 2 partes del cuerpo',    '16', '18', '22', '24'],
+          ['motor-grueso', 'Corre',                         '14', '16', '20', '22'],
+          ['motor-grueso', 'Patea una pelota',              '18', '20', '24', '26']
+        ]
+      }
+    ]
+  },
+
+  m24: {
+    group: 'g-2to5',
+    title: 'Niño/a · 24 meses (2 años)',
+    sub: 'CONTROL DEL NIÑO SANO – 24.º MES',
+    tip: 'Si el peso es < p3 o > p97 → evaluar riesgo nutricional y revisar técnica de lactancia.',
+    sections: [
+      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
+        '<strong>Peso, talla y perímetro cefálico actual</strong>',
+        'Registrar en <strong>curvas OMS / MSP</strong> (percentiles o z-score)',
+        'Interpretar el crecimiento según el patrón y alertar si hay pérdida o estancamiento'
+      ],
+        link: '➡ Ver Tablas de crecimiento OMS (Z-score) en pestaña 📊 Tablas OMS'
+      },
+      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo'],
+        sublist: [
+          '<strong>Fontanela anterior:</strong> cerrada',
+          '<strong>Boca:</strong> Dentición: 16-20 dientes erupcionados',
+          '<strong>Marcha:</strong> estable, corre y se agacha sin caer',
+          '<strong>Postura corporal simétrica, equilibrio</strong>'
+        ]
+      },
+      { title: '🍼 ALIMENTACIÓN Y NUTRICIÓN', items: [
+        '<strong>Lactancia materna continua</strong> (hasta los 2 años o más)',
+        'Comidas familiares: <strong>3 comidas + 2 meriendas</strong>',
+        'Promover autonomía alimentaria (autoalimentación con cubiertos, vaso)'
+      ]},
+      { title: '💊 SUPLEMENTACIÓN', items: [
+        'Dar <strong>4da suplementación de 💊 Vitamina A</strong> – dar (200.000 UI) en todos los niños',
+        'Continuar <strong>suplementación con micronutrientes en polvo (💊 Chispas)</strong> – 90 sobres (1 sobre pasando un día por 6 meses) hasta cumplir 2 años'
+      ]},
+      { title: '💉 INMUNIZACIONES (VERIFICAR)', items: [
+        'Verificar aplicación dosis previas y aplicar vacunas atrasadas si es necesario.'
+      ],
+        extraLink: { text: '➡ Vacunas y Esquema Nacional de Vacunación 💉', href: 'esquema_vacunas_2025.html' }
+      },
+      { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
+        'Realizar <strong>4.ª valoración de 🩸 hemoglobina</strong>',
+        '<strong>Control visual:</strong> reflejo rojo y coordinación ocular',
+        '<strong>Control auditivo:</strong> respuesta a sonidos y lenguaje inicial'
+      ]},
+      { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
+        denverTable: [
+          ['social',       'Se quita la ropa',              '15', '18', '22', '24'],
+          ['motor-fino',   'Hace garabatos',                '14', '16', '21', '24'],
+          ['lenguaje',     'Señala 2 partes del cuerpo',    '16', '18', '22', '24'],
+          ['motor-grueso', 'Corre',                         '14', '16', '20', '22'],
+          ['motor-grueso', 'Patea una pelota',              '18', '20', '24', '26']
         ]
       }
     ]
@@ -1599,166 +1924,103 @@ const PANELS = {
 
   y2: {
     group: 'g-2to5',
-    title: 'Niño/a · 2 años',
-    sub: 'Etapa preescolar temprana',
+    title: 'Niño/a · 2-5 años',
+    sub: 'CONTROL DEL NIÑO SANO – 2-5.º AÑO',
+    tip: 'A partir de los 5 años, el control del crecimiento debe basarse en el <strong>IMC para la edad</strong>.',
     sections: [
       { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
-        '<strong>Peso:</strong> ≈ 12 kg',
-        '<strong>Talla:</strong> ≈ 86 cm',
-        '<strong>IMC:</strong> evaluar curvas OMS para descartar sobrepeso/obesidad'
-      ]},
-      { title: '❤️ EVALUACIÓN CLÍNICA', items: ['Examen físico completo, salud oral'],
+        '<strong>Peso:</strong> aumento ≈ 2–3 kg por año',
+        '<strong>Talla:</strong> + 6–8 cm/año',
+        '<strong>IMC:</strong> calcular y registrar (peso/talla²)',
+        '<strong>Perímetro cefálico:</strong> estable (~49–51 cm)',
+        'Registrar en <strong>curvas OMS / MSP</strong> (percentiles o z-score)',
+        'Interpretar el crecimiento según el patrón y alertar si hay pérdida o estancamiento'
+      ],
+        link: '➡ Ver Tablas de crecimiento OMS (Z-score) en pestaña 📊 Tablas OMS'
+      },
+      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: ['Examen físico completo'],
         sublist: [
-          'Dientes deciduos completos (20 piezas)',
-          'Postura, marcha y equilibrio',
-          'Habla y socialización'
+          '<strong>Fontanela anterior:</strong> cerrada',
+          '<strong>Boca:</strong> dentición completa según edad (20 dientes a los 2–3 años) 🦷',
+          '<strong>Marcha:</strong> estable, corre y se agacha sin caer',
+          '<strong>Coordinación y equilibrio normales</strong>'
         ]
       },
+      { title: '🍼 ALIMENTACIÓN Y NUTRICIÓN', items: [
+        'Alimentación familiar equilibrada 🍎🥦🍚',
+        '3 comidas principales + 2 meriendas saludables',
+        'Porciones pequeñas y variadas',
+        'Agua como bebida principal 💧'
+      ]},
+      { title: '💊 SUPLEMENTACIÓN', items: [
+        'Dar <strong>suplementación de 💊 Vitamina A</strong> – dar (200.000 UI) en todos los niños cada 6 meses'
+      ]},
       { title: '💉 INMUNIZACIONES (VERIFICAR)', items: [
-        'Esquema completo a los 2 años',
-        'Influenza anual',
-        'COVID-19 según indicación'
-      ]},
-      { title: '🍽 NUTRICIÓN', items: [
-        'Alimentación variada, 3 comidas + 1-2 colaciones',
-        'Vitamina A semestral (campañas MSP)',
-        'Suplementación según riesgo'
-      ]},
-      { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
-        denverTable: [
-          ['social',       'Se quita la ropa',                  '15', '18', '22', '24'],
-          ['social',       'Se desviste solo',                  '24', '30', '36', '40'],
-          ['motor-fino',   'Hace torre de 4 cubos',             '17', '21', '26', '30'],
-          ['motor-fino',   'Hace garabatos',                    '14', '16', '21', '24'],
-          ['lenguaje',     'Combina dos palabras',              '18', '21', '24', '28'],
-          ['lenguaje',     'Señala 6 partes del cuerpo',        '18', '23', '30', '36'],
-          ['motor-grueso', 'Corre',                             '14', '16', '20', '22'],
-          ['motor-grueso', 'Patea una pelota',                  '18', '20', '24', '26'],
-          ['motor-grueso', 'Salta en el lugar con dos pies',    '20', '24', '30', '36']
-        ]
-      }
-    ]
-  },
-
-  y5: {
-    group: 'g-2to5',
-    title: 'Niño/a · 5 años',
-    sub: 'Edad escolar — refuerzos finales del esquema básico',
-    sections: [
-      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
-        '<strong>Peso:</strong> ≈ 18 kg',
-        '<strong>Talla:</strong> ≈ 110 cm',
-        '<strong>IMC:</strong> evaluación nutricional con curvas OMS',
-        'Tamizaje de obesidad infantil'
-      ]},
-      { title: '❤️ EVALUACIÓN CLÍNICA', items: ['Examen físico'],
+        '<strong>A los 5 años:</strong>'
+      ],
         sublist: [
-          'Agudeza visual (Snellen) — descartar miopía',
-          'Audición (audiometría/ otoemisiones)',
-          'Salud oral (control odontológico)',
-          'Postura, columna, marcha',
-          'Pubertad precoz (signos)'
-        ]
+          '<strong>2 dosis: vacuna bOPV</strong>',
+          '<strong>Vacuna DPT</strong> (refuerzo)'
+        ],
+        extraLink: { text: '➡ Vacunas y Esquema Nacional de Vacunación 💉', href: 'esquema_vacunas_2025.html' }
       },
-      { title: '💉 INMUNIZACIONES (REFUERZOS)', items: [
-        '<strong>DPT</strong> 2.º refuerzo',
-        '<strong>bOPV</strong> 2.º refuerzo',
-        '<strong>SRP</strong> verificar 2.ª dosis',
-        '<strong>Influenza</strong> anual'
-      ]},
-      { title: '🍽 NUTRICIÓN Y ESTILO DE VIDA', items: [
-        'Promoción de actividad física (≥ 60 min/día)',
-        'Evitar pantallas excesivas',
-        'Higiene bucal supervisada',
-        'Dieta equilibrada con frutas y verduras'
-      ]},
-      { title: '🧠 TEST DE NEURODESARROLLO (DENVER II)', items: [],
-        denverTable: [
-          ['social',       'Se pone una camiseta',          '30', '36', '42', '48'],
-          ['social',       'Juega a juegos en grupo',       '36', '48', '60', '72'],
-          ['motor-fino',   'Copia un círculo',              '36', '42', '48', '60'],
-          ['motor-fino',   'Dibuja figura humana (3 partes)','42','48', '54', '66'],
-          ['lenguaje',     'Dice su nombre completo',       '30', '36', '42', '48'],
-          ['lenguaje',     'Identifica colores (4)',        '36', '42', '54', '66'],
-          ['motor-grueso', 'Brinca en un pie',              '36', '42', '54', '66'],
-          ['motor-grueso', 'Camina punta-talón',            '42', '48', '60', '72']
-        ]
-      }
-    ]
-  },
-
-  y9: {
-    group: 'g-ado',
-    title: 'Niño/a · 9 años',
-    sub: 'Inicio de adolescencia / VPH',
-    sections: [
-      { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
-        '<strong>Peso:</strong> ≈ 28 kg promedio',
-        '<strong>Talla:</strong> ≈ 130 cm',
-        'IMC y curvas OMS para descartar sobrepeso',
-        'Estadios de Tanner para inicio puberal'
-      ]},
-      { title: '❤️ EVALUACIÓN CLÍNICA', items: ['Examen físico'],
-        sublist: [
-          'Tamizaje de pubertad (Tanner I-V)',
-          'Visión, audición, columna (escoliosis)',
-          'Salud oral, mentalidad y conducta',
-          'Acné, cambios hormonales'
-        ]
-      },
-      { title: '💉 INMUNIZACIONES', items: [
-        '<strong>VPH (Virus Papiloma Humano)</strong> — niñas 9 años (esquema MSP)',
-        'Influenza anual',
-        'Esquema básico verificado'
-      ]},
-      { title: '🍽 NUTRICIÓN Y SALUD MENTAL', items: [
-        'Dieta saludable, hidratación',
-        'Educación sexual y reproductiva apropiada',
-        'Prevención de bullying y salud mental'
-      ]},
-      { title: '🧠 DESARROLLO COGNITIVO Y SOCIAL', items: [
-        'Rendimiento académico',
-        'Habilidades sociales y juego en grupo',
-        'Lectura comprensiva, lógica matemática'
+      { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
+        'Realizar <strong>valoración de 🩸 hemoglobina cada 6 meses</strong>',
+        'Control dental cada 6 meses 🦷',
+        'Control visual (agudeza y alineación ocular)'
       ]}
     ]
   },
 
   ado: {
     group: 'g-ado',
-    title: 'Adolescente · 12-15 años',
-    sub: 'Adolescencia temprana e intermedia',
+    title: 'Niño/a · 9-15 años',
+    sub: 'CONTROL – 9-15.º AÑO',
+    tip: 'A esta edad el control incluye <strong>componente físico, psicológico y social</strong>, con enfoque en prevención y promoción de salud integral.',
     sections: [
       { title: '📏 EVALUACIÓN ANTROPOMÉTRICA', items: [
-        '<strong>IMC</strong> con curvas OMS (sobrepeso ≥ +1 DE, obesidad ≥ +2 DE)',
-        'Estatura y velocidad de crecimiento',
-        'Estadios de <strong>Tanner</strong>'
-      ]},
-      { title: '❤️ EVALUACIÓN CLÍNICA', items: ['Examen físico'],
-        sublist: [
-          'Tamizaje de tiroides, columna',
-          'Salud sexual y reproductiva',
-          'Salud mental: depresión, ansiedad, ideación suicida',
-          'Tamizaje de consumo de sustancias',
-          'Acné, problemas de piel'
-        ]
+        '<strong>Peso, talla, IMC</strong>',
+        '<strong>Perímetro abdominal:</strong> para detección temprana de síndrome metabólico',
+        '<strong>Tanner (maduración sexual):</strong> evaluar desarrollo mamario en niñas y genital en varones'
+      ],
+        link: '➡ Ver Tablas de crecimiento OMS (Z-score) en pestaña 📊 Tablas OMS'
       },
-      { title: '💉 INMUNIZACIONES', items: [
-        '<strong>dT (difteria-tétanos)</strong> a los 14-15 años',
-        '<strong>VPH</strong> si pendiente',
-        'Influenza anual',
-        'Refuerzos según esquema'
+      { title: '❤️ EVALUACIÓN CLÍNICA GENERAL', items: [
+        '<strong>Piel:</strong> acné, estrías, vello corporal, lesiones o infecciones',
+        '<strong>Boca y dientes:</strong> higiene oral, caries o maloclusión',
+        '<strong>Cuello:</strong> tiroides palpable, adenopatías',
+        '<strong>Genitales:</strong> desarrollo puberal, higiene, lesiones',
+        '<strong>Columna y extremidades:</strong> postura, escoliosis, fuerza muscular'
+      ],
+        extraLink: { text: '➡ Test de Tanner ✓', href: 'test_tanner.html' }
+      },
+      { title: '🍼 ALIMENTACIÓN Y NUTRICIÓN', items: [
+        'Alimentación variada, suficiente y equilibrada 🍎🥦🍗',
+        'Controlar consumo de ultraprocesados y bebidas azucaradas',
+        'Vigilar imagen corporal y trastornos alimentarios (anorexia, bulimia)'
       ]},
-      { title: '🩸 TAMIZAJES', items: [
-        'Hemoglobina (riesgo de anemia, especialmente en niñas)',
-        'Tamizaje visual y auditivo',
-        'Tamizaje cardiovascular antes de actividad física intensa'
-      ]},
-      { title: '💚 SALUD MENTAL Y SOCIAL', items: [
-        'Diálogo confidencial sobre salud sexual',
-        'Prevención de embarazo adolescente',
-        'Detección de violencia y bullying',
-        'Acompañamiento en uso de redes y pantallas'
+      { title: '💉 INMUNIZACIONES (VERIFICAR)', items: [
+        '<strong>A los 9 años:</strong>'
+      ],
+        sublist: [
+          '<strong>Niños y niñas:</strong> Vacuna HPV dosis única (esquema nuevo)',
+          '<strong>Solo niñas:</strong> Vacuna HPV 1-2 — dos dosis (esquema antiguo)'
+        ],
+        twoColumns: {
+          new: [
+            '<strong>A los 15 años:</strong> <strong>Vacuna dT</strong> (difteria y tétanos)'
+          ],
+          old: [
+            'Refuerzo dT cada 10 años posteriormente'
+          ]
+        },
+        extraLink: { text: '➡ Vacunas y Esquema Nacional de Vacunación 💉', href: 'esquema_vacunas_2025.html' }
+      },
+      { title: '🩸 TAMIZAJES Y CONTROL DE SALUD', items: [
+        'Realizar <strong>valoración de 🩸 hemoglobina si hay síntomas de anemia</strong>',
+        'Control dental cada 6 meses 🦷',
+        'Tamizaje visual y auditivo anual',
+        '<strong>En niñas:</strong> control de hemoglobina si menarquia &lt; 12 años'
       ]}
     ]
   }
@@ -1783,23 +2045,32 @@ function renderPanels() {
       </div>
       <div class="panel-body">`;
 
-    if (p.tip) html += `<div class="tip-card">${p.tip}</div>`;
-
-    p.sections.forEach(s => {
+    p.sections.forEach((s, idx) => {
       html += `<div class="section">
         <div class="section-title">${s.title}</div>`;
+      // Detect immunization sections by title (contains 💉 or "INMUNIZA" or "VACUNA")
+      const isVaccineSection = /💉|INMUNIZA|VACUNA/i.test(s.title);
+      const listClass = isVaccineSection ? 'vaccine-list' : 'check-list';
       if (s.items && s.items.length) {
-        html += `<ul class="check-list">`;
+        html += `<ul class="${listClass}">`;
         s.items.forEach(it => html += `<li>${it}</li>`);
         html += `</ul>`;
       }
       if (s.sublist) {
-        html += `<ul class="sub-list">`;
+        html += `<ul class="${isVaccineSection ? 'vaccine-list' : 'sub-list'}" style="${isVaccineSection ? 'margin-left:14px;' : ''}">`;
         s.sublist.forEach(sl => html += `<li>${sl}</li>`);
         html += `</ul>`;
       }
       if (s.link) {
         html += `<div style="margin-top:10px; padding:10px 14px; background: var(--primary-soft); border:1px solid var(--primary-border); border-left:4px solid var(--primary); border-radius:8px; font-size:13px; font-weight:600; color: var(--primary-dark); cursor:pointer;" onclick="document.querySelector('[data-tab=who]').click(); window.scrollTo({top:0,behavior:'smooth'});">${s.link}</div>`;
+      }
+      if (s.extraLink) {
+        const href = s.extraLink.href || '#';
+        html += `<div style="margin-top:10px; padding:10px 14px; background: var(--primary-soft); border:1px solid var(--primary-border); border-left:4px solid var(--primary); border-radius:8px; font-size:13px; font-weight:600; color: var(--primary-dark); cursor:pointer;" onclick="window.location.href='${href}'">${s.extraLink.text}</div>`;
+      }
+      // Render the panel-level tip right after the first section (Antropometría)
+      if (idx === 0 && p.tip) {
+        html += `<div class="tip-card">${p.tip}</div>`;
       }
       if (s.twoColumns) {
         html += `<div class="vac-schemes" style="margin-top:8px">
@@ -2007,13 +2278,13 @@ function ageLabelToMonths(s) {
   return num; // ya en meses
 }
 
-const Z_LABELS_DE = ['-3 DE', '-2 DE', '-1 DE', 'Mediana', '+1 DE', '+2 DE', '+3 DE'];
 const Z_LABELS_ZSCORE = ['Z = -3', 'Z = -2', 'Z = -1', 'Z = 0', 'Z = +1', 'Z = +2', 'Z = +3'];
+const Z_LABELS_PCT = ['P0.1', 'P3', 'P15', 'P50', 'P85', 'P97', 'P99.9'];
 const Z_COLORS = ['#dc2626', '#f97316', '#facc15', '#16a34a', '#facc15', '#f97316', '#dc2626'];
 
-let whoFormat = 'de'; // 'de' o 'zscore'
+let whoFormat = 'zscore'; // 'zscore' o 'percentil'
 function getZLabels() {
-  return whoFormat === 'zscore' ? Z_LABELS_ZSCORE : Z_LABELS_DE;
+  return whoFormat === 'percentil' ? Z_LABELS_PCT : Z_LABELS_ZSCORE;
 }
 // Compatibilidad con código que usa Z_LABELS directamente
 const Z_LABELS = new Proxy([], {
@@ -2374,11 +2645,11 @@ document.querySelectorAll('#who-format button').forEach(b => {
         <span class="z-zone z-2pos">P97</span> Alto &nbsp;
         <span class="z-zone z-3pos">P99.9</span> Severo`;
     } else {
-      legend.innerHTML = `<span class="z-zone z-3neg">-3 DE</span> Severo &nbsp;
-        <span class="z-zone z-2neg">-2 DE</span> Bajo &nbsp;
-        <span class="z-zone z-norm">Mediana</span> &nbsp;
-        <span class="z-zone z-2pos">+2 DE</span> Alto &nbsp;
-        <span class="z-zone z-3pos">+3 DE</span> Severo`;
+      legend.innerHTML = `<span class="z-zone z-3neg">Z = -3</span> Severo &nbsp;
+        <span class="z-zone z-2neg">Z = -2</span> Bajo &nbsp;
+        <span class="z-zone z-norm">Mediana (Z = 0)</span> &nbsp;
+        <span class="z-zone z-2pos">Z = +2</span> Alto &nbsp;
+        <span class="z-zone z-3pos">Z = +3</span> Severo`;
     }
     renderWHO();
   });
@@ -2406,9 +2677,14 @@ document.getElementById('hb-grupo').addEventListener('change', e => {
 });
 
 function altitudeAdjust(altitud) {
-  // OMS: a partir de 1000 msnm, restar ~0.3-0.5 g/dL por cada 500 m
+  // Fórmula oficial OMS/CDC (Cohen JH & Haas JD, 1999; WHO 2011 VMNIS)
+  // Ajuste (g/dL) = -0.032 × (alt × 0.0033) + 0.022 × (alt × 0.0033)²
+  // donde alt está en metros sobre el nivel del mar
+  // Validada para altitudes ≥ 1000 m
   if (altitud < 1000) return 0;
-  return ((altitud - 500) / 500) * 0.4;
+  const altKft = altitud * 0.0033;       // conversión a miles de pies
+  const adj = -0.032 * altKft + 0.022 * (altKft * altKft);
+  return adj;
 }
 
 function classifyHb(hb, group) {
