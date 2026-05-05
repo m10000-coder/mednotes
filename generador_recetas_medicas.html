@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador de Recetas Médicas · MED NOTES®</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --primary-soft: #dbeafe;
+    --text: #1e293b;
+    --text-light: #475569;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --bg: #f1f5f9;
+    --success: #16a34a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ============ Top Header ============ */
+  .top-header {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 22px;
+    display: flex; align-items: center; gap: 14px;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .brand-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #000; color: #fff;
+    padding: 6px 12px;
+    font: 700 12px 'JetBrains Mono', monospace;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    border-radius: 4px;
+  }
+  .brand-badge .reg { font-size: 8px; vertical-align: top; opacity: 0.85; }
+  .top-header h1 {
+    font-size: 17px; font-weight: 800;
+    color: var(--text); flex: 1;
+  }
+  .actions { display: flex; gap: 8px; align-items: center; }
+
+  .btn {
+    padding: 9px 18px;
+    background: var(--primary); color: #fff;
+    border: none; cursor: pointer;
+    font: 700 13px 'Inter', sans-serif;
+    border-radius: 8px;
+    transition: background .15s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn:hover { background: var(--primary-dark); }
+  .btn.success { background: var(--success); }
+  .btn.success:hover { background: #15803d; }
+  .btn.ghost {
+    background: var(--surface-alt);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+  }
+  .btn.ghost:hover { background: #e2e8f0; }
+
+  /* ============ Layout ============ */
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(420px, 1fr) minmax(550px, 1.2fr);
+    gap: 0;
+    height: calc(100vh - 60px);
+  }
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: 1fr; height: auto; }
+    .preview-pane { position: relative !important; max-height: none !important; }
+  }
+
+  .editor-pane {
+    overflow-y: auto;
+    padding: 22px 24px;
+    background: #fff;
+    border-right: 1px solid var(--border);
+  }
+  .preview-pane {
+    overflow-y: auto;
+    padding: 16px 22px 60px;
+    background: var(--bg);
+    position: sticky; top: 60px;
+    max-height: calc(100vh - 60px);
+  }
+
+  /* ============ Editor sections ============ */
+  .section-title {
+    font-size: 14px; font-weight: 800;
+    color: var(--text);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin: 18px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--primary-soft);
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  .field { margin-bottom: 14px; }
+  .field-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .field-row-3 {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 600px) { .field-row, .field-row-3 { grid-template-columns: 1fr; } }
+
+  .field-label {
+    display: block; font-size: 12.5px; font-weight: 700;
+    color: var(--text); margin-bottom: 5px;
+  }
+  .field-label .req { color: #dc2626; margin-left: 2px; }
+
+  .input, textarea.input, select.input {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    font: 500 13.5px 'Inter', sans-serif;
+    color: var(--text); background: #fff;
+    transition: border-color .15s;
+    resize: vertical;
+  }
+  .input:focus, textarea.input:focus, select.input:focus {
+    outline: none; border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+  }
+  textarea.input {
+    min-height: 80px;
+    line-height: 1.6;
+    font-family: 'Inter', sans-serif;
+  }
+  textarea.input.large { min-height: 120px; }
+
+  .helper {
+    font-size: 11.5px; color: var(--muted); margin-top: 4px;
+  }
+
+  /* ============ Preview header ============ */
+  .preview-header {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    margin-bottom: 12px;
+  }
+  .preview-title {
+    font-size: 13px; font-weight: 700;
+    color: var(--text);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .zoom-controls {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--surface-alt);
+    border-radius: 6px;
+    padding: 2px;
+  }
+  .zoom-controls button {
+    width: 26px; height: 26px;
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 4px; cursor: pointer;
+    font: 700 14px 'Inter', sans-serif;
+  }
+  .zoom-level {
+    min-width: 48px; text-align: center;
+    font: 700 12px 'Inter', sans-serif;
+  }
+
+  /* ============ Document — A5 LANDSCAPE single prescription ============ */
+  .doc-wrap {
+    display: flex; justify-content: center;
+    background: var(--bg);
+  }
+  .doc {
+    background: #fff;
+    width: 210mm;        /* A5 landscape */
+    height: 148mm;
+    min-height: 148mm;
+    padding: 0;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.10);
+    transform-origin: top center;
+    color: #000;
+    font: 400 10.5pt/1.45 'Inter', 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Single prescription — elegant card with navy accent bar */
+  .receta {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 14mm 1fr;
+    background: #fff;
+    border: 1pt solid #2c4866;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+  }
+
+  /* Navy left side bar with curved/arched top */
+  .receta-sidebar {
+    background: linear-gradient(180deg, #2c4866 0%, #2c4866 100%);
+    position: relative;
+    color: #fff;
+  }
+  .receta-sidebar::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 22mm;
+    background: #fff;
+    border-bottom-left-radius: 50% 100%;
+    border-bottom-right-radius: 50% 100%;
+    transform: translateY(-1px);
+  }
+  .receta-sidebar-caduceus {
+    position: absolute;
+    top: 4mm; left: 50%;
+    transform: translateX(-50%);
+    width: 10mm; height: 14mm;
+    z-index: 2;
+    color: #2c4866;
+  }
+  .receta-sidebar-caduceus svg { width: 100%; height: 100%; }
+
+  /* Right main content area */
+  .receta-main {
+    padding: 5mm 7mm 4mm 7mm;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Caduceus watermark behind body */
+  .receta-watermark {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80mm; height: 80mm;
+    opacity: 0.07;
+    z-index: 0;
+    pointer-events: none;
+    color: #2c4866;
+  }
+  .receta-watermark svg { width: 100%; height: 100%; }
+
+  /* Header: doctor name (script) + credentials, centered top */
+  .doc-header {
+    text-align: center;
+    padding-bottom: 3mm;
+    position: relative;
+    z-index: 1;
+  }
+  .doc-doctor-name {
+    font: italic 600 18pt 'Cormorant Garamond', 'Georgia', serif;
+    line-height: 1;
+    color: #2c4866;
+    margin-bottom: 0.5mm;
+  }
+  .doc-specialty {
+    font: 600 8.5pt 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #2c4866;
+    margin-top: 0.5mm;
+  }
+  .doc-registration {
+    font: 500 7.5pt 'Inter', sans-serif;
+    color: #2c4866;
+    margin-top: 0.6mm;
+  }
+  .doc-establecimiento {
+    font: 600 8pt 'Inter', sans-serif;
+    color: #2c4866;
+    margin-top: 0.6mm;
+    font-style: italic;
+  }
+  .doc-divider {
+    border: none;
+    border-top: 0.8pt solid #2c4866;
+    margin: 1.5mm 0 2mm;
+  }
+
+  /* Patient line: PACIENTE + FECHA in a row, then DIAGNÓSTICO */
+  .doc-patient-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 5mm;
+    margin-bottom: 2mm;
+    position: relative;
+    z-index: 1;
+  }
+  .doc-field {
+    font-size: 9.5pt;
+    line-height: 1.3;
+    border-bottom: 0.4pt solid #2c4866;
+    padding-bottom: 0.5mm;
+    min-height: 5mm;
+  }
+  .doc-field-label {
+    font: 700 8pt 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #2c4866;
+    margin-right: 2mm;
+  }
+  .doc-diagnostico {
+    margin-bottom: 2.5mm;
+  }
+
+  /* Two body columns: PRESCRIPCIÓN | INDICACIONES */
+  .doc-body-2col {
+    display: grid;
+    grid-template-columns: 1fr 1pt 1fr;
+    gap: 4mm;
+    flex: 1;
+    margin-top: 2mm;
+    position: relative;
+    z-index: 1;
+  }
+  .doc-body-divider {
+    background: #2c4866;
+    width: 0.5pt;
+    justify-self: center;
+  }
+  .doc-col-section {
+    display: flex;
+    flex-direction: column;
+  }
+  .doc-col-title {
+    font: 700 8.5pt 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #2c4866;
+    text-align: center;
+    margin-bottom: 1.5mm;
+    padding-bottom: 0.8mm;
+    border-bottom: 0.4pt solid #2c4866;
+  }
+  .doc-col-body {
+    font-size: 9pt;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    flex: 1;
+    color: #1a1a1a;
+  }
+
+  .duracion-line {
+    margin-top: 2mm;
+    font-size: 8.5pt;
+    font-style: italic;
+    color: #2c4866;
+  }
+  .duracion-line:empty { display: none; }
+
+  /* Signature block — bottom right */
+  .doc-signature {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4mm;
+    position: relative;
+    z-index: 1;
+  }
+  .signature-block {
+    text-align: center;
+    min-width: 55mm;
+    padding-top: 1mm;
+    border-top: 0.5pt solid #2c4866;
+    font-size: 7.5pt;
+    line-height: 1.3;
+    color: #2c4866;
+  }
+  .signature-block strong {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    font-size: 8pt;
+  }
+
+  /* Footer: email + phone */
+  .doc-footer {
+    border-top: 0.4pt solid #2c4866;
+    margin-top: 2mm;
+    padding-top: 1mm;
+    font-size: 7.5pt;
+    color: #2c4866;
+    display: flex;
+    justify-content: space-between;
+    gap: 4mm;
+    position: relative;
+    z-index: 1;
+  }
+  .doc-footer-left { letter-spacing: 0.02em; }
+  .doc-footer-right { text-align: right; letter-spacing: 0.02em; }
+
+  /* Empty placeholder */
+  .empty-ph {
+    color: #888;
+    font-style: italic;
+    font-size: 9.5pt;
+  }
+
+  /* ============ Print ============ */
+  @media print {
+    body { background: #fff; }
+    .top-header, .editor-pane, .preview-header { display: none !important; }
+    .layout { grid-template-columns: 1fr !important; height: auto !important; }
+    .preview-pane {
+      padding: 0; background: #fff; max-height: none;
+      position: static; overflow: visible;
+    }
+    .doc-wrap { background: #fff; }
+    .doc {
+      width: 210mm; height: 148mm;
+      box-shadow: none; padding: 0;
+      transform: none !important;
+    }
+    .receta { border: none; }
+    @page { size: A5 landscape; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ Top header ============ -->
+<div class="top-header">
+  <div class="brand-badge">MED NOTES<span class="reg">®</span></div>
+  <h1>💊 Generador de Recetas Médicas</h1>
+  <div class="actions">
+    <button class="btn ghost" id="btn-load-demo" title="Cargar datos de ejemplo">📋 Demo</button>
+    <button class="btn ghost" id="btn-clear">🗑 Limpiar receta</button>
+    <button class="btn success" id="btn-print">🖨 Imprimir / PDF</button>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- ===================== EDITOR PANE ===================== -->
+  <div class="editor-pane">
+
+    <!-- ============ Datos del médico ============ -->
+    <div class="section-title">👨‍⚕️ Datos del médico</div>
+
+    <div class="field">
+      <label class="field-label">Nombre del médico <span class="req">*</span></label>
+      <input class="input" id="m-nombre" type="text" placeholder="Ej. DR. ARTURO CRUZ RIVADENEIRA">
+    </div>
+    <div class="field-row">
+      <div>
+        <label class="field-label">Especialidad / Título</label>
+        <input class="input" id="m-especialidad" type="text" placeholder="Ej. Médico General">
+      </div>
+      <div>
+        <label class="field-label">N° de Registro</label>
+        <input class="input" id="m-msp" type="text" placeholder="Ej. N° REGISTRO: 1027-2023-2782530">
+      </div>
+    </div>
+    <div class="field-row">
+      <div>
+        <label class="field-label">Cédula</label>
+        <input class="input" id="m-cedula" type="text" placeholder="Ej. 1234567890">
+      </div>
+      <div>
+        <label class="field-label">Nombre del establecimiento</label>
+        <input class="input" id="m-establecimiento" type="text" placeholder="Ej. Centro de Salud / Consultorio Privado">
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:24px;">📍 Dirección y contacto</div>
+    <div class="field">
+      <label class="field-label">Dirección del consultorio</label>
+      <input class="input" id="m-direccion" type="text" placeholder="Ej. Sauces 6 Mz 250 V23">
+    </div>
+    <div class="field-row">
+      <div>
+        <label class="field-label">Teléfono fijo</label>
+        <input class="input" id="m-telefono" type="text" placeholder="Ej. 04-2967796">
+      </div>
+      <div>
+        <label class="field-label">Celular</label>
+        <input class="input" id="m-celular" type="text" placeholder="Ej. 0983971613">
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Email</label>
+      <input class="input" id="m-email" type="text" placeholder="Ej. doctor@correo.com">
+    </div>
+
+    <!-- ============ Datos del paciente ============ -->
+    <div class="section-title" style="margin-top:24px;">🧑 Datos del paciente</div>
+
+    <div class="field">
+      <label class="field-label">Nombre y apellido del paciente <span class="req">*</span></label>
+      <input class="input" id="p-nombre" type="text" placeholder="Ej. Ramírez Doménica">
+    </div>
+    <div class="field-row-3">
+      <div>
+        <label class="field-label">Cédula</label>
+        <input class="input" id="p-cedula" type="text" placeholder="Cédula">
+      </div>
+      <div>
+        <label class="field-label">Edad</label>
+        <input class="input" id="p-edad" type="text" placeholder="Ej. 45 años">
+      </div>
+      <div>
+        <label class="field-label">Fecha de receta <span class="req">*</span></label>
+        <input class="input" id="p-fecha" type="date">
+      </div>
+    </div>
+
+    <!-- ============ Prescripción ============ -->
+    <div class="section-title" style="margin-top:24px;">💊 Prescripción</div>
+
+    <div class="field">
+      <label class="field-label">Diagnóstico <span class="req">*</span></label>
+      <input class="input" id="rx-diagnostico" type="text" placeholder="Ej. Hiperlipidemia mixta (E78.2)">
+    </div>
+
+    <div class="field">
+      <label class="field-label">Medicamentos (uno por línea, con dosis y cantidad)</label>
+      <textarea class="input large" id="rx-medicamentos" placeholder="Ej.
+Ezetimiba/Rosuvastatina TAB 10mg/20mg #30
+Paracetamol 500mg #20"></textarea>
+      <div class="helper">📝 Escribe el nombre genérico, presentación, dosis y cantidad. Una línea por medicamento.</div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Indicaciones / Prescripción</label>
+      <textarea class="input large" id="rx-indicaciones" placeholder="Ej.
+Tomar una tableta cada noche
+Mantener dieta baja en grasas
+Control en 1 mes con perfil lipídico"></textarea>
+      <div class="helper">💡 Detalla cómo tomar el medicamento, recomendaciones y signos de alarma.</div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Duración del tratamiento (opcional)</label>
+      <input class="input" id="rx-duracion" type="text" placeholder="Ej. Tratamiento continuo / 3 meses / 7 días">
+    </div>
+
+    <p style="font-size:11px; color:var(--muted); margin-top:18px; padding-top:14px; border-top:1px solid var(--border);">
+      💾 Tus datos del médico se guardan automáticamente para no tener que escribirlos en cada receta.<br>
+      🖨 Formato <strong>A5 horizontal</strong> (210 × 148 mm). Datos del médico y paciente arriba, dos columnas (Prescripción / Indicaciones) abajo, con espacio para firma y sello.
+    </p>
+  </div>
+
+  <!-- ===================== PREVIEW PANE ===================== -->
+  <div class="preview-pane">
+    <div class="preview-header">
+      <div class="preview-title">📄 Vista previa (A5 horizontal · 210 × 148 mm)</div>
+      <div class="zoom-controls">
+        <button id="btn-zoom-out">−</button>
+        <span class="zoom-level" id="zoom-level">70%</span>
+        <button id="btn-zoom-in">+</button>
+      </div>
+    </div>
+
+    <div class="doc-wrap">
+      <div class="doc" id="doc-preview">
+
+        <!-- ===== COPY 1 ===== -->
+        <div class="receta">
+          <!-- Navy left sidebar with caduceus -->
+          <div class="receta-sidebar">
+            <div class="receta-sidebar-caduceus">
+              <svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg">
+                <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none">
+                  <circle cx="50" cy="6" r="3" fill="currentColor"/>
+                  <path d="M44 16 C 28 12, 12 16, 4 26 C 18 24, 30 26, 42 28 C 30 30, 18 38, 14 50 C 30 42, 42 38, 46 36" stroke-width="1.6"/>
+                  <path d="M56 16 C 72 12, 88 16, 96 26 C 82 24, 70 26, 58 28 C 70 30, 82 38, 86 50 C 70 42, 58 38, 54 36" stroke-width="1.6"/>
+                  <line x1="50" y1="9" x2="50" y2="124" stroke-width="2.5"/>
+                  <path d="M50 24 Q 36 32, 38 42 Q 40 50, 50 56 Q 60 62, 62 72 Q 64 82, 50 88 Q 36 94, 38 104 Q 40 112, 50 116" stroke-width="2"/>
+                  <path d="M50 24 Q 64 32, 62 42 Q 60 50, 50 56 Q 40 62, 38 72 Q 36 82, 50 88 Q 64 94, 62 104 Q 60 112, 50 116" stroke-width="2"/>
+                  <ellipse cx="36" cy="22" rx="3.8" ry="2.6" fill="currentColor"/>
+                  <ellipse cx="64" cy="22" rx="3.8" ry="2.6" fill="currentColor"/>
+                  <path d="M48 124 L 50 128 L 52 124" stroke-width="2" fill="currentColor"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Right main content -->
+          <div class="receta-main">
+            <!-- Watermark caduceus -->
+            <div class="receta-watermark">
+              <svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg">
+                <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none">
+                  <circle cx="50" cy="6" r="3" fill="currentColor"/>
+                  <path d="M44 16 C 28 12, 12 16, 4 26 C 18 24, 30 26, 42 28 C 30 30, 18 38, 14 50 C 30 42, 42 38, 46 36" stroke-width="1.6"/>
+                  <path d="M56 16 C 72 12, 88 16, 96 26 C 82 24, 70 26, 58 28 C 70 30, 82 38, 86 50 C 70 42, 58 38, 54 36" stroke-width="1.6"/>
+                  <line x1="50" y1="9" x2="50" y2="124" stroke-width="2.5"/>
+                  <path d="M50 24 Q 36 32, 38 42 Q 40 50, 50 56 Q 60 62, 62 72 Q 64 82, 50 88 Q 36 94, 38 104 Q 40 112, 50 116" stroke-width="2"/>
+                  <path d="M50 24 Q 64 32, 62 42 Q 60 50, 50 56 Q 40 62, 38 72 Q 36 82, 50 88 Q 64 94, 62 104 Q 60 112, 50 116" stroke-width="2"/>
+                </g>
+              </svg>
+            </div>
+
+            <div class="doc-header">
+              <div class="doc-doctor-name" id="p1-nombre">Dr. Nombre del Médico</div>
+              <div class="doc-specialty" id="p1-especialidad">Especialidad</div>
+              <div class="doc-registration" id="p1-registration">MSP: — · Cédula: —</div>
+              <div class="doc-establecimiento" id="p1-establecimiento"></div>
+            </div>
+            <hr class="doc-divider">
+
+            <div class="doc-patient-row">
+              <div class="doc-field">
+                <span class="doc-field-label">Paciente:</span>
+                <span id="p1-paciente">—</span>
+              </div>
+              <div class="doc-field">
+                <span class="doc-field-label">Fecha:</span>
+                <span id="p1-fecha">—</span>
+              </div>
+            </div>
+            <div class="doc-diagnostico doc-field">
+              <span class="doc-field-label">Diagnóstico:</span>
+              <span id="p1-diagnostico">—</span>
+            </div>
+
+            <div class="doc-body-2col">
+              <div class="doc-col-section">
+                <div class="doc-col-title">Prescripción</div>
+                <div class="doc-col-body" id="p1-medicamentos">—</div>
+                <div class="duracion-line" id="p1-duracion"></div>
+              </div>
+              <div class="doc-body-divider"></div>
+              <div class="doc-col-section">
+                <div class="doc-col-title">Indicaciones</div>
+                <div class="doc-col-body" id="p1-indicaciones">—</div>
+              </div>
+            </div>
+
+            <div class="doc-signature">
+              <div class="signature-block">
+                <strong id="p1-firma-nombre">—</strong><br>
+                <span id="p1-firma-especialidad">—</span><br>
+                <span id="p1-firma-msp">—</span>
+              </div>
+            </div>
+
+            <div class="doc-footer">
+              <div class="doc-footer-left" id="p1-contact-left">—</div>
+              <div class="doc-footer-right" id="p1-contact-right">—</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ Storage keys ============ */
+const STORAGE_DOCTOR = 'med-notes-recetas-doctor-v1';
+const STORAGE_RX     = 'med-notes-recetas-rx-v1';
+
+/* Format YYYY-MM-DD into DD/MM/YYYY */
+function formatDate(iso) {
+  if (!iso) return '—';
+  const parts = iso.split('-');
+  if (parts.length !== 3) return iso;
+  return `${parseInt(parts[2],10)}/${parseInt(parts[1],10)}/${parts[0]}`;
+}
+
+function escapeHtml(s) {
+  return (s || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+
+/* Render previews ========================================== */
+function render() {
+  const m = {
+    nombre: document.getElementById('m-nombre').value.trim() || 'DR. NOMBRE DEL MÉDICO',
+    especialidad: document.getElementById('m-especialidad').value.trim() || 'Especialidad',
+    msp: document.getElementById('m-msp').value.trim() || '',
+    cedula: document.getElementById('m-cedula').value.trim() || '',
+    establecimiento: document.getElementById('m-establecimiento').value.trim() || '',
+    direccion: document.getElementById('m-direccion').value.trim() || '',
+    telefono: document.getElementById('m-telefono').value.trim() || '',
+    celular: document.getElementById('m-celular').value.trim() || '',
+    email: document.getElementById('m-email').value.trim() || ''
+  };
+
+  // Build registration line: "N° REGISTRO: ___"  (cédula goes in signature, not header)
+  let regLine = '';
+  if (m.msp) {
+    regLine = /[:°]/.test(m.msp) ? m.msp : 'N° REGISTRO: ' + m.msp;
+  }
+  if (!regLine) regLine = '—';
+
+  const p = {
+    paciente: document.getElementById('p-nombre').value.trim() || '—',
+    cedula: document.getElementById('p-cedula').value.trim(),
+    edad: document.getElementById('p-edad').value.trim(),
+    fecha: formatDate(document.getElementById('p-fecha').value)
+  };
+
+  let pacienteLine = p.paciente;
+  if (p.cedula) pacienteLine += '  ·  CC: ' + p.cedula;
+  if (p.edad) pacienteLine += '  ·  ' + p.edad;
+
+  const rx = {
+    diagnostico: document.getElementById('rx-diagnostico').value.trim(),
+    medicamentos: document.getElementById('rx-medicamentos').value.trim(),
+    indicaciones: document.getElementById('rx-indicaciones').value.trim(),
+    duracion: document.getElementById('rx-duracion').value.trim()
+  };
+
+  // Build contact footer (split: address+phones on left, email on right)
+  let phoneParts = [];
+  if (m.telefono) phoneParts.push('Tel: ' + m.telefono);
+  if (m.celular) phoneParts.push('Cel: ' + m.celular);
+  const leftFootBits = [];
+  if (m.direccion) leftFootBits.push(m.direccion);
+  if (phoneParts.length) leftFootBits.push(phoneParts.join('  ·  '));
+  const contactLeft = leftFootBits.join('  ·  ') || '—';
+  const contactRight = m.email ? m.email.toUpperCase() : '—';
+
+  // Format doctor name for header (Title Case style for elegant script font)
+  const headerName = m.nombre;
+
+  // Build signature credentials block: NAME (caps) / SPECIALTY / CI: ___ / N° MSP: ___
+  const firmaLines = [];
+  firmaLines.push(m.especialidad || '');
+  if (m.cedula) firmaLines.push('CI: ' + m.cedula);
+  if (m.msp) firmaLines.push((/^MSP/i.test(m.msp) ? m.msp : 'MSP: ' + m.msp));
+
+  // Apply content to single prescription
+  const prefix = 'p1';
+  document.getElementById(`${prefix}-nombre`).textContent = headerName;
+  document.getElementById(`${prefix}-especialidad`).textContent = m.especialidad;
+  document.getElementById(`${prefix}-registration`).textContent = regLine;
+  document.getElementById(`${prefix}-establecimiento`).textContent = m.establecimiento;
+  document.getElementById(`${prefix}-paciente`).textContent = pacienteLine;
+  document.getElementById(`${prefix}-fecha`).textContent = p.fecha;
+  document.getElementById(`${prefix}-diagnostico`).textContent = rx.diagnostico || '—';
+
+  document.getElementById(`${prefix}-medicamentos`).textContent = rx.medicamentos || '—';
+  document.getElementById(`${prefix}-indicaciones`).textContent = rx.indicaciones || '—';
+
+  const dur = document.getElementById(`${prefix}-duracion`);
+  dur.textContent = rx.duracion ? 'Duración: ' + rx.duracion : '';
+
+  document.getElementById(`${prefix}-firma-nombre`).textContent = m.nombre.toUpperCase();
+  document.getElementById(`${prefix}-firma-especialidad`).textContent = m.especialidad;
+  const mspBlock = [];
+  if (m.cedula) mspBlock.push('CI: ' + m.cedula);
+  if (m.msp) mspBlock.push((/^MSP/i.test(m.msp) ? m.msp : 'MSP: ' + m.msp));
+  document.getElementById(`${prefix}-firma-msp`).textContent = mspBlock.join('  ·  ');
+
+  document.getElementById(`${prefix}-contact-left`).textContent = contactLeft;
+  document.getElementById(`${prefix}-contact-right`).textContent = contactRight;
+
+  saveState();
+}
+
+/* Save / Load state ======================================== */
+function saveState() {
+  // Doctor data goes in its own storage (persist across patients)
+  const doctor = {};
+  ['m-nombre','m-especialidad','m-msp','m-cedula','m-establecimiento','m-direccion','m-telefono','m-celular','m-email'].forEach(id => {
+    doctor[id] = document.getElementById(id).value;
+  });
+  // Rx + patient data
+  const rx = {};
+  ['p-nombre','p-cedula','p-edad','p-fecha','rx-diagnostico','rx-medicamentos','rx-indicaciones','rx-duracion'].forEach(id => {
+    rx[id] = document.getElementById(id).value;
+  });
+  try {
+    localStorage.setItem(STORAGE_DOCTOR, JSON.stringify(doctor));
+    localStorage.setItem(STORAGE_RX, JSON.stringify(rx));
+  } catch(e){}
+}
+
+function loadState() {
+  try {
+    const doctor = JSON.parse(localStorage.getItem(STORAGE_DOCTOR) || '{}');
+    Object.entries(doctor).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val;
+    });
+    const rx = JSON.parse(localStorage.getItem(STORAGE_RX) || '{}');
+    Object.entries(rx).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val;
+    });
+  } catch(e){}
+}
+
+function setDefaults() {
+  if (!document.getElementById('p-fecha').value) {
+    document.getElementById('p-fecha').value = new Date().toISOString().split('T')[0];
+  }
+}
+
+/* Demo ===================================================== */
+function loadDemo() {
+  const today = new Date().toISOString().split('T')[0];
+  const data = {
+    'm-nombre': 'Esteban Cifuentes M.D.',
+    'm-especialidad': 'Médico Cirujano',
+    'm-msp': 'N° REGISTRO: 1027-2023-2782530',
+    'm-cedula': '1718476417',
+    'm-establecimiento': 'Consultorio Privado',
+    'm-direccion': 'Sauces 6 Mz 250 V23',
+    'm-telefono': '',
+    'm-celular': '0979339348',
+    'm-email': 'estebancifuentest72@gmail.com',
+    'p-nombre': 'Ramírez Doménica',
+    'p-cedula': '0987654321',
+    'p-edad': '45 años',
+    'p-fecha': today,
+    'rx-diagnostico': 'Hiperlipidemia mixta (E78.2)',
+    'rx-medicamentos': 'Ezetimiba/Rosuvastatina TAB 10mg/20mg #30',
+    'rx-indicaciones': 'Tomar una tableta cada noche\nMantener dieta baja en grasas saturadas\nActividad física regular ≥ 150 min/semana\nControl en 1 mes con perfil lipídico',
+    'rx-duracion': 'Tratamiento continuo'
+  };
+  Object.entries(data).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  });
+  render();
+}
+
+/* Clear receta only (keep doctor data) ===================== */
+function clearReceta() {
+  if (!confirm('¿Limpiar los datos del paciente y la receta? (Los datos del médico se conservan)')) return;
+  ['p-nombre','p-cedula','p-edad','rx-diagnostico','rx-medicamentos','rx-indicaciones','rx-duracion'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('p-fecha').value = new Date().toISOString().split('T')[0];
+  try { localStorage.removeItem(STORAGE_RX); } catch(e){}
+  render();
+}
+
+/* Zoom ===================================================== */
+let zoom = 0.7;
+function applyZoom() {
+  document.getElementById('doc-preview').style.transform = `scale(${zoom})`;
+  document.getElementById('zoom-level').textContent = Math.round(zoom*100) + '%';
+}
+
+/* Wire up events =========================================== */
+document.querySelectorAll('.editor-pane input, .editor-pane textarea').forEach(el => {
+  el.addEventListener('input', render);
+  el.addEventListener('change', render);
+});
+
+document.getElementById('btn-load-demo').addEventListener('click', loadDemo);
+document.getElementById('btn-clear').addEventListener('click', clearReceta);
+document.getElementById('btn-print').addEventListener('click', () => {
+  const prevZoom = zoom;
+  zoom = 1; applyZoom();
+  setTimeout(() => {
+    window.print();
+    zoom = prevZoom; applyZoom();
+  }, 100);
+});
+document.getElementById('btn-zoom-in').addEventListener('click', () => {
+  zoom = Math.min(1.5, zoom + 0.1); applyZoom();
+});
+document.getElementById('btn-zoom-out').addEventListener('click', () => {
+  zoom = Math.max(0.4, zoom - 0.1); applyZoom();
+});
+
+/* Initialize =============================================== */
+loadState();
+setDefaults();
+applyZoom();
+render();
+</script>
+
+</body>
+</html>
