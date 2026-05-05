@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadoras: IMC + FINDRISC · MED NOTES®</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --primary-soft: #dbeafe;
+    --text: #1e293b;
+    --text-light: #475569;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --bg: #eff6ff;
+    --success: #16a34a;
+    --warning: #eab308;
+    --warning-orange: #f97316;
+    --danger: #dc2626;
+    --danger-dark: #991b1b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ============ Top Header ============ */
+  .top-header {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 22px;
+    display: flex; align-items: center; gap: 14px;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .brand-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #000; color: #fff;
+    padding: 6px 12px;
+    font: 700 12px 'JetBrains Mono', monospace;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    border-radius: 4px;
+  }
+  .brand-badge .reg { font-size: 8px; vertical-align: top; opacity: 0.85; }
+  .top-header h1 {
+    font-size: 17px; font-weight: 800;
+    color: var(--text); flex: 1;
+  }
+
+  /* ============ Layout ============ */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 26px 22px 80px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+  }
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 24px 26px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid var(--border);
+  }
+
+  .card-title {
+    font-size: 19px; font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 4px;
+  }
+  .card-sub {
+    color: var(--muted);
+    margin-bottom: 22px;
+    font-size: 13px;
+  }
+
+  /* ============ Form fields ============ */
+  .field { margin-bottom: 14px; }
+  .field-label {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 5px;
+  }
+
+  .input, select.input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font: 500 14px 'Inter', sans-serif;
+    color: var(--text); background: #fff;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .input:focus, select.input:focus {
+    outline: none; border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
+  }
+
+  .input-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+
+  /* ============ Buttons ============ */
+  .actions {
+    display: flex; gap: 10px;
+    margin-top: 18px; margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 10px 22px;
+    background: var(--primary); color: #fff;
+    border: none; cursor: pointer;
+    font: 700 14px 'Inter', sans-serif;
+    border-radius: 8px;
+    transition: background .15s, transform .12s;
+    flex: 1;
+    min-width: 120px;
+  }
+  .btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .btn.calc { background: var(--success); }
+  .btn.calc:hover { background: #15803d; }
+  .btn.danger { background: var(--danger); }
+  .btn.danger:hover { background: var(--danger-dark); }
+
+  /* ============ Results ============ */
+  .result-block {
+    margin-top: 18px;
+    text-align: center;
+    display: none;
+  }
+  .result-block.visible { display: block; }
+
+  .result-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .result-value .unit {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-left: 4px;
+  }
+
+  .result-banner {
+    border-radius: 10px;
+    padding: 14px 18px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  .result-banner.lvl-low { background: var(--success); }
+  .result-banner.lvl-elev { background: var(--warning); color: #000; }
+  .result-banner.lvl-mod { background: var(--warning-orange); }
+  .result-banner.lvl-high { background: var(--danger); }
+  .result-banner.lvl-vhigh { background: var(--danger-dark); }
+  .result-banner.lvl-norm { background: var(--success); }
+  .result-banner.lvl-thin { background: var(--primary); }
+  .result-banner.lvl-over { background: var(--warning-orange); }
+  .result-banner.lvl-ob1 { background: #ef4444; }
+  .result-banner.lvl-ob2 { background: var(--danger); }
+  .result-banner.lvl-ob3 { background: var(--danger-dark); }
+
+  .result-detail {
+    color: var(--text-light);
+    font-size: 13.5px;
+    margin-top: 6px;
+  }
+
+  /* ============ Reference table ============ */
+  .ref-table {
+    margin-top: 22px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .ref-table h3 {
+    background: var(--surface-alt);
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+  }
+  .ref-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .ref-table td {
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-light);
+  }
+  .ref-table td:first-child {
+    font-weight: 700;
+    color: var(--text);
+    width: 38%;
+    background: var(--surface-alt);
+  }
+  .ref-table tr:last-child td { border-bottom: none; }
+  .ref-table tr.highlight td {
+    background: rgba(37,99,235,0.08);
+    color: var(--primary-dark);
+    font-weight: 700;
+  }
+
+  /* ============ Live IMC tag (in FINDRISC) ============ */
+  .imc-suggestion {
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+    border-left: 3px solid var(--primary);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    margin-top: 6px;
+    display: none;
+  }
+  .imc-suggestion.visible { display: block; }
+</style>
+</head>
+<body>
+
+<div class="top-header">
+  <div class="brand-badge">MED NOTES<span class="reg">®</span></div>
+  <h1>🧮 Calculadoras: IMC + Test FINDRISC</h1>
+</div>
+
+<div class="container">
+  <div class="grid">
+
+    <!-- ============ IMC ============ -->
+    <div class="card">
+      <div class="card-title">⚖️ Calculadora de IMC</div>
+      <div class="card-sub">Índice de Masa Corporal (Quetelet) — clasificación OMS</div>
+
+      <div class="field">
+        <label class="field-label">Peso 🏋️</label>
+        <input class="input" id="imc-peso" type="number" min="0" step="0.1" placeholder="Ej. 70">
+      </div>
+
+      <div class="field">
+        <label class="field-label">Estatura (cm) 📏</label>
+        <input class="input" id="imc-altura" type="number" min="0" step="0.1" placeholder="Ej. 165">
+      </div>
+
+      <div class="field">
+        <label class="field-label">Unidad de peso</label>
+        <select class="input" id="imc-unidad">
+          <option value="kg">Kilogramos (kg)</option>
+          <option value="lb">Libras (lb)</option>
+        </select>
+      </div>
+
+      <div class="actions">
+        <button class="btn calc" id="btn-imc-calc">Calcular IMC 🔍</button>
+        <button class="btn danger" id="btn-imc-reset">Resetear ♻️</button>
+      </div>
+
+      <div class="result-block" id="imc-result">
+        <div class="result-value">IMC: <span id="imc-value">—</span></div>
+        <div class="result-banner" id="imc-banner">—</div>
+        <div class="result-detail" id="imc-equiv"></div>
+      </div>
+
+      <div class="ref-table">
+        <h3>Clasificación IMC 🍏</h3>
+        <table>
+          <tr id="ref-thin-3"><td>&lt; 16</td><td>Delgadez Severa</td></tr>
+          <tr id="ref-thin-2"><td>16 – 16.9</td><td>Delgadez Moderada</td></tr>
+          <tr id="ref-thin-1"><td>17 – 18.4</td><td>Delgadez Leve</td></tr>
+          <tr id="ref-norm"><td>18.5 – 24.9</td><td>Peso Normal</td></tr>
+          <tr id="ref-over"><td>25 – 29.9</td><td>Sobrepeso</td></tr>
+          <tr id="ref-ob1"><td>30 – 34.9</td><td>Obesidad Grado I</td></tr>
+          <tr id="ref-ob2"><td>35 – 39.9</td><td>Obesidad Grado II</td></tr>
+          <tr id="ref-ob3"><td>≥ 40</td><td>Obesidad Grado III</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============ FINDRISC ============ -->
+    <div class="card">
+      <div class="card-title">💉 Test FINDRISC</div>
+      <div class="card-sub">Riesgo de desarrollar Diabetes Tipo 2 en los próximos 10 años</div>
+
+      <div class="field">
+        <label class="field-label">Edad 🎂</label>
+        <select class="input" id="f-edad">
+          <option value="">— Seleccionar —</option>
+          <option value="0">Menos de 45 años</option>
+          <option value="2">45 a 54 años</option>
+          <option value="3">55 a 64 años</option>
+          <option value="4">Más de 64 años</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Índice de Masa Corporal (IMC) ⚖️</label>
+        <select class="input" id="f-imc">
+          <option value="">— Seleccionar —</option>
+          <option value="0">Menos de 25</option>
+          <option value="1">Entre 25 y 30</option>
+          <option value="3">Más de 30</option>
+        </select>
+        <div class="imc-suggestion" id="imc-link">
+          💡 Tu IMC calculado sugiere: <b id="imc-link-text">—</b>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Sexo</label>
+        <select class="input" id="f-sexo">
+          <option value="M">Masculino</option>
+          <option value="F">Femenino</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Perímetro de la cintura (cm) 📏</label>
+        <input class="input" id="f-cintura" type="number" min="0" step="0.5" placeholder="Ej. 92">
+        <div class="result-detail" id="f-cintura-hint" style="margin-top:4px; font-size:11.5px;">
+          🔵 Hombre: &lt;94 (0 pts) · 94–102 (3 pts) · &gt;102 (4 pts)<br>
+          🔴 Mujer: &lt;80 (0 pts) · 80–88 (3 pts) · &gt;88 (4 pts)
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">¿Realiza al menos 30 min de actividad física al día? 🏃</label>
+        <select class="input" id="f-ejercicio">
+          <option value="">— Seleccionar —</option>
+          <option value="0">Sí</option>
+          <option value="2">No</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label">¿Come frutas o verduras a diario? 🍎🥦</label>
+        <select class="input" id="f-frutas">
+          <option value="">— Seleccionar —</option>
+          <option value="0">Sí, todos los días</option>
+          <option value="1">No todos los días</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label">¿Toma medicación para la hipertensión? 💊</label>
+        <select class="input" id="f-hta">
+          <option value="">— Seleccionar —</option>
+          <option value="0">No</option>
+          <option value="2">Sí</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label">¿Le han encontrado valores altos de glucemia? 🩸</label>
+        <select class="input" id="f-glucemia">
+          <option value="">— Seleccionar —</option>
+          <option value="0">No</option>
+          <option value="5">Sí</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label">¿Antecedentes familiares de diabetes? 👨‍👩‍👧</label>
+        <select class="input" id="f-antec">
+          <option value="">— Seleccionar —</option>
+          <option value="0">No</option>
+          <option value="3">Sí: abuelos, tíos, primos hermanos (2.º grado)</option>
+          <option value="5">Sí: padres, hermanos, hijos (1.er grado)</option>
+        </select>
+      </div>
+
+      <div class="actions">
+        <button class="btn calc" id="btn-f-calc">Calcular Riesgo 🔍</button>
+        <button class="btn danger" id="btn-f-reset">Resetear ♻️</button>
+      </div>
+
+      <div class="result-block" id="f-result">
+        <div class="result-value">Puntaje FINDRISC: <span id="f-value">—</span></div>
+        <div class="result-banner" id="f-banner">—</div>
+        <div class="result-detail" id="f-detail"></div>
+      </div>
+
+      <div class="ref-table">
+        <h3>Interpretación FINDRISC 📊</h3>
+        <table>
+          <tr id="ref-f-low"><td>&lt; 7</td><td>Riesgo Bajo · 1% en 10 años</td></tr>
+          <tr id="ref-f-elev"><td>7 – 11</td><td>Riesgo Ligeramente Elevado · 4%</td></tr>
+          <tr id="ref-f-mod"><td>12 – 14</td><td>Riesgo Moderado · 17%</td></tr>
+          <tr id="ref-f-high"><td>15 – 20</td><td>Riesgo Alto · 33%</td></tr>
+          <tr id="ref-f-vhigh"><td>&gt; 20</td><td>Riesgo Muy Alto · 50%</td></tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  /* ============ IMC ============ */
+  const imcPeso = document.getElementById('imc-peso');
+  const imcAltura = document.getElementById('imc-altura');
+  const imcUnidad = document.getElementById('imc-unidad');
+  const imcResult = document.getElementById('imc-result');
+  const imcLink = document.getElementById('imc-link');
+
+  function clearIMCRefHighlight() {
+    document.querySelectorAll('.ref-table tr.highlight').forEach(tr => tr.classList.remove('highlight'));
+  }
+
+  function classifyIMC(imc) {
+    if (imc < 16)   return { lvl: 'thin',  label: 'Delgadez Severa ⚠️',     ref: 'ref-thin-3' };
+    if (imc < 17)   return { lvl: 'thin',  label: 'Delgadez Moderada ⚠️',   ref: 'ref-thin-2' };
+    if (imc < 18.5) return { lvl: 'thin',  label: 'Delgadez Leve',          ref: 'ref-thin-1' };
+    if (imc < 25)   return { lvl: 'norm',  label: 'Peso Normal ✅',          ref: 'ref-norm'   };
+    if (imc < 30)   return { lvl: 'over',  label: 'Sobrepeso ⚠️',            ref: 'ref-over'   };
+    if (imc < 35)   return { lvl: 'ob1',   label: 'Obesidad Grado I',       ref: 'ref-ob1'    };
+    if (imc < 40)   return { lvl: 'ob2',   label: 'Obesidad Grado II',      ref: 'ref-ob2'    };
+    return            { lvl: 'ob3',   label: 'Obesidad Grado III ⚠️⚠️', ref: 'ref-ob3'    };
+  }
+
+  function calcIMC() {
+    const pesoRaw = parseFloat(imcPeso.value);
+    const altRaw  = parseFloat(imcAltura.value);
+    if (isNaN(pesoRaw) || pesoRaw <= 0 || isNaN(altRaw) || altRaw <= 0) {
+      alert('Ingresa peso y estatura válidos.');
+      return;
+    }
+    const pesoKg = imcUnidad.value === 'lb' ? pesoRaw * 0.453592 : pesoRaw;
+    const altM   = altRaw / 100;
+    const imc    = pesoKg / (altM * altM);
+    const c      = classifyIMC(imc);
+
+    document.getElementById('imc-value').textContent = imc.toFixed(1);
+    const banner = document.getElementById('imc-banner');
+    banner.className = 'result-banner lvl-' + c.lvl;
+    banner.textContent = c.label;
+    document.getElementById('imc-equiv').textContent =
+      imcUnidad.value === 'lb'
+        ? `Equivale a ${pesoKg.toFixed(2)} kg`
+        : `Equivale a ${(pesoKg * 2.20462).toFixed(2)} lb`;
+
+    imcResult.classList.add('visible');
+    clearIMCRefHighlight();
+    document.getElementById(c.ref).classList.add('highlight');
+
+    // Auto-link to FINDRISC
+    let f_imc_val, f_imc_label;
+    if (imc < 25)   { f_imc_val = '0'; f_imc_label = 'Menos de 25 (0 pts)'; }
+    else if (imc <= 30) { f_imc_val = '1'; f_imc_label = 'Entre 25 y 30 (1 pt)'; }
+    else            { f_imc_val = '3'; f_imc_label = 'Más de 30 (3 pts)'; }
+    document.getElementById('f-imc').value = f_imc_val;
+    document.getElementById('imc-link-text').textContent = f_imc_label;
+    imcLink.classList.add('visible');
+  }
+
+  function resetIMC() {
+    imcPeso.value = '';
+    imcAltura.value = '';
+    imcUnidad.value = 'kg';
+    imcResult.classList.remove('visible');
+    clearIMCRefHighlight();
+    imcLink.classList.remove('visible');
+  }
+
+  document.getElementById('btn-imc-calc').addEventListener('click', calcIMC);
+  document.getElementById('btn-imc-reset').addEventListener('click', resetIMC);
+
+  /* ============ FINDRISC ============ */
+  const fields = ['f-edad','f-imc','f-ejercicio','f-frutas','f-hta','f-glucemia','f-antec'];
+  const fSexo = document.getElementById('f-sexo');
+  const fCintura = document.getElementById('f-cintura');
+  const fResult = document.getElementById('f-result');
+
+  function clearFRefHighlight() {
+    ['ref-f-low','ref-f-elev','ref-f-mod','ref-f-high','ref-f-vhigh']
+      .forEach(id => document.getElementById(id).classList.remove('highlight'));
+  }
+
+  function cinturaScore(cm, sexo) {
+    if (isNaN(cm) || cm <= 0) return 0;
+    if (sexo === 'M') {
+      if (cm < 94)  return 0;
+      if (cm <= 102) return 3;
+      return 4;
+    } else {
+      if (cm < 80) return 0;
+      if (cm <= 88) return 3;
+      return 4;
+    }
+  }
+
+  function classifyFINDRISC(p) {
+    if (p < 7)   return { lvl:'low',   label:'Riesgo Bajo ✅',                   det:'1 de cada 100 personas desarrollará diabetes en 10 años (≈1%).', ref:'ref-f-low' };
+    if (p <= 11) return { lvl:'elev',  label:'Riesgo Ligeramente Elevado',       det:'1 de cada 25 personas desarrollará diabetes en 10 años (≈4%).', ref:'ref-f-elev' };
+    if (p <= 14) return { lvl:'mod',   label:'Riesgo Moderado ⚠️',                det:'1 de cada 6 personas desarrollará diabetes en 10 años (≈17%).', ref:'ref-f-mod' };
+    if (p <= 20) return { lvl:'high',  label:'Riesgo Alto ⚠️⚠️',                  det:'1 de cada 3 personas desarrollará diabetes en 10 años (≈33%).', ref:'ref-f-high' };
+    return         { lvl:'vhigh', label:'Riesgo Muy Alto 🚨',                det:'1 de cada 2 personas desarrollará diabetes en 10 años (≈50%).', ref:'ref-f-vhigh' };
+  }
+
+  function calcFINDRISC() {
+    let total = 0;
+    let missing = false;
+
+    for (const id of fields) {
+      const v = document.getElementById(id).value;
+      if (v === '') {
+        if (id === 'f-imc') {
+          // allow blank if user hasn't selected — but require for calc
+          missing = true;
+          break;
+        }
+        missing = true;
+        break;
+      }
+      total += parseInt(v, 10);
+    }
+
+    if (missing) {
+      alert('Completa todas las preguntas antes de calcular.');
+      return;
+    }
+
+    // Cintura
+    const cm = parseFloat(fCintura.value);
+    if (isNaN(cm) || cm <= 0) {
+      alert('Ingresa el perímetro de cintura (cm).');
+      return;
+    }
+    total += cinturaScore(cm, fSexo.value);
+
+    document.getElementById('f-value').textContent = total;
+    const c = classifyFINDRISC(total);
+    const banner = document.getElementById('f-banner');
+    banner.className = 'result-banner lvl-' + c.lvl;
+    banner.textContent = c.label;
+    document.getElementById('f-detail').textContent = c.det;
+    fResult.classList.add('visible');
+
+    clearFRefHighlight();
+    document.getElementById(c.ref).classList.add('highlight');
+  }
+
+  function resetFINDRISC() {
+    fields.forEach(id => document.getElementById(id).value = '');
+    fSexo.value = 'M';
+    fCintura.value = '';
+    fResult.classList.remove('visible');
+    clearFRefHighlight();
+    document.getElementById('imc-link').classList.remove('visible');
+  }
+
+  document.getElementById('btn-f-calc').addEventListener('click', calcFINDRISC);
+  document.getElementById('btn-f-reset').addEventListener('click', resetFINDRISC);
+</script>
+
+</body>
+</html>
