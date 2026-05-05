@@ -348,7 +348,12 @@
   <div class="brand-badge">MED NOTES<span class="reg">®</span></div>
   <h1>📝 Generador de Informe Médico-Psicológico</h1>
   <div class="actions">
-    <button class="btn ghost" id="btn-load-demo" title="Cargar datos de ejemplo">📋 Demo</button>
+    <select class="btn ghost" id="select-tpl" title="Cargar plantilla de ejemplo" style="padding-right:28px;">
+      <option value="">📋 Plantilla...</option>
+      <option value="violencia-fisica">🚨 Violencia física intrafamiliar</option>
+      <option value="violencia-sexual">⚠ Violencia sexual</option>
+      <option value="accidente-transito">🚗 Accidente de tránsito</option>
+    </select>
     <button class="btn ghost" id="btn-clear">🗑 Limpiar</button>
     <button class="btn success" id="btn-print">🖨 Imprimir / PDF</button>
   </div>
@@ -710,31 +715,58 @@ function setDefaults() {
   }
 }
 
-/* Demo data ================================================ */
-function loadDemo() {
-  const today = new Date().toISOString().split('T')[0];
-  const data = {
-    'f-establecimiento': 'CENTRO DE SALUD',
-    'f-fecha-elab': today,
-    'f-codigo': '008/13',
-    'f-nro-serie': '123412',
-    'f-fecha': today,
-    'f-edad': '24',
-    'f-nombre': 'MATIAS MATIS MATIAS MATISA',
-    'f-cedula': '1718476417',
+/* ============ Templates with placeholders [PARAMETER] ============ */
+const TEMPLATES = {
+  'violencia-fisica': {
     'f-sexo': 'FEMENINA',
-    'f-presuncion': 'PACIENTE FEMENINA DE 24 AÑOS, APP NO REFIERE, ACUDE AL SERVICIO DE EMERGENCIA PARA VALORACIÓN MÉDICA LUEGO DE 2 HORAS DE SUFRIR AGRESIÓN FÍSICA Y PSICOLÓGICA POR PARTE DE SU CONVIVIENTE. PACIENTE REFIERE QUE HOY A LAS 8 AM EN SU DOMICILIO, MIENTRAS DISCUTÍA CON SU PAREJA (CONVIVIENDO 5 AÑOS, CON 1 HIJA DE 3 AÑOS EN COMÚN) PRESENTA UNA AGRESIÓN FÍSICA Y PSICOLÓGICA POR PARTE DE SU PAREJA. PACIENTE REFIERE QUE SERÍA LA TERCERA AGRESIÓN FÍSICA Y QUE AHORA SÍ DESEA DENUNCIARLO. PACIENTE REFIERE QUE MIENTRAS DISCUTÍAN, SU CONVIVIENTE LA EMPUJÓ Y ELLA SE IMPACTÓ CONTRA LA PARED LASTIMÁNDOSE ALGUNAS PARTES DEL CUERPO. RESTO DE EXAMINACIÓN APARENTEMENTE NORMAL. PACIENTE ACUDE AL SERVICIO DE EMERGENCIA PARA SOCIALIZAR EL CASO Y TRAMITAR RESPECTIVA DENUNCIA.',
-    'f-examen-fisico': 'Paciente consciente, orientada, ubicada en las 3 esferas, afebril, fascies poco álgica, rosada, apariencia general normal. Piel y mucosas hidratadas. CABEZA: normocéfala, sin lesiones evidentes. CUELLO: sin masas ni adenomegalias, sin signos de estrangulamiento. TÓRAX: simétrico, ruidos cardíacos rítmicos, murmullo vesicular conservado. ABDOMEN: blando, depresible, no doloroso. EXTREMIDADES: equimosis en cara externa de brazo derecho de aproximadamente 3 cm, sin limitación funcional. NEUROLÓGICO: alerta y orientada, fuerza muscular 5/5, sensibilidad conservada.',
-    'f-psicologico': 'A la inspección, paciente nerviosa, llanto fácil, pensamientos generalizados de temor a represalias por parte de la pareja. Refiere ansiedad y preocupación por el bienestar de su hija. Pensamiento coherente, lenguaje fluido. Niega ideación autolítica o heteroagresividad. Insight conservado. Se evidencia red de apoyo familiar limitada.',
-    'f-procedimientos': 'EXAMEN FÍSICO GENERAL, MEDIDAS GENERALES, IBUPROFENO 400 MG VO C/8H POR 3 DÍAS (AMBULATORIO).',
+    'f-presuncion': 'PACIENTE FEMENINA DE [EDAD] AÑOS, APP NO REFIERE, ACUDE AL SERVICIO DE EMERGENCIA PARA VALORACIÓN MÉDICA LUEGO DE [TIEMPO] HORAS DE SUFRIR AGRESIÓN FÍSICA Y PSICOLÓGICA POR PARTE DE SU CONVIVIENTE. PACIENTE REFIERE QUE HOY A LAS [HORA] AM EN SU DOMICILIO, MIENTRAS DISCUTÍA CON SU PAREJA (CONVIVIENDO [X] AÑOS, CON [X] HIJO/A DE [X] AÑOS EN COMÚN) PRESENTA UNA AGRESIÓN FÍSICA Y PSICOLÓGICA POR PARTE DE SU PAREJA. PACIENTE REFIERE QUE SERÍA LA [N] AGRESIÓN FÍSICA, Y QUE AHORA SÍ DESEA DENUNCIARLO. PACIENTE REFIERE MIENTRAS ESTABAN DISCUTIENDO, SU CONVIVIENTE LA EMPUJÓ Y ELLA SE IMPACTÓ CONTRA LA PARED LASTIMÁNDOSE ALGUNAS PARTES DEL CUERPO. RESTO DE EXAMINACIÓN APARENTEMENTE NORMAL. PACIENTE ACUDE AL SERVICIO DE EMERGENCIA PARA SOCIALIZAR EL CASO Y TRAMITAR RESPECTIVA DENUNCIA.',
+    'f-examen-fisico': 'Paciente consciente orientada ubicada en las 3 esferas afebril, fascies poco álgica, rosada, apariencia general normal, piel normo elástica, cabeza normocefálica se observa 1 hematoma de 1 cm en región [UBICACIÓN], dolor a la digito presión en dicha región. Ojos pupilas isocóricas normoreactivas a la luz y acomodación, reflejos conservados. Oído conducto auditivo externo permeable, no se evidencia salida de secreciones ni otorraquia. Nariz no se evidencian secreciones. Boca: mucosa oral húmeda, amígdalas no congestivas, no hiperémicas, sin exudado. Cuello sin adenopatías. Tórax simétrico, móvil, expansibilidad conservada, pulmones no se auscultan sonidos patológicos aparentes, claro pulmonar, murmullo vesicular conservado. Cardíaco: ruidos cardíacos rítmicos, intensidad 5/5. Abdomen blando, depresible, no doloroso a la palpación, ruidos hidroaéreos presentes. Extremidades móviles, simétricas, tono y fuerza muscular conservada, sensibilidad conservada, llenado capilar < 2 segundos. Neurológico: vigil, orientado en tiempo, espacio y persona, sin signos de focalización.',
+    'f-psicologico': 'A la inspección la paciente se encuentra un poco nerviosa, con pensamientos generalizados de temor a represalias que pueda tener la pareja. Llanto fácil. Niega ideación autolítica o heteroagresividad. Insight conservado.',
+    'f-procedimientos': 'EXAMEN FÍSICO GENERAL, MEDIDAS GENERALES, IBUPROFENO 400 MG C/8H X 3 DÍAS (AMBULATORIO).',
     'f-cie': 'W030 OTRA CAÍDA EN EL MISMO NIVEL, POR COLISIÓN CON O POR EMPUJÓN DE OTRA PERSONA, OCURRIDA EN UNA VIVIENDA\nY200 AHORCAMIENTO, ESTRANGULAMIENTO Y SOFOCACIÓN, DE INTENCIÓN NO DETERMINADA, OCURRIDOS EN UNA VIVIENDA\nT741 ABUSO FÍSICO',
     'f-tipo-dx': 'presuntivo',
     'f-indicaciones': 'Medidas generales\nConsejería nutricional\nHidratación\nUso de mascarilla\nLavado de manos\nAnalgesia\nFicha única de violencia\nInterconsulta a psicología\nSignos de alarma',
-    'f-reposo': 'REPOSO DE 48 HORAS',
-    'f-medico': 'Dr. Esteban Cifuentes',
-    'f-cargo': 'Médico Residente'
-  };
-  Object.entries(data).forEach(([id, val]) => {
+    'f-reposo': 'REPOSO DE 48 HORAS'
+  },
+
+  'violencia-sexual': {
+    'f-sexo': 'FEMENINA',
+    'f-presuncion': 'PACIENTE [SEXO] DE [EDAD] AÑOS, ACUDE AL SERVICIO DE EMERGENCIA ACOMPAÑADO/A DE [FAMILIAR/TUTOR] PARA VALORACIÓN MÉDICA POR PRESUNTA VIOLENCIA SEXUAL. REFIERE QUE EL DÍA [FECHA] APROXIMADAMENTE A LAS [HORA] EN [LUGAR], FUE VÍCTIMA DE AGRESIÓN SEXUAL POR PARTE DE [AGRESOR CONOCIDO/DESCONOCIDO]. PACIENTE REFIERE [DESCRIPCIÓN DE LOS HECHOS SEGÚN RELATO]. SE REALIZA VALORACIÓN INTEGRAL Y SE ACTIVA PROTOCOLO DE ATENCIÓN A VÍCTIMAS DE VIOLENCIA SEXUAL.',
+    'f-examen-fisico': 'Paciente consciente, orientado/a en las 3 esferas, afebril, fascie [DESCRIPCIÓN], apariencia general [DESCRIPCIÓN], signos vitales estables. [DESCRIPCIÓN DETALLADA DEL EXAMEN FÍSICO GENERAL Y GINECOLÓGICO/UROLÓGICO SEGÚN CORRESPONDA, INCLUYENDO HALLAZGOS POSITIVOS Y NEGATIVOS RELEVANTES].',
+    'f-psicologico': 'Paciente [ESTADO EMOCIONAL: lábil, ansioso/a, temeroso/a, etc.], con [DESCRIPCIÓN DEL ESTADO MENTAL], [presencia/ausencia] de llanto, [DESCRIPCIÓN DE CONDUCTA DURANTE LA ENTREVISTA].',
+    'f-procedimientos': 'EXAMEN FÍSICO GENERAL, EXAMEN GINECOLÓGICO/UROLÓGICO, TOMA DE MUESTRAS SEGÚN PROTOCOLO, ANTICONCEPCIÓN DE EMERGENCIA (SI APLICA), PROFILAXIS ITS, PROFILAXIS VIH.',
+    'f-cie': 'T742 ABUSO SEXUAL\nZ046 EXAMEN GENERAL Y OBSERVACIÓN CONSECUTIVOS A PRESUNTA VIOLACIÓN Y SEDUCCIÓN',
+    'f-tipo-dx': 'presuntivo',
+    'f-indicaciones': 'Medidas generales\nProfilaxis según protocolo\nInterconsulta a psicología URGENTE\nFicha única de violencia\nDenuncia en Fiscalía\nSeguimiento en 72 horas\nSignos de alarma',
+    'f-reposo': 'REPOSO DE 72 HORAS'
+  },
+
+  'accidente-transito': {
+    'f-sexo': 'FEMENINA',
+    'f-presuncion': 'PACIENTE [SEXO] DE [EDAD] AÑOS, APP [ANTECEDENTES], ACUDE AL SERVICIO DE EMERGENCIA PARA VALORACIÓN MÉDICA LUEGO DE APROXIMADAMENTE [TIEMPO] DE SUFRIR ACCIDENTE DE TRÁNSITO TIPO [COLISIÓN/ATROPELLO/VOLCAMIENTO]. PACIENTE REFIERE QUE EL DÍA DE HOY A LAS [HORA] TRANSITABA POR [UBICACIÓN] CUANDO [DESCRIPCIÓN DEL ACCIDENTE]. PACIENTE [USABA/NO USABA] CINTURÓN DE SEGURIDAD/CASCO. [PÉRDIDA O NO DE CONCIENCIA]. REFIERE DOLOR EN [ZONAS AFECTADAS].',
+    'f-examen-fisico': 'Paciente consciente, orientado/a en las 3 esferas, afebril, fascie álgica. Signos vitales: TA [X/X] mmHg, FC [X] lpm, FR [X] rpm, T [X]°C, SatO2 [X]%. Cabeza normocefálica [hallazgos], cuello móvil sin dolor, tórax [hallazgos], abdomen [hallazgos], extremidades [hallazgos detallados con ubicación de lesiones]. Neurológico: Glasgow [X]/15, pupilas isocóricas normoreactivas, sin signos de focalización.',
+    'f-psicologico': 'Paciente alerta, colaborador/a, orientado/a, sin alteraciones del estado mental evidentes.',
+    'f-procedimientos': 'EXAMEN FÍSICO GENERAL, LIMPIEZA Y CURACIÓN DE HERIDAS, ANALGESIA, [OTROS PROCEDIMIENTOS REALIZADOS].',
+    'f-cie': 'V[XX] ACCIDENTE DE TRANSPORTE TERRESTRE\nS[XX] [LESIÓN ESPECÍFICA SEGÚN ZONA]\nT[XX] [OTRAS LESIONES SI APLICA]',
+    'f-tipo-dx': 'presuntivo',
+    'f-indicaciones': 'Medidas generales\nReposo relativo\nCuración de heridas cada [X] horas\nAnalgesia: [MEDICAMENTO] cada [X] horas por [X] días\nSignos de alarma\nControl en [X] días',
+    'f-reposo': 'REPOSO DE [X] DÍAS'
+  }
+};
+
+/* Load template ============================================ */
+function loadTemplate(key) {
+  const tpl = TEMPLATES[key];
+  if (!tpl) return;
+  // Set establecimiento + codigo defaults if empty
+  if (!document.getElementById('f-establecimiento').value) {
+    document.getElementById('f-establecimiento').value = 'CENTRO DE SALUD';
+  }
+  if (!document.getElementById('f-codigo').value) {
+    document.getElementById('f-codigo').value = '008/13';
+  }
+  // Apply template fields (overwrites existing values)
+  Object.entries(tpl).forEach(([id, val]) => {
     const el = document.getElementById(id);
     if (el) el.value = val;
   });
@@ -769,7 +801,11 @@ document.querySelectorAll('.editor-pane input, .editor-pane select, .editor-pane
   el.addEventListener('change', render);
 });
 
-document.getElementById('btn-load-demo').addEventListener('click', loadDemo);
+document.getElementById('select-tpl').addEventListener('change', e => {
+  if (!e.target.value) return;
+  loadTemplate(e.target.value);
+  e.target.value = ''; // reset so user can re-select same template
+});
 document.getElementById('btn-clear').addEventListener('click', clearAll);
 document.getElementById('btn-print').addEventListener('click', () => {
   // Reset zoom to 100% before printing
