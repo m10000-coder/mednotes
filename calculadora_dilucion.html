@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Diluciones · MED NOTES®</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --primary-soft: #dbeafe;
+    --text: #1e293b;
+    --text-light: #475569;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --bg: #eff6ff;
+    --success: #16a34a;
+    --warning: #f97316;
+    --danger: #dc2626;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ============ Top Header ============ */
+  .top-header {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 22px;
+    display: flex; align-items: center; gap: 14px;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .brand-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #000; color: #fff;
+    padding: 6px 12px;
+    font: 700 12px 'JetBrains Mono', monospace;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    border-radius: 4px;
+  }
+  .brand-badge .reg { font-size: 8px; vertical-align: top; opacity: 0.85; }
+  .top-header h1 {
+    font-size: 17px; font-weight: 800;
+    color: var(--text); flex: 1;
+  }
+
+  /* ============ Layout ============ */
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 26px 22px 80px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 28px 30px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid var(--border);
+    margin-bottom: 18px;
+  }
+
+  .card-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 4px;
+    text-align: center;
+  }
+  .card-sub {
+    color: var(--muted);
+    margin-bottom: 22px;
+    font-size: 13.5px;
+    text-align: center;
+  }
+
+  .formula {
+    background: var(--surface-alt);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+    font: 600 13px 'JetBrains Mono', monospace;
+    color: var(--text);
+    text-align: center;
+  }
+
+  /* ============ Form fields ============ */
+  .field { margin-bottom: 14px; }
+  .field-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+    text-align: center;
+  }
+
+  .input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font: 500 15px 'Inter', sans-serif;
+    color: var(--text); background: #fff;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .input:focus {
+    outline: none; border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
+  }
+
+  .actions {
+    display: flex; gap: 10px;
+    margin-top: 18px;
+  }
+  .btn {
+    flex: 1;
+    padding: 12px 22px;
+    background: var(--primary); color: #fff;
+    border: none; cursor: pointer;
+    font: 700 15px 'Inter', sans-serif;
+    border-radius: 8px;
+    transition: background .15s, transform .12s;
+  }
+  .btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .btn.danger { background: var(--danger); }
+  .btn.danger:hover { background: #991b1b; }
+
+  /* ============ Result ============ */
+  .result-block {
+    margin-top: 22px;
+    padding: 16px 18px;
+    background: #f0fdf4;
+    border-left: 4px solid var(--success);
+    border-radius: 8px;
+    color: #14532d;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.5;
+    text-align: center;
+    display: none;
+  }
+  .result-block.visible { display: block; }
+  .result-block.error {
+    background: #fef2f2;
+    border-left-color: var(--danger);
+    color: #7f1d1d;
+  }
+  .result-block .vol {
+    font-size: 17px;
+    color: var(--success);
+  }
+  .result-block.error .vol { color: var(--danger); }
+
+  .breakdown {
+    margin-top: 14px;
+    padding: 14px 18px;
+    background: var(--primary-soft);
+    border-radius: 8px;
+    font-size: 13.5px;
+    color: var(--primary-dark);
+    line-height: 1.6;
+    display: none;
+  }
+  .breakdown.visible { display: block; }
+  .breakdown .step { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; }
+
+  /* ============ Info boxes ============ */
+  .info-box {
+    background: var(--primary-soft);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-top: 18px;
+    color: var(--text);
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .info-box h3 {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: var(--primary-dark);
+  }
+  .info-box p { margin-bottom: 10px; }
+  .info-box .warn {
+    color: #92400e;
+    background: #fef3c7;
+    padding: 10px 14px;
+    border-radius: 6px;
+    border-left: 3px solid var(--warning);
+    margin-top: 8px;
+  }
+  .info-box .step {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: var(--primary-dark);
+    background: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    display: inline-block;
+    margin: 2px 0;
+  }
+  .info-box.example { background: #ecfeff; }
+  .info-box.example h3 { color: #0e7490; }
+
+  /* Quick presets */
+  .presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+  .preset {
+    background: var(--surface-alt);
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    font: 600 12.5px 'Inter', sans-serif;
+    transition: all .15s;
+  }
+  .preset:hover {
+    background: var(--primary-soft);
+    border-color: var(--primary);
+    color: var(--primary-dark);
+  }
+</style>
+</head>
+<body>
+
+<div class="top-header">
+  <div class="brand-badge">MED NOTES<span class="reg">®</span></div>
+  <h1>🧪 Calculadora de Diluciones de Soluciones</h1>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <div class="card-title">Calculadora de Dilución</div>
+    <div class="card-sub">Mezcla de dos soluciones de distinta concentración para obtener una intermedia</div>
+
+    <div class="formula">
+      V<sub>C2</sub> = ((C1 − Cf) × Vf) ÷ (C1 − C2)  ·  V<sub>C1</sub> = Vf − V<sub>C2</sub>
+    </div>
+
+    <!-- Quick presets — basados en la solución a preparar -->
+    <div class="presets">
+      <span style="font-size:12px; color:var(--muted); align-self:center; margin-right:4px;">Solución a preparar:</span>
+      <button class="preset" data-c1="50" data-c2="10" data-vf="500" data-cf="12.5">Dextrosa 12.5% (500 ml)</button>
+      <button class="preset" data-c1="50" data-c2="10" data-vf="500" data-cf="15">Dextrosa 15% (500 ml)</button>
+      <button class="preset" data-c1="50" data-c2="10" data-vf="500" data-cf="25">Dextrosa 25% (500 ml)</button>
+      <button class="preset" data-c1="50" data-c2="5"  data-vf="500" data-cf="10">Dextrosa 10% (500 ml)</button>
+      <button class="preset" data-c1="20" data-c2="0.9" data-vf="500" data-cf="3">NaCl 3% (500 ml)</button>
+      <button class="preset" data-c1="0.9" data-c2="0" data-vf="500" data-cf="0.45">NaCl 0.45% (500 ml)</button>
+      <button class="preset" data-c1="50" data-c2="10" data-vf="100" data-cf="20">Dextrosa 20% (100 ml)</button>
+      <button class="preset" data-c1="20" data-c2="0.9" data-vf="100" data-cf="7.5">NaCl 7.5% (100 ml)</button>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Concentración Mayor (C1) %</label>
+      <input class="input" id="c1" type="number" min="0" step="0.01" placeholder="Ej. 50">
+    </div>
+
+    <div class="field">
+      <label class="field-label">Concentración Menor (C2) %</label>
+      <input class="input" id="c2" type="number" min="0" step="0.01" placeholder="Ej. 10">
+    </div>
+
+    <div class="field">
+      <label class="field-label">Volumen Deseado (Vf) ml</label>
+      <input class="input" id="vf" type="number" min="0" step="0.1" placeholder="Ej. 150">
+    </div>
+
+    <div class="field">
+      <label class="field-label">Concentración Deseada (Cf) %</label>
+      <input class="input" id="cf" type="number" min="0" step="0.01" placeholder="Ej. 12.5">
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="btn-calc">Calcular 🔍</button>
+      <button class="btn danger" id="btn-reset">Resetear ♻️</button>
+    </div>
+
+    <div class="result-block" id="result">
+      <span id="result-text"></span>
+    </div>
+
+    <div class="breakdown" id="breakdown">
+      <div style="font-weight:700; margin-bottom:6px;">📐 Desglose del cálculo:</div>
+      <div id="breakdown-steps"></div>
+    </div>
+  </div>
+
+  <!-- ============ Instructions ============ -->
+  <div class="card">
+    <div class="info-box">
+      <h3>📌 Instrucciones de uso</h3>
+      <p>1️⃣ Ingresa la <b>concentración mayor (C1)</b> en porcentaje (la solución más concentrada disponible).</p>
+      <p>2️⃣ Ingresa la <b>concentración menor (C2)</b> en porcentaje (la solución más diluida disponible). Usa <b>0</b> si vas a diluir con agua o suero estéril.</p>
+      <p>3️⃣ Indica el <b>volumen total deseado (Vf)</b> en mililitros.</p>
+      <p>4️⃣ Especifica la <b>concentración final deseada (Cf)</b> en porcentaje.</p>
+      <p>5️⃣ Presiona <b>Calcular</b> para obtener las cantidades exactas.</p>
+      <div class="warn">⚠️ La concentración deseada (Cf) debe estar <b>entre la menor y la mayor</b> para obtener un cálculo válido.</div>
+    </div>
+
+    <div class="info-box example">
+      <h3>📍 Ejemplo de cálculo</h3>
+      <p>🔷 Se necesita preparar <b>150 ml de dextrosa al 12.5%</b>.</p>
+      <p>🔷 Se dispone de dextrosa al <b>50% (C1)</b> y dextrosa al <b>10% (C2)</b>.</p>
+      <p>🔷 Aplicando la fórmula:</p>
+      <p>👉 <span class="step">V<sub>C2</sub> = ((50 − 12.5) × 150) ÷ (50 − 10) = 140.6 ml</span></p>
+      <p>👉 <span class="step">V<sub>C1</sub> = 150 − 140.6 = 9.4 ml</span></p>
+      <p>✅ <b>Resultado:</b> Mezclar <b>9.4 ml de dextrosa al 50%</b> con <b>140.6 ml de dextrosa al 10%</b> para obtener 150 ml al 12.5%.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+
+  function setError(msg) {
+    const r = $('result');
+    r.className = 'result-block visible error';
+    r.innerHTML = '⚠️ <span class="vol">' + msg + '</span>';
+    $('breakdown').classList.remove('visible');
+  }
+
+  function calc() {
+    const c1 = parseFloat($('c1').value);
+    const c2 = parseFloat($('c2').value);
+    const vf = parseFloat($('vf').value);
+    const cf = parseFloat($('cf').value);
+
+    if ([c1, c2, vf, cf].some(v => isNaN(v))) {
+      setError('Completa los 4 campos con valores numéricos.');
+      return;
+    }
+    if (vf <= 0) { setError('El volumen final debe ser mayor a 0.'); return; }
+    if (c1 <= c2) { setError('La concentración mayor (C1) debe ser superior a la menor (C2).'); return; }
+    if (cf < c2 || cf > c1) {
+      setError(`La concentración deseada (${cf}%) debe estar entre ${c2}% y ${c1}%.`);
+      return;
+    }
+
+    const volC2 = ((c1 - cf) * vf) / (c1 - c2);
+    const volC1 = vf - volC2;
+
+    const r = $('result');
+    r.className = 'result-block visible';
+    r.innerHTML = `✅ Mezclar <span class="vol">${volC1.toFixed(2)} ml</span> de solución al ${c1}% con <span class="vol">${volC2.toFixed(2)} ml</span> de solución al ${c2}%<br>para obtener <b>${vf} ml de solución al ${cf}%</b>.`;
+
+    const b = $('breakdown');
+    b.classList.add('visible');
+    $('breakdown-steps').innerHTML = `
+      <div class="step">V<sub>C2</sub> = ((${c1} − ${cf}) × ${vf}) ÷ (${c1} − ${c2})</div>
+      <div class="step">V<sub>C2</sub> = (${(c1 - cf).toFixed(2)} × ${vf}) ÷ ${(c1 - c2).toFixed(2)} = <b>${volC2.toFixed(2)} ml</b></div>
+      <div class="step">V<sub>C1</sub> = ${vf} − ${volC2.toFixed(2)} = <b>${volC1.toFixed(2)} ml</b></div>
+    `;
+  }
+
+  function reset() {
+    ['c1','c2','vf','cf'].forEach(id => $(id).value = '');
+    $('result').classList.remove('visible');
+    $('breakdown').classList.remove('visible');
+  }
+
+  $('btn-calc').addEventListener('click', calc);
+  $('btn-reset').addEventListener('click', reset);
+
+  // Allow Enter key to calculate
+  ['c1','c2','vf','cf'].forEach(id => {
+    $(id).addEventListener('keypress', e => { if (e.key === 'Enter') calc(); });
+  });
+
+  // Presets — autocompletan los 4 campos y calculan
+  document.querySelectorAll('.preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $('c1').value = btn.dataset.c1;
+      $('c2').value = btn.dataset.c2;
+      if (btn.dataset.vf) $('vf').value = btn.dataset.vf;
+      if (btn.dataset.cf) $('cf').value = btn.dataset.cf;
+      calc();
+    });
+  });
+</script>
+
+</body>
+</html>
