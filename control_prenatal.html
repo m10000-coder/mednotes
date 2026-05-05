@@ -1,0 +1,2197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control Prenatal · MED NOTES®</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #be185d;
+    --primary-dark: #9d174d;
+    --primary-soft: #fce7f3;
+    --primary-border: #fbcfe8;
+    --accent: #d946ef;
+    --pink: #ec4899;
+    --pink-bg: #fce7f3;
+    --purple: #a855f7;
+    --purple-bg: #f3e8ff;
+    --orange: #f97316;
+    --orange-bg: #ffedd5;
+    --teal: #14b8a6;
+    --teal-bg: #ccfbf1;
+    --red: #dc2626;
+    --red-bg: #fee2e2;
+    --yellow: #facc15;
+    --yellow-bg: #fef3c7;
+    --green: #16a34a;
+    --green-soft: #dcfce7;
+    --green-border: #bbf7d0;
+    --green-dark: #15803d;
+    --text: #1e293b;
+    --text-light: #475569;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --bg: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 14px;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 24px 18px 60px;
+  }
+
+  /* ============ Brand Header ============ */
+  .header {
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; margin-bottom: 22px;
+  }
+  .brand-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #000; color: #fff;
+    padding: 7px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700; font-size: 13px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    border-radius: 4px; margin-bottom: 14px;
+  }
+  .brand-badge .reg { font-size: 9px; vertical-align: top; opacity: 0.85; }
+  .header h1 {
+    font-size: 26px; font-weight: 800;
+    color: var(--text); letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+  .header .sub {
+    color: var(--muted); font-size: 13.5px;
+    font-weight: 500;
+  }
+  .header .sub strong { color: var(--primary-dark); }
+
+  /* ============ Top Tabs ============ */
+  .tabs-nav {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    padding: 6px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+  }
+  .top-tab {
+    flex: 1; min-width: 130px;
+    padding: 10px 12px;
+    background: transparent; color: var(--muted);
+    border: none; cursor: pointer;
+    font: 600 12.5px 'Inter', sans-serif;
+    border-radius: 7px;
+    transition: all .15s;
+    text-align: center;
+  }
+  .top-tab:hover { background: var(--primary-soft); color: var(--primary-dark); }
+  .top-tab.active { background: var(--primary); color: #fff; }
+
+  .tab-view { display: none; }
+  .tab-view.active { display: block; }
+
+  /* ============ Etapa Picker (Kanban-style cards) ============ */
+  .etapa-picker {
+    margin-bottom: 18px;
+  }
+  .etapa-picker-title {
+    font-size: 12.5px; font-weight: 700;
+    color: var(--text); letter-spacing: 0.04em;
+    margin-bottom: 14px;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--surface-alt); padding: 8px 14px;
+    border: 1px solid var(--border); border-radius: 999px;
+  }
+  .etapa-picker-title::before { content: '☑'; color: var(--primary); font-size: 13px; }
+
+  .etapa-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 900px) { .etapa-board { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .etapa-board { grid-template-columns: 1fr; } }
+
+  .etapa-column {
+    background: var(--surface-alt);
+    border-radius: 12px;
+    padding: 12px;
+    min-height: 100px;
+  }
+  .etapa-column.g-sospecha { background: #f3e8ff; }
+  .etapa-column.g-captacion { background: #ffedd5; }
+  .etapa-column.g-trimestre { background: #fce7f3; }
+  .etapa-column.g-puerperio { background: #ccfbf1; }
+
+  .etapa-col-header {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11.5px; font-weight: 800;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    margin-bottom: 12px; padding: 0 4px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .etapa-col-header .col-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+  }
+  .etapa-column.g-sospecha .etapa-col-header { color: #6b21a8; }
+  .etapa-column.g-sospecha .col-dot { background: #9333ea; }
+  .etapa-column.g-captacion .etapa-col-header { color: #9a3412; }
+  .etapa-column.g-captacion .col-dot { background: #ea580c; }
+  .etapa-column.g-trimestre .etapa-col-header { color: #9d174d; }
+  .etapa-column.g-trimestre .col-dot { background: #be185d; }
+  .etapa-column.g-puerperio .etapa-col-header { color: #115e59; }
+  .etapa-column.g-puerperio .col-dot { background: #0d9488; }
+
+  .etapa-col-name { flex: 1; }
+  .etapa-col-count {
+    background: rgba(0,0,0,0.08);
+    padding: 1px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .etapa-col-cards {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+
+  .etapa-card {
+    position: relative;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    padding: 16px 12px;
+    color: #fff;
+    text-align: center;
+    font: 700 13px 'Inter', sans-serif;
+    line-height: 1.3;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: all .18s;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    min-height: 130px;
+    justify-content: center;
+  }
+  .etapa-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.16);
+  }
+  .etapa-card.active {
+    box-shadow: 0 0 0 3px #1e293b, 0 6px 16px rgba(0,0,0,0.18);
+  }
+  .etapa-card.g-sospecha { background: #9333ea; }
+  .etapa-card.g-captacion { background: #dc2626; }
+  .etapa-card.g-trimestre { background: #be185d; }
+  .etapa-card.g-puerperio { background: #0d9488; }
+
+  .etapa-card-icon {
+    width: 60px; height: 60px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .etapa-card-icon svg { width: 100%; height: 100%; fill: #fff; }
+  .etapa-card-icon::after {
+    content: '✓';
+    position: absolute;
+    bottom: -4px; right: -2px;
+    width: 18px; height: 18px;
+    background: #16a34a;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid #fff;
+  }
+
+  .etapa-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+  }
+
+  /* ============ Etapa Panel ============ */
+  .etapa-panel { display: none; }
+  .etapa-panel.active { display: block; }
+
+  .panel-banner {
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+  .panel-banner.g-sospecha { background: #f3e8ff; border-left: 5px solid #9333ea; }
+  .panel-banner.g-captacion { background: #ffedd5; border-left: 5px solid #ea580c; }
+  .panel-banner.g-trimestre { background: #fce7f3; border-left: 5px solid #be185d; }
+  .panel-banner.g-puerperio { background: #ccfbf1; border-left: 5px solid #0d9488; }
+  .panel-banner h2 {
+    font-size: 18px; font-weight: 800; letter-spacing: -0.01em;
+  }
+  .panel-banner .sub {
+    font-size: 13px; color: var(--text-light); margin-top: 2px;
+    font-weight: 500;
+  }
+
+  .panel-body { padding: 0 4px; }
+  .section { margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+  .section-title {
+    font-size: 14px; font-weight: 700;
+    color: var(--primary-dark);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .check-list { list-style: none; }
+  .check-list li {
+    position: relative;
+    padding: 6px 0 6px 28px;
+    font-size: 13.5px; color: var(--text); line-height: 1.6;
+  }
+  .check-list li::before {
+    content: '✅';
+    position: absolute; left: 0; top: 6px;
+    font-size: 14px;
+  }
+  .check-list li strong {
+    background: var(--yellow-bg);
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-weight: 700;
+  }
+
+  /* Nested bullets inside check-list items */
+  .check-list li ul.nested {
+    list-style: none;
+    margin: 6px 0 6px 0;
+  }
+  .check-list li ul.nested li {
+    position: relative;
+    padding: 3px 0 3px 18px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .check-list li ul.nested li::before {
+    content: '•';
+    position: absolute; left: 4px; top: 2px;
+    color: var(--pink); font-weight: 700;
+    font-size: 14px;
+  }
+  .check-list li ul.nested ul.nested {
+    margin-top: 4px;
+  }
+  .check-list li ul.nested ul.nested li::before {
+    content: '◦';
+    color: var(--muted);
+  }
+
+  /* Big green container for "Controles y Acciones Clave" */
+  .controles-box {
+    background: #dcfce7;
+    border: 1px solid #86efac;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 6px 0 14px;
+  }
+  .controles-box .section-title {
+    color: #15803d;
+    margin-bottom: 12px;
+  }
+  .controles-box .check-list li strong {
+    background: #fef9c3;
+  }
+
+  /* Vaccine list — uses syringe icon */
+  .vaccine-list {
+    list-style: none;
+  }
+  .vaccine-list li {
+    position: relative;
+    padding: 6px 0 6px 28px;
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .vaccine-list li::before {
+    content: '💉';
+    position: absolute; left: 0; top: 6px;
+    font-size: 14px;
+  }
+  .vaccine-list li strong {
+    background: var(--yellow-bg);
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-weight: 700;
+  }
+
+  .sub-list {
+    list-style: none;
+    margin-left: 28px; margin-top: 4px;
+  }
+  .sub-list li {
+    position: relative;
+    padding: 3px 0 3px 16px;
+    font-size: 13px; color: var(--text); line-height: 1.5;
+  }
+  .sub-list li::before {
+    content: '•';
+    position: absolute; left: 4px; top: 3px;
+    color: var(--pink); font-weight: 700;
+  }
+
+  .tip-card {
+    background: var(--yellow-bg);
+    border: 1px solid #fde68a;
+    border-left: 4px solid #facc15;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 10px 0;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .tip-card::before { content: '💡 '; }
+
+  .alert-card {
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    border-left: 4px solid #dc2626;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 10px 0;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .alert-card::before { content: '⚠ '; }
+
+  /* Alert card for panel sections (with embedded HTML) */
+  .alert-card-pe {
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 10px 0;
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .alert-card-pe ol { padding-left: 0; list-style-position: inside; }
+
+  /* Section without border */
+  .section.section-no-border {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 6px;
+  }
+
+  /* Green box for "Controles y Acciones Clave" */
+  .section.controles-clave {
+    background: #dcfce7;
+    border: 1px solid #86efac;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+  }
+
+  /* ============ Preeclampsia Calculator ============ */
+  .pe-calc {
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    margin-top: 12px;
+  }
+  .pe-calc-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--primary-dark);
+    margin-bottom: 6px;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .pe-calc-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .pe-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  @media (max-width: 700px) { .pe-grid { grid-template-columns: 1fr; } }
+
+  .pe-col h4 {
+    font-size: 13.5px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .pe-col.alto h4 { color: #dc2626; }
+  .pe-col.moderado h4 { color: #b45309; }
+
+  .pe-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 0;
+    cursor: pointer;
+    font-size: 13.5px;
+    line-height: 1.5;
+    user-select: none;
+  }
+  .pe-check input[type="checkbox"] {
+    margin-top: 3px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--primary);
+  }
+  .pe-check span { flex: 1; }
+
+  /* Result blocks */
+  .pe-result {
+    margin-top: 14px;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .pe-result.alto {
+    background: #fee2e2;
+    border: 1.5px solid #fca5a5;
+    color: var(--text);
+  }
+  .pe-result.bajo {
+    background: #dcfce7;
+    border: 1.5px solid #86efac;
+    color: var(--text);
+  }
+  .pe-result-title {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .pe-result.alto .pe-result-title { color: #b91c1c; }
+  .pe-result.bajo .pe-result-title { color: #15803d; }
+
+  .pe-result ul { margin: 6px 0 0 22px; }
+  .pe-result li { padding: 4px 0; }
+  .pe-result code, .pe-result strong.mark {
+    background: var(--yellow-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 700;
+    font-family: inherit;
+  }
+
+  .pe-dairy-row {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(0,0,0,0.15);
+  }
+
+  /* ============ Calculator cards ============ */
+  .calc-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .calc-title {
+    font-size: 18px; font-weight: 800; margin-bottom: 4px;
+    color: var(--primary-dark);
+    letter-spacing: -0.01em;
+  }
+  .calc-sub {
+    color: var(--muted); font-size: 13px; margin-bottom: 16px;
+  }
+
+  .field { display: block; margin-bottom: 14px; }
+  .field-label {
+    display: block; font-size: 11px; font-weight: 700;
+    color: var(--muted); letter-spacing: 0.06em;
+    text-transform: uppercase; margin-bottom: 6px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .input, select.input {
+    width: 100%; padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font: 500 14px 'Inter', sans-serif;
+    color: var(--text); background: #fff;
+    transition: border-color .15s;
+  }
+  .input:focus, select.input:focus {
+    outline: none; border-color: var(--primary);
+  }
+
+  .grid-2 {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  }
+  .grid-3 {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;
+  }
+  @media (max-width: 700px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  .btn {
+    padding: 10px 20px;
+    background: var(--primary); color: #fff;
+    border: none; cursor: pointer;
+    font: 700 13px 'Inter', sans-serif;
+    border-radius: 8px;
+    transition: background .15s;
+    letter-spacing: 0.02em;
+  }
+  .btn:hover { background: var(--primary-dark); }
+  .btn-secondary {
+    background: var(--surface-alt); color: var(--text);
+    border: 1.5px solid var(--border);
+  }
+  .btn-secondary:hover { background: #e2e8f0; }
+
+  /* ============ Result blocks ============ */
+  .result-card {
+    margin-top: 16px;
+    padding: 16px 18px;
+    border-radius: 10px;
+    border: 1.5px solid;
+  }
+  .result-card.normal { background: #dcfce7; border-color: #86efac; color: #15803d; }
+  .result-card.warning { background: #fef3c7; border-color: #fde047; color: #a16207; }
+  .result-card.alert { background: #fee2e2; border-color: #fca5a5; color: #b91c1c; }
+  .result-card h3 { font-size: 17px; margin-bottom: 6px; font-weight: 800; }
+  .result-card p { font-size: 13px; line-height: 1.55; }
+
+  /* ============ Tables ============ */
+  .data-table {
+    width: 100%; border-collapse: collapse;
+    margin: 12px 0;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .data-table thead {
+    background: var(--primary-soft);
+  }
+  .data-table th {
+    padding: 11px 12px; text-align: left;
+    font-size: 12px; font-weight: 700;
+    color: var(--primary-dark);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    border-bottom: 2px solid var(--primary-border);
+  }
+  .data-table td {
+    padding: 10px 12px;
+    font-size: 13.5px; color: var(--text);
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table tbody tr:last-child td { border-bottom: none; }
+  .data-table tbody tr:hover { background: #fafafa; }
+
+  /* ============ SCORE MAMA grid ============ */
+  .score-table {
+    width: 100%; border-collapse: collapse;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 18px;
+    font-size: 12px;
+    border: 1px solid var(--border);
+  }
+  .score-table th, .score-table td {
+    padding: 8px 6px;
+    text-align: center;
+    border: 1px solid #cbd5e1;
+    vertical-align: middle;
+    font-weight: 600;
+  }
+  .score-table thead th {
+    background: var(--surface-alt);
+    color: var(--text);
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .score-table thead th.sc-3 { background: #dc2626; color: #fff; }
+  .score-table thead th.sc-2 { background: #f97316; color: #fff; }
+  .score-table thead th.sc-1 { background: #facc15; color: #1e293b; }
+  .score-table thead th.sc-0 { background: #fff; color: #1e293b; }
+  .score-table tbody td.lbl {
+    text-align: left;
+    background: var(--surface-alt);
+    font-weight: 700;
+    color: var(--text);
+    width: 130px;
+  }
+  .score-cell {
+    cursor: pointer;
+    user-select: none;
+    transition: all .15s;
+    position: relative;
+    line-height: 1.35;
+  }
+  .score-cell:hover { transform: scale(1.02); box-shadow: inset 0 0 0 2px var(--primary); }
+  .score-cell.empty {
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: default;
+  }
+  .score-cell.empty:hover { transform: none; box-shadow: none; }
+  .score-cell.active {
+    box-shadow: inset 0 0 0 3px #1e293b;
+    font-weight: 800;
+  }
+  .score-cell.s-3 { background: #fecaca; color: #7f1d1d; }
+  .score-cell.s-2 { background: #fed7aa; color: #7c2d12; }
+  .score-cell.s-1 { background: #fef08a; color: #713f12; }
+  .score-cell.s-0 { background: #f8fafc; color: #1e293b; }
+  .score-table .partial-col {
+    background: #dcfce7;
+    font-weight: 700;
+    color: #15803d;
+    width: 70px;
+  }
+  .score-table .total-row td {
+    background: var(--surface-alt);
+    font-weight: 800;
+    font-size: 14px;
+  }
+  .score-table .total-row .total-val {
+    background: #16a34a; color: #fff;
+    font-size: 18px;
+  }
+
+  .score-summary {
+    margin-top: 14px;
+    padding: 16px 18px;
+    border-radius: 10px;
+    border: 1.5px solid;
+    text-align: center;
+  }
+  .score-summary h3 { font-size: 22px; margin-bottom: 6px; font-weight: 800; }
+  .score-summary p { font-size: 13.5px; line-height: 1.55; }
+  .score-summary.s-normal { background: #dcfce7; border-color: #86efac; color: #15803d; }
+  .score-summary.s-vigilancia { background: #fef9c3; border-color: #fde047; color: #a16207; }
+  .score-summary.s-prioritario { background: #fed7aa; border-color: #fb923c; color: #9a3412; }
+  .score-summary.s-emergencia { background: #fecaca; border-color: #f87171; color: #b91c1c; animation: pulse 1.5s infinite; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+  }
+
+  /* ============ IMC table ============ */
+  .imc-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 10px; margin-bottom: 14px;
+  }
+  .imc-card {
+    border-radius: 10px;
+    padding: 14px;
+    border: 1.5px solid;
+    text-align: center;
+  }
+  .imc-card.bajo { background: #dbeafe; border-color: #60a5fa; color: #1e40af; }
+  .imc-card.normal { background: #dcfce7; border-color: #86efac; color: #15803d; }
+  .imc-card.sobrepeso { background: #fef3c7; border-color: #fcd34d; color: #92400e; }
+  .imc-card.obesidad { background: #fee2e2; border-color: #fca5a5; color: #b91c1c; }
+  .imc-card .imc-cat { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+  .imc-card .imc-range { font-size: 18px; font-weight: 800; }
+  .imc-card .imc-gan { font-size: 12.5px; margin-top: 4px; opacity: 0.9; }
+  @media (max-width: 700px) { .imc-row { grid-template-columns: 1fr 1fr; } }
+
+  /* ============ Footer ============ */
+  .disclaimer {
+    background: var(--yellow-bg);
+    border: 1px solid #fde68a;
+    border-left: 4px solid #facc15;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 12.5px;
+    color: var(--text); line-height: 1.5;
+    margin-top: 24px;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 22px; padding-top: 18px;
+    border-top: 1px solid var(--border);
+    color: var(--muted); font-size: 12.5px;
+  }
+  .brand-logo {
+    display: inline-block; padding: 4px 12px;
+    background: #000; color: #fff;
+    font: 700 11px 'JetBrains Mono', monospace;
+    letter-spacing: 0.06em; border-radius: 3px;
+    margin-bottom: 8px;
+  }
+  .brand-logo .reg { font-size: 8px; vertical-align: top; }
+
+  /* ============ Bibliography ============ */
+  .bib-card {
+    margin-top: 14px; padding: 12px 14px;
+    background: #f8fafc; border: 1px solid #e2e8f0;
+    border-left: 3px solid #64748b; border-radius: 6px;
+    font-size: 11.5px; color: #475569; line-height: 1.6;
+  }
+  .bib-card strong { color: #1e293b; font-size: 12px; }
+  .bib-card ol { margin: 8px 0 0 18px; padding: 0; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ============ Brand Header ============ -->
+  <div class="header">
+    <div class="brand-badge">
+      <span>MED NOTES</span><span class="reg">®</span>
+    </div>
+    <h1>Control Prenatal</h1>
+    <p class="sub">Guía clínica · <strong>MSP Ecuador · OMS · ALARM</strong> · Score MAMA · Anemia en embarazo</p>
+  </div>
+
+  <!-- ============ Top Tabs ============ -->
+  <div class="tabs-nav">
+    <button class="top-tab active" data-tab="etapa">🤰 Control por Etapa</button>
+    <button class="top-tab" data-tab="peso">📊 Ganancia de Peso</button>
+    <button class="top-tab" data-tab="hb">🩸 Hemoglobina</button>
+    <button class="top-tab" data-tab="hierro">💊 Dosis de Hierro</button>
+    <button class="top-tab" data-tab="score">🚨 SCORE MAMA</button>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TAB 1: CONTROL POR ETAPA                     -->
+  <!-- ============================================ -->
+  <div class="tab-view active" id="view-etapa">
+
+    <div class="etapa-picker">
+      <div class="etapa-picker-title">Selecciona la etapa</div>
+
+      <div class="etapa-board">
+
+        <!-- COLUMNA: SOSPECHA DE EMBARAZO -->
+        <div class="etapa-column g-sospecha">
+          <div class="etapa-col-header">
+            <span class="col-dot"></span>
+            <span class="etapa-col-name">Sospecha de embarazo</span>
+            <span class="etapa-col-count">2</span>
+          </div>
+          <div class="etapa-col-cards">
+            <button class="etapa-card g-sospecha active" data-etapa="sosp_normal">
+              <div class="etapa-card-icon">
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M32 8c-4 0-7 2.5-7 6v6c-3 .5-5 2.8-5 6v3c0 4 2 6 5 7v8c-3 1-5 4-5 7v3c0 5 4 8 8 8h8c4 0 8-3 8-8v-3c0-3-2-6-5-7v-8c3-1 5-3 5-7v-3c0-3.2-2-5.5-5-6v-6c0-3.5-3-6-7-6zm-2 4h4c1.5 0 3 1 3 3v6h-10v-6c0-2 1.5-3 3-3zm-7 15h18v3c0 2-1.5 4-4 4H27c-2.5 0-4-2-4-4v-3zm6 9h6v9h-6v-9zm-3 13h12c2 0 4 2 4 4v3c0 3-2 4-4 4h-12c-2 0-4-1-4-4v-3c0-2 2-4 4-4z"/>
+                </svg>
+              </div>
+              <div class="etapa-card-title">Sospecha de embarazo<br>normal</div>
+            </button>
+            <button class="etapa-card g-sospecha" data-etapa="sosp_ado">
+              <div class="etapa-card-icon">
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M32 8c-4 0-7 2.5-7 6v6c-3 .5-5 2.8-5 6v3c0 4 2 6 5 7v8c-3 1-5 4-5 7v3c0 5 4 8 8 8h8c4 0 8-3 8-8v-3c0-3-2-6-5-7v-8c3-1 5-3 5-7v-3c0-3.2-2-5.5-5-6v-6c0-3.5-3-6-7-6zm-2 4h4c1.5 0 3 1 3 3v6h-10v-6c0-2 1.5-3 3-3zm-7 15h18v3c0 2-1.5 4-4 4H27c-2.5 0-4-2-4-4v-3zm6 9h6v9h-6v-9zm-3 13h12c2 0 4 2 4 4v3c0 3-2 4-4 4h-12c-2 0-4-1-4-4v-3c0-2 2-4 4-4z"/>
+                </svg>
+              </div>
+              <div class="etapa-card-title">Sospecha de embarazo<br>adolescente</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- COLUMNA: CAPTACIÓN -->
+        <div class="etapa-column g-captacion">
+          <div class="etapa-col-header">
+            <span class="col-dot"></span>
+            <span class="etapa-col-name">Captación</span>
+            <span class="etapa-col-count">1</span>
+          </div>
+          <div class="etapa-col-cards">
+            <button class="etapa-card g-captacion" data-etapa="captacion">
+              <div class="etapa-card-icon">
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="32" cy="12" r="5"/>
+                  <path d="M28 19c-4 0-7 3-7 7v12c0 2 1 4 3 5l1 1v14c0 2 2 4 4 4h6c2 0 4-2 4-4V44l1-1c2-1 3-3 3-5V26c0-4-3-7-7-7h-8zm10 13c0 4-3 8-7 9-4-1-7-5-7-9v-4c0-2 1-3 3-3h8c2 0 3 1 3 3v4z"/>
+                </svg>
+              </div>
+              <div class="etapa-card-title">Captación y<br>1er control prenatal</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- COLUMNA: TRIMESTRES -->
+        <div class="etapa-column g-trimestre">
+          <div class="etapa-col-header">
+            <span class="col-dot"></span>
+            <span class="etapa-col-name">Trimestres</span>
+            <span class="etapa-col-count">3</span>
+          </div>
+          <div class="etapa-col-cards">
+            <button class="etapa-card g-trimestre" data-etapa="t1">
+              <div class="etapa-card-icon">
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="32" cy="10" r="5"/>
+                  <path d="M28 17c-3 0-6 3-6 6v15c0 2 1 3 3 4l1 1v15c0 2 2 4 4 4h4c2 0 4-2 4-4V47c4-1 6-4 6-8v-9c0-4-3-7-7-7h-9zm10 14c0 3-2 5-5 6-3-1-5-3-5-6v-2c0-2 1-3 3-3h4c2 0 3 1 3 3v2z"/>
+                </svg>
+              </div>
+              <div class="etapa-card-title">Control prenatal<br>1° TRIMESTRE</div>
+            </button>
+            <button class="etapa-card g-trimestre" data-etapa="t2">
+              <div class="etapa-card-icon">
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="32" cy="10" r="5"/>
+                  <path d="M28 17c-3 0-6 3-6 6v15c0 2 1 3 3 4l1 1v15c0 2 2 4 4 4h4c2 0 4-2 4-4V47c4-1 6-4 6-8v-9c0-4-3-7-7-7h-9zm10 14c0 3-2 5-5 6-3-1-5-3-5-6v-2c0-2 1-3 3-3h4c2 0 3 1 3 3v2z"/>
+                </svg>
+              </div>
+              <div class="etapa-card-title">Control prenatal<br>2° TRIMESTRE</div>
+            </button>
+            <button class="etapa-card g-trimestre" data-etapa="t3">
+              <div class="etapa-card-icon">
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="32" cy="10" r="5"/>
+                  <path d="M28 17c-3 0-6 3-6 6v15c0 2 1 3 3 4l1 1v15c0 2 2 4 4 4h4c2 0 4-2 4-4V47c4-1 6-4 6-8v-9c0-4-3-7-7-7h-9zm10 14c0 3-2 5-5 6-3-1-5-3-5-6v-2c0-2 1-3 3-3h4c2 0 3 1 3 3v2z"/>
+                </svg>
+              </div>
+              <div class="etapa-card-title">Control prenatal<br>3° TRIMESTRE</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- COLUMNA: PUERPERIO -->
+        <div class="etapa-column g-puerperio">
+          <div class="etapa-col-header">
+            <span class="col-dot"></span>
+            <span class="etapa-col-name">Puerperio</span>
+            <span class="etapa-col-count">1</span>
+          </div>
+          <div class="etapa-col-cards">
+            <button class="etapa-card g-puerperio" data-etapa="puerperio">
+              <div class="etapa-card-icon">
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M28 6c-1.5 0-2.5 1-2.5 2.5V11h-2c-1 0-2 1-2 2v3c0 1 1 2 2 2h2v.5c-4 1-7 5-7 9.5V52c0 3 2 5 5 5h13c3 0 5-2 5-5V28c0-4.5-3-8.5-7-9.5V18h2c1 0 2-1 2-2v-3c0-1-1-2-2-2h-2V8.5c0-1.5-1-2.5-2.5-2.5h-4zm-2 24h12c1.5 0 2.5 1 2.5 2.5v17c0 1.5-1 2.5-2.5 2.5H26c-1.5 0-2.5-1-2.5-2.5v-17c0-1.5 1-2.5 2.5-2.5z"/>
+                </svg>
+              </div>
+              <div class="etapa-card-title">Control posparto</div>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="etapa-panels"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TAB 2: GANANCIA DE PESO                      -->
+  <!-- ============================================ -->
+  <div class="tab-view" id="view-peso">
+
+    <div class="calc-card">
+      <h2 class="calc-title">📊 Ganancia de peso recomendada en el embarazo</h2>
+      <p class="calc-sub">Según el <strong>IMC pregestacional</strong> (recomendaciones IOM 2009 / OMS / MSP Ecuador)</p>
+
+      <div class="grid-2">
+        <div class="field">
+          <label class="field-label">Peso pregestacional (kg)</label>
+          <input class="input" id="p-peso-pre" type="number" step="0.1" placeholder="Ej. 60">
+        </div>
+        <div class="field">
+          <label class="field-label">Talla (cm)</label>
+          <input class="input" id="p-talla" type="number" step="0.1" placeholder="Ej. 160">
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label class="field-label">Peso actual (kg)</label>
+          <input class="input" id="p-peso-act" type="number" step="0.1" placeholder="Ej. 65">
+        </div>
+        <div class="field">
+          <label class="field-label">Semanas de gestación</label>
+          <input class="input" id="p-sem" type="number" min="1" max="42" placeholder="Ej. 28">
+        </div>
+      </div>
+      <button class="btn" id="btn-peso-calc">Calcular IMC y ganancia</button>
+
+      <div id="peso-result"></div>
+
+      <h3 style="margin-top:24px; margin-bottom:10px; font-size:14px; font-weight:700; text-transform:uppercase; color:var(--primary-dark); letter-spacing:0.04em;">📋 Tabla de referencia de ganancia de peso</h3>
+
+      <div class="imc-row">
+        <div class="imc-card bajo">
+          <div class="imc-cat">Bajo peso</div>
+          <div class="imc-range">IMC &lt; 18.5</div>
+          <div class="imc-gan"><strong>12.5 – 18 kg</strong></div>
+          <div class="imc-gan">≈ 0.51 kg/sem (2T-3T)</div>
+        </div>
+        <div class="imc-card normal">
+          <div class="imc-cat">Normal</div>
+          <div class="imc-range">IMC 18.5 – 24.9</div>
+          <div class="imc-gan"><strong>11.5 – 16 kg</strong></div>
+          <div class="imc-gan">≈ 0.42 kg/sem (2T-3T)</div>
+        </div>
+        <div class="imc-card sobrepeso">
+          <div class="imc-cat">Sobrepeso</div>
+          <div class="imc-range">IMC 25 – 29.9</div>
+          <div class="imc-gan"><strong>7 – 11.5 kg</strong></div>
+          <div class="imc-gan">≈ 0.28 kg/sem (2T-3T)</div>
+        </div>
+        <div class="imc-card obesidad">
+          <div class="imc-cat">Obesidad</div>
+          <div class="imc-range">IMC ≥ 30</div>
+          <div class="imc-gan"><strong>5 – 9 kg</strong></div>
+          <div class="imc-gan">≈ 0.22 kg/sem (2T-3T)</div>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>IMC pregestacional</th>
+            <th>Categoría</th>
+            <th>Ganancia 1.er T</th>
+            <th>Ganancia total</th>
+            <th>Ritmo 2T-3T</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>&lt; 18.5</td>
+            <td><strong>Bajo peso</strong></td>
+            <td>1 – 3 kg</td>
+            <td>12.5 – 18 kg</td>
+            <td>0.44 – 0.58 kg/sem</td>
+          </tr>
+          <tr>
+            <td>18.5 – 24.9</td>
+            <td><strong>Normal</strong></td>
+            <td>0.5 – 2 kg</td>
+            <td>11.5 – 16 kg</td>
+            <td>0.35 – 0.50 kg/sem</td>
+          </tr>
+          <tr>
+            <td>25 – 29.9</td>
+            <td><strong>Sobrepeso</strong></td>
+            <td>0.5 – 2 kg</td>
+            <td>7 – 11.5 kg</td>
+            <td>0.23 – 0.33 kg/sem</td>
+          </tr>
+          <tr>
+            <td>≥ 30</td>
+            <td><strong>Obesidad</strong></td>
+            <td>0.2 – 2 kg</td>
+            <td>5 – 9 kg</td>
+            <td>0.17 – 0.27 kg/sem</td>
+          </tr>
+          <tr>
+            <td colspan="5" style="background:#fef3c7; font-style:italic; font-size:12px;">
+              <strong>Embarazo gemelar:</strong> ganancia 16.8 – 24.5 kg (normal) · 14.1 – 22.7 kg (sobrepeso) · 11.3 – 19.1 kg (obesidad)
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="bib-card">
+        <strong>📚 Bibliografía:</strong>
+        <ol>
+          <li><strong>IOM (Institute of Medicine).</strong> Weight Gain During Pregnancy: Reexamining the Guidelines. Washington DC: National Academies Press; 2009.</li>
+          <li><strong>MSP Ecuador.</strong> Control prenatal. Guía de Práctica Clínica. Quito: MSP; 2015.</li>
+          <li><strong>OMS.</strong> Recomendaciones sobre atención prenatal para una experiencia positiva del embarazo. Ginebra: OMS; 2016.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TAB 3: HEMOGLOBINA                            -->
+  <!-- ============================================ -->
+  <div class="tab-view" id="view-hb">
+
+    <div class="calc-card">
+      <h2 class="calc-title">🩸 Calculadora de hemoglobina – embarazo</h2>
+      <p class="calc-sub">Clasificación OMS con corrección por altitud (Ecuador)</p>
+
+      <div class="grid-3">
+        <div class="field">
+          <label class="field-label">Trimestre</label>
+          <select class="input" id="hb-trimestre">
+            <option value="1">1.er trimestre (≤ 13 sem)</option>
+            <option value="2">2.º trimestre (14-27 sem)</option>
+            <option value="3">3.er trimestre (≥ 28 sem)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label">Hb medida (g/dL)</label>
+          <input class="input" id="hb-valor" type="number" step="0.1" placeholder="Ej. 11.0">
+        </div>
+        <div class="field">
+          <label class="field-label">Altitud (msnm)</label>
+          <select class="input" id="hb-altitud">
+            <option value="0">0 m (nivel del mar)</option>
+            <option value="500">500 m</option>
+            <option value="1000">1000 m</option>
+            <option value="1500">1500 m</option>
+            <option value="2000">2000 m</option>
+            <option value="2500">2500 m</option>
+            <option value="2560">2560 m (Cuenca)</option>
+            <option value="2850" selected>2850 m (Quito)</option>
+            <option value="3000">3000 m</option>
+            <option value="3500">3500 m</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn" id="btn-hb-calc">Clasificar anemia</button>
+
+      <div id="hb-result"></div>
+
+      <h3 style="margin-top:24px; margin-bottom:10px; font-size:14px; font-weight:700; text-transform:uppercase; color:var(--primary-dark); letter-spacing:0.04em;">📋 Umbrales OMS – embarazo</h3>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Trimestre</th>
+            <th>Normal</th>
+            <th>Anemia leve</th>
+            <th>Anemia moderada</th>
+            <th>Anemia grave</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1.er y 3.er trimestre</strong></td>
+            <td style="color:#15803d; font-weight:700;">≥ 11.0 g/dL</td>
+            <td style="color:#a16207; font-weight:700;">10.0 – 10.9</td>
+            <td style="color:#9a3412; font-weight:700;">7.0 – 9.9</td>
+            <td style="color:#b91c1c; font-weight:700;">&lt; 7.0</td>
+          </tr>
+          <tr>
+            <td><strong>2.º trimestre</strong></td>
+            <td style="color:#15803d; font-weight:700;">≥ 10.5 g/dL</td>
+            <td style="color:#a16207; font-weight:700;">9.5 – 10.4</td>
+            <td style="color:#9a3412; font-weight:700;">7.0 – 9.4</td>
+            <td style="color:#b91c1c; font-weight:700;">&lt; 7.0</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="tip-card">
+        <strong>Corrección por altitud (Cohen &amp; Haas, 1999 / OMS 2011):</strong><br>
+        <code style="background:#fff8e1; padding:2px 6px; border-radius:4px; font-family:'JetBrains Mono', monospace; font-size:12px;">Ajuste = -0.032 × (alt × 0.0033) + 0.022 × (alt × 0.0033)²</code><br>
+        Quito (2850 m) ≈ <strong>-1.6 g/dL</strong> · Cuenca (2560 m) ≈ -1.3 g/dL · La Paz (3640 m) ≈ -2.7 g/dL
+      </div>
+
+      <div class="bib-card">
+        <strong>📚 Bibliografía – Corrección por altitud:</strong>
+        <ol>
+          <li><strong>Cohen JH, Haas JD.</strong> Hemoglobin correction factors for estimating the prevalence of iron deficiency anemia in pregnant women residing at high altitudes in Bolivia. <em>Pan American Journal of Public Health</em>. 1999;6(6):392–399.</li>
+          <li><strong>WHO.</strong> Haemoglobin concentrations for the diagnosis of anaemia and assessment of severity. VMNIS. Geneva: World Health Organization; 2011 (WHO/NMH/NHD/MNM/11.1).</li>
+          <li><strong>CDC.</strong> CDC criteria for anemia in children and childbearing-aged women. <em>MMWR</em>. 1989;38(22):400–404.</li>
+          <li><strong>MSP Ecuador.</strong> Diagnóstico y tratamiento de la anemia en el embarazo. Guía de Práctica Clínica. Quito: MSP; 2014.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TAB 4: DOSIS DE HIERRO                        -->
+  <!-- ============================================ -->
+  <div class="tab-view" id="view-hierro">
+
+    <div class="calc-card">
+      <h2 class="calc-title">💊 Calculadora de dosis – Hierro en embarazo</h2>
+      <p class="calc-sub">Suplementación profiláctica y tratamiento de anemia · MSP Ecuador / OMS</p>
+
+      <div class="grid-2">
+        <div class="field">
+          <label class="field-label">Indicación clínica</label>
+          <select class="input" id="fe-indicacion">
+            <option value="profilaxis">Suplementación profiláctica (Hb normal)</option>
+            <option value="leve">Tratamiento – Anemia LEVE (Hb 10.0 – 10.9)</option>
+            <option value="moderada">Tratamiento – Anemia MODERADA (Hb 7.0 – 9.9)</option>
+            <option value="grave">Tratamiento – Anemia GRAVE (Hb &lt; 7.0)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label">Presentación disponible</label>
+          <select class="input" id="fe-presentacion">
+            <option value="sf-tab">Sulfato ferroso 200 mg tab (60 mg Fe elemental)</option>
+            <option value="sf-jbe">Sulfato ferroso jarabe 125 mg/5 mL (25 mg Fe/5 mL)</option>
+            <option value="hp-gotas">Hierro polimaltosado gotas 50 mg/mL (Vitafer®)</option>
+            <option value="hp-jbe">Hierro polimaltosado jarabe 50 mg/5 mL</option>
+            <option value="hierro-iv">Hierro sacarato IV 100 mg/5 mL (ampolla)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label class="field-label">Peso (kg) – opcional para IV</label>
+          <input class="input" id="fe-peso" type="number" step="0.1" placeholder="Ej. 65">
+        </div>
+        <div class="field">
+          <label class="field-label">Hb actual (g/dL) – opcional</label>
+          <input class="input" id="fe-hb" type="number" step="0.1" placeholder="Ej. 9.5">
+        </div>
+      </div>
+
+      <button class="btn" id="btn-fe-calc">Calcular dosis</button>
+
+      <div id="fe-result"></div>
+
+      <h3 style="margin-top:24px; margin-bottom:10px; font-size:14px; font-weight:700; text-transform:uppercase; color:var(--primary-dark); letter-spacing:0.04em;">📋 Esquema de tratamiento – MSP Ecuador</h3>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Indicación</th>
+            <th>Dosis Fe elemental</th>
+            <th>Duración</th>
+            <th>Notas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Profilaxis</strong></td>
+            <td>60 mg Fe + 400 mcg ácido fólico/día</td>
+            <td>Todo el embarazo y 3 m posparto</td>
+            <td>Iniciar desde captación</td>
+          </tr>
+          <tr>
+            <td><strong>Anemia leve</strong></td>
+            <td>120 mg Fe/día (60 mg c/12 h)</td>
+            <td>3 meses, hasta corregir + 3 m</td>
+            <td>Reevaluar Hb a los 30 días</td>
+          </tr>
+          <tr>
+            <td><strong>Anemia moderada</strong></td>
+            <td>120 – 200 mg Fe/día</td>
+            <td>Hasta normalizar + 3 m</td>
+            <td>Considerar derivar; evaluar IV si intolerancia VO</td>
+          </tr>
+          <tr>
+            <td><strong>Anemia grave</strong></td>
+            <td>Hierro IV (sacarato/carboximaltosa)</td>
+            <td>Según fórmula Ganzoni</td>
+            <td>Referir a 2.º/3.er nivel · transfusión si descompensación</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="tip-card">
+        <strong>Fórmula de Ganzoni</strong> (déficit de hierro IV en mg):<br>
+        <code style="background:#fff8e1; padding:2px 6px; border-radius:4px; font-family:'JetBrains Mono', monospace; font-size:12px;">Déficit Fe (mg) = peso × (Hb objetivo − Hb actual) × 2.4 + 500</code><br>
+        Donde Hb objetivo = 13 g/dL (en embarazo se usa 11 g/dL como mínimo). Depósitos = 500 mg.
+      </div>
+
+      <div class="alert-card">
+        <strong>Tomar VO con estómago vacío</strong> (1 h antes o 2 h después de comidas) y con vitamina C / jugo cítrico para mejor absorción. Evitar con leche, café, té o calcio.
+      </div>
+
+      <div class="bib-card">
+        <strong>📚 Bibliografía:</strong>
+        <ol>
+          <li><strong>MSP Ecuador.</strong> Diagnóstico y tratamiento de la anemia en el embarazo. Guía de Práctica Clínica. Quito: MSP; 2014.</li>
+          <li><strong>OMS.</strong> Daily iron and folic acid supplementation in pregnant women: guideline. Geneva: WHO; 2012.</li>
+          <li><strong>Ganzoni AM.</strong> Intravenous iron-dextran: therapeutic and experimental possibilities. <em>Schweiz Med Wochenschr</em>. 1970;100(7):301-303.</li>
+          <li><strong>FIGO.</strong> Good clinical practice advice: Iron deficiency anemia in pregnancy. Int J Gynaecol Obstet. 2019;144:322-324.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TAB 5: SCORE MAMA                             -->
+  <!-- ============================================ -->
+  <div class="tab-view" id="view-score">
+
+    <div class="calc-card">
+      <h2 class="calc-title">🚨 SCORE MAMA</h2>
+      <p class="calc-sub">Score de alerta materna obstétrica · MSP Ecuador. Haz clic en cada celda para seleccionar el valor del parámetro.</p>
+
+      <div style="overflow-x:auto;">
+        <table class="score-table" id="score-mama-table">
+          <thead>
+            <tr>
+              <th rowspan="1">Parámetro</th>
+              <th class="sc-3">3</th>
+              <th class="sc-2">2</th>
+              <th class="sc-1">1</th>
+              <th class="sc-0">0</th>
+              <th class="sc-1">1</th>
+              <th class="sc-2">2</th>
+              <th class="sc-3">3</th>
+              <th>Puntaje<br>parcial</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-param="temp">
+              <td class="lbl">Temperatura (°C)</td>
+              <td class="score-cell s-3" data-score="3">&lt; 35</td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="score-cell s-1" data-score="1">35 – 35.9</td>
+              <td class="score-cell s-0" data-score="0">36 – 37.4</td>
+              <td class="score-cell s-1" data-score="1">37.5 – 38.2</td>
+              <td class="score-cell s-2" data-score="2">38.3 – 38.9</td>
+              <td class="score-cell s-3" data-score="3">≥ 39</td>
+              <td class="partial-col">0</td>
+            </tr>
+            <tr data-param="tas">
+              <td class="lbl">TA sistólica (mmHg)</td>
+              <td class="score-cell s-3" data-score="3">≤ 70</td>
+              <td class="score-cell s-2" data-score="2">71 – 79</td>
+              <td class="score-cell s-1" data-score="1">80 – 89</td>
+              <td class="score-cell s-0" data-score="0">90 – 139</td>
+              <td class="score-cell s-1" data-score="1">140 – 149</td>
+              <td class="score-cell s-2" data-score="2">150 – 159</td>
+              <td class="score-cell s-3" data-score="3">≥ 160</td>
+              <td class="partial-col">0</td>
+            </tr>
+            <tr data-param="tad">
+              <td class="lbl">TA diastólica (mmHg)</td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="score-cell s-1" data-score="1">≤ 49</td>
+              <td class="score-cell s-0" data-score="0">50 – 89</td>
+              <td class="score-cell s-1" data-score="1">90 – 99</td>
+              <td class="score-cell s-2" data-score="2">100 – 109</td>
+              <td class="score-cell s-3" data-score="3">≥ 110</td>
+              <td class="partial-col">0</td>
+            </tr>
+            <tr data-param="fc">
+              <td class="lbl">Frecuencia cardiaca (lpm)</td>
+              <td class="score-cell s-3" data-score="3">≤ 40</td>
+              <td class="score-cell s-2" data-score="2">41 – 49</td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="score-cell s-0" data-score="0">50 – 99</td>
+              <td class="score-cell s-1" data-score="1">100 – 109</td>
+              <td class="score-cell s-2" data-score="2">110 – 129</td>
+              <td class="score-cell s-3" data-score="3">≥ 130</td>
+              <td class="partial-col">0</td>
+            </tr>
+            <tr data-param="fr">
+              <td class="lbl">Frecuencia respiratoria (rpm)</td>
+              <td class="score-cell s-3" data-score="3">≤ 10</td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="score-cell s-0" data-score="0">11 – 20</td>
+              <td class="score-cell s-1" data-score="1">21 – 24</td>
+              <td class="score-cell s-2" data-score="2">25 – 29</td>
+              <td class="score-cell s-3" data-score="3">≥ 30</td>
+              <td class="partial-col">0</td>
+            </tr>
+            <tr data-param="sat">
+              <td class="lbl">Saturación O₂ (%)</td>
+              <td class="score-cell s-3" data-score="3">≤ 88</td>
+              <td class="score-cell s-2" data-score="2">89 – 90</td>
+              <td class="score-cell s-1" data-score="1">91 – 93</td>
+              <td class="score-cell s-0" data-score="0">≥ 94</td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="partial-col">0</td>
+            </tr>
+            <tr data-param="o2">
+              <td class="lbl">Oxígenoterapia</td>
+              <td class="score-cell s-3" data-score="3">Máscara<br>o superior</td>
+              <td class="score-cell s-2" data-score="2">Catéter<br>nasal</td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="score-cell s-0" data-score="0">Aire<br>ambiente</td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="partial-col">0</td>
+            </tr>
+            <tr data-param="conc">
+              <td class="lbl">Nivel de consciencia</td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="score-cell s-0" data-score="0">Alerta</td>
+              <td class="score-cell s-1" data-score="1">Responde<br>a la voz</td>
+              <td class="score-cell s-2" data-score="2">Responde<br>al dolor</td>
+              <td class="score-cell s-3" data-score="3">No<br>responde</td>
+              <td class="partial-col">0</td>
+            </tr>
+            <tr data-param="orina">
+              <td class="lbl">Gasto urinario (mL/h)</td>
+              <td class="score-cell s-3" data-score="3">≤ 10</td>
+              <td class="score-cell s-2" data-score="2">≤ 30</td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="score-cell s-0" data-score="0">No cuantificable<br>(sin sonda /<br>ambulatoria)</td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="score-cell empty" data-score=""></td>
+              <td class="partial-col">0</td>
+            </tr>
+            <tr class="total-row">
+              <td colspan="8" style="text-align:right; padding-right:14px;">TOTAL</td>
+              <td class="total-val" id="score-total">0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="score-summary" class="score-summary s-normal">
+        <h3>🟢 Puntaje 0 – Normal</h3>
+        <p>Vigilancia rutinaria. Continuar control prenatal habitual.</p>
+      </div>
+
+      <button class="btn btn-secondary" id="btn-score-reset" style="margin-top:14px;">↻ Reiniciar SCORE MAMA</button>
+
+      <h3 style="margin-top:24px; margin-bottom:10px; font-size:14px; font-weight:700; text-transform:uppercase; color:var(--primary-dark); letter-spacing:0.04em;">📋 Interpretación del SCORE MAMA</h3>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Puntaje total</th>
+            <th>Categoría</th>
+            <th>Acción a realizar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:#15803d; font-weight:800;">0</td>
+            <td><strong>🟢 Normal</strong></td>
+            <td>Vigilancia rutinaria · control prenatal habitual</td>
+          </tr>
+          <tr>
+            <td style="color:#a16207; font-weight:800;">1 – 3</td>
+            <td><strong>🟡 Vigilancia</strong></td>
+            <td>Reevaluar en 1 hora · monitorización continua · valoración por médico</td>
+          </tr>
+          <tr>
+            <td style="color:#9a3412; font-weight:800;">4 – 5</td>
+            <td><strong>🟠 Atención prioritaria</strong></td>
+            <td>Activar protocolo de atención obstétrica especializada · referir si no se puede manejar localmente · vigilancia estrecha</td>
+          </tr>
+          <tr>
+            <td style="color:#b91c1c; font-weight:800;">≥ 6</td>
+            <td><strong>🔴 Emergencia obstétrica</strong></td>
+            <td>Activar <strong>CÓDIGO ROJO OBSTÉTRICO</strong> · atención crítica inmediata · referir a 3.er nivel</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="alert-card">
+        <strong>Importante:</strong> El SCORE MAMA es una herramienta de tamizaje. La decisión clínica final debe basarse en el juicio médico integrado con el contexto clínico, antecedentes y evolución de la paciente.
+      </div>
+
+      <div class="bib-card">
+        <strong>📚 Bibliografía:</strong>
+        <ol>
+          <li><strong>MSP Ecuador.</strong> Score MAMA y claves obstétricas. Manual del Sistema de Alerta Temprana. Quito: MSP; 2017.</li>
+          <li><strong>MSP Ecuador.</strong> Norma para la atención del parto y nacimiento humanizado. Quito: MSP; 2016.</li>
+          <li><strong>Singh S, et al.</strong> A validation study of the CEMACH recommended modified early obstetric warning system (MEOWS). <em>Anaesthesia</em>. 2012;67(1):12-18.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Disclaimer ============ -->
+  <div class="disclaimer">
+    <strong>⚠ Aviso clínico:</strong> Esta herramienta es de apoyo educativo basada en los lineamientos del MSP Ecuador, OMS y guías clínicas internacionales. Las dosis, esquemas y valoraciones deben individualizarse según evaluación clínica y prescripción médica. No sustituye el criterio profesional ni reemplaza la evaluación directa.
+  </div>
+
+  <!-- ============ Footer ============ -->
+  <div class="footer">
+    <span class="brand-logo">MED NOTES<span class="reg">®</span></span>
+    <p>Hecho por <strong>MED NOTES®</strong> — Apuntes médicos basados en evidencia</p>
+    <p style="font-size:11px; opacity:0.7;">Fuente: MSP Ecuador · OMS · IOM · ALARM · FIGO</p>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   DATA: Etapas de control prenatal
+   ============================================================ */
+const ETAPAS = {
+  sosp_normal: {
+    group: 'g-sospecha',
+    title: 'Sospecha de embarazo',
+    sub: 'En esta consulta te centrarás sobretodo en descartar otras causas de amenorrea, aclarar dudas y solicitar exámenes para confirmar el embarazo.',
+    sections: [
+      { title: '✅ CONTROLES Y ACCIONES CLAVE', items: [
+        'Historia clínica detallada, registro de <strong>FUM</strong> y sintomatología sugestiva.',
+        'Registro de <strong>peso / talla / presión arterial / altura uterina</strong> (si es el caso)',
+        '<strong>Exámenes:</strong> βHCG en sangre',
+        'Puedes pedir un <strong>eco obstétrico</strong>: &gt; 6 semanas (valoración de latido cardíaco)',
+        'Reagendar cita para verificar embarazo con resultado de βHCG'
+      ]},
+      { alert: true, html: `<strong>🚨 Es de vital importancia, que realices la captación de embarazo solo cuando tengas:</strong>
+        <ol style="margin: 8px 0 8px 20px; line-height:1.6;">
+          <li><strong style="color:#dc2626;">Prueba βHCG en sangre positiva</strong> (de preferencia, se puede usar también prueba en orina, aunque tiene más fallos positivos)</li>
+          <li><strong style="color:#dc2626;">Hallazgos ecográficos que confirmen embarazo</strong> (latido fetal, presencia de embrión viable, etc.)</li>
+        </ol>
+        Nunca catalogues a una mujer como embarazada sin esto, por más que ella te diga que tiene síntomas y amenorrea.`
+      }
+    ]
+  },
+
+  sosp_ado: {
+    group: 'g-sospecha',
+    title: 'Sospecha de embarazo adolescente',
+    sub: 'En el embarazo adolescente, tienes que tener mucho cuidado de todo lo que vayas a realizar. Esta consulta te centrarás sobretodo en descartar violencia sexual, luego en otras causas de amenorrea, aclarar dudas y solicitar exámenes para confirmar el embarazo.',
+    sections: [
+      { title: '✅ CONTROLES Y ACCIONES CLAVE', items: [
+        'Historia clínica detallada, registro de <strong>FUM</strong> y sintomatología sugestiva.',
+        'Registro de <strong>peso / talla / presión arterial / altura uterina</strong> (si es el caso)',
+        '<strong>Exámenes:</strong> βHCG en sangre',
+        'Puedes pedir un <strong>eco obstétrico</strong>: &gt; 6 semanas (valoración de latido cardíaco)',
+        'Reagendar cita para verificar embarazo con resultado de βHCG'
+      ]},
+      { alert: true, html: `<strong>🚨 Es de vital importancia, que realices la captación de embarazo solo cuando tengas:</strong>
+        <ol style="margin: 8px 0 8px 20px; line-height:1.6;">
+          <li><strong style="color:#dc2626;">Prueba βHCG en sangre positiva</strong> (de preferencia, se puede usar también prueba en orina, aunque tiene más fallos positivos)</li>
+          <li><strong style="color:#dc2626;">Hallazgos ecográficos que confirmen embarazo</strong> (latido fetal, presencia de embrión viable, etc.)</li>
+        </ol>
+        Nunca catalogues a una mujer como embarazada sin esto, por más que ella te diga que tiene síntomas y amenorrea.`
+      },
+      { alert: true, html: `<strong>🚨 Ten mucho cuidado con estas pacientes:</strong> si es <strong>menor de 14 años</strong>, o muestra <strong>signos sugestivos de violencia</strong>, debes activar <strong style="color:#7c2d12;">CÓDIGO PÚRPURA</strong>. Si no cumple estas condiciones, solicita los exámenes y determina si el embarazo es positivo o negativo.`
+      }
+    ]
+  },
+
+  captacion: {
+    group: 'g-captacion',
+    title: 'Captación de embarazo y 1° control',
+    sub: 'Una vez tengas los resultados de la βHCG en sangre o la ecografía que confirmen el embarazo, debes realizar la captación de la embarazada y el primer control prenatal.',
+    sections: [
+      { title: '✅ CONTROLES Y ACCIONES CLAVE', items: [
+        '<strong>Verificar prueba de embarazo positiva</strong> o ecografía con feto viable.',
+        '<strong>Historia clínica completa / examen físico</strong>'
+      ],
+        sublist: [
+          'Cálculo de <strong>FUM / Edad gestacional / FPP</strong>',
+          'Registro de <strong>peso / talla / presión arterial / FCF / altura uterina</strong>'
+        ]
+      },
+      { title: '', items: [
+        '<strong>Entrega de carnet perinatal y registro</strong> 📕',
+        '<strong>Referir a odontología:</strong> examen odontológico 🦷',
+        '<strong style="color:#15803d;">Solicitar exámenes de laboratorio:</strong>'
+      ],
+        sublist: [
+          'Grupo sanguíneo y factor Rh+, Biometría hemática, Descartar incompatibilidad del grupo y factor Rh+, Tamizaje VIH, VDRL, hepatitis B (antígeno de superficie sérico), glucosa en ayunas, función tiroidea, AST y ALT, Chagas, EMO – Urocultivo, Pruebas TORCH.'
+        ],
+        noBorder: true
+      },
+      { title: '', items: [
+        'Realizar 🩸 <strong style="color:#dc2626;">Valoración de Hemoglobina</strong>',
+        'Iniciar 💊 <strong style="color:#ea580c;">Suplementación</strong>'
+      ],
+        sublist: [
+          'Prescripción de <strong>Hierro + Ácido Fólico</strong> (0.4 mg de ácido fólico + 60 mg hierro elemental)'
+        ],
+        noBorder: true
+      },
+      { title: '', items: [
+        'Solicitar 🩻 <strong style="color:#2563eb;">Primer eco obstétrico:</strong> semana 11-14 (valoración de cromosomopatías)',
+        'Solicitar <strong style="color:#2563eb;">Citología vaginal (papanicolau)</strong>',
+        '<strong>Vacunación Influenza</strong> según historial.',
+        '<strong>Consejería y Planificación</strong> del parto y transporte.'
+      ],
+        sublist: [
+          'Informar: Cambios fisiológicos, Actividad física, Hábitos, <strong style="color:#dc2626;">Signos de alarma</strong>',
+          'Referencia si existen factores de riesgo para <strong>Sx Down</strong> (+35 años, antecedente familiar o personal de malformaciones congénitas)'
+        ],
+        noBorder: true
+      },
+      { title: '', items: [
+        '<strong>Verificar adscripción territorial</strong> 📋 Admisión'
+      ],
+        noBorder: true
+      },
+      // Preeclampsia interactive calculator
+      { title: '⚠ RIESGO DE PREECLAMPSIA',
+        preeclampsia: true
+      }
+    ]
+  },
+
+  t1: {
+    group: 'g-trimestre',
+    title: 'Control prenatal · 1.er TRIMESTRE',
+    sub: 'CONTROL PRENATAL · Semanas 1 a 13 + 6 días',
+    tip: 'Confirmar viabilidad, descartar embarazo ectópico/molar, evaluar riesgos.',
+    sections: [
+      { title: '📋 EVALUACIÓN', items: [
+        'Confirmar embarazo intrauterino y viabilidad (ecografía)',
+        'Calcular EG por FUM y/o ecografía precoz',
+        'Antropometría: peso, IMC, TA',
+        'Evaluación de riesgos (preeclampsia, DM, anemia)',
+        'Síntomas: náuseas, vómitos, mastalgia, fatiga'
+      ]},
+      { title: '🧪 ECOGRAFÍA Y TAMIZAJES', items: [
+        '<strong>Ecografía 11-13.6 semanas:</strong> traslucencia nucal + hueso nasal',
+        '<strong>Tamizaje combinado del 1.er trimestre:</strong> βHCG libre + PAPP-A + TN (cromosomopatías)',
+        'NIPT (test prenatal no invasivo) si está disponible y hay indicación',
+        'Doppler de arterias uterinas: tamizaje de preeclampsia'
+      ]},
+      { title: '💊 SUPLEMENTACIÓN', items: [
+        '<strong>Ácido fólico 0.4-1 mg/día</strong> hasta la semana 12',
+        '<strong>Hierro + ácido fólico</strong> (60 mg Fe + 400 mcg) — profilaxis',
+        'AAS 100-150 mg/noche desde semana 12 si riesgo de preeclampsia'
+      ]},
+      { title: '⚠ SIGNOS DE ALARMA', items: [
+        'Sangrado vaginal',
+        'Dolor abdominal o pélvico intenso',
+        'Vómitos persistentes (hiperémesis)',
+        'Fiebre, disuria, leucorrea anormal'
+      ]}
+    ]
+  },
+
+  t2: {
+    group: 'g-trimestre',
+    title: 'Control prenatal · 2.º TRIMESTRE',
+    sub: 'CONTROL PRENATAL · Semanas 14 a 27 + 6 días',
+    tip: 'Tamizaje morfológico + tamizaje DM gestacional + valoración nutricional.',
+    sections: [
+      { title: '📋 EVALUACIÓN', items: [
+        'Antropometría: peso, ganancia ponderal según IMC',
+        'TA, edema, signos de preeclampsia',
+        'Altura uterina (cm) — debe coincidir con EG ± 2',
+        '<strong>Movimientos fetales</strong> (a partir de las 18-20 semanas en multíparas, 20-22 en primigestas)',
+        'Maniobras de Leopold',
+        'FCF con Doppler portátil'
+      ]},
+      { title: '🧪 ECOGRAFÍA Y LABORATORIO', items: [
+        '<strong>Ecografía morfológica 20-24 semanas:</strong> evaluación anatómica detallada',
+        '<strong>PTOG (75 g)</strong> entre 24-28 semanas — tamizaje de DM gestacional',
+        'Hemograma de control, EMO',
+        'Coombs indirecto si Rh negativa (28 sem)',
+        'Cervicometría (si riesgo de parto pretérmino)'
+      ]},
+      { title: '💉 INMUNIZACIONES', items: [
+        '<strong>Tdap</strong> entre semanas 27-36 (idealmente desde semana 27)',
+        '<strong>Influenza</strong> en temporada',
+        'Anti-D (RhoGAM) a las 28 sem si Rh negativa con Coombs indirecto negativo'
+      ]},
+      { title: '⚠ SIGNOS DE ALARMA', items: [
+        'Disminución de movimientos fetales',
+        'Cefalea intensa, escotomas, epigastralgia',
+        'Edema súbito en cara/manos',
+        'Contracciones regulares antes de semana 37',
+        'Pérdida de líquido amniótico'
+      ]}
+    ]
+  },
+
+  t3: {
+    group: 'g-trimestre',
+    title: 'Control prenatal · 3.er TRIMESTRE',
+    sub: 'CONTROL PRENATAL · Semanas 28 al término',
+    tip: 'Vigilancia estrecha de bienestar fetal y materno. Plan de parto.',
+    sections: [
+      { title: '📋 EVALUACIÓN', items: [
+        'Antropometría: peso, ganancia ponderal acumulada',
+        'TA, búsqueda activa de preeclampsia',
+        '<strong>Altura uterina</strong> y maniobras de Leopold (presentación, posición, situación)',
+        '<strong>FCF</strong> (110-160 lpm)',
+        'Movimientos fetales (≥ 10 movimientos en 12 h)',
+        'Edemas, várices, signos de compresión',
+        'Tacto vaginal en últimas semanas (Bishop)'
+      ]},
+      { title: '🧪 LABORATORIO Y MONITOREO', items: [
+        'Hemograma + Hb a las 32-36 semanas',
+        'Cultivo vagino-rectal (Streptococcus B agalactiae) entre 35-37 semanas',
+        'EMO en cada control',
+        'Ecografía 32-34 semanas (crecimiento fetal, líquido amniótico, placenta)',
+        'NST / Doppler fetal según indicación'
+      ]},
+      { title: '💉 INMUNIZACIONES PENDIENTES', items: [
+        '<strong>Tdap</strong> (si no se aplicó entre 27-36 sem)',
+        'Verificar Anti-D si Rh negativa'
+      ]},
+      { title: '📋 PLAN DE PARTO', items: [
+        'Lugar de atención (1.er, 2.º o 3.er nivel según riesgo)',
+        'Acompañamiento durante el parto',
+        'Plan de lactancia materna',
+        'Plan de anticoncepción posparto',
+        'Signos de inicio de trabajo de parto'
+      ]},
+      { title: '⚠ SIGNOS DE ALARMA', items: [
+        'Disminución de movimientos fetales',
+        'Sangrado vaginal',
+        'Pérdida de líquido amniótico',
+        'Contracciones regulares dolorosas',
+        'Preeclampsia: cefalea, escotomas, epigastralgia, edema'
+      ]}
+    ]
+  },
+
+  puerperio: {
+    group: 'g-puerperio',
+    title: 'Control posparto / Puerperio',
+    sub: 'CONTROL POSPARTO · Inmediato (24h), mediato (2-7 d), tardío (8-42 d)',
+    tip: 'El puerperio es un periodo crítico. Vigilancia de hemorragia, infección y depresión posparto.',
+    sections: [
+      { title: '📋 EVALUACIÓN POSPARTO', items: [
+        '<strong>Signos vitales:</strong> TA, FC, FR, T°, SatO₂',
+        '<strong>SCORE MAMA</strong> en cada control posparto (durante hospitalización)',
+        'Involución uterina (altura del fondo uterino)',
+        'Loquios: cantidad, color, olor',
+        'Mamas: lactancia, ingurgitación, grietas',
+        'Heridas (episiotomía, cesárea): infección, dehiscencia',
+        'Estado emocional, vínculo madre-RN'
+      ]},
+      { title: '🍼 LACTANCIA MATERNA', items: [
+        '<strong>Inicio precoz</strong> (1.ª hora postparto)',
+        'Lactancia materna exclusiva hasta los 6 meses',
+        'Técnica adecuada: agarre, posición, succión',
+        'Manejo de problemas: grietas, ingurgitación, mastitis'
+      ]},
+      { title: '💊 SUPLEMENTACIÓN', items: [
+        '<strong>Hierro + ácido fólico</strong> por 3 meses posparto',
+        'Tratamiento de anemia si Hb &lt; 11 g/dL',
+        'Calcio si lactancia materna'
+      ]},
+      { title: '🧠 SALUD MENTAL', items: [
+        'Tamizaje de <strong>depresión posparto</strong> (Edinburgh) a las 2 y 6 semanas',
+        '<strong>Distinguir baby blues vs. depresión vs. psicosis posparto</strong>',
+        'Apoyo emocional y red de soporte familiar'
+      ]},
+      { title: '🌸 ANTICONCEPCIÓN POSPARTO', items: [
+        '<strong>MELA (lactancia materna exclusiva)</strong>: efectivo si LME, amenorrea y &lt; 6 meses',
+        '<strong>Implante subdérmico</strong>: desde el postparto inmediato',
+        '<strong>DIU</strong>: postparto inmediato (&lt; 48 h) o ≥ 6 semanas',
+        'Progestágeno solo (compatible con lactancia)',
+        'Métodos combinados: solo después de 6 sem (con LME) o 3 sem (sin LME)',
+        'Ligadura tubárica: durante cesárea o postparto inmediato'
+      ]},
+      { title: '⚠ SIGNOS DE ALARMA POSPARTO', items: [
+        'Sangrado abundante (&gt; 500 mL parto / &gt; 1000 mL cesárea)',
+        'Fiebre &gt; 38 °C',
+        'Loquios fétidos',
+        'Dolor abdominal intenso, dolor torácico',
+        'Edema o dolor en miembros inferiores (TVP)',
+        'Síntomas de preeclampsia (puede aparecer hasta 6 sem posparto)',
+        'Ideas de hacerse daño o al RN'
+      ]}
+    ]
+  }
+};
+
+/* ============================================================
+   RENDER ETAPA PANELS
+   ============================================================ */
+const etapaContainer = document.getElementById('etapa-panels');
+
+function renderEtapas() {
+  Object.entries(ETAPAS).forEach(([key, e]) => {
+    const div = document.createElement('div');
+    div.className = 'etapa-panel';
+    div.id = 'panel-' + key;
+    if (key === 'sosp_normal') div.classList.add('active');
+
+    let html = `
+      <div class="panel-banner ${e.group}">
+        <h2>${e.title}</h2>
+        <div class="sub">${e.sub}</div>
+      </div>
+      <div class="panel-body">`;
+
+    e.sections.forEach((s, idx) => {
+      // Alert-only block (no section title/border)
+      if (s.alert) {
+        html += `<div class="alert-card-pe">${s.html}</div>`;
+        return;
+      }
+      // Preeclampsia interactive calculator
+      if (s.preeclampsia) {
+        html += renderPreeclampsiaCalc(key);
+        return;
+      }
+      const noBorderClass = s.noBorder ? ' section-no-border' : '';
+      const boxClass = s.box ? ' controles-box' : '';
+      html += `<div class="section${noBorderClass}${boxClass}">`;
+      if (s.title) {
+        html += `<div class="section-title">${s.title}</div>`;
+      }
+      const isVaccineSection = /💉|INMUNIZA|VACUNA/i.test(s.title || '');
+      const listClass = isVaccineSection ? 'vaccine-list' : 'check-list';
+      if (s.items && s.items.length) {
+        html += `<ul class="${listClass}">`;
+        s.items.forEach(it => {
+          // Item can be a string or { text, children: [...] } for nested
+          if (typeof it === 'string') {
+            html += `<li>${it}</li>`;
+          } else if (it && typeof it === 'object') {
+            html += `<li>${it.text}`;
+            if (it.children && it.children.length) {
+              html += `<ul class="nested">`;
+              it.children.forEach(ch => {
+                if (typeof ch === 'string') {
+                  html += `<li>${ch}</li>`;
+                } else if (ch && typeof ch === 'object') {
+                  html += `<li>${ch.text}`;
+                  if (ch.children) {
+                    html += `<ul class="nested">`;
+                    ch.children.forEach(cc => html += `<li>${cc}</li>`);
+                    html += `</ul>`;
+                  }
+                  html += `</li>`;
+                }
+              });
+              html += `</ul>`;
+            }
+            html += `</li>`;
+          }
+        });
+        html += `</ul>`;
+      }
+      if (s.sublist) {
+        html += `<ul class="sub-list">`;
+        s.sublist.forEach(sl => html += `<li>${sl}</li>`);
+        html += `</ul>`;
+      }
+      // Tip card after first section (only if section has title/items)
+      if (idx === 0 && e.tip) {
+        html += `<div class="tip-card">${e.tip}</div>`;
+      }
+      html += `</div>`;
+    });
+
+    html += `</div>`;
+    div.innerHTML = html;
+    etapaContainer.appendChild(div);
+  });
+}
+/* ============================================================
+   PREECLAMPSIA – Risk calculator (interactive)
+   ============================================================ */
+const PE_ALTO = [
+  'Preeclampsia en embarazo anterior',
+  'Gestación multifetal (gemelos, etc.)',
+  'Hipertensión crónica',
+  'Diabetes (Tipo 1 o 2)',
+  'Enfermedad renal',
+  'Enfermedad autoinmune (LES, SAF)'
+];
+const PE_MOD = [
+  'Primer embarazo (Nuliparidad)',
+  'Edad materna ≥ 35 años',
+  'IMC pregestacional &gt; 30',
+  'Historia familiar de preeclampsia',
+  'Intervalo entre embarazos &gt; 10 años'
+];
+
+function renderPreeclampsiaCalc(panelKey) {
+  const id = 'pe-' + panelKey;
+  let html = `<div class="section">
+    <div class="section-title">⚠ RIESGO DE PREECLAMPSIA</div>
+    <div class="pe-calc" id="${id}">
+      <p class="pe-calc-sub">Marca los factores presentes en la paciente para evaluar el riesgo y la profilaxis recomendada.</p>
+      <div class="pe-grid">
+        <div class="pe-col alto">
+          <h4 style="color:#dc2626;">Factores de Alto Riesgo (1 o más)</h4>
+          ${PE_ALTO.map((f, i) => `
+            <label class="pe-check"><input type="checkbox" data-pe="alto" data-idx="${i}"><span>${f}</span></label>
+          `).join('')}
+        </div>
+        <div class="pe-col moderado">
+          <h4 style="color:#b45309;">Factores de Riesgo Moderado (2 o más)</h4>
+          ${PE_MOD.map((f, i) => `
+            <label class="pe-check"><input type="checkbox" data-pe="mod" data-idx="${i}"><span>${f}</span></label>
+          `).join('')}
+        </div>
+      </div>
+      <div class="pe-result-container" id="${id}-result"></div>
+    </div>
+  </div>`;
+  return html;
+}
+
+function evaluatePreeclampsia(panelEl) {
+  const altoChecked = panelEl.querySelectorAll('input[data-pe="alto"]:checked').length;
+  const modChecked = panelEl.querySelectorAll('input[data-pe="mod"]:checked').length;
+  const dairy = panelEl.querySelector('input[data-pe="dairy"]')?.checked ?? false;
+  const dairyVisible = panelEl.querySelector('input[data-pe="dairy"]') !== null;
+
+  const altoRiesgo = altoChecked >= 1 || modChecked >= 2;
+  const container = panelEl.querySelector('.pe-result-container');
+
+  let html = '';
+  if (altoRiesgo) {
+    html += `<div class="pe-result alto">
+      <div class="pe-result-title">🔴 Riesgo Alto de Preeclampsia: ${altoChecked >= 1 ? '1 factor de alto riesgo' : '2 factores de riesgo moderado'}</div>
+      <p>Se recomienda iniciar profilaxis a partir de la <strong>semana 12</strong> de gestación:</p>
+      <ul>
+        <li>💊 <strong>Aspirina (ASA):</strong> <strong class="mark">100 mg</strong> vía oral, una vez al día, por la noche antes de dormir. Iniciar entre la <strong>semana 12 y 16</strong>, y continuar hasta la <strong>semana 36</strong>.</li>
+      </ul>
+      <div class="pe-dairy-row">
+        <label class="pe-check"><input type="checkbox" data-pe="dairy" ${dairy ? 'checked' : ''}><span><strong>¿La gestante tiene un bajo consumo de lácteos?</strong></span></label>`;
+    if (dairy) {
+      html += `
+        <div style="margin-top:10px; padding:10px 14px; background:#fff8e1; border-radius:8px;">
+          <p>💊 <strong>Calcio:</strong> Por alto riesgo y bajo consumo de lácteos, suplementar con <strong class="mark">Calcio 1.5 g/día</strong>.</p>
+          <ul style="margin-top:6px;">
+            <li><strong>Si no consume hierro:</strong> Calcio 0.5 g VO después de cada comida.</li>
+            <li><strong>Si consume hierro:</strong> Calcio 0.5 g VO después de cada comida <strong>Y</strong> administrar el Hierro (ej. 60 mg) entre comidas (ej. 10 am) para no afectar su absorción.</li>
+          </ul>
+        </div>`;
+    }
+    html += `</div></div>`;
+  } else {
+    html += `<div class="pe-result bajo">
+      <div class="pe-result-title">🟢 Riesgo Bajo de Preeclampsia: ningún o 1 factor de riesgo moderado</div>
+      <p>No se cumplen criterios para alto riesgo. <strong>No se requiere profilaxis con Aspirina.</strong> Continuar controles regulares. A pesar del bajo riesgo, se recomienda <strong class="mark">mejorar la ingesta de calcio</strong> en la dieta o considerar suplementación para la salud ósea.</p>
+      <div class="pe-dairy-row">
+        <label class="pe-check"><input type="checkbox" data-pe="dairy" ${dairy ? 'checked' : ''}><span><strong>¿La gestante tiene un bajo consumo de lácteos?</strong></span></label>`;
+    if (dairy) {
+      html += `
+        <div style="margin-top:10px; padding:10px 14px; background:#fff8e1; border-radius:8px;">
+          <p>💊 <strong>Calcio:</strong> Suplementar con <strong class="mark">Calcio 1 – 1.5 g/día</strong> para mejorar la salud ósea materna.</p>
+          <ul style="margin-top:6px;">
+            <li><strong>Si no consume hierro:</strong> Calcio 0.5 g VO después de cada comida.</li>
+            <li><strong>Si consume hierro:</strong> separar la toma de calcio y hierro (calcio con comidas, hierro entre comidas) para no afectar la absorción.</li>
+          </ul>
+        </div>`;
+    }
+    html += `</div></div>`;
+  }
+
+  container.innerHTML = html;
+  // Re-attach dairy checkbox listener
+  const dairyBox = container.querySelector('input[data-pe="dairy"]');
+  if (dairyBox) {
+    dairyBox.addEventListener('change', () => evaluatePreeclampsia(panelEl));
+  }
+}
+
+renderEtapas();
+
+/* Initialize PE calculators after rendering */
+document.querySelectorAll('.pe-calc').forEach(panelEl => {
+  // Initial render
+  evaluatePreeclampsia(panelEl);
+  // Listen to all PE checkboxes (alto and mod)
+  panelEl.addEventListener('change', e => {
+    if (e.target.matches('input[data-pe="alto"], input[data-pe="mod"]')) {
+      evaluatePreeclampsia(panelEl);
+    }
+  });
+});
+
+/* Etapa cards */
+document.querySelectorAll('.etapa-card').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.etapa-card').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    document.querySelectorAll('.etapa-panel').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById('panel-' + c.dataset.etapa);
+    if (target) {
+      target.classList.add('active');
+      setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+    }
+  });
+});
+
+/* Top tabs */
+document.querySelectorAll('.top-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.top-tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + t.dataset.tab).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+/* ============================================================
+   GANANCIA DE PESO – Calculadora
+   ============================================================ */
+document.getElementById('btn-peso-calc').addEventListener('click', () => {
+  const pre = parseFloat(document.getElementById('p-peso-pre').value);
+  const tallaCm = parseFloat(document.getElementById('p-talla').value);
+  const act = parseFloat(document.getElementById('p-peso-act').value);
+  const sem = parseFloat(document.getElementById('p-sem').value);
+  const result = document.getElementById('peso-result');
+
+  if (isNaN(pre) || isNaN(tallaCm) || pre <= 0 || tallaCm <= 0) {
+    result.innerHTML = '<div class="result-card alert"><h3>⚠ Datos incompletos</h3><p>Ingresa peso pregestacional y talla.</p></div>';
+    return;
+  }
+
+  const tallaM = tallaCm / 100;
+  const imc = pre / (tallaM * tallaM);
+  let cat = '', minTotal = 0, maxTotal = 0, minSem = 0, maxSem = 0, color = 'normal';
+
+  if (imc < 18.5) { cat = 'Bajo peso'; minTotal = 12.5; maxTotal = 18; minSem = 0.44; maxSem = 0.58; color = 'warning'; }
+  else if (imc < 25) { cat = 'Normal'; minTotal = 11.5; maxTotal = 16; minSem = 0.35; maxSem = 0.50; color = 'normal'; }
+  else if (imc < 30) { cat = 'Sobrepeso'; minTotal = 7; maxTotal = 11.5; minSem = 0.23; maxSem = 0.33; color = 'warning'; }
+  else { cat = 'Obesidad'; minTotal = 5; maxTotal = 9; minSem = 0.17; maxSem = 0.27; color = 'alert'; }
+
+  let html = `<div class="result-card ${color}">
+    <h3>📊 IMC pregestacional: ${imc.toFixed(1)} kg/m² · ${cat}</h3>
+    <p><strong>Ganancia recomendada total:</strong> ${minTotal} – ${maxTotal} kg<br>
+    <strong>Ritmo 2T-3T:</strong> ${minSem.toFixed(2)} – ${maxSem.toFixed(2)} kg/sem</p>`;
+
+  if (!isNaN(act) && !isNaN(sem) && sem > 0) {
+    const ganActual = act - pre;
+    let ganEsperadaMin = 0, ganEsperadaMax = 0;
+    if (sem <= 13) {
+      // 1.er trimestre: ganancia 0.5-2 kg total (variable según IMC)
+      if (imc < 18.5) { ganEsperadaMin = 1; ganEsperadaMax = 3; }
+      else if (imc < 25) { ganEsperadaMin = 0.5; ganEsperadaMax = 2; }
+      else if (imc < 30) { ganEsperadaMin = 0.5; ganEsperadaMax = 2; }
+      else { ganEsperadaMin = 0.2; ganEsperadaMax = 2; }
+    } else {
+      // Después de 1.er T: gan 1.er T + (sem - 13) × ritmo
+      const semAfterT1 = sem - 13;
+      const t1Min = imc < 18.5 ? 1 : (imc < 30 ? 0.5 : 0.2);
+      const t1Max = imc < 18.5 ? 3 : 2;
+      ganEsperadaMin = t1Min + semAfterT1 * minSem;
+      ganEsperadaMax = t1Max + semAfterT1 * maxSem;
+    }
+
+    let estado = '✅ Adecuada';
+    let estadoColor = '#15803d';
+    if (ganActual < ganEsperadaMin - 1) { estado = '⚠ Insuficiente'; estadoColor = '#a16207'; }
+    else if (ganActual > ganEsperadaMax + 1) { estado = '⚠ Excesiva'; estadoColor = '#b91c1c'; }
+
+    html += `<hr style="margin:12px 0; border:0; border-top:1px solid rgba(0,0,0,0.1);">
+      <p><strong>Ganancia actual:</strong> ${ganActual.toFixed(1)} kg en ${sem} semanas<br>
+      <strong>Ganancia esperada a las ${sem} sem:</strong> ${ganEsperadaMin.toFixed(1)} – ${ganEsperadaMax.toFixed(1)} kg<br>
+      <strong style="color:${estadoColor}; font-size:15px;">Estado: ${estado}</strong></p>`;
+  }
+  html += `</div>`;
+  result.innerHTML = html;
+});
+
+/* ============================================================
+   HEMOGLOBINA – Calculadora
+   ============================================================ */
+function altitudeAdjust(altitud) {
+  if (altitud < 1000) return 0;
+  const altKft = altitud * 0.0033;
+  return -0.032 * altKft + 0.022 * (altKft * altKft);
+}
+
+const HB_THRESHOLDS = {
+  '1': { normal: 11.0, leve: [10.0, 10.9], mod: [7.0, 9.9], grave: 7.0, label: 'Embarazo · 1.er trimestre' },
+  '2': { normal: 10.5, leve: [9.5, 10.4],  mod: [7.0, 9.4], grave: 7.0, label: 'Embarazo · 2.º trimestre' },
+  '3': { normal: 11.0, leve: [10.0, 10.9], mod: [7.0, 9.9], grave: 7.0, label: 'Embarazo · 3.er trimestre' }
+};
+
+function classifyHb(hb, group) {
+  const t = HB_THRESHOLDS[group];
+  if (hb >= t.normal) return { type: 'normal', label: 'Sin anemia', icon: '✅' };
+  if (hb >= t.leve[0]) return { type: 'warning', label: 'Anemia LEVE', icon: '🟡' };
+  if (hb >= t.mod[0]) return { type: 'warning', label: 'Anemia MODERADA', icon: '🟠' };
+  return { type: 'alert', label: 'Anemia GRAVE', icon: '🔴' };
+}
+
+document.getElementById('btn-hb-calc').addEventListener('click', () => {
+  const tri = document.getElementById('hb-trimestre').value;
+  const valor = parseFloat(document.getElementById('hb-valor').value);
+  const altitud = parseInt(document.getElementById('hb-altitud').value);
+  const result = document.getElementById('hb-result');
+
+  if (isNaN(valor) || valor <= 0) {
+    result.innerHTML = '<div class="result-card alert"><h3>⚠ Ingresa un valor válido</h3><p>El valor de hemoglobina es requerido y debe ser mayor a 0.</p></div>';
+    return;
+  }
+
+  const adj = altitudeAdjust(altitud);
+  const corrected = valor - adj;
+  const c = classifyHb(corrected, tri);
+  const t = HB_THRESHOLDS[tri];
+
+  let html = `<div class="result-card ${c.type}">
+    <h3>${c.icon} ${c.label}</h3>
+    <p><strong>Hb medida:</strong> ${valor.toFixed(1)} g/dL</p>`;
+  if (adj > 0) {
+    html += `<p><strong>Corrección por altitud (${altitud} m):</strong> −${adj.toFixed(1)} g/dL<br>
+      <strong>Hb corregida:</strong> ${corrected.toFixed(1)} g/dL</p>`;
+  }
+  html += `<p style="margin-top:6px;"><strong>Grupo:</strong> ${t.label} · <strong>Umbral normal:</strong> ≥ ${t.normal} g/dL</p>`;
+
+  // Recomendación
+  const recom = {
+    normal: 'Continuar suplementación profiláctica (60 mg Fe + 400 mcg ácido fólico/día). Reevaluar Hb por trimestre.',
+    warning: c.label.includes('LEVE')
+      ? 'Iniciar tratamiento: <strong>120 mg Fe elemental/día VO</strong> (60 mg c/12 h) por 3 meses. Reevaluar Hb a los 30 días.'
+      : 'Iniciar tratamiento: <strong>120-200 mg Fe elemental/día VO</strong>. Considerar derivar a 2.º nivel. Evaluar hierro IV si intolerancia VO.',
+    alert: '<strong>REFERIR a 2.º/3.er nivel.</strong> Evaluar hierro IV (Sacarato/Carboximaltosa). Considerar transfusión si descompensación hemodinámica.'
+  };
+  html += `<p style="margin-top:8px; padding:8px 10px; background:rgba(255,255,255,0.5); border-radius:6px;"><strong>📋 Recomendación:</strong><br>${recom[c.type]}</p>`;
+  html += `<p style="margin-top:8px; font-size:12px; opacity:0.85;">→ Ver <strong>Calculadora de Dosis de Hierro</strong> para esquema detallado.</p>`;
+  html += `</div>`;
+  result.innerHTML = html;
+});
+
+/* ============================================================
+   HIERRO – Calculadora de dosis
+   ============================================================ */
+const FE_PRESENTACIONES = {
+  'sf-tab': { nombre: 'Sulfato ferroso 200 mg tab', feElemental: 60, unidad: 'tab', via: 'VO' },
+  'sf-jbe': { nombre: 'Sulfato ferroso jarabe 125 mg/5 mL', feElemental: 25, unidad: '5 mL', via: 'VO' },
+  'hp-gotas': { nombre: 'Hierro polimaltosado gotas 50 mg/mL', feElemental: 50, unidad: 'mL', via: 'VO' },
+  'hp-jbe': { nombre: 'Hierro polimaltosado jarabe 50 mg/5 mL', feElemental: 50, unidad: '5 mL', via: 'VO' },
+  'hierro-iv': { nombre: 'Hierro sacarato IV 100 mg/5 mL', feElemental: 100, unidad: '5 mL (ampolla)', via: 'IV' }
+};
+
+const FE_DOSIS = {
+  'profilaxis': { feMg: 60, label: 'Profilaxis', duracion: 'Todo el embarazo + 3 meses posparto', frec: '1 vez/día' },
+  'leve': { feMg: 120, label: 'Anemia LEVE', duracion: '3 meses, hasta corregir + 3 meses', frec: '60 mg c/12 h' },
+  'moderada': { feMg: 180, label: 'Anemia MODERADA', duracion: 'Hasta normalizar + 3 meses', frec: '60 mg c/8 h' },
+  'grave': { feMg: 0, label: 'Anemia GRAVE', duracion: 'Hierro IV según fórmula de Ganzoni', frec: 'IV en ámbito hospitalario' }
+};
+
+document.getElementById('btn-fe-calc').addEventListener('click', () => {
+  const ind = document.getElementById('fe-indicacion').value;
+  const presKey = document.getElementById('fe-presentacion').value;
+  const peso = parseFloat(document.getElementById('fe-peso').value);
+  const hb = parseFloat(document.getElementById('fe-hb').value);
+  const result = document.getElementById('fe-result');
+
+  const dosis = FE_DOSIS[ind];
+  const pres = FE_PRESENTACIONES[presKey];
+
+  let html = '';
+
+  if (ind === 'grave') {
+    // Anemia grave - Ganzoni
+    let ganzoni = '';
+    if (!isNaN(peso) && !isNaN(hb) && peso > 0 && hb > 0) {
+      const hbObjetivo = 11;
+      const deficit = peso * (hbObjetivo - hb) * 2.4 + 500;
+      ganzoni = `<p><strong>Fórmula de Ganzoni:</strong><br>
+        Déficit Fe = ${peso} × (${hbObjetivo} − ${hb}) × 2.4 + 500 = <strong>${deficit.toFixed(0)} mg de Fe IV total</strong><br>
+        Ej. Sacarato 100 mg: <strong>${Math.ceil(deficit/100)} ampollas</strong> (3 dosis/sem máx)</p>`;
+    } else {
+      ganzoni = `<p>Ingresa <strong>peso y Hb actual</strong> para calcular el déficit con la fórmula de Ganzoni.</p>`;
+    }
+    html = `<div class="result-card alert">
+      <h3>🔴 Anemia GRAVE – Hierro IV</h3>
+      <p><strong>Referir a 2.º o 3.er nivel.</strong> Evaluar Hierro Sacarato/Carboximaltosa IV. Considerar transfusión si descompensación.</p>
+      ${ganzoni}
+      <p style="margin-top:8px; font-size:12px;">⚠ Hierro VO no es adecuado en anemia grave (corrección lenta, alta intolerancia).</p>
+    </div>`;
+  } else {
+    // VO - calcular según presentación
+    const tomas = Math.ceil(dosis.feMg / pres.feElemental);
+    const cantidadPorToma = (dosis.feMg / pres.feElemental).toFixed(2);
+    let frecuencia = '';
+    if (ind === 'profilaxis') frecuencia = `<strong>1 ${pres.unidad}</strong> al día`;
+    else if (ind === 'leve') frecuencia = `<strong>${(60/pres.feElemental).toFixed(1)} ${pres.unidad}</strong> cada 12 horas (= ${(120/pres.feElemental).toFixed(1)} ${pres.unidad}/día)`;
+    else frecuencia = `<strong>${(60/pres.feElemental).toFixed(1)} ${pres.unidad}</strong> cada 8 horas (= ${(180/pres.feElemental).toFixed(1)} ${pres.unidad}/día)`;
+
+    const color = ind === 'profilaxis' ? 'normal' : 'warning';
+    html = `<div class="result-card ${color}">
+      <h3>💊 ${dosis.label}</h3>
+      <p><strong>Dosis Fe elemental:</strong> ${dosis.feMg} mg/día (${dosis.frec})</p>
+      <p><strong>Presentación:</strong> ${pres.nombre} (${pres.feElemental} mg Fe por ${pres.unidad})</p>
+      <p style="margin-top:8px; padding:10px 12px; background:rgba(255,255,255,0.6); border-radius:6px; font-size:14px;">
+        💉 <strong>Indicación:</strong> ${frecuencia} VO
+      </p>
+      <p><strong>Duración:</strong> ${dosis.duracion}</p>
+      <p style="margin-top:6px; font-size:12px;">📌 <strong>Recomendaciones:</strong> Tomar con estómago vacío + jugo cítrico/vitamina C. Evitar con leche, café, té o calcio. Reevaluar Hb a los 30 días.</p>
+    </div>`;
+  }
+  result.innerHTML = html;
+});
+
+/* ============================================================
+   SCORE MAMA – Interactive
+   ============================================================ */
+const scoreState = {};
+const ACTION_MAP = {
+  0: { cls: 's-normal', icon: '🟢', cat: 'Normal',
+       text: 'Vigilancia rutinaria. Continuar control prenatal habitual.' },
+  1: { cls: 's-vigilancia', icon: '🟡', cat: 'Vigilancia (1-3)',
+       text: 'Reevaluar en 1 hora · monitorización continua · valoración por médico.' },
+  4: { cls: 's-prioritario', icon: '🟠', cat: 'Atención prioritaria (4-5)',
+       text: 'Activar protocolo de atención obstétrica especializada · referir si no se puede manejar localmente · vigilancia estrecha.' },
+  6: { cls: 's-emergencia', icon: '🔴', cat: 'EMERGENCIA OBSTÉTRICA (≥ 6)',
+       text: 'Activar CÓDIGO ROJO OBSTÉTRICO · atención crítica inmediata · referir a 3.er nivel.' }
+};
+
+function getActionLevel(total) {
+  if (total === 0) return ACTION_MAP[0];
+  if (total <= 3) return ACTION_MAP[1];
+  if (total <= 5) return ACTION_MAP[4];
+  return ACTION_MAP[6];
+}
+
+function updateScore() {
+  let total = 0;
+  document.querySelectorAll('#score-mama-table tr[data-param]').forEach(row => {
+    const param = row.dataset.param;
+    const val = scoreState[param] !== undefined ? scoreState[param] : 0;
+    total += val;
+    const partial = row.querySelector('.partial-col');
+    if (partial) partial.textContent = val;
+  });
+  document.getElementById('score-total').textContent = total;
+
+  const action = getActionLevel(total);
+  const summary = document.getElementById('score-summary');
+  summary.className = 'score-summary ' + action.cls;
+  summary.innerHTML = `
+    <h3>${action.icon} Puntaje ${total} – ${action.cat}</h3>
+    <p>${action.text}</p>`;
+}
+
+document.querySelectorAll('#score-mama-table .score-cell').forEach(cell => {
+  if (cell.classList.contains('empty')) return;
+  cell.addEventListener('click', () => {
+    const row = cell.closest('tr');
+    const param = row.dataset.param;
+    const score = parseInt(cell.dataset.score, 10);
+    // Toggle off if same cell already active
+    if (cell.classList.contains('active')) {
+      cell.classList.remove('active');
+      delete scoreState[param];
+    } else {
+      // remove other active cells in same row
+      row.querySelectorAll('.score-cell.active').forEach(c => c.classList.remove('active'));
+      cell.classList.add('active');
+      scoreState[param] = score;
+    }
+    updateScore();
+  });
+});
+
+document.getElementById('btn-score-reset').addEventListener('click', () => {
+  document.querySelectorAll('#score-mama-table .score-cell.active').forEach(c => c.classList.remove('active'));
+  Object.keys(scoreState).forEach(k => delete scoreState[k]);
+  updateScore();
+});
+
+</script>
+
+</body>
+</html>
