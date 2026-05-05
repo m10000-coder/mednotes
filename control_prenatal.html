@@ -1193,6 +1193,7 @@
         <div class="field">
           <label class="field-label">Presentación disponible</label>
           <select class="input" id="fe-presentacion">
+            <option value="hemotonic">Hemotonic® 60 masticable (60 mg Fe + 0.4 mg ác. fólico) – MSP</option>
             <option value="sf-tab">Sulfato ferroso 200 mg tab (60 mg Fe elemental)</option>
             <option value="sf-jbe">Sulfato ferroso jarabe 125 mg/5 mL (25 mg Fe/5 mL)</option>
             <option value="hp-gotas">Hierro polimaltosado gotas 50 mg/mL (Vitafer®)</option>
@@ -2172,6 +2173,7 @@ document.getElementById('btn-hb-calc').addEventListener('click', () => {
    HIERRO – Calculadora de dosis
    ============================================================ */
 const FE_PRESENTACIONES = {
+  'hemotonic': { nombre: 'Hemotonic® 60 tab masticable (60 mg Fe + 0.4 mg ác. fólico)', feElemental: 60, unidad: 'tab', via: 'VO', combo: true, folato: 0.4 },
   'sf-tab': { nombre: 'Sulfato ferroso 200 mg tab', feElemental: 60, unidad: 'tab', via: 'VO' },
   'sf-jbe': { nombre: 'Sulfato ferroso jarabe 125 mg/5 mL', feElemental: 25, unidad: '5 mL', via: 'VO' },
   'hp-gotas': { nombre: 'Hierro polimaltosado gotas 50 mg/mL', feElemental: 50, unidad: 'mL', via: 'VO' },
@@ -2226,6 +2228,12 @@ document.getElementById('btn-fe-calc').addEventListener('click', () => {
     else frecuencia = `<strong>${(60/pres.feElemental).toFixed(1)} ${pres.unidad}</strong> cada 8 horas (= ${(180/pres.feElemental).toFixed(1)} ${pres.unidad}/día)`;
 
     const color = ind === 'profilaxis' ? 'normal' : 'warning';
+    let comboNote = '';
+    if (pres.combo && pres.folato) {
+      const dailyTabs = ind === 'profilaxis' ? 1 : (ind === 'leve' ? 2 : 3);
+      const folatoTotal = (pres.folato * dailyTabs).toFixed(2);
+      comboNote = `<p style="margin-top:6px; padding:8px 10px; background:rgba(220,252,231,0.6); border-left:3px solid #16a34a; border-radius:4px; font-size:12.5px;">✅ <strong>Combo:</strong> Esta presentación ya incluye <strong>${pres.folato} mg de ácido fólico/tab</strong> → con ${dailyTabs} tab/día se cubre <strong>${folatoTotal} mg/día</strong> de ácido fólico (ideal en profilaxis ≥ 0.4 mg). No requiere ácido fólico adicional salvo indicación especial (5 mg en antecedente DTN).</p>`;
+    }
     html = `<div class="result-card ${color}">
       <h3>💊 ${dosis.label}</h3>
       <p><strong>Dosis Fe elemental:</strong> ${dosis.feMg} mg/día (${dosis.frec})</p>
@@ -2234,7 +2242,8 @@ document.getElementById('btn-fe-calc').addEventListener('click', () => {
         💉 <strong>Indicación:</strong> ${frecuencia} VO
       </p>
       <p><strong>Duración:</strong> ${dosis.duracion}</p>
-      <p style="margin-top:6px; font-size:12px;">📌 <strong>Recomendaciones:</strong> Tomar con estómago vacío + jugo cítrico/vitamina C. Evitar con leche, café, té o calcio. Reevaluar Hb a los 30 días.</p>
+      ${comboNote}
+      <p style="margin-top:6px; font-size:12px;">📌 <strong>Recomendaciones:</strong> Tomar con estómago vacío + jugo cítrico/vitamina C. Evitar con leche, café, té o calcio. Reevaluar Hb a los 30 días.${pres.unidad === 'tab' && pres.combo ? ' Esta presentación es <strong>masticable</strong> – masticar bien antes de tragar.' : ''}</p>
     </div>`;
   }
   result.innerHTML = html;
