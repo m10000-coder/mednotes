@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCORE MAMA · MED NOTES®</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #be185d;
+    --primary-dark: #9d174d;
+    --primary-soft: #fce7f3;
+    --text: #1e293b;
+    --text-light: #475569;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --bg: #fdf2f8;
+    --yellow-bg: #fefce8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ============ Top Header ============ */
+  .top-header {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 22px;
+    display: flex; align-items: center; gap: 14px;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .brand-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #000; color: #fff;
+    padding: 6px 12px;
+    font: 700 12px 'JetBrains Mono', monospace;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    border-radius: 4px;
+  }
+  .brand-badge .reg { font-size: 8px; vertical-align: top; opacity: 0.85; }
+  .top-header h1 {
+    font-size: 17px; font-weight: 800;
+    color: var(--text); flex: 1;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 26px 22px 60px;
+  }
+
+  /* ============ Cards ============ */
+  .calc-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 24px 26px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid var(--border);
+    margin-bottom: 18px;
+  }
+  .calc-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 4px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .calc-sub {
+    color: var(--muted);
+    margin-bottom: 18px;
+    font-size: 13.5px;
+  }
+
+  /* ============ SCORE MAMA grid ============ */
+  .score-table {
+    width: 100%; border-collapse: collapse;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 18px;
+    font-size: 12px;
+    border: 1px solid var(--border);
+  }
+  .score-table th, .score-table td {
+    padding: 8px 6px;
+    text-align: center;
+    border: 1px solid #cbd5e1;
+    vertical-align: middle;
+    font-weight: 600;
+  }
+  .score-table thead th {
+    background: var(--surface-alt);
+    color: var(--text);
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .score-table thead th.sc-3 { background: #dc2626; color: #fff; }
+  .score-table thead th.sc-2 { background: #f97316; color: #fff; }
+  .score-table thead th.sc-1 { background: #facc15; color: #1e293b; }
+  .score-table thead th.sc-0 { background: #fff; color: #1e293b; }
+  .score-table tbody td.lbl {
+    text-align: left;
+    background: var(--surface-alt);
+    font-weight: 700;
+    color: var(--text);
+    width: 130px;
+  }
+  .score-cell {
+    cursor: pointer;
+    user-select: none;
+    transition: all .15s;
+    position: relative;
+    line-height: 1.35;
+  }
+  .score-cell:hover { transform: scale(1.02); box-shadow: inset 0 0 0 2px var(--primary); }
+  .score-cell.empty {
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: default;
+  }
+  .score-cell.empty:hover { transform: none; box-shadow: none; }
+  .score-cell.active {
+    box-shadow: inset 0 0 0 3px #1e293b;
+    font-weight: 800;
+  }
+  .score-cell.s-3 { background: #fecaca; color: #7f1d1d; }
+  .score-cell.s-2 { background: #fed7aa; color: #7c2d12; }
+  .score-cell.s-1 { background: #fef08a; color: #713f12; }
+  .score-cell.s-0 { background: #f8fafc; color: #1e293b; }
+  .score-table .partial-col {
+    background: #dcfce7;
+    font-weight: 700;
+    color: #15803d;
+    width: 70px;
+  }
+  .score-table .total-row td {
+    background: var(--surface-alt);
+    font-weight: 800;
+    font-size: 14px;
+  }
+  .score-table .total-row .total-val {
+    background: #16a34a; color: #fff;
+    font-size: 18px;
+  }
+
+  .score-summary {
+    margin-top: 14px;
+    padding: 16px 18px;
+    border-radius: 10px;
+    border: 1.5px solid;
+    text-align: center;
+  }
+  .score-summary h3 { font-size: 22px; margin-bottom: 6px; font-weight: 800; }
+  .score-summary p { font-size: 13.5px; line-height: 1.55; }
+  .score-summary.s-normal     { background: #dcfce7; border-color: #86efac; color: #15803d; }
+  .score-summary.s-vigilancia { background: #fef9c3; border-color: #fde047; color: #a16207; }
+  .score-summary.s-prioritario{ background: #fed7aa; border-color: #fb923c; color: #9a3412; }
+  .score-summary.s-emergencia { background: #fecaca; border-color: #f87171; color: #b91c1c; animation: pulse 1.5s infinite; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+  }
+
+  /* ============ Buttons ============ */
+  .btn {
+    padding: 10px 20px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    font: 700 13.5px 'Inter', sans-serif;
+    transition: background .15s, transform .12s;
+  }
+  .btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .btn-secondary {
+    background: var(--surface-alt);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+  }
+  .btn-secondary:hover { background: #e2e8f0; transform: translateY(-1px); }
+  .btn-print { background: #2563eb; }
+  .btn-print:hover { background: #1e40af; }
+
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+
+  /* ============ Reference table ============ */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 8px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .data-table thead th {
+    background: var(--primary);
+    color: #fff;
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .data-table tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-light);
+  }
+  .data-table tbody td:first-child { font-weight: 700; color: var(--text); white-space: nowrap; }
+  .data-table tbody tr:last-child td { border-bottom: none; }
+  .data-table tbody tr:hover { background: #fafafa; }
+
+  .alert-card {
+    margin-top: 14px;
+    background: var(--yellow-bg);
+    border: 1px solid #fde68a;
+    border-left: 4px solid #facc15;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .alert-card strong { color: #92400e; }
+
+  .bib-card {
+    margin-top: 14px; padding: 12px 14px;
+    background: #f8fafc; border: 1px solid #e2e8f0;
+    border-left: 3px solid #64748b; border-radius: 6px;
+    font-size: 11.5px; color: #475569; line-height: 1.6;
+  }
+  .bib-card strong { color: #1e293b; font-size: 12px; }
+  .bib-card ol { margin: 8px 0 0 18px; padding: 0; }
+
+  .disclaimer {
+    background: var(--yellow-bg);
+    border: 1px solid #fde68a;
+    border-left: 4px solid #facc15;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 12.5px;
+    color: var(--text); line-height: 1.5;
+    margin-top: 24px;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 22px; padding-top: 18px;
+    border-top: 1px solid var(--border);
+    color: var(--muted); font-size: 12.5px;
+  }
+  .brand-logo {
+    display: inline-block; padding: 4px 12px;
+    background: #000; color: #fff;
+    font: 700 11px 'JetBrains Mono', monospace;
+    letter-spacing: 0.06em; border-radius: 3px;
+    margin-bottom: 8px;
+  }
+  .brand-logo .reg { font-size: 8px; vertical-align: top; }
+
+  /* ============ PRINT ============ */
+  @media print {
+    body { background: #fff; }
+    .top-header, .btn-row { display: none !important; }
+    .container { max-width: 100%; padding: 0; }
+    .calc-card { border: none; box-shadow: none; padding: 0; }
+    .score-summary.s-emergencia { animation: none !important; }
+    @page { size: A4 portrait; margin: 12mm 14mm; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-header">
+  <div class="brand-badge">MED NOTES<span class="reg">®</span></div>
+  <h1>🚨 SCORE MAMA — Alerta Materna Obstétrica</h1>
+</div>
+
+<div class="container">
+
+  <div class="calc-card">
+    <h2 class="calc-title">🚨 SCORE MAMA</h2>
+    <p class="calc-sub">Score de alerta materna obstétrica · MSP Ecuador. Haz clic en cada celda para seleccionar el valor del parámetro.</p>
+
+    <div style="overflow-x:auto;">
+      <table class="score-table" id="score-mama-table">
+        <thead>
+          <tr>
+            <th rowspan="1">Parámetro</th>
+            <th class="sc-3">3</th>
+            <th class="sc-2">2</th>
+            <th class="sc-1">1</th>
+            <th class="sc-0">0</th>
+            <th class="sc-1">1</th>
+            <th class="sc-2">2</th>
+            <th class="sc-3">3</th>
+            <th>Puntaje<br>parcial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-param="temp">
+            <td class="lbl">Temperatura (°C)</td>
+            <td class="score-cell s-3" data-score="3">&lt; 35</td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="score-cell s-1" data-score="1">35 – 35.9</td>
+            <td class="score-cell s-0" data-score="0">36 – 37.4</td>
+            <td class="score-cell s-1" data-score="1">37.5 – 38.2</td>
+            <td class="score-cell s-2" data-score="2">38.3 – 38.9</td>
+            <td class="score-cell s-3" data-score="3">≥ 39</td>
+            <td class="partial-col">0</td>
+          </tr>
+          <tr data-param="tas">
+            <td class="lbl">TA sistólica (mmHg)</td>
+            <td class="score-cell s-3" data-score="3">≤ 70</td>
+            <td class="score-cell s-2" data-score="2">71 – 79</td>
+            <td class="score-cell s-1" data-score="1">80 – 89</td>
+            <td class="score-cell s-0" data-score="0">90 – 139</td>
+            <td class="score-cell s-1" data-score="1">140 – 149</td>
+            <td class="score-cell s-2" data-score="2">150 – 159</td>
+            <td class="score-cell s-3" data-score="3">≥ 160</td>
+            <td class="partial-col">0</td>
+          </tr>
+          <tr data-param="tad">
+            <td class="lbl">TA diastólica (mmHg)</td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="score-cell s-1" data-score="1">≤ 49</td>
+            <td class="score-cell s-0" data-score="0">50 – 89</td>
+            <td class="score-cell s-1" data-score="1">90 – 99</td>
+            <td class="score-cell s-2" data-score="2">100 – 109</td>
+            <td class="score-cell s-3" data-score="3">≥ 110</td>
+            <td class="partial-col">0</td>
+          </tr>
+          <tr data-param="fc">
+            <td class="lbl">Frecuencia cardiaca (lpm)</td>
+            <td class="score-cell s-3" data-score="3">≤ 40</td>
+            <td class="score-cell s-2" data-score="2">41 – 49</td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="score-cell s-0" data-score="0">50 – 99</td>
+            <td class="score-cell s-1" data-score="1">100 – 109</td>
+            <td class="score-cell s-2" data-score="2">110 – 129</td>
+            <td class="score-cell s-3" data-score="3">≥ 130</td>
+            <td class="partial-col">0</td>
+          </tr>
+          <tr data-param="fr">
+            <td class="lbl">Frecuencia respiratoria (rpm)</td>
+            <td class="score-cell s-3" data-score="3">≤ 10</td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="score-cell s-0" data-score="0">11 – 20</td>
+            <td class="score-cell s-1" data-score="1">21 – 24</td>
+            <td class="score-cell s-2" data-score="2">25 – 29</td>
+            <td class="score-cell s-3" data-score="3">≥ 30</td>
+            <td class="partial-col">0</td>
+          </tr>
+          <tr data-param="sat">
+            <td class="lbl">Saturación O₂ (%)</td>
+            <td class="score-cell s-3" data-score="3">≤ 88</td>
+            <td class="score-cell s-2" data-score="2">89 – 90</td>
+            <td class="score-cell s-1" data-score="1">91 – 93</td>
+            <td class="score-cell s-0" data-score="0">≥ 94</td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="partial-col">0</td>
+          </tr>
+          <tr data-param="o2">
+            <td class="lbl">Oxígenoterapia</td>
+            <td class="score-cell s-3" data-score="3">Máscara<br>o superior</td>
+            <td class="score-cell s-2" data-score="2">Catéter<br>nasal</td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="score-cell s-0" data-score="0">Aire<br>ambiente</td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="partial-col">0</td>
+          </tr>
+          <tr data-param="conc">
+            <td class="lbl">Nivel de consciencia</td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="score-cell s-0" data-score="0">Alerta</td>
+            <td class="score-cell s-1" data-score="1">Responde<br>a la voz</td>
+            <td class="score-cell s-2" data-score="2">Responde<br>al dolor</td>
+            <td class="score-cell s-3" data-score="3">No<br>responde</td>
+            <td class="partial-col">0</td>
+          </tr>
+          <tr data-param="orina">
+            <td class="lbl">Gasto urinario (mL/h)</td>
+            <td class="score-cell s-3" data-score="3">≤ 10</td>
+            <td class="score-cell s-2" data-score="2">≤ 30</td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="score-cell s-0" data-score="0">No cuantificable<br>(sin sonda /<br>ambulatoria)</td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="score-cell empty" data-score=""></td>
+            <td class="partial-col">0</td>
+          </tr>
+          <tr class="total-row">
+            <td colspan="8" style="text-align:right; padding-right:14px;">TOTAL</td>
+            <td class="total-val" id="score-total">0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="score-summary" class="score-summary s-normal">
+      <h3>🟢 Puntaje 0 – Normal</h3>
+      <p>Vigilancia rutinaria. Continuar control prenatal habitual.</p>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" id="btn-score-reset">↻ Reiniciar SCORE MAMA</button>
+      <button class="btn btn-print" id="btn-score-print">🖨 Imprimir / PDF</button>
+    </div>
+
+    <h3 style="margin-top:24px; margin-bottom:10px; font-size:14px; font-weight:700; text-transform:uppercase; color:var(--primary-dark); letter-spacing:0.04em;">📋 Interpretación del SCORE MAMA</h3>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Puntaje total</th>
+          <th>Categoría</th>
+          <th>Acción a realizar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="color:#15803d; font-weight:800;">0</td>
+          <td><strong>🟢 Normal</strong></td>
+          <td>Vigilancia rutinaria · control prenatal habitual</td>
+        </tr>
+        <tr>
+          <td style="color:#a16207; font-weight:800;">1 – 3</td>
+          <td><strong>🟡 Vigilancia</strong></td>
+          <td>Reevaluar en 1 hora · monitorización continua · valoración por médico</td>
+        </tr>
+        <tr>
+          <td style="color:#9a3412; font-weight:800;">4 – 5</td>
+          <td><strong>🟠 Atención prioritaria</strong></td>
+          <td>Activar protocolo de atención obstétrica especializada · referir si no se puede manejar localmente · vigilancia estrecha</td>
+        </tr>
+        <tr>
+          <td style="color:#b91c1c; font-weight:800;">≥ 6</td>
+          <td><strong>🔴 Emergencia obstétrica</strong></td>
+          <td>Activar <strong>CÓDIGO ROJO OBSTÉTRICO</strong> · atención crítica inmediata · referir a 3.<sup>er</sup> nivel</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert-card">
+      <strong>Importante:</strong> El SCORE MAMA es una herramienta de tamizaje. La decisión clínica final debe basarse en el juicio médico integrado con el contexto clínico, antecedentes y evolución de la paciente.
+    </div>
+
+    <div class="bib-card">
+      <strong>📚 Bibliografía:</strong>
+      <ol>
+        <li><strong>MSP Ecuador.</strong> Score MAMA y claves obstétricas. Manual del Sistema de Alerta Temprana. Quito: MSP; 2017.</li>
+        <li><strong>MSP Ecuador.</strong> Norma para la atención del parto y nacimiento humanizado. Quito: MSP; 2016.</li>
+        <li><strong>Singh S, et al.</strong> A validation study of the CEMACH recommended modified early obstetric warning system (MEOWS). <em>Anaesthesia</em>. 2012;67(1):12-18.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    <strong>⚠ Aviso clínico:</strong> Esta herramienta es de apoyo educativo basada en los lineamientos del MSP Ecuador. Las dosis, esquemas y valoraciones deben individualizarse según evaluación clínica y prescripción médica. No sustituye el criterio profesional ni reemplaza la evaluación directa.
+  </div>
+
+  <div class="footer">
+    <span class="brand-logo">MED NOTES<span class="reg">®</span></span>
+    <p>Hecho por <strong>MED NOTES®</strong> — Apuntes médicos basados en evidencia</p>
+    <p style="font-size:11px; opacity:0.7;">Fuente: MSP Ecuador · OMS · ALARM · FIGO</p>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   SCORE MAMA – Interactive
+   ============================================================ */
+const scoreState = {};
+const ACTION_MAP = {
+  0: { cls: 's-normal',     icon: '🟢', cat: 'Normal',
+       text: 'Vigilancia rutinaria. Continuar control prenatal habitual.' },
+  1: { cls: 's-vigilancia', icon: '🟡', cat: 'Vigilancia (1-3)',
+       text: 'Reevaluar en 1 hora · monitorización continua · valoración por médico.' },
+  4: { cls: 's-prioritario',icon: '🟠', cat: 'Atención prioritaria (4-5)',
+       text: 'Activar protocolo de atención obstétrica especializada · referir si no se puede manejar localmente · vigilancia estrecha.' },
+  6: { cls: 's-emergencia', icon: '🔴', cat: 'EMERGENCIA OBSTÉTRICA (≥ 6)',
+       text: 'Activar CÓDIGO ROJO OBSTÉTRICO · atención crítica inmediata · referir a 3.er nivel.' }
+};
+
+function getActionLevel(total) {
+  if (total === 0) return ACTION_MAP[0];
+  if (total <= 3)  return ACTION_MAP[1];
+  if (total <= 5)  return ACTION_MAP[4];
+  return ACTION_MAP[6];
+}
+
+function updateScore() {
+  let total = 0;
+  document.querySelectorAll('#score-mama-table tr[data-param]').forEach(row => {
+    const param = row.dataset.param;
+    const val = scoreState[param] !== undefined ? scoreState[param] : 0;
+    total += val;
+    const partial = row.querySelector('.partial-col');
+    if (partial) partial.textContent = val;
+  });
+  document.getElementById('score-total').textContent = total;
+
+  const action = getActionLevel(total);
+  const summary = document.getElementById('score-summary');
+  summary.className = 'score-summary ' + action.cls;
+  summary.innerHTML = `
+    <h3>${action.icon} Puntaje ${total} – ${action.cat}</h3>
+    <p>${action.text}</p>`;
+}
+
+document.querySelectorAll('#score-mama-table .score-cell').forEach(cell => {
+  if (cell.classList.contains('empty')) return;
+  cell.addEventListener('click', () => {
+    const row = cell.closest('tr');
+    const param = row.dataset.param;
+    const score = parseInt(cell.dataset.score, 10);
+    if (cell.classList.contains('active')) {
+      cell.classList.remove('active');
+      delete scoreState[param];
+    } else {
+      row.querySelectorAll('.score-cell.active').forEach(c => c.classList.remove('active'));
+      cell.classList.add('active');
+      scoreState[param] = score;
+    }
+    updateScore();
+  });
+});
+
+document.getElementById('btn-score-reset').addEventListener('click', () => {
+  document.querySelectorAll('#score-mama-table .score-cell.active').forEach(c => c.classList.remove('active'));
+  Object.keys(scoreState).forEach(k => delete scoreState[k]);
+  updateScore();
+});
+
+document.getElementById('btn-score-print').addEventListener('click', () => window.print());
+</script>
+
+</body>
+</html>
