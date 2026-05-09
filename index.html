@@ -117,7 +117,16 @@
   .toggle-sidebar:hover { background: var(--primary-soft); color: var(--primary); }
 
   .app.collapsed .brand-text { display: none; }
-  .app.collapsed .toggle-sidebar { transform: rotate(180deg); }
+  .app.collapsed .brand-icon { display: none; }
+  .app.collapsed .sidebar-header {
+    padding: 10px;
+    justify-content: center;
+  }
+  .app.collapsed .toggle-sidebar {
+    transform: rotate(180deg);
+    width: 36px; height: 36px;
+    font-size: 16px;
+  }
   .app.collapsed .nav-label { display: none; }
   .app.collapsed .nav-section-title { display: none; }
   .app.collapsed .nav-section { padding: 6px 4px; }
@@ -459,6 +468,26 @@
     align-items: center; justify-content: center;
     font-size: 18px;
   }
+  .menu-toggle-btn {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    font-size: 16px;
+    color: var(--text-light);
+    transition: all .15s;
+  }
+  .menu-toggle-btn:hover {
+    background: var(--primary-soft);
+    color: var(--primary);
+    border-color: var(--primary);
+  }
+  @media (max-width: 800px) {
+    .menu-toggle-btn { display: none !important; }
+  }
 </style>
 </head>
 <body>
@@ -490,6 +519,7 @@
   <main class="main">
     <div class="main-header">
       <button class="menu-mobile-btn" id="btn-mobile-menu">☰</button>
+      <button class="menu-toggle-btn" id="btn-header-menu" title="Mostrar/ocultar menú">☰</button>
       <h1 id="page-title">Inicio</h1>
       <span class="sub" id="page-sub">Plataforma integrada</span>
       <a class="external-btn" id="btn-external" href="#" target="_blank" style="display:none;">↗ Abrir en pestaña nueva</a>
@@ -727,6 +757,7 @@ $('search').addEventListener('input', e => {
 });
 
 $('btn-toggle').addEventListener('click', () => $('app').classList.toggle('collapsed'));
+$('btn-header-menu').addEventListener('click', () => $('app').classList.toggle('collapsed'));
 $('btn-mobile-menu').addEventListener('click', () => $('app').classList.toggle('mobile-open'));
 $('mobile-overlay').addEventListener('click', () => $('app').classList.remove('mobile-open'));
 
