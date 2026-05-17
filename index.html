@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- 👉 REEMPLAZA "https://TU-NUEVA-URL.com" POR LA URL DE TU NUEVA PLATAFORMA 👈 -->
-<meta http-equiv="refresh" content="2; url=https://TU-NUEVA-URL.com">
+<!-- 👉 REEMPLAZA "https://herramientas.mednotes.cloud/" POR LA URL DE TU NUEVA PLATAFORMA 👈 -->
+<meta http-equiv="refresh" content="2; url=https://herramientas.mednotes.cloud/">
 
 <title>MED NOTES® · Redirigiendo a la nueva plataforma</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -112,7 +112,7 @@
   <div class="spinner"></div>
 
   <!-- 👇 También cambia el href de este botón con tu URL 👇 -->
-  <a class="btn" id="manual-link" href="https://TU-NUEVA-URL.com">
+  <a class="btn" id="manual-link" href="https://herramientas.mednotes.cloud/">
     Ir ahora a la nueva plataforma →
   </a>
 
@@ -125,7 +125,7 @@
   /* Redirect por JavaScript también, como respaldo del meta refresh */
   setTimeout(function () {
     var link = document.getElementById('manual-link').getAttribute('href');
-    if (link && !link.includes('TU-NUEVA-URL')) {
+    if (link) {
       window.location.replace(link);
     }
   }, 2200);
